@@ -1,0 +1,25 @@
+
+echo "# wc.jieqiangtec.com" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git remote add origin https://github.com/1569501393/wc.jieqiangtec.com.git
+git push -u origin master
+
+
+最新微橙人人店V3.3.6微信分销一键安装版|全解密开源版人人商城V2二次开发版
+http://www.dede168.com/a/2866.html
+
+
+www.dede168.com
+
+
+10月最新微橙微分销系统源码 微橙人人店三级分销系统+粉丝排行榜（修复后台密码）
+http://www.bcb5.com/yuanma/php/919.html
+账号 密码分别为 admin admin888
+密码：jju4
+
+
+3月最新微橙微分销源码商业版源码完整版|人人店三级分销系统原版|微擎内核
+http://www.bcb5.com/yuanma/php/3399.html
+密码：2d7l
