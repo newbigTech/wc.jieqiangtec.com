@@ -1,3 +1,21 @@
+http://wc.jieqiangtec.com/README.md
+
+http://erp.jieqiangtec.com/README.md
+
+
+微橙商城：
+http://wc.jieqiangtec.com/
+
+ERP系统：
+http://erp.jieqiangtec.com/
+
+同时指向
+微橙商城：
+http://wc.adjyc.com/
+
+ERP系统：
+http://erp.adjyc.com/
+
 
 echo "# wc.jieqiangtec.com" >> README.md
 git init
@@ -12,6 +30,10 @@ http://www.dede168.com/a/2866.html
 
 
 www.dede168.com
+
+7月最新微橙分销商城系统商业版源码|微擎人人店三级微信分销+多功能分销系统
+http://www.bcb5.com/yuanma/php/5318.html
+密码：b88f
 
 
 10月最新微橙微分销系统源码 微橙人人店三级分销系统+粉丝排行榜（修复后台密码）
