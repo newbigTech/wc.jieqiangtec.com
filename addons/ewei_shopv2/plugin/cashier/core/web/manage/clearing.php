@@ -106,7 +106,7 @@ class Clearing_EweiShopV2Page extends CashierWebPage
 		$params = array(':uniacid' => $_W['uniacid']);
 		$pindex = max(1, intval($_GPC['page']));
 		$psize = 20;
-		$condition = 'AND status=1 AND paytype = 101';
+		$condition = 'AND status=1 AND (paytype = 101 OR paytype = 102 OR paytype = 2)';
 		if (!($id)) 
 		{
 			$condition .= ' AND is_applypay=0 AND cashierid=' . $cashierid;
@@ -121,11 +121,11 @@ class Clearing_EweiShopV2Page extends CashierWebPage
 		$total = (int) pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_cashier_pay_log') . ' where uniacid=:uniacid ' . $condition . $payday_sql, $params);
 		if (!(empty($_W['cashieruser']['merchid']))) 
 		{
-			$total_money = (double) pdo_fetchcolumn('select sum(money-orderprice) from ' . tablename('ewei_shop_cashier_pay_log') . ' where uniacid=:uniacid ' . $condition . $payday_sql, $params);
+			$total_money = (double) pdo_fetchcolumn('select sum(money-orderprice+deduction) from ' . tablename('ewei_shop_cashier_pay_log') . ' where uniacid=:uniacid ' . $condition . $payday_sql, $params);
 		}
 		else 
 		{
-			$total_money = (double) pdo_fetchcolumn('select sum(money) from ' . tablename('ewei_shop_cashier_pay_log') . ' where uniacid=:uniacid ' . $condition . $payday_sql, $params);
+			$total_money = (double) pdo_fetchcolumn('select sum(money+deduction) from ' . tablename('ewei_shop_cashier_pay_log') . ' where uniacid=:uniacid ' . $condition . $payday_sql, $params);
 		}
 		$withdraw = ((empty($userinfo['withdraw']) ? 0 : (double) $userinfo['withdraw']));
 		$money = round($total_money * (1 - ($withdraw / 100)), 2);

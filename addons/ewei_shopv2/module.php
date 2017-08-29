@@ -1,6 +1,5 @@
 <?php
-
-if (!defined('IN_IA')) {
+if (!(defined('IN_IA'))) {
 	exit('Access Denied');
 }
 

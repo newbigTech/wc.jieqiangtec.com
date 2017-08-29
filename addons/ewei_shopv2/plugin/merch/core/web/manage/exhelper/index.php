@@ -1,5 +1,5 @@
 <?php
-if (!defined('IN_IA')) 
+if (!(defined('IN_IA'))) 
 {
 	exit('Access Denied');
 }
@@ -10,6 +10,7 @@ class Index_EweiShopV2Page extends MerchWebPage
 	{
 		global $_W;
 		global $_GPC;
+		$this->model->CheckPlugin('exhelper');
 		include $this->template();
 	}
 }

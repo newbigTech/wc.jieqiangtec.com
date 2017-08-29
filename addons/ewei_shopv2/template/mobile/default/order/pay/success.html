@@ -1,5 +1,12 @@
 {template '_header'}
-<div class='fui-page order-success-page'>
+
+<link rel="stylesheet" type="text/css" href="../addons/ewei_shopv2/template/mobile/default/static/css/index.css"/>
+<style>
+    .fui-mask {
+        opacity: 1;
+    }
+</style>
+<div class='fui-page order-success-page pay'>
 
 	<div class="fui-header">
 		<div class="fui-header-left">
@@ -20,15 +27,15 @@
 	
 	<div class='fui-list-group result-list ' style="margin-top: 0;">
 	    <div class='fui-list'>
-		<div class='fui-list-media'>
+		<div class='fui-list-media' >
 			{if $_GPC['result']=='seckill_refund'}
 					<i class='icon icon-cry'></i>
 			{else}
-		                   {if !empty($address)}<i class='icon icon-deliver'></i>{/if}
+		   {if !empty($address)&&empty($order['istrade'])}<i class='icon icon-deliver'></i>{/if}
 			
 			{if !empty($order['dispatchtype']) && empty($order['isverify'])}<i class='icon icon-store'></i>{/if}
 			
-			{if !empty($order['isverify'])}<i class='icon icon-store'></i>{/if}
+			{if !empty($order['isverify'])||$isonlyverifygoods || !empty($order['istrade'])}<i class='icon icon-store'></i>{/if}
 			
 			{if !empty($order['virtual'])}<i class='icon icon-text'></i>{/if}
 			
@@ -51,6 +58,7 @@
 				订单提交支付
 				{else}
 				订单支付成功
+
 				{/if}
 				{/if}
 
@@ -62,7 +70,9 @@
 				{else}
 
 
-			{if !empty($address)}您的包裹整装待发{/if}
+			{if !empty($address)&&empty($order['istrade'])}您的包裹整装待发{/if}
+
+			{if !empty($order['istrade'])}您的服务已成功预约{/if}
 			
 			{if !empty($order['dispatchtype']) && empty($order['isverify'])}您可以到您选择的自提点取货了{/if}
 			
@@ -75,6 +85,40 @@
 			         您购买的商品已自动发货
 			    {else}
 			         您已经支付成功
+
+				{if p('lottery')}
+				<div id="changesmodel" style="display: none;">
+					<div id="changescontent" onclick="" class="task-model" style="background: url('../addons/ewei_shopv2/plugin/lottery/static/images/changes.png');background-size: cover; width: 16rem; height: 16rem;  background-size: cover;position: relative; left: 9%; margin-bottom: 55%;">
+        <span class="changes-btn-close" style="border: 1px solid #ffffff; color: #ffffff; border-radius: 50%; position: relative; top: -1.3rem; left: 15.5rem; padding: 0.2rem 0.3rem;"><i class="icon icon-close"></i><span>
+					</div>
+				</div>
+				<script type="text/javascript">
+					$(document).ready(function () {
+						setTimeout(function () {
+							if ({$lottery_changes['is_changes']} == 1) {
+								var changes = {php echo json_encode($lottery_changes['lottery']);};
+								$('#changescontent').attr('onclick', 'window.location.href="{php echo mobileUrl("lottery/lottery_info",array(),true);}&id=' + changes.lottery_id + '"');
+								taskget = new FoxUIModal({
+									content: $('#changesmodel').html(),
+									extraClass: 'picker-modal',
+									maskClick: function () {
+										taskget.close()
+									}
+								});
+								taskget.container.find('.changes-btn-close').click(function () {
+									taskget.close();
+									event.stopPropagation();
+								});
+
+								taskget.show();
+							}
+						}, 200);
+					});
+
+				</script>
+				{/if}
+
+
 			    {/if}
 			{/if}
 				{/if}
@@ -85,7 +129,7 @@
 	</div>
 	
 	{if !empty($stores)}
-	<script language='javascript' src='http://api.map.baidu.com/api?v=2.0&ak=ZQiFErjQB7inrGpx27M1GR5w3TxZ64k7'></script>
+	<script language='javascript' src='https://api.map.baidu.com/api?v=2.0&ak=ZQiFErjQB7inrGpx27M1GR5w3TxZ64k7&s=1'></script>
 	<div class='fui-according-group'>
 	<div class='fui-according'>
 	    <div class='fui-according-header'>
@@ -138,6 +182,23 @@
 	    </div>
 	</div>
 	{/if}
+
+
+
+	{if $hasverifygood}
+	<a  href="{php echo mobileUrl('verifygoods')}" class="fui-cell-group small noborder nopadding no_active" style="display: block;">
+		<div class="fui-cell">
+			<div class="fui-cell-label">
+				<img src="../addons/ewei_shopv2/static/images/card.png" alt="" class="card"/ >
+			</div>
+			<div class="fui-cell-info" style="font-size: 0.75rem;" >
+				<p>您有一件核销商品待使用</p>
+				<div>立即前往激活>></div>
+			</div>
+		</div>
+	</a>
+	{/if}
+
 	
 	{if !empty($carrier) || !empty($store)}
 	 
@@ -175,11 +236,11 @@
 	{/if}
 	
 	
-	<div class="fui-cell-group">
+	<div class="fui-cell-group small">
 	    <div class="fui-cell">
 		<div class="fui-cell-label">{if $order['paytype']==3}需到付{else}实付金额{/if}</div>
 		<div class="fui-cell-info"></div>
-		<div class="fui-cell-remark noremark"><span class='text-danger'>￥{php echo number_format($order['price'],2)}</span></div>
+		<div class="fui-cell-remark noremark"><span class='text-danger'>￥{if empty($peerprice)}{php echo number_format($order['price'],2)}{else}{$peerprice['price']}{/if}</span></div>
 	    </div>
 		{if $_GPC['result']!='seckill_refund'}
 	{if !empty($order['virtual']) || !empty($order['isvirtualsend'])}
@@ -196,7 +257,7 @@
 	 
 	<div class='row'>
 	    <div class='col-50'>
-		<a class="btn btn-default external" href="{php echo mobileUrl('order/detail',array('id'=>$order['id']))}" >订单详情</a>
+		<a class="btn btn-default external" {if empty($ispeerpay)}href="{php echo mobileUrl('order/detail',array('id'=>$order['id']))}"{else}href="{php echo mobileUrl('order/pay/peerpaydetail',array('id'=>$orderid))}"{/if} >订单详情</a>
 	    </div>
 	    <div class='col-50'>
 		<a class="btn btn-default external" href="{php echo mobileUrl()}" >返回首页</a>
@@ -204,6 +265,19 @@
 	</div>
 	 
     </div>
-	    <script language='javascript'>require(['biz/order/success'], function (modal) {modal.init(); });</script>
+
+	{if p('lottery')}
+	<div id="changesmodel" style="display: none;width: 90%">
+		<div id="changescontent" onclick="" class="task-model" style="background: url('../addons/ewei_shopv2/plugin/lottery/static/images/changes.png');background-size: cover; width: 90%; height: 16rem;  background-size: cover;position: relative;margin: 0 auto; margin-bottom: 55%;">
+            <span class="changes-btn-close" style="border: 1px solid dodgerblue; color: dodgerblue; border-radius: 50%; position: absolute;right: 5px; padding: 0.2rem 0.4rem;top: 5px;z-index: 10"><i class="icon icon-close"></i><span>
+		</div>
+	</div>
+	{/if}
+	    <script language='javascript'>
+            require(['biz/order/success'], function (modal) {modal.init("{$lottery_changes['is_changes']}","{$lottery_changes['lottery']['lottery_id']}");});
+        </script>
 </div>
+{if $share}
+	{template 'sale/sendticket/share'}
+{/if}
 {template '_footer'}

@@ -11,19 +11,32 @@ class TaskProcessor extends PluginProcessor
 	{
 		parent::__construct('task');
 	}
-	public function respond($obj = NULL) 
+	public function respond($obj = NULL, $clear = true) 
 	{
 		global $_W;
 		$message = $obj->message;
 		$msgtype = strtolower($message['msgtype']);
 		$event = strtolower($message['event']);
-		$obj->member = $this->model->checkMember($message['from']);
-		if (($msgtype == 'text') || ($event == 'click')) 
+		if ($clear) 
 		{
+			$_SESSION['autoposter'] = NULL;
+			$_SESSION['postercontent'] = NULL;
+		}
+		$obj->member = $this->model->checkMember($message['from']);
+		if (($msgtype == 'text') || ($event == 'click') || !(empty($_SESSION['autoposter']))) 
+		{
+			unset($_SESSION['autoposter']);
+			if (!(empty($_SESSION['postercontent']))) 
+			{
+				$obj->message['content'] = $_SESSION['postercontent'];
+				unset($_SESSION['postercontent']);
+			}
 			return $this->responseText($obj);
 		}
 		if ($msgtype == 'event') 
 		{
+			@session_start();
+			$_SESSION['autoposter'] = $obj;
 			if ($event == 'scan') 
 			{
 				return $this->responseScan($obj);
@@ -100,9 +113,9 @@ class TaskProcessor extends PluginProcessor
 			return m('message')->sendCustomNotice($openid, '扫描自己的海报是不会增加人气值的,快快把你的海报发送给你的小伙伴吧~');
 		}
 		load()->func('logging');
-		logging_run($join_info['task_type']);
 		if ($member_info['isnew']) 
 		{
+			load()->func('logging');
 			if (!(empty($join_info))) 
 			{
 				if ($join_info['task_type'] == 1) 
@@ -111,10 +124,14 @@ class TaskProcessor extends PluginProcessor
 				}
 				else if ($join_info['task_type'] == 2) 
 				{
-					logging_run('saomiao 2leixing');
 					$this->model->rankreward($member_info, $poster, $join_info, $qr, $openid, $qrmember);
 				}
 				$this->commission($poster, $member_info, $qrmember);
+				if (!(empty($_SESSION['postercontent']))) 
+				{
+					$this->respond($_SESSION['autoposter']);
+					$this->respond($_SESSION['autoposter'], false);
+				}
 			}
 		}
 		else 
@@ -238,7 +255,7 @@ class TaskProcessor extends PluginProcessor
 			return $this->responseDefault($obj);
 		}
 		$qrmember = m('member')->getMember($qr['openid']);
-		$join_info = pdo_fetch('select `join_id`,`needcount`,`completecount`,`failtime`,`reward_data`,`is_reward` from ' . tablename('ewei_shop_task_join') . ' where uniacid=:uniacid and join_user=:join_user and task_id=:task_id and task_type=:task_type and failtime>' . time() . '  order by addtime DESC limit 1', array(':uniacid' => $_W['uniacid'], ':join_user' => $qrmember['openid'], ':task_id' => $poster['id'], ':task_type' => $poster['poster_type']));
+		$join_info = pdo_fetch('select `join_id`,`needcount`,`completecount`,`failtime`,`task_type`,`reward_data`,`is_reward` from ' . tablename('ewei_shop_task_join') . ' where uniacid=:uniacid and join_user=:join_user and task_id=:task_id and task_type=:task_type and failtime>' . time() . ' order by addtime DESC limit 1', array(':uniacid' => $_W['uniacid'], ':join_user' => $qrmember['openid'], ':task_id' => $poster['id'], ':task_type' => $poster['poster_type']));
 		if ($openid == $qr['openid']) 
 		{
 			$default_text = pdo_fetchcolumn('SELECT `data` FROM ' . tablename('ewei_shop_task_default') . ' WHERE uniacid=:uniacid limit 1', array(':uniacid' => $_W['uniacid']));
@@ -271,6 +288,10 @@ class TaskProcessor extends PluginProcessor
 					$this->model->rankreward($member_info, $poster, $join_info, $qr, $openid, $qrmember);
 				}
 				$this->commission($poster, $member_info, $qrmember);
+				if (!(empty($_SESSION['postercontent']))) 
+				{
+					$this->respond($_SESSION['autoposter'], false);
+				}
 			}
 		}
 		else 
@@ -489,21 +510,9 @@ class TaskProcessor extends PluginProcessor
 					}
 					if (isset($val['bribery']) && (0 < $val['bribery'])) 
 					{
-						$setting = uni_setting($_W['uniacid'], array('payment'));
-						if (!(is_array($setting['payment']))) 
-						{
-							return error(1, '没有设定支付参数');
-						}
-						$sec = m('common')->getSec();
-						$sec = iunserializer($sec['sec']);
-						$certs = $sec;
-						$wechat = $setting['payment']['wechat'];
-						$sql = 'SELECT `key`,`secret` FROM ' . tablename('account_wechats') . ' WHERE `uniacid`=:uniacid limit 1';
-						$row = pdo_fetch($sql, array(':uniacid' => $_W['uniacid']));
 						$tid = rand(1, 1000) . time() . rand(1, 10000);
 						$params = array('openid' => $qr['openid'], 'tid' => $tid, 'send_name' => '推荐奖励', 'money' => $val['bribery'], 'wishing' => '推荐奖励', 'act_name' => $poster['title'], 'remark' => '推荐奖励');
-						$wechat = array('appid' => $row['key'], 'mchid' => $wechat['mchid'], 'apikey' => $wechat['apikey'], 'certs' => $certs);
-						$err = m('common')->sendredpack($params, $wechat);
+						$err = m('common')->sendredpack($params);
 						if (!(is_error($err))) 
 						{
 							$reward = unserialize($reward);
@@ -671,21 +680,9 @@ class TaskProcessor extends PluginProcessor
 					}
 					if (0 < $val['bribery']) 
 					{
-						$setting = uni_setting($_W['uniacid'], array('payment'));
-						if (!(is_array($setting['payment']))) 
-						{
-							return error(1, '没有设定支付参数');
-						}
-						$sec = m('common')->getSec();
-						$sec = iunserializer($sec['sec']);
-						$certs = $sec;
-						$wechat = $setting['payment']['wechat'];
-						$sql = 'SELECT `key`,`secret` FROM ' . tablename('account_wechats') . ' WHERE `uniacid`=:uniacid limit 1';
-						$row = pdo_fetch($sql, array(':uniacid' => $_W['uniacid']));
 						$tid = rand(1, 1000) . time() . rand(1, 10000);
 						$params = array('openid' => $openid, 'tid' => $tid, 'send_name' => '推荐奖励', 'money' => $val['bribery'], 'wishing' => '推荐奖励', 'act_name' => $poster['title'], 'remark' => '推荐奖励');
-						$wechat = array('appid' => $row['key'], 'mchid' => $wechat['mchid'], 'apikey' => $wechat['apikey'], 'certs' => $certs);
-						$err = m('common')->sendredpack($params, $wechat);
+						$err = m('common')->sendredpack($params);
 						logging_run('bribery' . json_encode($err));
 						if (!(is_error($err))) 
 						{
@@ -820,21 +817,9 @@ class TaskProcessor extends PluginProcessor
 					}
 					if (isset($val['bribery']) && (0 < $val['bribery'])) 
 					{
-						$setting = uni_setting($_W['uniacid'], array('payment'));
-						if (!(is_array($setting['payment']))) 
-						{
-							return error(1, '没有设定支付参数');
-						}
-						$sec = m('common')->getSec();
-						$sec = iunserializer($sec['sec']);
-						$certs = $sec;
-						$wechat = $setting['payment']['wechat'];
-						$sql = 'SELECT `key`,`secret` FROM ' . tablename('account_wechats') . ' WHERE `uniacid`=:uniacid limit 1';
-						$row = pdo_fetch($sql, array(':uniacid' => $_W['uniacid']));
 						$tid = rand(1, 1000) . time() . rand(1, 10000);
 						$params = array('openid' => $qr['openid'], 'tid' => $tid, 'send_name' => '推荐奖励', 'money' => $val['bribery'], 'wishing' => '推荐奖励', 'act_name' => $poster['title'], 'remark' => '推荐奖励');
-						$wechat = array('appid' => $row['key'], 'mchid' => $wechat['mchid'], 'apikey' => $wechat['apikey'], 'certs' => $certs);
-						$err = m('common')->sendredpack($params, $wechat);
+						$err = m('common')->sendredpack($params);
 						if (!(is_error($err))) 
 						{
 							$reward = unserialize($reward);
@@ -1002,21 +987,9 @@ class TaskProcessor extends PluginProcessor
 					}
 					if (0 < $val['bribery']) 
 					{
-						$setting = uni_setting($_W['uniacid'], array('payment'));
-						if (!(is_array($setting['payment']))) 
-						{
-							return error(1, '没有设定支付参数');
-						}
-						$sec = m('common')->getSec();
-						$sec = iunserializer($sec['sec']);
-						$certs = $sec;
-						$wechat = $setting['payment']['wechat'];
-						$sql = 'SELECT `key`,`secret` FROM ' . tablename('account_wechats') . ' WHERE `uniacid`=:uniacid limit 1';
-						$row = pdo_fetch($sql, array(':uniacid' => $_W['uniacid']));
 						$tid = rand(1, 1000) . time() . rand(1, 10000);
 						$params = array('openid' => $openid, 'tid' => $tid, 'send_name' => '推荐奖励', 'money' => $val['bribery'], 'wishing' => '推荐奖励', 'act_name' => $poster['title'], 'remark' => '推荐奖励');
-						$wechat = array('appid' => $row['key'], 'mchid' => $wechat['mchid'], 'apikey' => $wechat['apikey'], 'certs' => $certs);
-						$err = m('common')->sendredpack($params, $wechat);
+						$err = m('common')->sendredpack($params);
 						logging_run('bribery' . json_encode($err));
 						if (!(is_error($err))) 
 						{

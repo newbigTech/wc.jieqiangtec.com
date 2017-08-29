@@ -28,7 +28,7 @@
 
     <ul class="nav navbar-nav gray-bg">
 
-        <li {if $_W['routes']=='shop'} class="active"{/if}><a href="{php echo merchUrl('shop')}">店铺</a></li>
+        <li {if $_W['routes']=='shop' || empty($_W['routes'])} class="active"{/if}><a href="{php echo merchUrl('shop')}">店铺</a></li>
         {ifp 'goods'}<li {if $_W['routes']=='goods'} class="active"{/if}><a href="{php echo merchUrl('goods')}">商品</a></li>{/if}
         {ifp 'order'}<li {if $_W['routes']=='order'} class="active"{/if}><a href="{php echo merchUrl('order')}">订单</a></li>{/if}
         {ifp 'sale'}<li {if $_W['routes']=='sale'} class="active"{/if}><a href="{php echo merchUrl('sale')}">营销</a></li>{/if}

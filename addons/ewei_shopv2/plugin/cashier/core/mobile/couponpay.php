@@ -63,14 +63,12 @@ class Couponpay_EweiShopV2Page extends CashierMobilePage
 		if ($paytype == '0') 
 		{
 			$this->paytype0($jie);
-			return;
 		}
-		if ($paytype == '1') 
+		else if ($paytype == '1') 
 		{
 			$this->paytype1();
-			return;
 		}
-		if ($paytype == '101') 
+		else if ($paytype == '101') 
 		{
 			$this->paytype101($jie);
 		}

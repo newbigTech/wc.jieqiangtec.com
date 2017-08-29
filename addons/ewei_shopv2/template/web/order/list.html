@@ -66,6 +66,8 @@
                 <option value='goodssn' {if $_GPC['searchfield']=='goodssn'}selected{/if}>商品编码</option>
                 <option value='saler' {if $_GPC['searchfield']=='saler'}selected{/if}>核销员</option>
                 <option value='store' {if $_GPC['searchfield']=='store'}selected{/if}>核销门店</option>
+                <option value='verifycode' {if $_GPC['searchfield']=='verifycode'}selected{/if}>核销码</option>
+                <option value='mid' {if $_GPC['searchfield']=='mid'}selected{/if}>会员编号</option>
                 {if $merch_plugin}
                 <option value='merch' {if $_GPC['searchfield']=='merch'}selected{/if}>商户名称</option>
                 {/if}
@@ -128,7 +130,7 @@
             {/if}
 
             {if $item['merchid'] == 0}
-                {if ($item['statusvalue']>=2 || $item['sendtype']>0) && !empty($item['addressid'])}
+                {if ($item['statusvalue']>=2 || $item['sendtype']>0) && !empty($item['addressid']) && $item['statusvalue']!=3}
                     {ifp 'order.op.send'}
                     <a class="op" data-toggle="ajaxModal"  href="{php echo webUrl('order/op/changeexpress', array('id' => $item['id']))}">修改物流</a>
                     {/if}
@@ -163,7 +165,7 @@
 
         {if $k==0}
         <td rowspan="{php echo count($item['goods'])}"  style='text-align: center;' >
-            {ifp 'member.member.edit'}
+            {ifp 'member.list.edit'}
             <a href="{php echo webUrl('member/list/detail',array('id'=>$item['mid']))}"> {$item['nickname']}</a>
             {else}
             {$item['nickname']}
@@ -205,6 +207,12 @@
                 <tr>
                     <td  style='border:none;text-align:right;'>任务活动优惠：</td>
                     <td  style='border:none;text-align:right;;'>-￥{php echo number_format( $item['taskdiscountprice'],2)}</td>
+                </tr>
+                {/if}
+                {if $item['lotterydiscountprice']>0}
+                <tr>
+                    <td  style='border:none;text-align:right;'>游戏活动优惠：</td>
+                    <td  style='border:none;text-align:right;;'>-￥{php echo number_format( $item['lotterydiscountprice'],2)}</td>
                 </tr>
                 {/if}
                 {if $item['discountprice']>0}

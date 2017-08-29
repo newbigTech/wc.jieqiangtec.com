@@ -200,6 +200,7 @@ class Index_EweiShopV2Page extends MobilePage
 	{
 		global $_W;
 		global $_GPC;
+		@session_start();
 		$set = $this->getWapSet();
 		$mobile = trim($_GPC['mobile']);
 		$temp = trim($_GPC['temp']);
@@ -212,7 +213,11 @@ class Index_EweiShopV2Page extends MobilePage
 		{
 			show_json(0, '参数错误');
 		}
-		if (!(empty($set['wap']['smsimgcode'])) && (($temp == 'sms_reg') || ($temp == 'sms_forget'))) 
+		if (!(empty($_SESSION['verifycodesendtime'])) && (time() < ($_SESSION['verifycodesendtime'] + 60))) 
+		{
+			show_json(0, '请求频繁请稍后重试');
+		}
+		if (!(empty($set['wap']['smsimgcode']))) 
 		{
 			if (empty($imgcode)) 
 			{

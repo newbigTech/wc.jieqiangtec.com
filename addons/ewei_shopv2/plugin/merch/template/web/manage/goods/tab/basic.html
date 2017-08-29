@@ -2,10 +2,10 @@
     <label class="col-sm-2 control-label">排序</label>
     <div class="col-sm-9 col-xs-12">
         {ife 'goods' $item}
-        <input type="text" name="displayorder" id="displayorder" class="form-control" value="{$item['displayorder']}" />
+        <input type="text" name="displayorder" id="displayorder" class="form-control" maxlength="10" value="{$item['merchdisplayorder']}" />
         <span class='help-block'>数字越大，排名越靠前,如果为空，默认排序方式为创建时间</span>
         {else}
-        <div class='form-control-static'>{$item['displayorder']}</div>
+        <div class='form-control-static'>{$item['merchdisplayorder']}</div>
         {/if}
     </div>
 </div>
@@ -33,6 +33,18 @@
 
     {else}
     <div class='form-control-static'>{$item['subtitle']}</div>
+    {/if}
+</div>
+
+<div class="form-group">
+    <label class="col-sm-2 control-label">关键字</label>
+    {ife 'goods' $item}
+    <div class="col-sm-9">
+        <input type="text" name="keywords" class="form-control" value="{$item['keywords']}"/>
+        <div class="help-block">商品关键字,能准确搜到商品的,比如 : 海尔电视|电视 之类的</div>
+    </div>
+    {else}
+    <div class='form-control-static'>{$item['keywords']}</div>
     {/if}
 </div>
 
@@ -268,7 +280,7 @@
 		
 	<span class='help-block'>商品所在地，显示在详情页面，如果不选择，则显示商城所在地
 	    <script language='javascript'>
-            cascdeInit("{$item['province']}","{$item['city']}","");
+            cascdeInit("{php echo $new_area}","0","{$item['province']}","{$item['city']}","");
         </script>
            {else}
            <div class='form-control-static'>{$item['province']} {$item['province']}</div>

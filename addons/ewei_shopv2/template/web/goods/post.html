@@ -16,7 +16,7 @@
 <div class="page-heading">
 	<span class='pull-right'>
 		{ifp 'goods.add'}
-        <a class="btn btn-primary btn-sm" href="{php echo webUrl('goods/add')}" >添加商品</a>
+        	<a class="btn btn-primary btn-sm" href="{php echo webUrl('goods/add')}" >添加商品</a>
 		{/if}
         <a class="btn btn-default btn-sm" href="{php echo webUrl('goods',array('goodsfrom'=>$_GPC['goodsfrom'], 'page'=>$_GPC['page']))}">返回列表</a>
     </span>
@@ -39,11 +39,10 @@
                 <li {if $_GPC['tab']=='notice'}class="active"{/if} ><a href="#tab_notice">卖家通知</a></li>
 
                 {if !empty($com_set['level'])}
-                <li {if $_GPC['tab']=='sell'}class="active"{/if}><a href="#tab_sell" id="a_sell">{if p('ccard') && $item['type'] == 20}返佣{else}分销{/if}</a></li>
+                <li {if $_GPC['tab']=='sell'}class="active"{/if}><a href="#tab_sell" id="a_sell">分销</a></li>
                 {/if}
-
-                {if $merchid == 0}
-                <li {if $_GPC['tab']=='verify'}class="active"{/if}><a href="#tab_verify">线下核销</a></li>
+                {if $merchid == 0 && $showverify}
+                <li {if $_GPC['tab']=='verify'}class="active"{/if} id="tab_nav_verify" {if $item['type']==3||($item['type']==2&&!empty($item['virtualsend']))}style="display:none;"{/if}><a href="#tab_verify">线下核销</a></li>
                 {/if}
 
                 {if p('diyform')}
@@ -58,9 +57,10 @@
                 <li {if $_GPC['tab']=='diypage'}class="active"{/if}><a href="#tab_diypage">自定义模板</a></li>
                 {/if}
 
-                {if p('ccard')}
-                <li class="ccard-group {if $_GPC['tab']=='ccard'}active{/if}" {if $item['type'] != 20}style="display:none;"{/if}><a href="#tab_ccard">充值说明</a></li>
-                {/if}
+				<li {if $item['type'] != 5}style="display:none;"{/if}   class="showverifygoods" {if $_GPC['tab']=='verifygoods'}class="active"{/if} ><a href="#tab_verifygoods">核销类商品规则</a></li>
+				{if com('wxcard')}
+				<li {if $item['type'] != 5}style="display:none;"{/if}   class="showverifygoodscard"  {if $_GPC['tab']=='verifygoodscard'}class="active"{/if} ><a href="#tab_verifygoodscard">核销类商品会员卡</a></li>
+				{/if}
             </ul>
 
             <div class="tab-content ">
@@ -73,37 +73,34 @@
                 <div class="tab-pane {if $_GPC['tab']=='discount'}active{/if}" id="tab_discount"> <div class="panel-body">{template 'goods/tab/discount'}</div></div>
                 <div class="tab-pane {if $_GPC['tab']=='share'}active{/if}" id="tab_share"> <div class="panel-body">{template 'goods/tab/share'}</div></div>
                 <div class="tab-pane  {if $_GPC['tab']=='notice'}active{/if}" id="tab_notice"> <div class="panel-body">{template 'goods/tab/notice'}</div></div>
+				<div class="tab-pane  {if $_GPC['tab']=='verifygoods'}active{/if}" id="tab_verifygoods"> <div class="panel-body">{template 'goods/tab/verifygoods'}</div></div>
+				{if com('wxcard')}
+					<div class="tab-pane  {if $_GPC['tab']=='verifygoodscard'}active{/if}" id="tab_verifygoodscard"> <div class="panel-body">{template 'goods/tab/verifygoodscard'}</div></div>
+				{/if}
 
                 {if p('commission') && !empty($com_set['level'])}
-                <div class="tab-pane {if $_GPC['tab']=='sell'}active{/if}" id="tab_sell"> <div class="panel-body">
-                    {if p('ccard')}
-                    {template 'ccard/goods'}
-                    {else}
+                <div class="tab-pane {if $_GPC['tab']=='sell'}active{/if}" id="tab_sell">
+                    <div class="panel-body">
                     {template 'commission/goods'}
-                    {/if}
-                </div></div>
+                    </div>
+                </div>
                 {/if}
 
-                {if $merchid == 0}
-                <div class="tab-pane {if $_GPC['tab']=='verify'}active{/if}" id="tab_verify"> <div class="panel-body">{template 'goods/tab/verify'}</div></div>
+                {if $merchid == 0 && $showverify}
+                <div class="tab-pane {if $_GPC['tab']=='verify'}active{/if}" id="tab_verify"  {if $item['type']==3||($item['type']==2&&!empty($item['virtualsend']))}style="display:none;"{/if}> <div class="panel-body">{template 'goods/tab/verify'}</div></div>
                 {/if}
 
                 {if p('diyform')}
-                <div class="tab-pane {if $_GPC['tab']=='diyform'}active{/if}" id="tab_diyform"> <div class="panel-body">{template 'diyform/goods'}</div></div>
+                	<div class="tab-pane {if $_GPC['tab']=='diyform'}active{/if}" id="tab_diyform"> <div class="panel-body">{template 'diyform/goods'}</div></div>
                 {/if}
 
                 {if $merchid == 0}
-                <div class="tab-pane {if $_GPC['tab']=='detaildiy'}active{/if}" id="tab_detaildiy"> <div class="panel-body">{template 'goods/tab/detaildiy'}</div></div>
+                	<div class="tab-pane {if $_GPC['tab']=='detaildiy'}active{/if}" id="tab_detaildiy"> <div class="panel-body">{template 'goods/tab/detaildiy'}</div></div>
                 {/if}
 
                 {if p('diypage')}
-                <div class="tab-pane {if $_GPC['tab']=='diypage'}active{/if}" id="tab_diypage"> <div class="panel-body">{template 'diypage/invoke/goods'}</div></div>
+                	<div class="tab-pane {if $_GPC['tab']=='diypage'}active{/if}" id="tab_diypage"> <div class="panel-body">{template 'diypage/invoke/goods'}</div></div>
                 {/if}
-
-                {if p('ccard')}
-                <div class="tab-pane {if $_GPC['tab']=='ccard'}active{/if}" id="tab_ccard"> <div class="panel-body">{template 'ccard/explain'}</div></div>
-                {/if}
-
             </div>
         </div>
     </div>
@@ -151,7 +148,7 @@
         $(':radio[name=type]').click(function () {
             window.type = $("input[name='type']:checked").val();
             window.virtual = $("#virtual").val();
-            if(window.type=='1'){
+            if(window.type=='1'||window.type=='4'){
                 $('.dispatch_info').show();
             } else {
                 $('.dispatch_info').hide();
@@ -166,7 +163,7 @@
                     $('.choosetemp').show();
                 }
             }
-            if (window.type == '2' || window.type == '3') {
+            if (window.type == '2' || window.type == '3'|| window.type == '5') {
                 $(':checkbox[name=cash]').attr("checked",false);
                 $(':checkbox[name=cash]').parent().hide();
             } else {
@@ -269,6 +266,12 @@
 					$('form').attr('stop',1),tip.msgbox.err('您的商品类型为：虚拟物品(卡密)的多规格形式，请添加规格！');
 					return false;
 				}
+			}
+		}
+		else if (window.type == '5') {
+			if ($('#hasoption').get(0).checked) {
+				$('form').attr('stop',1),tip.msgbox.err('您的商品类型为：核销产品，无法设置多商品规格！');
+				return false;
 			}
 		}
 		else if(window.type=='10'){
@@ -652,43 +655,54 @@
 	}
 
     function type_change(type) {
-        var ccard = {php echo intval($ccard)};
+		if(type == 4) {
+			$(".interval").show();
+			$(".price").hide();
+			$(".minbuy").hide();
+			$(".wholesalewarning").show();
+		}else{
+			$(".interval").hide();
+			$(".price").show();
+			$(".minbuy").show();
+			$(".wholesalewarning").hide();
+		}
 
-        if(type == 1) {
+		 if(type == 5) {
+			$(".showverifygoods").show();
+			$(".showverifygoodscard").show();
+			 $('#product').hide();
+			 $('#type_virtual').hide();
+
+		}else
+		 {
+			 $(".showverifygoods").hide();
+			 $(".showverifygoodscard").hide();
+		 }
+
+        if(type == 1||type == 4) {
             $('#product').show();
             $('#type_virtual').hide();
             $('.entity').show();
+            $("#tab_nav_verify").show();
         } else if(type == 2) {
             $('#product').hide();
             $('#type_virtual').hide();
             $('.entity').hide();
+            if($("input[name='virtualsend']:checked").val()==1) {
+                $("#tab_nav_verify").hide();
+            }else{
+                $("#tab_nav_verify").show();
+            }
         } else if(type == 3) {
             $('#type_virtual').show();
             $('.entity').hide();
-        } else if(type == 10) {
+            $("#tab_nav_verify").hide();
+        }else if(type == 10) {
             $('#type_virtual').hide();
             $('#product').hide();
             $('.entity').hide();
-        } else if(type == 20) {
-            $('#type_virtual').hide();
-            $('#product').hide();
-            $('.entity').hide();
-            $('.ccard-group').show();
-            $('.commission-group').hide();
-            $('#a_sell').html('返佣');
-            $('.commission1-group').html('会员购买返佣');
-            $('.commission2-group').html('上级返佣');
-
+            $("#tab_nav_verify").hide();
         }
-
-        if (ccard == 1 && type != 20) {
-            $('.ccard-group').hide();
-            $('.commission-group').show();
-            $('#a_sell').html('分销');
-            $('.commission1-group').html('一级分销');
-            $('.commission2-group').html('二级分销');
-        }
-
     }
 
 

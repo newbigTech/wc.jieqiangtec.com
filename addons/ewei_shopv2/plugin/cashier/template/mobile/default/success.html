@@ -143,7 +143,7 @@
                 {/if}
                 {if !empty($item['deduction'])}
                 <div class="line">
-                    <div class="title">余额抵扣</div>
+                    <div class="title">{$_W['shopset']['trade']['moneytext']}抵扣</div>
                     <div class="text">-&yen;{$item['deduction']}</div>
                 </div>
                 {/if}
@@ -155,8 +155,15 @@
                 {/if}
                 {if !empty($item['couponpay'])}
                 <div class="line">
-                    <div class="title">优惠买单减</div>
+                    <div class="title">优惠券减免</div>
                     <div class="text">-&yen;{$item['couponpay']}</div>
+                </div>
+                {/if}
+
+                {if !empty($item['present_credit1'])}
+                <div class="line">
+                    <div class="title">{$_W['shopset']['trade']['credittext']}赠送</div>
+                    <div class="text">+{$item['present_credit1']}</div>
                 </div>
                 {/if}
             </div>

@@ -4,6 +4,7 @@
     <div class="page-heading">
     <span class="pull-right">
         {ifp 'exchange.score.creat'}
+        {if $res['code_type'] == 3}<a class="btn btn-danger btn-sm" data-href="{php echo webUrl('exchange/goods/import',array('id'=>$id));}" data-toggle="ajaxModal"><i class="fa fa-download"></i> 导入兑换码</a>{/if}
             <a class="btn btn-primary btn-sm" data-href="{php echo webUrl('exchange/score/creat',array('id'=>$id));}" data-toggle="ajaxModal"><i class="fa fa-plus"></i> 生成兑换券</a>
         {/if}
         <a class="btn btn-default btn-sm" href="{php echo webUrl('exchange/score');}">返回列表</a>
@@ -141,7 +142,7 @@
                 </td>
                 <td>
                     {if $value['type']!=3}
-                    <a class="btn btn-default btn-sm" data-toggle="ajaxModal" data-href="{php echo webUrl('exchange/score/qrcode',array('key'=>$value['key'],'type'=>$value['type']));}" title="编辑"><i class="fa fa-search"></i> 二维码</a>
+                    <a class="btn btn-default btn-sm" data-toggle="ajaxModal" data-href="{php echo webUrl('exchange/score/qrcode',array('key'=>$value['key'],'type'=>$value['type'],'id'=>$id));}" title="编辑"><i class="fa fa-search"></i> 二维码</a>
                     {else}
                     <a href="javascript:;" class="btn btn-default btn-sm js-clip" data-url="&nbsp;{$value['key']}"><i class="fa fa-link"></i> 复制</a>
                     {/if}
@@ -152,7 +153,7 @@
                     {if $value['type']<2}
                     <a class="btn btn-default btn-sm" href="{php echo webUrl('exchange/goods/down',array('key'=>$value['key']));}"><i class="fa fa fa-download"></i> 下载</a>
                     {/if}
-                    {if $value['type'] == 2}<a class="btn btn-default btn-sm" href="{$value['qrcode_url']}" download="{$value['serial']}.png"><i class="fa fa fa-download"></i> 下载</a>
+                    {if $value['type'] == 2}<a class="btn btn-default btn-sm" href="{$value['qrcode_url']}&id={$id}" download="{$value['serial']}.png"><i class="fa fa fa-download"></i> 下载</a>
                     {/if}
                     {if 'exchange.score.destroy'}
                     <a class="btn btn-default btn-sm" data-toggle="ajaxRemove"

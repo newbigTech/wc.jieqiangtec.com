@@ -27,7 +27,7 @@
                            {php echo tpl_selector('openid',array('key'=>'openid', 'required'=>true, 'text'=>'nickname', 'thumb'=>'avatar','placeholder'=>'昵称/姓名/手机号','buttontext'=>'选择会员 ', 'items'=>$saler,'url'=>webUrl('member/query') ))}
                         {else}
                              {if !empty($saler)}
-                             <span class='help-block'><img  style="width:100px;height:100px;border:1px solid #ccc;padding:1px" src="{$saler['avatar']}"/><br/>
+                             <span class='help-block'><img  style="width:100px;height:100px;border:1px solid #ccc;padding:1px" src="{php echo tomedia($saler['avatar'])}"/><br/>
                                  {if !empty($saler)}{$saler['nickname']}/{$saler['realname']}/{$saler['mobile']}{/if}</span>
                             {/if}
                         {/if}

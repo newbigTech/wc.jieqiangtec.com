@@ -25,9 +25,11 @@
 	<span class='pull-right'>
 		
 		{ifp 'goods.add'}
-                            <a class="btn btn-primary btn-sm" href="{php echo merchUrl('goods/add')}" >添加商品</a>
+            {if empty($not_add)}
+                <a class="btn btn-primary btn-sm" href="{php echo merchUrl('goods/add')}" >添加商品</a>
+            {/if}
 		{/if}
-                
+
 		<a class="btn btn-default btn-sm" href="{php echo merchUrl('goods',array('goodsfrom'=>$_GPC['goodsfrom'], 'page'=>$_GPC['page']))}">返回列表</a>
                 
                 

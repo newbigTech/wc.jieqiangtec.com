@@ -2335,7 +2335,7 @@
   <county name="江永县" /> 
   <county name="宁远县" /> 
   <county name="蓝山县" /> 
-  <county name="折翼天使资源社区县" /> 
+  <county name="新田县" /> 
   <county name="江华瑶族自治县" /> 
   </city>
  <city name="怀化市">
@@ -2387,6 +2387,7 @@
   <county name="花都区" /> 
   <county name="增城市" /> 
   <county name="从化市" /> 
+  <county name="南沙区" />
   </city>
  <city name="韶关市">
   <county name="市辖区" /> 
@@ -3077,6 +3078,7 @@
   <county name="息烽县" /> 
   <county name="修文县" /> 
   <county name="清镇市" /> 
+  <county name="观山湖区" />
   </city>
  <city name="六盘水市">
   <county name="钟山区" /> 

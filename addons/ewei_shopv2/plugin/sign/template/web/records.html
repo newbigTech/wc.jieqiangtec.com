@@ -64,7 +64,7 @@
                 <tr class="trbody">
                     <td>{$item['id']}</td>
                     <td>
-                        <a href="{php echo webUrl('member/list/detail', array('id'=>$item['mid']))}" target="_blank" title="{$item['nickname']}"><img src="{$item['avatar']}" style="width:30px; height:30px; padding: 1px; border:1px solid #ccc;"> {$item['nickname']}</a>
+                        <a href="{php echo webUrl('member/list/detail', array('id'=>$item['mid']))}" target="_blank" title="{$item['nickname']}"><img src="{php echo tomedia($item['avatar'])}" style="width:30px; height:30px; padding: 1px; border:1px solid #ccc;"> {$item['nickname']}</a>
                     </td>
                     <td>
                         {if $item['type']==0}日常签到{elseif $item['type']==1}连签奖励{elseif $item['type']==2}总签奖励{/if}

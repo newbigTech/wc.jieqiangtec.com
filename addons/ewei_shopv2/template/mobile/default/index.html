@@ -11,5 +11,12 @@
 	{$index_cache}
 </div>
 
+
+{if !empty($cpinfos)}
+	{template 'sale/sendticket'}
+{/if}
+
+{php $this->diyDanmu()}
+
 {php $this->footerMenus()}
 {template '_footer'}

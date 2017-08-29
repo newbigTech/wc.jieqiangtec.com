@@ -3,7 +3,7 @@
     <tbody>   
         {loop $ds $row}
         <tr>
-            <td><img src='{$row['avatar']}' style='width:30px;height:30px;padding1px;border:1px solid #ccc' /> {$row['nickname']}</td>
+            <td><img src='{php echo tomedia($row['avatar'])}' style='width:30px;height:30px;padding1px;border:1px solid #ccc' /> {$row['nickname']}</td>
             <td>{$row['realname']}</td>
             <td>{$row['mobile']}</td>
             <td style="width:80px;"><a href="javascript:;" onclick='select_member({php echo json_encode($row);})'>选择</a></td>

@@ -1,711 +1,517 @@
+{php define('MUI', true);}
 {template 'common/header'}
-<style>
-	body{background:#d2e6e9; padding-bottom:63px;}
-	.panel{margin-bottom:0px; border:none;}
-	.panel.panel-default{color:#606366;}
-	.panel>.list-group:last-child .list-group-item:last-child{border-bottom:1px solid #dddddd;}
-	.panel.panel-default ul{background:-webkit-gradient(linear,0 0, 0 10%,from(rgba(90,197,212,1)), to(rgba(90,197,212,1))) center top; border-top:10px solid #e4e9e8; -webkit-background-size:100% 2px; padding-top:2px; background-repeat:no-repeat;}
-	.panel.panel-default:first-child ul{background:none; border-top:0; padding-top:0;}
-	.panel.panel-default ul .list-group-item{background-color:#e1ecee; height:48px; overflow:hidden;}
-	.panel.panel-default ul .list-group-item i{font-size:20px; display:inline-block; width:25px; margin-right:10px; color:#8dd1db; text-align:center; position:relative; top:3px;}
-	.panel.panel-default ul .list-group-item > .pull-right i{display:inline-block; font-size:22px; color:#888; position:absolute; right:0px; top:12px;}
-	.panel.panel-default ul .list-group-item > .pull-right .btn{background:#56c6d6; color:#FFF; border:0; border-radius:1px; margin-top:-5px; width:100px; height:32px; font-size:17px; white-space:pre-line;}
-	.btn-group-top-box{padding:10px 0; border-bottom:1px solid #a5d7de;}
-	.btn-group-top{margin:0 auto; overflow:hidden; width:200px; display:block;text-align:center;}
-	.btn-group-top .btn{width:100px; -webkit-box-shadow:none; box-shadow:none; border-color:#5ac5d4; color:#5ac5d4; background:#d1e5e9;}
-	.btn-group-top .btn:hover{color:#FFF; background:#addbe1;}
-	.btn-group-top .btn.active{color:#FFF; background:#5ac5d4;}
-	.btn.use{background:#56c6d6; color:#FFF; border:0; border-radius:4px;}
-	.pagination>li>a:hover, .pagination>li>span:hover, .pagination>li>a:focus, .pagination>li>span:focus {color: #5ac5d4; background-color: #eee; border-color: #a5d7de;}
-	.pagination>.active>a, .pagination>.active>span, .pagination>.active>a:hover, .pagination>.active>span:hover, .pagination>.active>a:focus, .pagination>.active>span:focus{background-color:#5ac5d4; border-color:#5ac5d4;}
-	.pagination>li>a, .pagination>li>span{color:#5ac5d4; border:1px solid #a5d7de;}
-	/*消费记录*/
-	.consume .record-head{width:100%; height:100px; border-bottom:1px solid #a5d7de;margin-bottom:1px;}
-	.consume .record-head ul{margin:0 auto; list-style:none; padding:0px; }
-	.consume .record-head li{height:50px; line-height:50px; background-color:#ffffff;}
-	.consume .record-head .date{padding:0px 5px; text-align:center; }
-	.consume .record-head .money{width:46%; float:left; color:#999; height:50px; padding:0 4%; line-height:50px;}
-	.consume .record-head .income{margin-right:20px;}
-	.consume .record-head .money span{color:#333;}
-	.consume .record-box{background:transparent url('resource/images/home-bg.jpg') no-repeat; background-size:100% 100%;}
-	.consume .list-item{height:70px; padding:10px 5px; border-bottom:1px solid #dddddd;}
-	.consume .list-item>div{float:left;}
-	.consume .record-box .member-detail{width:15%; text-align:center; overflow:hidden;}
-	.consume .record-box .member-detail .img-rounded{width:30px; height:30px; line-height:30px; overflow:hidden; margin:0 auto; text-align:center;}
-	.consume .record-box .member-detail .img-rounded i{font-size:20px; margin-top:4px; display:inline-block; color:#FFF;}
-	.consume .record-box .member-detail .img-rounded img{width:30px; height:30px;}
-	.consume .record-box .member-detail span{display:block; width:100%; text-align:center; overflow:hidden; text-overflow:ellipsis;  white-space:nowrap; font-size:12px; color:#999; margin-top:3px;}
-	.consume .record-box .record-detail{width:60%;}
-	.consume .record-box .record-detail > div{margin-top:4px; border-left:1px #DDD solid; padding-left:10px;}
-	.consume .record-box .record-detail > div span{display:block;}
-	.consume .record-box .record-detail > div .name{font-size:15px; width:160px; text-overflow:ellipsis; white-space:nowrap; overflow:hidden;}
-	.consume .record-box .record-detail > div .date{font-size:13px; margin-top:5px; color:#999;}
-	.consume .record-box .pay-detail{width:23%; text-align:right; margin-right:2%;}
-	.consume .record-box .pay-detail > div{margin-top:4px;}
-	.consume .record-box .pay-detail > div span{display:block; text-align:right;}
-	.consume .record-box .pay-detail > div .money{font-size:15px; font-weight:bold;}
-	.consume .record-box .pay-detail > div .state{font-size:13px; margin-top:5px; color:#999;}
-	.consume .list-group-item{background-color:#e1ecee;}
-	/*收货地址*/
-	.address,.address-edit{padding:10px 15px; background:transparent url('resource/images/home-bg.jpg') no-repeat; background-size:100% 100%;}
-	.address > a{text-decoration:none; border-bottom:1px #DDD solid; padding:8px 0; display:block; color:#333;}
-	.address > a:last-child{border-bottom:0; color:#428bca;}
-	.address div{padding:0; margin:0;}
-	.address .info b{margin-right:15px;}
-	.address .address-details{white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-size:12px; margin-top:5px;}
-	@media screen and (max-width: 767px) {.tpl-calendar div,.tpl-district-container div{margin-bottom:10px;}}
-</style>
-<script>
-	$(".list-coupon").delegate("li","click",function(){
-		$(this).find(".list-coupon-ft > div").slideToggle();
-	});
-</script>
-<!--  积分记录 -->
-{if $do == 'credits'}
-	<div class="consume">
-		{if $_GPC['credittype'] == 'credit2'}
-			<div class="btn-group-top-box">
-				<div class="btn-group btn-group-top">
-					<a href="{php echo url('mc/bond/credits', array('credittype' => $behavior['currency']))}" class="btn btn-default {if ($_GPC['type'] != 'order')}active{/if}">消费记录</a>
-					<a href="{php echo url('mc/bond/credits', array('credittype' => $behavior['currency'], 'type' => 'order'))}" class="btn btn-default {if ($_GPC['type'] == 'order')}active{/if}">订单管理</a>
-				</div>
-			</div>
-		{/if}
-		<div class="record-head">
-			<ul class="clearfix">
-				<li class="date">
-					<form action="" id="form1">
-						<input type="hidden" name="i" value="{$_W['uniacid']}">
-						<input type="hidden" name="c" value="mc">
-						<input type="hidden" name="a" value="bond">
-						<input type="hidden" name="do" value="credits">
-						<input type="hidden" name="credittype" value="{$_GPC['credittype']}">
-						<input type="hidden" name="type" value="{$_GPC['type']}">
-						 日期范围:{php echo tpl_form_field_daterange('time', array('starttime'=>date('Y-m-d', $starttime),'endtime'=>date('Y-m-d', $endtime)));}
-					</form>
-				</li>
-				<li class="infos">
-				{if ($_GPC['type'] == 'order')}
-					<div class="money">支出：<span>{php echo number_format($orderspay, 2)}</span></div>
-				{else}
-						<div class="money">支出：<span>{$pay}</span></div>
-						<div class="money income">收入：<span>{$income}</span></div>
-				{/if}
-				</li>
-			</ul>
+{if $do == 'mobile'}
+	{if $op == 'index'}
+	<div class="mui-content mc-tel-bonded">
+		<div class="mui-text-center">
+			<img src="{$_W['siteroot']}app/resource/images/bonded-tel.png">
+			<div class="mui-b">你的手机号:{$profile['mobile']}</div>
 		</div>
-		<div class="record-box list clearfix">
-		<!-- 订单管理 -->
-		{if ($_GPC['type'] == 'order')}
-			{loop $orders $row}
-				<div class="list-item">
-					<div class="member-detail">
-						<div class="img-rounded" {if (!empty($user['avatar']))} style="background:transparent;" {else} style="background:#5ac5d4;"{/if}>
-							{if (!empty($user['avatar']))}
-								<img src="{php echo tomedia($user['avatar']);}" />
-							{else}
-								<i class="fa fa-user"></i>
-							{/if}
-						</div>
-						<span>{$user['realname']}</span>
-					</div>
-					<div class="record-detail">
-						<div>
-							<span class="name">订单编号：{$row['tid']}</span>
-							<span class="date">{$row['createtime']}</span>
-						</div>
-					</div>
-					<div class="pay-detail">
-						<div>
-							<span class="money">{$row['fee']}</span>
-							{if ($row['status'] == 1)}
-								<span class="state">支付成功</span>
-							{elseif ($row['status'] == 0)}
-								<a class="state" style="color:red" href="{php echo url('entry', array('m' => 'recharge', 'do' => 'pay', 'ajax' => 1, 'money' => $row['fee']));}">订单待支付</a>
-							{else}
-								<span class="state">支付失败</span>
-							{/if}
-						</div>
-					</div>
-				</div>
-			{/loop}
-			</div>
-			<div class="btn-group-top-box">
-				<div class="btn-group btn-group-top" style="width:320px;">
-					{$orderpager}
-				</div>
-			</div>
-		<!-- 消费记录 -->
-		{else}
-			{loop $data $row}
-				<div class="list-item">
-					<div class="member-detail">
-						<div class="img-rounded" {if (!empty($user['avatar']))} style="background:transparent;" {else} style="background:#5ac5d4;"{/if}>
-							{if (!empty($user['avatar']))}
-								<img src="{php echo tomedia($user['avatar']);}" />
-							{else}
-								<i class="fa fa-user"></i>
-							{/if}
-						</div>
-						<span>{$user['realname']}</span>
-					</div>
-					<div class="record-detail">
-						<div>
-							<span class="name">{$row['remark']}</span>
-							<span class="date">{$row['createtime']}</span>
-						</div>
-					</div>
-					<div class="pay-detail">
-						<div>
-							{if ($row['num'] > 0)}
-								<span class="money">+{$row['num']}</span>
-							{else}
-								<span class="money">{$row['num']}</span>
-							{/if}
-							<span class="state">交易成功</span>
-						</div>
-					</div>
-				</div>
-			{/loop}
-			</div>
-			<div class="btn-group-top-box">
-				<div class="btn-group btn-group-top" style="width:320px;">
-					{$pager}
-				</div>
-			</div>
-		{/if}
+		<div class="mui-content-padded">
+			<a class="mui-btn mui-btn-success mui-btn-block" href="{php echo url('mc/bond/mobile', array('op' => 'mobilechange'))}">更换手机号</a>
+		</div>
 	</div>
-
-	<script type="text/javascript">
-		require(['daterangepicker'], function($){
-			$('.daterange').on('apply.daterangepicker', function(ev, picker) {
-				$('#form1')[0].submit();
-			});
-		});
-	</script>
-{/if}
-
-<!--  收货地址 -->
-{if $do == 'address' && empty($_GPC['addid'])}
-<div class="address">
-	{loop $addresses $address}
-	<a href="{php echo url('mc/bond/addressadd', array('addid' => $address['id'], 'uid' => $address['openid']));}" class="list-item clearfix">
-		<div class="">
-			<div class="info">
-				<b class="name">{$address['username']}</b>{$address['mobile']}
+	{/if}
+	{if $op == 'mobilechange'}
+	<div class="mui-content">
+		<div class="sendcode">
+			<div class="mui-content-padded mui-text-muted">请输入手机号,以收取验证码</div>
+			<div class="mui-input-group mui-mt15">
+				<div class="mui-input-row">
+					<label class="mui-label-icon"><i class="fa fa-user"></i></label>
+					<input name="mobile" type="text" class="js-mobile-val" value="" placeholder="手机号"/>
+				</div>
 			</div>
-			<div class="address-details text-muted">
-				{$address['province']} {$address['city']} {$address['district']} {$address['address']}
-				{if $address['isdefault'] > 0}
-				(默认收货地址)
+			<div class="mui-content-padded mui-text-center">
+				<button class="mui-btn mui-btn-success mui-btn-block js-check-mobile" uniacid="{$_W['uniacid']}">获取验证码</button>
+			</div>
+		</div>
+		<div style="display:none;" class="codeverify">
+			<div class="mui-content-padded mui-text-muted">您的手机号<span class="mui-text-success js-code"></span>会收到一条含有6位数字验证码的短息</div>
+			<div class="mui-input-group mui-mt15">
+				<div class="mui-input-row">
+					<label class="mui-label-icon"><i class="fa fa-key"></i></label>
+					<input name="code" type="text" placeholder="验证码"/>
+				</div>
+				{if !empty($reregister)}
+				<div class="mui-input-row">
+					<label class="mui-label-icon"><i class="fa fa-lock"></i></label>
+					<input type="password" value="" name="password" placeholder="请输入您的新密码"/>
+				</div>
+				<div class="mui-input-row">
+					<label class="mui-label-icon"><i class="fa fa-lock"></i></label>
+					<input type="password" value="" name="repassword" placeholder="请再次输入您的新密码"/>
+				</div>
 				{/if}
 			</div>
-		</div>
-		{if !$address['isdefault']}<a class="js-add"  href="{php echo url('mc/bond/address', array('op' => 'default', 'id' => $address['id'], address => $address['province'].$address['city'].$address['district'].$address['address']))}">设为默认</a>{/if}<a class="js-add"  href="{php echo url('mc/bond/address', array('op' => 'delete', 'id' => $address['id']))}">删除</a>
-	</a>
-	{/loop}
-	<a class="js-add text-center" href="{php echo url('mc/bond/addressadd')}" target="_blank"><i class="fa fa-plus-circle"></i> 添加收货地址</a>
-	{$pager}
-</div>
-{/if}
-<!--  编辑收货地址 -->
-{if $do == 'addressadd'}
-<div class="address-edit">
-	<div class="info">
-	<form action="" method="post" class="form-horizontal form" enctype="multipart/form-data">
-		<div class="form-group">
-			<label class="col-xs-12 col-sm-3 col-md-2 control-label">姓名</label>
-			<div class="col-xs-12 col-sm-8">
-				<input type="text" name="address[username]" class="form-control" value="{$address['username']}" />
-			</div>
-		</div>
-		<div class="form-group">
-			<label class="col-xs-12 col-sm-3 col-md-2 control-label">电话</label>
-			<div class="col-xs-12 col-sm-8">
-				<input type="text" name="address[mobile]" class="form-control" value="{$address['mobile']}" />
-			</div>
-		</div>
-		<div class="form-group">
-			<label class="col-xs-12 col-sm-3 col-md-2 control-label">邮编</label>
-			<div class="col-xs-12 col-sm-8">
-				<input type="text" name="address[zipcode]" class="form-control" value="{$address['zipcode']}" />
-			</div>
-		</div>
-		<div class="form-group">
-			<label class="col-xs-12 col-sm-3 col-md-2 control-label">收货地址</label>
-			<div class="col-xs-12 col-sm-8">
-				{php echo tpl_form_field_district('address', array('province' => $address['province'], 'city' => $address['city'], 'district' => $address['district']))}
-			</div>
-		</div>
-		<div class="form-group">
-			<label class="col-xs-12 col-sm-3 col-md-2 control-label">街道名称</label>
-			<div class="col-xs-12 col-sm-8">
-				<input type="text" name="address[address]" class="form-control" value="{$address['address']}" />
-			</div>
-		</div>
-		<div class="form-group">
-			<label class="col-xs-12 col-sm-3 col-md-2 control-label"></label>
-			<div class="col-xs-12 col-sm-8">
-				<input name="submit" type="submit" value="提交" class="btn btn-primary btn-block use" />
-				<input type="hidden" name="token" value="{$_W['token']}" />
-			</div>
-		</div>
-	</form>
-	</div>
-</div>
-{/if}
+			<div class="mui-content-padded mui-text-center">
+				<button class="mui-btn mui-btn-success mui-btn-block js-bond">确认</button>
+				<div class="mui-mt15 mui-text-center">
+					<span class="mui-text-muted js-timer">
 
-<!-- 会员卡中心 -->
-{if $do == 'card'}
-	<style>
-	.card-img{width:100%; height:185px; padding-top:10px; overflow:hidden; -webkit-box-sizing:border-box; background:url('resource/images/card-img-bg.png') no-repeat 0 0; background-size:100% 100%; border-bottom: 1px solid #a5d7de; margin-bottom: 1px;}
-	.card{position:relative; width:280px; max-height:165px; overflow:hidden; margin:0 auto;}
-	.cardsn{position:absolute; color:#666; right:20px; bottom:10px; text-shadow:0 -1px 0 rgba(255, 255, 255, 0.5); font-size:16px; z-index:1;}
-	.cardtitle{position:absolute; right:20px; top:10px; color:#ffffff; font-size:16px; text-shadow:0 -1px 0 rgba(255, 255, 255, 0.5); z-index:1;}
-	.cardlogo{position:absolute; top:10px; left:20px;}
-	.card-box{width:100%; padding:10px; background:#eef8fa; border:1px solid #eeeeee;}
-	.form-control{background-color:#eef8fa;}
-	.form-horizontal .form-group{margin-left:0px; margin-right:0px;}
-	</style>
-	<form action="" class="form-horizontal form" method="post" enctype="multipart/form-data">
-		<div class="form-group" style="margin-bottom:0px;">
-			<div class="col-xs-12 card-img text-center">
-				<div class="card img-rounded">
-					{if !$setting['format_type']}
-					<div class="cardsn" style="color:{if !empty($setting['color']['number'])}{$setting['color']['number']}{/if}">卡号：{$setting['format']}</div>
-					{/if}
-					<div class="cardtitle" style="color:{if !empty($setting['color']['title'])}{$setting['color']['title']}{/if}">{if !empty($setting['title'])}{$setting['title']}{/if}</div>
-					<div class="cardlogo"><img src="{if !empty($setting['logo'])}{php echo tomedia($setting['logo'])}{else}../attachment/images/global/card/logo.png{/if}"></div>
-					<img class="cardbg"
-						 src="
-								 {if empty($setting['background']['image'])}
-									../attachment/images/global/card/1.png
-								 {elseif $setting['background']['background'] == 'system'}
-								 	../attachment/images/global/card/{$setting['background']['image']}.png
-								 {else}
-								 	{php echo tomedia($setting['background']['image']);}
-								 {/if}
-							 "
-							 width="280px" height="165px" />
-				</div>
-			</div>
-		</div>
-		<div class="card-box">
-			{if !empty($setting['grant']) && ($setting['grant']['credit1'] || $setting['grant']['credit2'] || !empty($coupon))}
-				<div class="form-group" style="margin-bottom:0">
-					<label class="col-xs-12 col-sm-1 control-label"></label>
-					<div class="col-sm-11">
-						<p class="form-control-static">
-							<strong class="text-danger">
-							<i class="fa fa-info-circle"></i>
-							领卡赠送:
-							{if $setting['grant']['credit1'] > 0}
-								{$setting['grant']['credit1']}积分
-							{/if}
-							{if $setting['grant']['credit2'] > 0}
-								{$setting['grant']['credit2']}余额
-							{/if}
-							{if !empty($coupon)}
-								{$coupon['title']}
-							{/if}
-							</strong>
-						</p>
-					</div>
-				</div>
-			{/if}
-			<div class="form-group">
-				<label class="col-xs-12 col-sm-1 control-label">
-					姓名 <span title="必填项" style="color:red">*</span>
-				</label>
-				<div class="col-sm-11">
-					<input type="text" name="realname" value="{$member_info['realname']}" class="form-control"/>
-				</div>
-			</div>
-			<div class="form-group">
-				<label class="col-xs-12 col-sm-1 control-label">
-					手机号 <span title="必填项" style="color:red">*</span>
-				</label>
-				<div class="col-sm-11">
-					<input type="text" name="mobile" value="{$member_info['mobile']}" class="form-control"/>
-				</div>
-			</div>
-			{loop $setting['fields'] $item}
-				{if $item['bind'] != 'realname' &&  $item['bind'] != 'mobile'}
-				<div class="form-group">
-					<label class="col-xs-12 col-sm-1 control-label">
-						{$item['title']} {if $item['require'] == 1}<span title="必填项" style="color:red">*</span>{else} &nbsp;{/if}
-					</label>
-					<div class="col-sm-11">
-						{if $item['bind'] == 'reside'}
-							{php echo tpl_fans_form('reside', array('province' => $member_info['resideprovince'],'city' => $member_info['residecity'],'district' => $member_info['residedist']))}
-						{elseif $item['bind'] == 'birth'}
-							{php echo tpl_fans_form('birth',array('year' => $member_info['birthyear'],'month' => $member_info['birthmonth'],'day' => $member_info['birthday']));}
-						{else}
-							{php echo tpl_fans_form($item['bind'], $member_info[$item['bind']]);}
-						{/if}
-					</div>
-				</div>
-				{/if}
-			{/loop}
-			<div class="form-group">
-				<div class="col-sm-12" style="text-align:center">
-					<input type="hidden" name="cardid" value="{$setting['id']}" />
-					<input type="hidden" name="format" value="{$setting['format']}" />
-					<input type="hidden" name="snpos"  value="{$setting['snpos']}" />
-					<button type="submit" class="btn btn-primary btn-block use" name="submit" value="领取会员卡">领取会员卡</button>
-					{if $reregister}
-						<a href="{php echo url('mc/bond/email');}" class="btn btn-danger btn-block" style="margin-top:15px">绑定已有会员</a>
-					{/if}
-					<input type="hidden" name="token" value="{$_W['token']}" />
-				</div>
-			</div>
-		</div>
-	</form>
-{/if}
-
-<!-- 我的会员卡 -->
-{if $do == 'mycard'}
-	{if empty($mcard['status'])}
-	<div class="alert alert-warning" role="alert">
-		您的会员卡已被禁用，如有疑问，请联系{$_W['account']['name']}。
-	</div>
-	{else}
-	<div class="system-card">
-		<div class="card">
-			<div class="card-panel">
-				<div class="prev" onclick="$(this).hide();$('.back').show()">
-					<div class="card-sn" style="color:{if !empty($setting['color']['number'])}{$setting['color']['number']}{/if}">卡号:{$mcard['cardsn']}</div>
-					<div class="card-title" style="color:{if !empty($setting['color']['title'])}{$setting['color']['title']}{/if}">{$setting['title']}</div>
-					<div class="rank" style="color:{if !empty($setting['color']['rank'])}{$setting['color']['rank']}{/if}">{$_W['member']['groupname']}</div>
-					<div class="nickname" style="color:{if !empty($setting['color']['name'])}{$setting['color']['name']}{/if}">{$_W['member']['realname']}</div>
-					<div class="card-logo">{if !empty($setting['logo'])}<img src="{php echo tomedia($setting['logo'])}">{/if}</div>
-					<img class="card-bg" src="
-						{if empty($setting['background']['image'])}
-						{php echo tomedia('images/global/card/1.png')}
-						{elseif $setting['background']['background'] == 'system'}
-						{php echo tomedia('images/global/card/' . $setting['background']['image'] . '.png')}
-						{else}
-						{php echo tomedia($setting['background']['image']);}
-						{/if}
-					"/>
-				</div>
-				<div class="back" onclick="$(this).hide();$('.prev').show()">
-					<span style="color:#000000;">
-						<h3>使用说明：</h3>
-						<pre>
-						{if empty($setting['description'])}
-						1、本卡采取记名消费方式
-						2、持卡人可享受会员专属优惠
-						3、本卡不能与其他优惠活动同时使用
-						4、持卡人可用卡内余额进行消费
-						{else}
-						{$setting['description']}
-						{/if}
-						</pre>
 					</span>
 				</div>
 			</div>
-			{php $sum = $setting['nums_status'] + $setting['times_status'] + 2; $class = "has-nav-" . $sum;}
-			<div class="head-nav">
-				<a class="head-nav-list {$class}" href="{php echo url('mc/bond/credits', array('credittype' => 'credit1'));}">积分<span>{$_W['member']['credit1']}</span></a>
-				<a class="head-nav-list {$class}" href="{php echo url('mc/bond/credits', array('credittype' => 'credit2'));}">余额<span>{$_W['member']['credit2']}</span></a>
-				{if $setting['nums_status'] == 1}
-				<a class="head-nav-list {$class}" href="{php echo url('mc/bond/record', array('type' => 'nums'));}">{$setting['nums_text']}<span>{$mcard['nums']}</span></a>
-				{/if}
-				{if $setting['times_status'] == 1}
-				<a class="head-nav-list {$class}" href="{php echo url('mc/bond/record', array('type' => 'times'));}">{$setting['times_text']}<span>{php echo date('Y-m-d', $mcard['endtime']);}</span></a>
-				{/if}
-			</div>
 		</div>
-		<div class="btn-manage clearfix">
-			<a href="{php echo url('entry', array('m' => 'recharge', 'do' => 'pay'));}" class="recharge">充值</a>
-			<a href="{php echo url('mc/bond/consume');}" class="payment">付款</a>
-		</div>
-		{if $notice_count > 0}
-		<div class="maker">
-			<a href="{php echo url('mc/card/notice');}">{$notice_count}条新消息 <i class="fa fa-angle-double-right"></i></a>
-		</div>
-		{/if}
-		{$setting['html']}
-	</div>
-	{php $nav = $setting['recommend_status'] + $setting['sign_status'] + 3; $nav = "has-nav-" . $nav;}
-	<div class="nav-menu-app {$nav} usercard">
-		<ul class="nav-group clearfix">
-			<li class="nav-group-item"><a href="{php echo url('mc/bond/mycard');}"><i class="fa fa-credit-card"></i><span>会员卡</span></a></li>
-			<li class="nav-group-item notice-count"><a href="{php echo url('mc/card/notice');}"><i class="fa fa-comments-o"></i><span>消息</span>{if $notice_count > 0}<em class="maker badge">{$notice_count}</em>{/if}</a></li>
-			{if !empty($setting['sign_status'])}
-				<li class="nav-group-item"><a href="{php echo url('mc/card/sign_display');}"><i class="fa fa-hand-o-up"></i><span>签到</span></a></li>
-			{/if}
-			{if !empty($setting['recommend_status'])}
-				<li class="nav-group-item"><a href="{php echo url('mc/card/recommend');}"><i class="fa fa-share-square-o"></i><span>推荐</span></a></li>
-			{/if}
-			<li class="nav-group-item"><a href="{php echo url('mc/home');}"><i class="fa fa-user"></i><span>我的</span></a></li>
-		</ul>
+		
 	</div>
 	<script>
 		$(function(){
-			$('.collapse-link a').click(function(){
-				$(this).next().toggleClass('off');
+			$(document).on('input propertychange', '.js-mobile-val', function(){
+				var mobile_value = $(this).val();
+				if (mobile_value.length == '11') {
+					$.post("{php echo url('auth/login/mobile_exist')}", {'mobile' : mobile_value}, function(data) {
+						data = $.parseJSON(data);
+						if (data.message.errno == '1') {
+							$('.js-check-mobile').removeClass('send-code');
+							util.toast('手机号已被绑定', '', 'error');
+							return;
+						} else if (data.message.errno == '2'){
+							$('.js-check-mobile').addClass('send-code');
+						}
+					});
+				} else {
+					$('.js-check-mobile').removeClass('send-code');
+				}
 			});
+			$(document).on('click', '.send-code', function(){
+				var username = $('input[name=mobile]').val();
+				var oldmobile = '{$_W['member']['mobile']}';
+				if (username == oldmobile) {
+					util.toast('无法更改为当前手机号', '', 'error');
+					return;
+				}
+				$('.js-code').text(username);
+				option = {
+					'btnElement' : $('.send-code'),
+					'showElement' : $('.js-timer'),
+					'btnTips' : '<a class="send-code">重新获取验证码</a>',
+					'successCallback' : function(ret, message){
+						if (ret == '0') {
+							util.toast(message);
+							$('.sendcode').hide();
+							$('.codeverify').show();
+						} else {
+							util.toast(message);
+							$('.sendcode').show();
+							$('.codeverify').hide();
+							return;
+						}
+					}
+				};
+				util.sendCode(username, option);
+			});
+			$('.js-bond').click(function() {
+				var code = $('.codeverify input[name="code"]').val();
+				var mobile = $('.sendcode input[name="mobile"]').val();
+				var password = $('.codeverify input[name="password"]').val();
+				var repassword = $('.codeverify input[name="repassword"]').val();
+				if (!code) {
+					util.toast('请填写验证码', '', 'error');
+					return;
+				}
+				if (!mobile) {
+					util.toast('请填写手机号', '', 'error');
+					return;
+				}
+				if(!/^1[3|4|5|7|8][0-9]{9}$/.test(mobile)) {
+					util.toast('手机格式错误', '', 'error');
+					return;
+				}
+				{if !empty($reregister)}
+				if (!password || !repassword) {
+					util.toast('请填写密码', '', 'error');
+					return;
+				}
+				if (password !== repassword) {
+					util.toast('密码不一致', '', 'error');
+					return;
+				}
+				{/if}
+				$.post('{php echo url("mc/bond/mobile")}', {'code' : code, 'mobile' : mobile, 'password' : password, 'repassword' : repassword}, function(data) {
+					data = $.parseJSON(data);
+					if (data.message.errno == '-1') {
+						util.toast(data.message.message, '', 'error');
+					} else if (data.message.errno == '0') {
+						util.toast(data.message.message, data.redirect, 'success');
+					}
+				})
+			})
 		});
 	</script>
 	{/if}
 {/if}
 
-{if $do == 'record'}
-	<style>
-		body{background:#d2e6e9 url('resource/images/home-bg.jpg') no-repeat; background-size:100% 100%;}
-		.sign-record .header{height:45px; line-height:45px; color:#25a5b7; padding:0 20px;}
-		.sign-record .content .list{padding:0 10px 10px 10px;}
-		.sign-record .table_record{background: #ffffff; width:100%;}
-		.sign-record .table_record thead td{text-indent: 10px;}
-		.sign-record .table_record thead{background:#56c6d6;}
-		.sign-record .table_record thead td{line-height: 35px; color:#ffffff; font-size:16px;}
-		.sign-record .table_record tbody td{padding:10px; border-bottom:1px dotted #cccccc;}
-		.sign-record .table_record tbody tr:last-of-type td{border:0;}
-	</style>
-
-	<div class="sign-record">
-		{if $type == 'nums'}
-			<div class="header">{$setting['nums_text']}记录.当前剩余次数为:<strong>{$card['nums']}</strong>次</div>
-		{elseif $type == 'times'}
-			<div class="header">{$setting['times_text']}记录.当前服务到期时间:<strong>{php echo date('Y-m-d', $card['endtime']);}</strong></div>
+{if $do == 'settings'}
+<div class="mui-content">
+	<ul class="mui-table-view mui-table-view-chevron">
+		{if empty($profile_hide)}
+		<li class="mui-table-view-cell">
+			<a href="{php echo url('mc/profile') . 'wxref=mp.weixin.qq.com#wechat_redirect'}" class="mui-navigate-right">个人资料</a>
+		</li>
 		{/if}
-		<div class="content">
-			<div class="list">
-				<table class="table_record">
-					<thead>
-						<tr>
-							<td style="width:35%;">日期</td>
-							<td style="width:35%;">费用</td>
-							<td style="width:30%;">次数/天数</td>
-						</tr>
-					</thead>
-					<tbody>
-					{if !empty($data)}
-						{loop $data $da}
-							<tr class="drop">
-								<td>{php echo date('Y-m-d', $da['addtime']);}</td>
-								<td>收费 {$da['fee']}</td>
-								<td>
-									{if $type == 'nums'}
-										{if $da['model'] == 1}+{$da['tag']}次{else}-{$da['tag']} 次{/if}
-									{else}
-										{if $da['model'] == 1}+{$da['tag']}天{else}-{$da['tag']} 天{/if}
-									{/if}
-									<span style="display:inline-block;float:right;width:15px"><i class="fa fa-angle-down"></i></span>
-								</td>
-							</tr>
-							<tr style="display: none; ">
-								<td colspan="3">
-									详情:{$da['note']}
-								</td>
-							</tr>
-						{/loop}
-					{else}
-						<tr>
-							<td colspan="3" class="text-center" style="color:#25a5b7"><i class="fa fa-info-circle"></i> 暂无记录</td>
-						</tr>
-					{/if}
-					</tbody>
-				</table>
-				{if !empty($data)}
-					<div class="text-center">
-						{$pager}
+		<li class="mui-table-view-cell">
+			<a href="{php echo url('mc/profile/address') . 'wxref=mp.weixin.qq.com#wechat_redirect'}" class="mui-navigate-right">
+				收货地址
+				<span class="mui-pull-right">管理</span>
+			</a>
+		</li>
+	</ul>
+	<ul class="mui-table-view mui-table-view-chevron">
+		{if !empty($reregister)}
+		<li class="mui-table-view-cell">
+			<a href="{php echo url('mc/bond/binding_account', array('type' => '1'))}" class="mui-navigate-right">
+				完善账号
+			</a>
+		</li>
+		{else}
+		{if $item !== 'mobile'}
+		<li class="mui-table-view-cell">
+			<a href="{php echo url('mc/bond/email')}" class="mui-navigate-right">
+				邮箱
+				<span class="mui-pull-right"><span class="mui-mr10">{if !empty($reregister)}请绑定邮箱{else}{$_W['member']['email']}{/if}</span></span>
+			</a>
+		</li>
+		{/if}
+		{if $item !== 'email'}
+		<li class="mui-table-view-cell">
+			{if empty($_W['member']['mobile'])}
+			<a href="{php echo url('mc/bond/mobile', array('op' =>'mobilechange'))}" class="mui-navigate-right">
+			{else}
+			<a href="{php echo url('mc/bond/mobile', array('op' =>'index'))}" class="mui-navigate-right">
+			{/if}
+				手机号
+				<span class="mui-pull-right"><span class="mui-mr10">{if empty($_W['member']['mobile'])}请绑定手机号{else}{$_W['member']['mobile']}{/if}</span></span>
+			</a>
+		</li>
+		{/if}
+		{if empty($reregister) && $ltype != 'code'}
+		<li class="mui-table-view-cell">
+			<a href="{php echo url('mc/bond/password') . 'wxref=mp.weixin.qq.com#wechat_redirect'}" class="mui-navigate-right">密码设置</a>
+		</li>
+		{/if}
+		{/if}
+	</ul>
+	<ul class="mui-table-view mui-table-view-chevron">
+		{if !empty($_W['setting']['copyright']['companyprofile'])}
+		<li class="mui-table-view-cell">
+			<a href="{php echo url('mc/bond/aboutus') . 'wxref=mp.weixin.qq.com#wechat_redirect'}" class="mui-navigate-right">关于我们</a>
+		</li>
+		{/if}
+		<li class="mui-table-view-cell">
+			<a href="tel:{$ucpage['params'][0]['params']['contact']}" class="mui-navigate-right" id='contact-us'>联系我们</a>
+		</li>
+	</ul>
+	<div class="mui-content-padded">
+		<a href="{php echo url('mc/home/login_out');}" class="mui-btn mui-btn-block mui-btn-outlined mui-btn-danger">退出登录</a>
+	</div>
+</div>
+{/if}
+{if $do == 'aboutus'}
+<div class="mui-content mc-about-us">
+	<div class="mui-text-center logo"><img src="{if tomedia('headimg_'.$_W['acid'].'.jpg')}{php echo tomedia('headimg_'.$_W['acid'].'.jpg');}{else}resource/images/MicroEngine.ico{/if}" class="mui-img-circle"/></div>
+	<div class="mui-content-padded desc">
+		{$_W['setting']['copyright']['companyprofile']}
+	</div>
+</div>
+{/if}
+{if $do == 'email'}
+<form class="tab-content clearfix js-ajax-form {if $_W['container'] !== 'wechat'}profile-form{/if}" action="{url 'mc/bond/email'}" method="post" enctype="multipart/form-data">
+	<div class="mui-content mc-email">
+		<div class="mui-control-content mui-active" id="email">
+			<div class="tips mui-content-padded">
+				您可以使用邮箱作为登陆账号，绑定成功后暂不支持修改。
+			</div>
+			<div class="mui-input-group mui-mt15">
+				{if empty($reregister) && !empty($_W['member']['email'])}
+					<div class="mui-input-row">
+						<label>邮箱</label>
+						<input type="text" name="email" value="{$_W['member']['email']}" disabled />
 					</div>
+				{else}
+				<div class="mui-input-row">
+					<label>邮箱</label>
+					<input type="text" name="email" value="" placeholder="请输入邮箱" />
+				</div>
 				{/if}
 			</div>
 		</div>
-	</div>
-	<script>
-		$(function(){
-			$('tr.drop').click(function(){
-				$(this).next('tr').toggle();
-			});
-		});
-	</script>
-{/if}
-
-{if $do == 'email'}
-<style>
-	body{background:#d2e6e9;}
-	.panel{margin:.5em; border:none;}
-	.panel-info>.panel-heading {background: -webkit-gradient(linear, 0 0, 100% 0, from(#ebebeb), to(#f3f9fa), color-stop(30%, #f5f9f9)); color:#666666; border:none;}
-	a{color:#666666;}a:hover{color: #3ebacc;}
-	.nav-tabs>li.active>a, .nav-tabs>li.active>a:hover, .nav-tabs>li.active>a:focus{color: #3ebacc;}
-	.actions{margin:.8em auto;}
-	.nav.nav-tabs{margin-bottom:.8em;}
-	.btn.btn-primary{background: #56c6d6; color: #FFF; border: 0;}
-</style>
-<div class="panel panel-info">
-	<div class="panel-heading">
-		<h4>资料重置</h4>
-	</div>
-	<div class="panel-body">
-		<div class="alert alert-warning" role="alert">为了保证您的账号安全，请完善以下资料，如果密码丢失可以联系管理员为您重置密码。下面设置的密码将作为您的消费凭证，请妥善保管！</div>
-		<form name="theform" method="post" role="form" id="form1">
-			{if !empty($reregister)}
-			<ul class="nav nav-tabs" role="tablist">
-				<li class="active"><a href="#email" role="tab" data-toggle="tab">完善帐号</a></li>
-				<li><a href="#binding" role="tab" data-toggle="tab">绑定至已有帐号</a></li>
-			</ul>
-			<input type="hidden" id="type" name="type" value="1" />
-			{/if}
-			<div class="tab-content">
-				<div class="tab-pane fade in active" id="email">
-					{if !empty($reregister)}
-					<div class="form-group">
-						<input type="text" name="email" value="" class="form-control input-lg" placeholder="{if $username_type == 'email'}请输入邮箱{elseif $username_type == 'mobile'}请输入手机号{else}请输入手机号或邮箱{/if}">
-					</div>
-					{/if}
-					<div class="form-group">
-						<input type="password" name="password" value="" class="form-control input-lg" placeholder="登录密码">
-					</div>
-					<div class="form-group">
-						<input type="password" name="repassword" value="" class="form-control input-lg" placeholder="确认登录密码">
-					</div>
-				</div>
-				{if !empty($reregister)}
-				<div class="tab-pane fade" id="binding">
-					<div class="form-group input-group">
-						<span class="input-group-addon"><i class="fa fa-user"></i></span>
-						<input type="text" name="username" value="" class="form-control input-lg" placeholder="登录账号">
-					</div>
-					<div class="form-group input-group">
-						<span class="input-group-addon"><i class="fa fa-unlock-alt"></i></span>
-						<input type="password" name="oldpassword" value="" class="form-control input-lg" placeholder="登录密码">
-					</div>
-				</div>
-				{/if}
-			</div>
-			<div class="form-group">
-				<input type="hidden" name="token" value="{$_W['token']}">
-				<input type="submit" name="submit" class="btn btn-primary btn-block btn-lg" value="立即修改">
-				<button class="btn btn-default btn-block" onclick="javascript:history.go(-1);return false;">返回</button>
-			</div>
-		</form>
-	</div>
-</div>
-<script>
-	require(['util'], function(u){
-		$('#form1').submit(function(){
-			var type = $('#type').val();
-			if (type == 1) {
-				{if !empty($reregister)}
-				if($.trim($('input[name="email"]').val()) == '') {
-					u.message('请输入您的用户名');
-					return false;
-				}
-				{/if}
-				if($.trim($('input[name="password"]').val()) == '') {
-					u.message('请输入您的密码');
-					return false;
-				}
-				if($.trim($('input[name="password"]').val()) != $.trim($('input[name="repassword"]').val())) {
-					u.message('您两次输入的密码不一致');
-					return false;
-				}
-			}
-			return true;
-		});
-	});
-	$('.nav li').click(function(){
-		$('#type').val($(this).index()+1);
-	});
-</script>
-{/if}
-
-{if $do == 'mobile'}
-<style>
-	body{background:#d2e6e9;}
-	.panel{margin:.5em; border:none;}
-	.panel-info>.panel-heading {background: -webkit-gradient(linear, 0 0, 100% 0, from(#ebebeb), to(#f3f9fa), color-stop(30%, #f5f9f9)); color:#666666; border:none;}
-	a{color:#666666;}a:hover{color: #3ebacc;}
-	.nav-tabs>li.active>a, .nav-tabs>li.active>a:hover, .nav-tabs>li.active>a:focus{color: #3ebacc;}
-	.actions{margin:.8em auto;}
-	.nav.nav-tabs{margin-bottom:.8em;}
-	.btn.btn-primary{background: #56c6d6; color: #FFF; border: 0;}
-</style>
-<div class="panel panel-info">
-	<div class="panel-heading">
-		<h4>{if $mobile_exist == 0}绑定{else}修改{/if}手机号</h4>
-	</div>
-	<div class="panel-body">
-		<form name="theform" method="post" role="form" id="form1">
-			<ul class="nav nav-tabs" role="tablist">
-				<li class="active"><a href="javascript:;" role="tab" data-toggle="tab">{if $mobile_exist == 0}绑定{else}修改{/if}手机号</a></li>
-			</ul>
-			<div class="tab-content">	
-				{if $mobile_exist == 1}
-					<div class="tab-pane active">
-						<div class="form-group">
-							<input type="text" name="oldmobile" value="{$profile['mobile']}" class="form-control" placeholder="原手机号">
-						</div>
-						<div class="form-group">
-							<input type="password" name="password" class="form-control" placeholder="密码">
-						</div>
-						<div class="form-group">
-							<input type="text" name="mobile" class="form-control" placeholder="新手机号">
-						</div>
-					</div>
-				{else}
-					<div class="tab-pane active">
-						<div class="form-group">
-							<input type="text" name="mobile" class="form-control" placeholder="手机号">
-						</div>
-						<div class="form-group">
-							<input type="password" name="password" class="form-control" placeholder="设置密码">
-							<span class="help-block">密码不能小于6位</span>
-						</div>
-						<div class="form-group">
-							<input type="password" name="repassword" class="form-control" placeholder="重复密码">
-						</div>
-					</div>
-				{/if}
-			</div>
+		<div class="mui-content-padded">
+			{if !empty($reregister) || (empty($reregister) && empty($_W['member']['email']))}
 			<input type="hidden" name="token" value="{$_W['token']}">
-			<input type="submit" name="submit" class="btn btn-primary btn-block" value="立即{if $mobile_exist == 0}绑定{else}修改{/if}">
-			<button class="btn btn-default btn-block" onclick="javascript:history.go(-1);return false;">返回</button>
-		</form>
-	</div>
-</div>
-<script>
-	require(['util'], function(u){
-		$('#form1').submit(function(){
-			var reg = /^\d{11}$/;
-			var re = new RegExp(reg);
-			{if $mobile_exist == 1}
-				if($.trim($('input[name="oldmobile"]').val()) == '' || !re.test($.trim($('input[name="oldmobile"]').val()))) {
-					u.message('原手机号格式有误');
-					return false;
-				}
-				if($.trim($('input[name="password"]').val()) == '') {
-					u.message('请填写密码');
-					return false;
-				}
-				if($.trim($('input[name="mobile"]').val()) == '' || !re.test($.trim($('input[name="mobile"]').val()))) {
-					u.message('新手机号格式有误');
-					return false;
-				}
-				return true;
+			<input type="hidden" id="type" name="type" value="{$type}" />
+			<button class="mui-btn mui-btn-success mui-btn-block" type="submit" name="submit" value="立刻绑定">立即绑定</button>
 			{else}
-				if($.trim($('input[name="mobile"]').val()) == '' || !re.test($.trim($('input[name="mobile"]').val()))) {
-					u.message('原手机号格式有误');
-					return false;
-				}
-				if($.trim($('input[name="password"]').val()) == '' || $.trim($('input[name="mobile"]').val()).length < 6) {
-					u.message('密码不能少于6位');
-					return false;
-				}
-				if($.trim($('input[name="repassword"]').val()) != $.trim($('input[name="password"]').val())) {
-					u.message('两次密码输入不一致');
-					return false;
-				}
-				return true;
+			<a class="mui-btn mui-btn-block" href="javascript:history.back(-1);">返回</a>
 			{/if}
-		});
+		</div>
+	</div>
+</form>
+{/if}
+{if $do == 'password'}
+<form class="tab-content clearfix js-ajax-form {if $_W['container'] !== 'wechat'}profile-form{/if}" action="{url 'mc/bond/password'}" method="post" enctype="multipart/form-data">
+	<div class="mui-content">
+		<div class="mui-content-padded mui-text-muted">请设置密码</div>
+		<div class="mui-input-group mui-mt15">
+			{if empty($reregister) && !empty($profile['password'])}
+			<div class="mui-input-row">
+				<label>旧密码</label>
+				<input type="password" value="" name="oldpassword" placeholder="请输入您的旧密码"/>
+			</div>
+			{/if}
+			<div class="mui-input-row">
+				<label>新密码</label>
+				<input type="password" value="" name="password" placeholder="请输入您的新密码"/>
+			</div>
+			<div class="mui-input-row">
+				<label class="mui-ellipsis">重复新密码</label>
+				<input type="password" value="" name="repassword" placeholder="请再次输入您的新密码"/>
+			</div>
+		</div>
+		<div class="mui-content-padded">
+			<input type="hidden" name="token" value="{$_W['token']}">
+			<button class="mui-btn mui-btn-success mui-btn-block" type="submit" name="submit" value="确定">确定</button>
+		</div>
+	</div>
+</form>
+{/if}
+{if $do == 'credits'}
+	{if $_GPC['type'] == 'record'}
+	<header class="mui-bar mui-bar-nav">
+		{if $_W['container'] !== 'wechat'}
+		<div class="mui-row fixed-bar">
+			<div class="mui-col-xs-4">
+				<button class="mui-btn mui-btn-link mui-btn-nav mui-pull-left mui-action-back">
+					<span class="mui-icon mui-icon-left-nav"></span>
+					返回
+				</button>
+			</div>
+			<div class="mui-col-xs-4 mui-text-center">{if !empty($title)}{$title}{elseif !empty($_W['page']['title'])}{$_W['page']['title']}{/if}</div>
+			<div class="mui-col-xs-4 mui-text-right">
+				<a href="#consume-date">
+					<span>{if $_GPC['period'] <= 0}{php echo date('Y.m', strtotime($_GPC['period'] . 'month'))}{else}查看全部{/if}</span>
+					<span class="fa fa-angle-down mui-text-muted"></span>
+				</a>
+			</div>
+		</div>
+		{else}
+		<div class="mui-row fixed-bar">
+			<div class="mui-col-xs-6"></div>
+			<div class="mui-col-xs-6 mui-text-right">
+				<a href="#consume-date">
+					<span>{if $_GPC['period'] <= 0}{php echo date('Y.m', strtotime($_GPC['period'] . 'month'))}{else}查看全部{/if}</span>
+					<span class="fa fa-angle-down mui-text-muted"></span>
+				</a>
+			</div>
+		</div>
+		{/if}
+	</header>
+	<div id="consume-date" class="mui-popover mui-popover-top">
+		<ul class="mui-table-view">
+			<li class="mui-table-view-cell">
+				<a href="{php echo url('mc/bond/credits', array('credittype' => $_GPC['credittype'], 'type' => 'record', 'period' => '1'))}">查看全部</a>
+			</li>
+			<li class="mui-table-view-cell">
+				<a href="{php echo url('mc/bond/credits', array('credittype' => $_GPC['credittype'], 'type' => 'record', 'period' => '0'))}">{php echo date('Y.m', strtotime('today'))}</a>
+			</li>
+			<li class="mui-table-view-cell">
+				<a href="{php echo url('mc/bond/credits', array('credittype' => $_GPC['credittype'], 'type' => 'record', 'period' => '-1'))}">{php echo date('Y.m', strtotime('-1month'))}</a>
+			</li>
+			<li class="mui-table-view-cell">
+				<a href="{php echo url('mc/bond/credits', array('credittype' => $_GPC['credittype'], 'type' => 'record', 'period' => '-2'))}">{php echo date('Y.m', strtotime('-2month'))}</a>
+			</li>
+		</ul>
+	</div>
+	<div class="mui-content">
+		<div class="mui-table mui-table-inline mui-pa10">
+			<div class="mui-table-cell">
+				<div class="mui-text-muted ">充值</div>{$income}{if $_GPC['credittype'] == 'credit2'}元{else}积分{/if}
+			</div>
+			<div class="mui-table-cell">
+				<div class="mui-text-muted">消费</div>{$pay}{if $_GPC['credittype'] == 'credit2'}元{else}积分{/if}
+			</div>
+		</div>
+		<div class="credits-display">
+		<ul class="mui-table-view mui-credits">
+			{loop $data $row}
+			<li class="mui-table-view-cell">
+				<a href="{php echo murl('mc/bond/credits', array('type' => recorddetail, 'id' => $row['id'], 'credittype' => $_GPC['credittype']), true)}">
+					<div class="mui-row">
+						<div class="mui-col-xs-6 mui-ellipsis-2">
+							{$row['remark']}
+						</div>
+						<div class="mui-col-xs-6 mui-text-right">
+							<span class="mui-big {if $_GPC['credittype'] == 'credit2'}mui-rmb{/if}" style="color:{php echo $row['color']}">
+								<span class="money" style="color:{php echo $row['color']}">{$row['num']}</span>
+							</span>
+							<span class="mui-block mui-text-muted mui-small">{$row['createtime']}</span>
+						</div>
+					</div>
+				</a>
+			</li>
+			{/loop}
+		</ul>
+		</div>
+	</div>
+	{/if}
+	{if $_GPC['type'] == 'recorddetail'}
+	<div class="mui-bg-white mc-record-detail">
+		<div class="mui-bb1 mui-row sum">
+			<div class="mui-col-xs-6 mui-text-muted">
+				付款金额
+			</div>
+			<div class="mui-col-xs-6 mui-text-right">
+				<span class="mui-big {if $_GPC['credittype'] == 'credit2'}mui-rmb{/if}" style="color:{php echo $row['color']}">
+					<span class="money" style="color:{php echo $row['color']}">{$data['num']}</span>
+				</span>
+			</div>
+		</div>
+		<div class="detail-info">
+			<div class="mui-row">
+				<div class="mui-col-xs-6 mui-text-muted">
+					操作人
+				</div>
+				<div class="mui-col-xs-6 mui-text-right mui-ellipsis">
+					{if $data['username']}{$data['username']}{else}本人{/if}
+				</div>
+			</div>
+			<div class="mui-row">
+				<div class="mui-col-xs-6 mui-text-muted">
+					数量
+				</div>
+				<div class="mui-col-xs-6 mui-text-right mui-ellipsis">
+					{$data['num']}
+				</div>
+			</div>
+			<div class="mui-row">
+				<div class="mui-col-xs-6 mui-text-muted">
+					当前状态
+				</div>
+				<div class="mui-col-xs-6 mui-text-right mui-ellipsis">
+					交易成功
+				</div>
+			</div>
+			<div class="mui-row">
+				<div class="mui-col-xs-6 mui-text-muted">
+					时间
+				</div>
+				<div class="mui-col-xs-6 mui-text-right mui-ellipsis">
+					{php echo date('Y-m-d H:i:s', $data['createtime'])}
+				</div>
+			</div>
+			<div class="mui-row">
+				<div class="mui-col-xs-6 mui-text-muted">
+					备注
+				</div>
+				<div class="mui-col-xs-6 mui-text-right">
+					{$data['remark']}
+				</div>
+			</div>
+		</div>
+	</div>
+	{/if}
+<script>
+require(['mui.pullrefresh'], function(mui) {
+	mui.init();
+	mui.ready(function() {
+		var page = 2;
+		var pagetotal = {$pagenums} + 1;
+		if (page < pagetotal) {
+			//循环初始化所有下拉刷新，上拉加载。
+			mui.each(document.querySelectorAll('.credits-display'), function(index, pullRefreshEl) {
+				mui(pullRefreshEl).pullToRefresh({
+					up: {
+						callback: function() {
+							var self = this;
+							setTimeout(function() {
+								$('.mui-pull-bottom-tips').hide();
+								var ul = self.element.querySelector('.mui-credits');
+								ul.appendChild(createFragment(ul, index, 5));
+								if (pagetotal <= page) {
+									$('.mui-pull-bottom-tips').hide();
+									self.endPullUpToRefresh(true);
+								} else {
+									self.endPullUpToRefresh(false);
+								}
+							}, 1000);
+						}
+					}
+				});
+			});
+
+			var createFragment = function(ul, index, count, reverse) {
+				var length = ul.querySelectorAll('li').length;
+				var fragment = document.createDocumentFragment();
+				var li;
+				var url = "{php echo url('mc/bond/credits', array('credittype' => $_GPC['credittype'], 'type' => $_GPC['type'], 'period' => $_GPC['period']), true)}";
+				mui.post(url, {'page' : page}, function(data){
+					data = $.parseJSON(data);
+					if (data.state == 'error') {
+						return false;
+					}
+					for (var i in data) {
+						var href = "{php echo url('mc/bond/credits', array('type' => 'recorddetail', 'credittype' => $_GPC['credittype']),true)}";
+						li = document.createElement('li');
+						li.className = 'mui-table-view-cell';
+						li.innerHTML = '<a href="' + href + '&id=' + data[i].id + '" ><div class="mui-row"><div class="mui-col-xs-6 mui-ellipsis-2">' + data[i].remark + '</div><div class="mui-col-xs-6 mui-text-right"><span class="mui-big mui-rmb" style="color:' + data[i].color + '"><span class="money" style="color:' + data[i].color + '">' + data[i].num + '</span></span><span class="mui-block mui-text-muted mui-small">' + data[i].createtime + '</span></div></div></a>';
+						ul.appendChild(li, ul.firstChild);
+					}
+					$('.mui-pull-bottom-tips').show();
+				});
+				page++;
+				return fragment;
+			};
+		}
 	});
+});
 </script>
 {/if}
-{template 'mc/footer'}
+
+{if $do == 'binding_account'}
+<form class="tab-content clearfix js-ajax-form {if $_W['container'] !== 'wechat'}profile-form{/if}" action="{url 'mc/bond/binding_account'}" method="post" enctype="multipart/form-data">
+	<div class="mui-content mc-email">
+		<div class="mui-control-content mui-active" id="email">
+			<div class="tips mui-content-padded">
+				您可以使用邮箱或手机作为登陆账号。
+			
+			</div>
+			<div class="mui-input-group mui-mt15">
+				{if $type == '1'}
+				<div class="mui-input-row">
+					<label>账号</label>
+					<input type="text" name="username" value="" placeholder="请输入{if $item == 'email'}邮箱{elseif $item == 'mobile'}手机号{else}邮箱或手机号{/if}" />
+				</div>
+				{else}
+				<div class="mui-input-row">
+					<label>已有邮箱</label>
+					<input type="text" name="username" value="" placeholder="请输入已有邮箱" />
+				</div>
+				{/if}
+				<div class="mui-input-row">
+					<label>登录密码</label>
+					<input type="password" name="password" value="" placeholder="请输入{if $type != '1'}已有邮箱{/if}登录密码"/>
+				</div>
+			</div>
+		</div>
+		<div class="mui-content-padded">
+			<div class="mui-text-center mui-mt15 mui-mb10">
+			{if !empty($reregister) || (empty($reregister) && empty($_W['member']['email']))}
+				{if $_GPC['type'] == 1}
+				<a href="{php echo url('mc/bond/binding_account', array('type' => '0'))}">绑定已有账号</a>
+				{else}
+				<a href="{php echo url('mc/bond/binding_account', array('type' => '1'))}">绑定新账号</a>
+				{/if}
+			{/if}
+			</div>
+			{if !empty($reregister) || (empty($reregister) && empty($_W['member']['email']))}
+			<input type="hidden" name="token" value="{$_W['token']}">
+			<input type="hidden" id="type" name="type" value="{$type}" />
+			<button class="mui-btn mui-btn-success mui-btn-block" type="submit" name="submit" value="立刻绑定">立即绑定</button>
+			{else}
+			<a class="mui-btn mui-btn-block" href="javascript:history.back(-1);">返回</a>
+			{/if}
+		</div>
+	</div>
+</form>
+{/if}
 {template 'common/footer'}

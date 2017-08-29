@@ -339,6 +339,7 @@ html,body{
         //表单提交
         $('form').submit(function (e) {
             e.preventDefault();
+            $('input[type="submit"]').attr('disabled',true);
             var $this = $(this);
             var ordre_status = $('#ordre-status');
 

@@ -1,11 +1,14 @@
 <?php
-
+/**
+ * [WeEngine System] Copyright (c) 2014 WE7.CC
+ * WeEngine is NOT a free software, it under the license terms, visited http://www.we7.cc/ for more details.
+ */
 defined('IN_IA') or exit('Access Denied');
 $GLOBALS['_W']['config']['db']['tablepre'] = empty($GLOBALS['_W']['config']['db']['tablepre']) ? $GLOBALS['_W']['config']['db']['master']['tablepre'] : $GLOBALS['_W']['config']['db']['tablepre'];
 
 function db_table_schema($db, $tablename = '') {
 	$result = $db->fetch("SHOW TABLE STATUS LIKE '" . trim($db->tablename($tablename), '`') . "'");
-	if(empty($result)) {
+	if(empty($result) || empty($result['Create_time'])) {
 		return array();
 	}
 	$ret['tablename'] = $result['Name'];
@@ -272,4 +275,40 @@ function _db_build_field_sql($field) {
 		$increment = '';
 	}
 	return "{$field['type']}{$length}{$signed}{$null}{$default}{$increment}";
+}
+
+function db_table_schemas($table) {
+	$dump = "DROP TABLE IF EXISTS {$table};\n";
+	$sql = "SHOW CREATE TABLE {$table}";
+	$row = pdo_fetch($sql);
+	$dump .= $row['Create Table'];
+	$dump .= ";\n\n";
+	return $dump;
+}
+
+function db_table_insert_sql($tablename, $start, $size) {
+	$data = '';
+	$tmp = '';
+	$sql = "SELECT * FROM {$tablename} LIMIT {$start}, {$size}";
+	$result = pdo_fetchall($sql);
+	if (!empty($result)) {
+		foreach($result as $row) {
+			$tmp .= '(';
+			foreach($row as $k => $v) {
+				$value = str_replace(array('\\', "\0", "\n", "\r", "'", '"', "\x1a"), array('\\\\', '\\0', '\\n', '\\r', "\\'", '\\"', '\\Z'), $v);
+				$tmp .= "'" . $value . "',";
+			}
+			$tmp = rtrim($tmp, ',');
+			$tmp .= "),\n";
+		}
+		$tmp = rtrim($tmp, ",\n");
+		$data .= "INSERT INTO {$tablename} VALUES \n{$tmp};\n";
+		$datas = array (
+				'data' => $data,
+				'result' => $result
+		);
+		return $datas;
+	} else {
+		return false ;
+	}
 }

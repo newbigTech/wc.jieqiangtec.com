@@ -1,11 +1,14 @@
 <?php
-
+/**
+ * [WeEngine System] Copyright (c) 2014 WE7.CC
+ * WeEngine is NOT a free software, it under the license terms, visited http://www.we7.cc/ for more details.
+ */
 defined('IN_IA') or exit('Access Denied');
 class PaycenterModuleSite extends WeModuleSite {
 	public function __construct() {
 		global $_W, $_GPC;
 		load()->model('paycenter');
-		if($_GPC['do'] != 'pay') {
+		if($_GPC['do'] != 'pay' || $_GPC['do'] != 'consume') {
 			$session = json_decode(base64_decode($_GPC['_pc_session']), true);
 			if(is_array($session)) {
 				load()->model('user');
@@ -106,8 +109,8 @@ class PaycenterModuleSite extends WeModuleSite {
 			$starttime = strtotime(date('Y-m-d',strtotime($period . 'day')));
 			$endtime = strtotime(date('Y-m-d'));
 		}
-		$condition = "WHERE uniacid = :uniacid AND status = 1 AND paytime >= :starttime AND paytime <= :endtime";
-		$params = array(':starttime' => $starttime, ':endtime' => $endtime, ':uniacid' => $_W['uniacid']);
+		$condition = "WHERE uniacid = :uniacid AND status = 1 AND paytime >= :starttime AND paytime <= :endtime AND clerk_id = :clerk_id";
+		$params = array(':starttime' => $starttime, ':endtime' => $endtime, ':uniacid' => $_W['uniacid'], ':clerk_id' => intval($_W['user']['clerk_id']));
 		$revenue = pdo_fetchcolumn("SELECT SUM(final_fee) FROM" . tablename('paycenter_order') . $condition, $params);
 		return floatval($revenue);
 	}
@@ -168,6 +171,24 @@ class PaycenterModuleSite extends WeModuleSite {
 					$data['remark'] = "使用优惠券减免{$discount_fee}元";
 				}
 				pdo_update('paycenter_order', $data, array('id' => $params['tid'], 'uniacid' => $_W['uniacid']));
+				$cash_data = array(
+						'uniacid' => $_W['uniacid'],
+						'uid' => $order['uid'],
+						'fee' => $order['fee'],
+						'final_fee' => $order['final_fee'],
+						'credit1' => $order['credit1'],
+						'credit1_fee' => $order['credit1_fee'],
+						'credit2' => $order['credit2'],
+						'cash' => $params['card_fee'],
+						'final_cash' => $params['card_fee'],
+						'return_cash' => 0,
+						'remark' => $order['remark'],
+						'clerk_id' => $order['clerk_id'],
+						'store_id' => $order['store_id'],
+						'clerk_type' => $order['clerk_type'],
+						'createtime' => TIMESTAMP,
+				);
+				pdo_insert('mc_cash_record', $cash_data);
 			}
 		}
 		if($params['result'] == 'success' && $params['from'] == 'return') {
@@ -192,7 +213,7 @@ class PaycenterModuleSite extends WeModuleSite {
 		global $_W, $_GPC;
 		if(checksubmit()) {
 			$fee = trim($_GPC['fee']) ? trim($_GPC['fee']) : message('收款金额有误', '', 'error');
-			$body = trim($_GPC['body']);
+			$body = trim($_GPC['body']) ? trim($_GPC['body']) : '收银台收款' . trim($_GPC['fee']);
 			$openid = trim($_GPC['openid']) ? trim($_GPC['openid']) : message('用户信息错误',  '', 'error');
 			$clerk = pdo_get('activity_clerks', array('uniacid' => $_W['uniacid'], 'id' => intval($_GPC['clerk_id'])));
 			$data = array(
@@ -216,7 +237,14 @@ class PaycenterModuleSite extends WeModuleSite {
 		}
 		$fans = mc_oauth_userinfo();
 		if(is_error($fans) || empty($fans)) {
-					}
+			message('获取粉丝信息失败', '', 'error');
+		}
 		include $this->template('selfpay');
+	}
+	public function doMobileConsume() {
+		global $_GPC, $_W;
+		$url = murl('entry', array('m' => 'we7_coupon', 'do' => 'consume', 'card_id' => trim($_GPC['card_id']), 'encrypt_code' => trim($_GPC['encrypt_code']), 'openid' => trim($_GPC['openid'])));
+		header("Location: $url");
+		exit;
 	}
 }

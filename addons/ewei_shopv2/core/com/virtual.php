@@ -67,6 +67,15 @@ class Virtual_EweiShopV2ComModel extends ComModel
 	{
 		global $_W;
 		global $_GPC;
+		$orderid_cache = m('cache')->getString('orderid_' . $order['id']);
+		if (empty($orderid_cache)) 
+		{
+			m('cache')->set('orderid_' . $order['id'], 1);
+		}
+		else 
+		{
+			return false;
+		}
 		$goods = pdo_fetch('select id,goodsid,total,realprice from ' . tablename('ewei_shop_order_goods') . ' where  orderid=:orderid and uniacid=:uniacid limit 1', array(':uniacid' => $_W['uniacid'], ':orderid' => $order['id']));
 		$g = pdo_fetch('select id,credit,sales,salesreal from ' . tablename('ewei_shop_goods') . ' where  id=:id and uniacid=:uniacid limit 1', array(':uniacid' => $_W['uniacid'], ':id' => $goods['goodsid']));
 		$virtual_data = pdo_fetchall('SELECT id,typeid,fields FROM ' . tablename('ewei_shop_virtual_data') . ' WHERE typeid=:typeid and openid=:openid and uniacid=:uniacid and merchid = :merchid order by rand() limit ' . $goods['total'], array(':openid' => '', ':typeid' => $order['virtual'], ':uniacid' => $_W['uniacid'], ':merchid' => $order['merchid']));
@@ -92,7 +101,19 @@ class Virtual_EweiShopV2ComModel extends ComModel
 		$virtual_info = '[' . implode(',', $virtual_info) . ']';
 		$time = time();
 		pdo_update('ewei_shop_order', array('virtual_info' => $virtual_info, 'virtual_str' => $virtual_str, 'status' => '3', 'paytime' => $time, 'sendtime' => $time, 'finishtime' => $time), array('id' => $order['id']));
-		$credits = $goods['total'] * $g['credit'];
+		$credits = 0;
+		$gcredit = trim($g['credit']);
+		if (!(empty($gcredit))) 
+		{
+			if (strexists($gcredit, '%')) 
+			{
+				$credits += intval((floatval(str_replace('%', '', $gcredit)) / 100) * $goods['realprice']);
+			}
+			else 
+			{
+				$credits += intval($g['credit']) * $goods['total'];
+			}
+		}
 		if (0 < $credits) 
 		{
 			$shopset = m('common')->getSysset('shop');
@@ -100,7 +121,8 @@ class Virtual_EweiShopV2ComModel extends ComModel
 		}
 		$salesreal = pdo_fetchcolumn('select ifnull(sum(total),0) from ' . tablename('ewei_shop_order_goods') . ' og ' . ' left join ' . tablename('ewei_shop_order') . ' o on o.id = og.orderid ' . ' where og.goodsid=:goodsid and o.status>=1 and o.uniacid=:uniacid limit 1', array(':goodsid' => $g['id'], ':uniacid' => $_W['uniacid']));
 		pdo_update('ewei_shop_goods', array('salesreal' => $salesreal), array('id' => $g['id']));
-		m('member')->upgradeLevel($order['openid']);
+		m('order')->fullback($order['id']);
+		m('member')->upgradeLevel($order['openid'], $order['id']);
 		m('notice')->sendOrderMessage($order['id']);
 		m('order')->setGiveBalance($order['id'], 1);
 		if (com('coupon')) 

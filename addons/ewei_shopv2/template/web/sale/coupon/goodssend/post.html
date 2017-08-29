@@ -17,23 +17,19 @@
 
                     <div class="form-group">
                         {ife 'sale.coupon' $item}
-                        <div class="form-group" >
                             <label class="col-sm-2 control-label">选择商品</label>
                             <div class="col-sm-9 col-xs-12">
-                                <div class="form-group ">
-                                    <?php echo tpl_selector('goodsid',array(
-                        'preview'=>true,
-                                    'readonly'=>true,
-                                    'multi'=>0,
-                                    'value'=>null,
-                                    'url'=>webUrl('sale/coupon/querygoods'),
-                                    'items'=>$goods,
-                                    'buttontext'=>'选择商品',
-                                    'placeholder'=>'请选择商品')
-                                    )
-                                    ?>
-                                </div>
-                            </div>
+                                <?php echo tpl_selector('goodsid',array(
+                    'preview'=>true,
+                                'readonly'=>true,
+                                'multi'=>0,
+                                'value'=>null,
+                                'url'=>webUrl('sale/coupon/querygoods'),
+                                'items'=>$goods,
+                                'buttontext'=>'选择商品',
+                                'placeholder'=>'请选择商品')
+                                )
+                                ?>
                         </div>
                         {else}
                         {if !empty($goods)}
@@ -51,23 +47,19 @@
 
                     <div class="form-group">
                         {ife 'sale.coupon' $item}
-                            <div class="form-group" >
-                                <label class="col-sm-2 control-label">选择优惠券</label>
-                                <div class="col-sm-9 col-xs-12">
-                                    <div class="form-group ">
-                                        <?php echo tpl_selector('couponid',array(
-                                        'preview'=>true,
-                                        'readonly'=>true,
-                                        'multi'=>0,
-                                        'value'=>null,
-                                        'url'=>webUrl('sale/coupon/querycoupons'),
-                                        'items'=>$coupon,
-                                        'buttontext'=>'选择优惠券',
-                                        'placeholder'=>'请选择优惠券')
-                                        )
-                                        ?>
-                                    </div>
-                                </div>
+                            <label class="col-sm-2 control-label">选择优惠券</label>
+                            <div class="col-sm-9 col-xs-12">
+                                <?php echo tpl_selector('couponid',array(
+                                'preview'=>true,
+                                'readonly'=>true,
+                                'multi'=>0,
+                                'value'=>null,
+                                'url'=>webUrl('sale/coupon/querycoupons'),
+                                'items'=>$coupon,
+                                'buttontext'=>'选择优惠券',
+                                'placeholder'=>'请选择优惠券')
+                                )
+                                ?>
                             </div>
                         {else}
                             {if !empty($coupon)}
@@ -86,8 +78,14 @@
                         <label class="col-sm-2 control-label must">发送数量</label>
                         <div class="col-sm-9 col-xs-12">
                             {ife 'sale.coupon' $item}
-                            <div class="input-group">
-                                <input type='text' class='form-control' name='sendnum' value="{$item['sendnum']}"/>
+                            <div class="input-group col-sm-2">
+                                <select class='form-control '  id="sendnum" name="sendnum" >
+                                    <option value="1" {if $item['sendnum']=='1'} selected{/if}>1</option>
+                                    <option value="2" {if $item['sendnum']=='2'} selected{/if}>2</option>
+                                    <option value="3" {if $item['sendnum']=='3'} selected{/if}>3</option>
+                                    <option value="4" {if $item['sendnum']=='4'} selected{/if}>4</option>
+                                    <option value="5" {if $item['sendnum']=='5'} selected{/if}>5</option>
+                                </select>
                                 <span class="input-group-addon">张</span>
                             </div>
                             <span class="help-block image-block" style="display: block;">当用户购买此商品时,赠送几张指定的优惠券</span>

@@ -1,7 +1,7 @@
 <?php
 /**
  * [WeEngine System] Copyright (c) 2014 WE7.CC
- * WeEngine is NOT a free software, it under the license terms, visited http://www.zheyitianshi.com/ for more details.
+ * WeEngine is NOT a free software, it under the license terms, visited http://www.we7.cc/ for more details.
  */
 defined('IN_IA') or exit('Access Denied');
 $dos = array('verifycode', 'image', 'qrcode');
@@ -27,7 +27,7 @@ if($do == 'verifycode') {
 	echo $content['content'];
 	exit();
 }  elseif($do == 'qrcode') {
-	require_once('../framework/library/qrcode/phpqrcode.php');
+	require_once(IA_ROOT.'/framework/library/qrcode/phpqrcode.php');
 	$errorCorrectionLevel = "L";
 	$matrixPointSize = "8";
 	$text = trim($_GPC['text']);

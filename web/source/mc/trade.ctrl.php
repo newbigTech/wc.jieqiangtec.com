@@ -1,13 +1,17 @@
 <?php
-
+/**
+ * [WeEngine System] Copyright (c) 2014 WE7.CC
+ * WeEngine is NOT a free software, it under the license terms, visited http://www.we7.cc/ for more details.
+ */
 defined('IN_IA') or exit('Access Denied');
-if($_W['role'] != 'clerk') {
-	uni_user_permission_check('mc_member');
-}
-$_W['page']['title'] = '会员交易-会员管理';
-$dos = array('consume', 'user', 'modal', 'credit', 'card', 'cardsn', 'tpl');
-$do = in_array($do, $dos) ? $do : 'tpl';
+
 load()->model('mc');
+load()->model('card');
+load()->model('module');
+
+$_W['page']['title'] = '会员交易-会员管理';
+$dos = array('consume', 'user', 'modal', 'credit', 'card', 'cardsn', 'tpl', 'cardconsume');
+$do = in_array($do, $dos) ? $do : 'tpl';
 
 if($do == 'user') {
 	$type = trim($_GPC['type']);
@@ -21,40 +25,45 @@ if($do == 'user') {
 	} elseif(count($data) > 1) {
 		exit(json_encode(array('error' => 'not-unique', 'message' => '用户不唯一,请重新输入用户信息')));
 	} else {
-		load()->model('card');
+		$card = array();
 		$user = $data[0];
 		$user['groupname'] = $_W['account']['groups'][$user['groupid']]['title'];
-
-		$card = card_setting();
-		$member = pdo_get('mc_card_members', array('uniacid' => $_W['uniacid'], 'uid' => $user['uid']));
-		if(!empty($card) && $card['status'] == 1) {
-			if(!empty($member)) {
-				$str = "会员卡号:{$member['cardsn']}.";
-				$user['discount'] = $card['discount'][$user['groupid']];
-				$user['cardsn'] = $member['cardsn'];
-				if(!empty($user['discount']) && !empty($user['discount']['discount'])) {
-					$str .= "折扣:满{$user['discount']['condition']}元";
-					if($card['discount_type'] == 1) {
-						$str .= "减{$user['discount']['discount']}元";
-					} else {
-						$discount = $user['discount']['discount'] * 10;
-						$str .= "打{$discount}折";
+		$we7_coupon_info = module_fetch('we7_coupon');
+		if (!empty($we7_coupon_info)) {
+			$card = card_setting();
+			$member = pdo_get('mc_card_members', array('uniacid' => $_W['uniacid'], 'uid' => $user['uid']));
+			if(!empty($card) && $card['status'] == 1) {
+				if(!empty($member)) {
+					$str = "会员卡号:{$member['cardsn']}.";
+					$user['discount'] = $card['discount'][$user['groupid']];
+					$user['cardsn'] = $member['cardsn'];
+					if(!empty($user['discount']) && !empty($user['discount']['discount'])) {
+						$str .= "折扣:满{$user['discount']['condition']}元";
+						if($card['discount_type'] == 1) {
+							$str .= "减{$user['discount']['discount']}元";
+						} else {
+							$discount = $user['discount']['discount'] * 10;
+							$str .= "打{$discount}折";
+						}
+						$user['discount_cn'] = $str;
 					}
-					$user['discount_cn'] = $str;
+				} else {
+					$user['discount_cn'] = '会员未领取会员卡,不能享受优惠';
 				}
 			} else {
-				$user['discount_cn'] = '会员未领取会员卡,不能享受优惠';
+				$user['discount_cn'] = '商家未开启会员卡功能';
 			}
-		} else {
-			$user['discount_cn'] = '商家未开启会员卡功能';
 		}
+		
 		$html = "姓名:{$user['realname']},会员组:{$user['groupname']}<br>";
-		$html .= "{$user['discount_cn']}<br>";
-		$html .= "余额:{$user['credit2']}元,积分:{$user['credit1']},贡献:{$user['credit6']}<br>";
-
-		if(!empty($card) && $card['offset_rate'] > 0 && $card['offset_max'] > 0) {
+		if(!empty($we7_coupon_info)) {
+			$html .= "{$user['discount_cn']}<br>";
+		}
+		$html .= "余额:{$user['credit2']}元,积分:{$user['credit1']}<br>";
+		if(!empty($we7_coupon_info) && !empty($card) && $card['offset_rate'] > 0 && $card['offset_max'] > 0) {
 			$html .= "{$card['offset_rate']}积分可抵消1元。最多可抵消{$card['offset_max']}元";
 		}
+		
 		exit(json_encode(array('error' => 'none', 'user' => $user, 'html' => $html, 'card' => $card, 'group' => $_W['account']['groups'], 'grouplevel' => $_W['account']['grouplevel'])));
 	}
 }
@@ -76,7 +85,7 @@ if($do == 'cardsn') {
 	}
 }
 
-if($_W['isajax'] && !in_array($do, array('user', 'clerk', 'cardsn'))) {
+if($_W['isajax'] && !in_array($do, array('user', 'clerk', 'cardsn', 'cardconsume'))) {
 	$uid = intval($_GPC['uid']);
 	$user = pdo_get('mc_members', array('uniacid' => $_W['uniacid'], 'uid' => $uid));
 	if(empty($user)) {
@@ -121,7 +130,6 @@ if($do == 'consume') {
 	if($post_money != $money) {
 		exit('实收金额错误');
 	}
-
 	$post_credit1 = intval($_GPC['credit1']);
 	if($post_credit1 > 0) {
 		if($post_credit1 > $user['credit1']) {
@@ -197,8 +205,27 @@ if($do == 'consume') {
 	pdo_insert('mc_cash_record', $data);
 
 	$tips = "用户消费{$money}元,使用{$data['credit1']}积分,抵现{$data['credit1_fee']}元,使用余额支付{$data['credit2']}元,现金支付{$data['final_cash']}元";
-		if(!empty($card) && $card['grant_rate'] > 0 && !empty($member)) {
-		$num = floor($money * $card['grant_rate']);
+	$recharges_set = card_params_setting('cardRecharge');
+	$grant_rate_switch = intval($recharges_set['params']['grant_rate_switch']);
+		$grant_credit1_enable = false;
+	$grant_money = $money;
+	if (!empty($card) && $card['grant_rate'] > 0 && !empty($member)) {
+		if (empty($recharges_set['params']['recharge_type'])) {
+			$grant_credit1_enable = true;
+		} else {
+			if ($grant_rate_switch == '1') {
+				$grant_money = $data['cash'] + $data['credit2'];
+				$grant_credit1_enable = true;
+			} else {
+				if (!empty($data['cash'])) {
+					$grant_money = $data['cash'];
+					$grant_credit1_enable = true;
+				}
+			}
+		}
+	}
+	if(!empty($grant_credit1_enable)) {
+		$num = floor($grant_money * $card['grant_rate']);
 		$tips .= "，积分赠送比率为:【1：{$card['grant_rate']}】,共赠送【{$num}】积分";
 		mc_credit_update($uid, 'credit1', $num, array(0, $tips, 'system', $_W['user']['clerk_id'], $_W['user']['store_id'], $_W['user']['clerk_type']));
 	}
@@ -274,7 +301,7 @@ if($do == 'card') {
 		'openid' => '',
 		'uid' => $uid,
 		'cid' => $card['id'],
-		'cardsn' => $cardsn,
+		'cardsn' => $_GPC['username'],
 		'status' => '1',
 		'createtime' => TIMESTAMP,
 		'endtime' => TIMESTAMP
@@ -304,18 +331,29 @@ if($do == 'card') {
 			);
 			mc_credit_update($uid, 'credit2', $card['grant']['credit2'], $log);
 		}
-		if($card['grant']['coupon'] > 0) {
-			if($card['grant']['coupon'] > 0) {
-				$coupon = pdo_fetch('SELECT couponid,title,type FROM ' . tablename('activity_coupon') . ' WHERE uniacid = :uniacid AND couponid = :couponid', array(':uniacid' => $_W['uniacid'], ':couponid' => $card['grant']['coupon']));
-			}
-			load()->model('activity');
-			if($coupon['type'] == 1) {
-				$status = activity_coupon_grant($uid, $coupon['couponid'], 'card', '领取会员卡，赠送优惠券');
-			} else {
-				$status = activity_token_grant($uid, $coupon['couponid'], 'card', '领取会员卡，赠送优惠券');
+		if (!empty($card['grant']['coupon']) && is_array($card['grant']['coupon'])) {
+			foreach ($card['grant']['coupon'] as $grant_coupon) {
+				load()->model('activity');
+				activity_coupon_grant($grant_coupon['coupon'], $uid);
 			}
 		}
 		exit('success');
+	}
+}
+
+if ($do == 'cardconsume') {
+	load() -> model('activity');
+	$code = trim($_GPC['code']);
+	$coupon_record = pdo_get('coupon_record', array('code' => $code, 'status' => '1'));
+	if (!empty($coupon_record)) {
+		$status = activity_coupon_use($coupon_record['couponid'], $coupon_record['id'], 'paycenter');
+		if (is_error($status)) {
+			exit($status['message']);
+		}else {
+			exit('success');
+		}
+	} else {
+		exit('卡券已核销或失效');
 	}
 }
 

@@ -17,68 +17,57 @@ class History_EweiShopV2Page extends PluginWebPage
 		$group = trim($_GPC['group']);
 		$start = strtotime(trim($_GPC['start']));
 		$end = strtotime(trim($_GPC['end']));
-		if (!empty($keyword)) 
+		if (!(empty($keyword))) 
 		{
 			switch ($kdtype) 
 			{
-				case 'code':
-					$keyword_condition = ' AND `serial` LIKE \'%' . $keyword . '%\'';
+				case code: $keyword_condition = ' AND `serial` LIKE \'%' . $keyword . '%\'';
 				break;
-				case 'goodstitle':
-					$keyword_condition = ' AND `goods_title` LIKE \'%' . $keyword . '%\'';
+				case goodstitle: $keyword_condition = ' AND `goods_title` LIKE \'%' . $keyword . '%\'';
 				break;
-				case 'openid':
-					$keyword_condition = ' AND `openid` LIKE \'%' . $keyword . '%\'';
+				case openid: $keyword_condition = ' AND `openid` LIKE \'%' . $keyword . '%\'';
 				break;
-				case 'nickname':
-					$keyword_condition = ' AND `nickname` LIKE \'%' . $keyword . '%\'';
+				case nickname: $keyword_condition = ' AND `nickname` LIKE \'%' . $keyword . '%\'';
 				break;
-				case 'group':
-					$keyword_condition = ' AND `title` LIKE \'%' . $keyword . '%\'';
+				case group: $keyword_condition = ' AND `title` LIKE \'%' . $keyword . '%\'';
 				break;
-				default:
-					$keyword_condition = '';
-				break;
+				default: $keyword_condition = '';
 			}
 		}
 		else 
 		{
 			$keyword_condition = '';
 		}
-		switch ($group) {
-			case 'goods':
-				$group_condition = ' AND `mode` = 1';
+		switch ($group) 
+		{
+			case goods: $group_condition = ' AND `mode` = 1';
 			break;
-			case 'balance':
-				$group_condition = ' AND `mode` = 2';
+			case balance: $group_condition = ' AND `mode` = 2';
 			break;
-			case 'red':
-				$group_condition = ' AND `mode` = 3';
+			case red: $group_condition = ' AND `mode` = 3';
 			break;
-			case 'score':
-				$group_condition = ' AND `mode` = 4';
+			case score: $group_condition = ' AND `mode` = 4';
 			break;
-			case 'coupon':
-				$group_condition = ' AND `mode` = 5';
+			case coupon: $group_condition = ' AND `mode` = 5';
 			break;
-			case 'group':
-				$group_condition = ' AND `mode` = 6';
+			case group: $group_condition = ' AND `mode` = 6';
 			break;
-			default:
-				$group_condition = '';	
-			break;
+			default: $group_condition = '';
 		}
 		if (($start == '1475251200') && ($end == '1475251200')) 
 		{
 			$time_condition = '';
 		}
-		else if (empty($start) || empty($end)) 
-		{
-			$time_condition = '';
-		}
 		else 
 		{
-			$time_condition = ' AND `time`>=' . $start . ' AND time <=' . $end;
+			if (empty($start) || empty($end)) 
+			{
+				$time_condition = '';
+			}
+			else 
+			{
+				$time_condition = ' AND `time`>=' . $start . ' AND time <=' . $end;
+			}
 		}
 		$ps = $psize * ($page - 1);
 		$limit = ' ORDER BY id DESC LIMIT ' . $ps . ',' . $psize;
@@ -230,7 +219,7 @@ class History_EweiShopV2Page extends PluginWebPage
 					else if ($va['mode'] == 5) 
 					{
 						$couponCount += 1;
-						$couponsum += count(json_decode(coupon, 1));
+						$couponsum += count(json_decode($va['coupon'], 1));
 					}
 					else if ($va['mode'] == 6) 
 					{

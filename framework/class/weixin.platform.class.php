@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * [WeEngine System] Copyright (c) 2014 WE7.CC
+ * WeEngine is NOT a free software, it under the license terms, visited http://www.we7.cc/ for more details.
+ */
 defined('IN_IA') or exit('Access Denied');
 
 define('ACCOUNT_PLATFORM_API_ACCESSTOKEN', 'https://api.weixin.qq.com/cgi-bin/component/api_component_token');
@@ -188,8 +191,8 @@ class WeiXinPlatform extends WeiXinAccount {
 	}
 	
 	public function getJsApiTicket(){
-		$cachename = 'account:jsapi_ticket';
-		$js_ticket = cache_load($cachename);
+		$cachekey = "jsticket:{$this->account['acid']}";
+		$js_ticket = cache_load($cachekey);
 		if (empty($js_ticket) || empty($js_ticket['value']) || $js_ticket['expire'] < TIMESTAMP) {
 			$access_token = $this->getAccessToken();
 			if(is_error($access_token)){
@@ -198,16 +201,16 @@ class WeiXinPlatform extends WeiXinAccount {
 			$apiurl = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token={$access_token}&type=jsapi";
 			$response = $this->request($apiurl);
 			$js_ticket = array(
-					'value' => $response['ticket'],
-					'expire' => TIMESTAMP + $response['expires_in'] - 200,
+				'value' => $response['ticket'],
+				'expire' => TIMESTAMP + $response['expires_in'] - 200,
 			);
-			cache_write('account:jsapi_ticket', $js_ticket);
+			cache_write($cachekey, $js_ticket);
 		}
 		$this->account['jsapi_ticket'] = $js_ticket;
 		return $js_ticket['value'];
 	}
 	
-	public function getJssdkConfig(){
+	public function getJssdkConfig($url = ''){
 		global $_W;
 		$jsapiTicket = $this->getJsApiTicket();
 		if(is_error($jsapiTicket)){
@@ -215,7 +218,7 @@ class WeiXinPlatform extends WeiXinAccount {
 		}
 		$nonceStr = random(16);
 		$timestamp = TIMESTAMP;
-		$url = $_W['siteurl'];
+		$url = empty($url) ? $_W['siteurl'] : $url;
 		$string1 = "jsapi_ticket={$jsapiTicket}&noncestr={$nonceStr}&timestamp={$timestamp}&url={$url}";
 		$signature = sha1($string1);
 		$config = array(

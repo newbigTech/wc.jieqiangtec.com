@@ -4,21 +4,21 @@
 <div class="fui-goods-group container" >
     {if !empty($goodslist)}
     {loop $goodslist $goodsid $value}
-    <div class="fui-goods-item" >
-        <a href="{php echo mobileUrl('goods/detail',array('id'=>$goodsid,'join_id'=>$taskinfo['join_id']),true);}">
-            <div class="image" data-lazyloaded="true" style="background-image: url('{$value['thumb']}');">
+        <a href="{php echo mobileUrl('goods/detail',array('id'=>$goodsid,'join_id'=>$taskinfo['join_id']),true);}" class="fui-list">
+            <div class="fui-list-media">
+                <img src="{$value['thumb']}" class="round" style="height: 2.5rem;">
             </div>
-        </a>
-            <div class="detail">
-                <a href="{php echo mobileUrl('goods/detail',array('id'=>$goodsid),true);}">
-                <div class="name">{$value['title']}</div>
-                </a>
-                <div class="price">
-                    <span class="text">￥{$value['marketprice']}</span>
+            <div class="fui-list-inner">
+                <div class="row">
+                    <div class="row-text">{$value['title']}</div>
+                </div>
+                <div class="subtitle">
+                    <span class="text">特惠价:{$value['marketprice']}元<span class="oldprice">原价:{$value['oldprice']}元</span></span>
+                    <span class="text">可购数量:{$value['total']}</span>
                 </div>
             </div>
+        </a>
 
-    </div>
     {/loop}
     {else}
     <div class="text-center" >无特价商品信息</div>
@@ -26,26 +26,26 @@
 </div>
 {elseif $taskinfo['task_type']==2}
     {if !empty($goodslist)}
+<div class="fui-list-group container" >
     {loop $goodslist $rank $val}
         {loop $val $goodsid $value}
-            <div class="fui-goods-group container" >
-                <div class="fui-goods-item" >
-                    <a href="{php echo mobileUrl('goods/detail',array('id'=>$goodsid,'rank'=>$rank,'join_id'=>$taskinfo['join_id']),true);}">
-                        <div class="image" data-lazyloaded="true" style="background-image: url('{$value['thumb']}');">
+                <a href="{php echo mobileUrl('goods/detail',array('id'=>$goodsid,'join_id'=>$taskinfo['join_id'],'rank'=>$rank),true);}" class="fui-list">
+                    <div class="fui-list-media">
+                        <img src="{$value['thumb']}" class="round" style="height: 2.5rem;">
+                    </div>
+                    <div class="fui-list-inner {if empty($value['total'])}nosale{/if}">
+                        <div class="row " style="margin-bottom: 1rem;">
+                            <div class="row-text">{$value['title']}</div>
                         </div>
-                    </a>
-                    <div class="detail">
-                        <a href="{php echo mobileUrl('goods/detail',array('id'=>$goodsid),true);}">
-                            <div class="name">{$value['title']}</div>
-                        </a>
-                        <div class="price">
-                            <span class="text">￥{$value['marketprice']}</span>
+                        <div class="subtitle">
+                            <span class="text">特惠价:{$value['marketprice']}元<span class="oldprice">原价:{$value['oldprice']}元</span></span>
+                            <span class="text">可购数量:{$value['total']}</span>
                         </div>
                     </div>
-                </div>
-            </div>
+                </a>
         {/loop}
     {/loop}
+</div>
     {else}
     <div class="text-center" >无特价商品信息</div>
     {/if}

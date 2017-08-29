@@ -125,7 +125,7 @@ class DiypageModel extends PluginModel
 												{
 													$childid = rand(1000000000, 9999999999);
 													$childid = 'C' . $childid;
-													$item['data'][$childid] = array('thumb' => $good['thumb'], 'title' => $good['title'], 'price' => $good['minprice'], 'gid' => $good['id'], 'total' => $good['total'], 'bargain' => $good['bargain'], 'productprice' => $good['productprice'], 'credit' => $good['credit'], 'ctype' => $good['type'], 'gtype' => $good['goodstype'], 'sales' => $good['sales'] + intval($goods['salesreal']));
+													$item['data'][$childid] = array('thumb' => $good['thumb'], 'title' => $good['title'], 'price' => $good['minprice'], 'gid' => $good['id'], 'total' => $good['total'], 'bargain' => $good['bargain'], 'productprice' => $good['productprice'], 'credit' => $good['credit'], 'ctype' => $good['type'], 'gtype' => $good['goodstype'], 'sales' => $good['sales'] + intval($good['salesreal']));
 												}
 											}
 										}
@@ -345,18 +345,51 @@ class DiypageModel extends PluginModel
 							if (!(empty($item['data'])) && is_array($item['data'])) 
 							{
 								$hasyushou = false;
+								$hascoupon = false;
+								$haszengpin = false;
+								$hasfullback = false;
 								foreach ($item['data'] as $childid => $child ) 
 								{
 									if ($child['type'] == 'yushou') 
 									{
 										$hasyushou = true;
-										break;
+									}
+									else if ($child['type'] == 'coupon') 
+									{
+										$hascoupon = true;
+									}
+									else if ($child['type'] == 'zengpin') 
+									{
+										$haszengpin = true;
+									}
+									else if ($child['type'] == 'fullback') 
+									{
+										$hasfullback = true;
 									}
 								}
 								if (!($hasyushou)) 
 								{
 									$childid = 'C' . time() . rand(100, 999);
 									$item['data'][$childid] = array('name' => '商品预售', 'type' => 'yushou');
+									unset($childid);
+								}
+								if (!($hascoupon)) 
+								{
+									$childid = 'C' . time() . rand(100, 999);
+									$item['data'][$childid] = array('name' => '可用优惠券', 'type' => 'coupon');
+									unset($childid);
+								}
+								if (!($haszengpin)) 
+								{
+									$childid = 'C' . time() . rand(100, 999);
+									$item['data'][$childid] = array('name' => '赠品', 'type' => 'zengpin');
+									unset($childid);
+								}
+								if (!($hasfullback)) 
+								{
+									$childid = 'C' . time() . rand(100, 999);
+									$item['data'][$childid] = array('name' => '全返', 'type' => 'fullback');
+									unset($childid);
 								}
 							}
 						}
@@ -477,7 +510,8 @@ class DiypageModel extends PluginModel
 					{
 						if ($item['id'] == 'diymod') 
 						{
-							$newmod = array_merge($newmod, $tempmod[$itemid]);
+							$analysisMod = $this->analysisMod($tempmod[$itemid]);
+							$newmod = array_merge($newmod, $analysisMod);
 						}
 						else 
 						{
@@ -551,7 +585,7 @@ class DiypageModel extends PluginModel
 								{
 									if ($goodssort == 1) 
 									{
-										$orderby = ((empty($item['params']['goodstype']) ? ' sales desc, displayorder desc' : ' joins desc, displayorder desc'));
+										$orderby = ((empty($item['params']['goodstype']) ? ' sales+salesreal desc, displayorder desc' : ' joins desc, displayorder desc'));
 									}
 									else if ($goodssort == 2) 
 									{
@@ -608,7 +642,7 @@ class DiypageModel extends PluginModel
 								{
 									if ($goodssort == 1) 
 									{
-										$orderby = ((empty($item['params']['goodstype']) ? ' order by sales desc, displayorder desc' : ' order by joins desc, displayorder desc'));
+										$orderby = ((empty($item['params']['goodstype']) ? ' order by sales+salesreal desc, displayorder desc' : ' order by joins desc, displayorder desc'));
 									}
 									else if ($goodssort == 2) 
 									{
@@ -638,75 +672,59 @@ class DiypageModel extends PluginModel
 						}
 						else if (2 < $item['params']['goodsdata']) 
 						{
-							$args = array('pagesize' => $item['params']['goodsnum'], 'page' => 1, 'order' => ' displayorder desc, createtime desc');
+							$args = array('pagesize' => $item['params']['goodsnum'], 'page' => 1);
+							if ($item['params']['goodsdata'] == 3) 
+							{
+								$args['isnew'] = 1;
+							}
+							else if ($item['params']['goodsdata'] == 4) 
+							{
+								$args['ishot'] = 1;
+							}
+							else if ($item['params']['goodsdata'] == 5) 
+							{
+								$args['isrecommand'] = 1;
+							}
+							else if ($item['params']['goodsdata'] == 6) 
+							{
+								$args['isdiscount'] = 1;
+							}
+							else if ($item['params']['goodsdata'] == 7) 
+							{
+								$args['issendfree'] = 1;
+							}
+							else if ($item['params']['goodsdata'] == 8) 
+							{
+								$args['istime'] = 1;
+							}
 							$goodssort = $item['params']['goodssort'];
 							if (!(empty($goodssort))) 
 							{
 								if ($goodssort == 1) 
 								{
-									$args['order'] = ((empty($item['params']['goodstype']) ? ' sales desc, displayorder desc' : ' joins desc, displayorder desc'));
+									$args['order'] = ' sales desc, displayorder desc';
 								}
 								else if ($goodssort == 2) 
 								{
-									$args['order'] = ((empty($item['params']['goodstype']) ? ' minprice desc, displayorder desc' : 'minmoney desc, mincredit desc, displayorder desc'));
+									$args['order'] = ' minprice desc, displayorder desc';
 								}
 								else if ($goodssort == 3) 
 								{
-									$args['order'] = ((empty($item['params']['goodstype']) ? ' minprice asc, displayorder desc' : 'minmoney asc, mincredit asc, displayorder desc'));
+									$args['order'] = ' minprice asc, displayorder desc';
 								}
 							}
-							if (empty($item['params']['goodstype'])) 
-							{
-								if ($item['params']['goodsdata'] == 3) 
-								{
-									$args['isnew'] = 1;
-								}
-								else if ($item['params']['goodsdata'] == 4) 
-								{
-									$args['ishot'] = 1;
-								}
-								else if ($item['params']['goodsdata'] == 5) 
-								{
-									$args['isrecommand'] = 1;
-								}
-								else if ($item['params']['goodsdata'] == 6) 
-								{
-									$args['isdiscount'] = 1;
-								}
-								else if ($item['params']['goodsdata'] == 7) 
-								{
-									$args['issendfree'] = 1;
-								}
-								else if ($item['params']['goodsdata'] == 8) 
-								{
-									$args['istime'] = 1;
-								}
+							
+							//修复多商户装修可以看见总商城商品的问题
+							if($page['merch']>0){
 								$args['merchid'] = $page['merch'];
-								$goodslist = m('goods')->getList($args);
-								$goods = $goodslist['list'];
 							}
-							else 
-							{
-								$condition = ' and status=1 and deleted=0 and uniacid=:uniacid ';
-								$params = array('uniacid' => $_W['uniacid'], 'uniacid' => $_W['uniacid']);
-								if ($item['params']['goodsdata'] == 5) 
-								{
-									$condition .= ' and isrecommand=1 ';
-								}
-								else if ($item['params']['goodsdata'] == 9) 
-								{
-									$condition .= ' and type=0 ';
-								}
-								else if ($item['params']['goodsdata'] == 10) 
-								{
-									$condition .= ' and type=1 ';
-								}
-								$goods = pdo_fetchall('select id, title, thumb, price as productprice, money as minprice, credit, total, showlevels, showgroups, `type`, goodstype from ' . tablename('ewei_shop_creditshop_goods') . ' where 1 ' . $condition . ' order by ' . $args['order'] . ' limit ' . $args['pagesize'], $params);
-							}
+							//修复结束
+							
+							$goodslist = m('goods')->getList($args);
+							$goods = $goodslist['list'];
 							$item['data'] = array();
-							if (!(empty($goods)) && !(empty($item['data'])) && is_array($item['data'])) 
+							if (!(empty($goods)) && !(empty($goods)) && is_array($goods)) 
 							{
-								unset($index);
 								foreach ($goods as $index => $good ) 
 								{
 									$showgoods = m('goods')->visit($good, $this->member);
@@ -714,13 +732,13 @@ class DiypageModel extends PluginModel
 									{
 										$childid = rand(1000000000, 9999999999);
 										$childid = 'C' . $childid;
-										$item['data'][$childid] = array('thumb' => $good['thumb'], 'title' => $good['title'], 'price' => $good['minprice'], 'gid' => $good['id'], 'total' => $good['total'], 'bargain' => $good['bargain'], 'productprice' => $good['productprice'], 'credit' => $good['credit'], 'ctype' => $good['type'], 'gtype' => $good['goodstype'], 'sales' => $good['sales'] + intval($good['salesreal']));
+										$item['data'][$childid] = array('thumb' => $good['thumb'], 'title' => $good['title'], 'price' => $good['minprice'], 'gid' => $good['id'], 'total' => $good['total'], 'bargain' => $good['bargain']);
 									}
 								}
 							}
 						}
 					}
-					else if ($item['id'] == 'notice') 
+	else if ($item['id'] == 'notice') 
 					{
 						if ($item['params']['noticedata'] == '0') 
 						{
@@ -956,6 +974,40 @@ class DiypageModel extends PluginModel
 					{
 						$item['data'] = plugin_run('seckill::getTaskSeckillInfo');
 					}
+					else if ($item['id'] == 'tabbar') 
+					{
+						if (!(empty($item['data']))) 
+						{
+							$itemstyle = 'background:' . $item['style']['background'] . '; color:' . $item['style']['color'] . ';';
+							$itemstyleactive = 'background:' . $item['style']['activebackground'] . '; color:' . $item['style']['activecolor'] . '; border-color:' . $item['style']['activecolor'] . ';';
+							$activeIndex = 0;
+							foreach ($item['data'] as $childid => $child ) 
+							{
+								$active = false;
+								if (!(empty($child['linkurl']))) 
+								{
+									if (strexists($_W['siteurl'], ltrim($child['linkurl'], './'))) 
+									{
+										$item['data'][$childid]['active'] = 1;
+										$item['params']['slideto'] = $activeIndex;
+										$active = true;
+									}
+								}
+								$item['data'][$childid]['style'] = (($active ? $itemstyleactive : $itemstyle));
+								++$activeIndex;
+							}
+							unset($active);
+							unset($childid);
+							unset($child);
+							unset($activeIndex);
+						}
+						else 
+						{
+							unset($page['data']['items'][$itemid]);
+						}
+						unset($itemstyle);
+						unset($itemstyleactive);
+					}
 				}
 				unset($item);
 			}
@@ -992,7 +1044,7 @@ class DiypageModel extends PluginModel
 		{
 			$pagedata = $this->saveImg($pagedata);
 		}
-		$diypage = array('data' => base64_encode($pagedata), 'name' => $data['page']['name'], 'keyword' => $data['page']['keyword'], 'type' => $data['page']['type'], 'diymenu' => $data['page']['diymenu']);
+		$diypage = array('data' => base64_encode($pagedata), 'name' => $data['page']['name'], 'keyword' => $data['page']['keyword'], 'type' => $data['page']['type'], 'diymenu' => $data['page']['diymenu'], 'diyadv' => $data['page']['diyadv']);
 		if (!(empty($id))) 
 		{
 			if ($update) 
@@ -1088,7 +1140,7 @@ class DiypageModel extends PluginModel
 		{
 			show_json(1);
 		}
-		$items = pdo_fetchall('SELECT id,name,keyword FROM ' . tablename('ewei_shop_diypage') . ' WHERE id in( ' . $id . ' ) and uniacid=:uniacid ', array(':uniacid' => $_W['uniacid']));
+		$items = pdo_fetchall('SELECT id,`name`,`type`,keyword FROM ' . tablename('ewei_shop_diypage') . ' WHERE id in( ' . $id . ' ) and uniacid=:uniacid ', array(':uniacid' => $_W['uniacid']));
 		foreach ($items as $item ) 
 		{
 			pdo_delete('ewei_shop_diypage', array('id' => $item['id'], 'uniacid' => $_W['uniacid']));
@@ -1304,14 +1356,9 @@ class DiypageModel extends PluginModel
 				{
 					$urlparm['mid'] = intval($_GPC['mid']);
 				}
-				$_W['shopshare']['link'] = mobileUrl($urlpage, $urlparm, true);
-				return;
 			}
 		}
-		else 
-		{
-			$_W['shopshare']['link'] = mobileUrl($urlpage, $urlparm, true);
-		}
+		$_W['shopshare']['link'] = mobileUrl($urlpage, $urlparm, true);
 	}
 	public function calculate($str = NULL, $member = false) 
 	{
@@ -1802,6 +1849,95 @@ class DiypageModel extends PluginModel
 		}
 		return $newData;
 	}
+	public function analysisMod($mod) 
+	{
+		$newMod = array();
+		if (is_array($mod)) 
+		{
+			foreach ($mod as $itemid => $item ) 
+			{
+				$newid = explode('M', $itemid);
+				$newid = $newid[1] + rand(1111, 9999);
+				$newid = 'M' . $newid;
+				$newMod[$newid] = $item;
+			}
+		}
+		return $newMod;
+	}
+	public function getStartAdvList($id) 
+	{
+		global $_W;
+		$adv = pdo_fetch('SELECT * FROM' . tablename('ewei_shop_diypage_plu') . 'WHERE id=:id AND status=1 AND `type`=1 AND uniacid=:uniacid', array(':id' => $id, ':uniacid' => $_W['uniacid']));
+		if (empty($adv)) 
+		{
+			return;
+		}
+		$adv['data'] = base64_decode($adv['data']);
+		$adv['data'] = json_decode($adv['data'], true);
+		return $adv['data'];
+	}
+	public function getStartAdv($id) 
+	{
+		global $_W;
+		global $_GPC;
+		if (empty($id)) 
+		{
+			return;
+		}
+		$startadv = p('diypage')->getStartAdvList($id);
+		if (empty($startadv)) 
+		{
+			return;
+		}
+		if ((0 < $startadv['params']['showtype']) && (0 < $startadv['params']['showtime'])) 
+		{
+			$second = $startadv['params']['showtime'] * 60;
+			$key = 'diyadv-' . $_W['uniacid'] . '-' . $id;
+			$cookie = $_GPC[$key];
+			if (!(empty($cookie)) && (time() < ($cookie + $second))) 
+			{
+				return;
+			}
+			isetcookie($key, time(), $second);
+		}
+		return $startadv;
+	}
+	public function getDanmuTime($item) 
+	{
+		if (empty($item) || ($item <= 0)) 
+		{
+			return '刚刚';
+		}
+		if (is_numeric($item)) 
+		{
+			if ($item < 60) 
+			{
+				return $item . '秒前';
+			}
+			$item = round($item / 60);
+			if ($item < 60) 
+			{
+				return $item . '分钟前';
+			}
+			$item = round($item / 60);
+			if ($item < 24) 
+			{
+				return $item . '小时前';
+			}
+			$item = round($item / 24);
+			return $item . '天前';
+		}
+		if (strexists($item, '秒前') || strexists($item, '分钟') || strexists($item, '小时')) 
+		{
+			return $item;
+		}
+		$item = intval($item);
+		if ($item < 60) 
+		{
+			return $item . '秒前';
+		}
+		return round($item / 60) . '分钟前';
+	}
 	public function detailPage($pageid = 0) 
 	{
 		global $_W;
@@ -1912,7 +2048,7 @@ class DiypageModel extends PluginModel
 				}
 			}
 		}
-		return array('background' => $background, 'followbar' => $followbar, 'tab' => $detail_tab, 'navbar' => $detail_navbar, 'diynavbar' => $navbar, 'comment' => $detail_comment, 'seckill' => $detail_seckill, 'diylayer' => $page['data']['page']['diylayer'], 'items' => $pageitems);
+		return array('background' => $background, 'followbar' => $followbar, 'tab' => $detail_tab, 'navbar' => $detail_navbar, 'diynavbar' => $navbar, 'comment' => $detail_comment, 'seckill' => $detail_seckill, 'diylayer' => $page['data']['page']['diylayer'], 'items' => $pageitems, 'diyadv' => $page['data']['page']['diyadv'], 'danmu' => $page['data']['page']['danmu']);
 	}
 	public function seckillPage($pageid = 0) 
 	{
@@ -1943,7 +2079,7 @@ class DiypageModel extends PluginModel
 				break;
 			}
 		}
-		return array('seckill_list' => $seckill_list, 'diylayer' => $page['data']['page']['diylayer'], 'diymenu' => $page['data']['page']['diymenu'], 'items' => $pageitems);
+		return array('seckill_list' => $seckill_list, 'diylayer' => $page['data']['page']['diylayer'], 'diymenu' => $page['data']['page']['diymenu'], 'diyadv' => $page['data']['page']['diyadv'], 'items' => $pageitems);
 	}
 	public function exchangePage($pageid = 0) 
 	{
@@ -1976,7 +2112,7 @@ class DiypageModel extends PluginModel
 				}
 			}
 		}
-		return array('exchange_input' => $exchange_input, 'items' => $pageitems);
+		return array('exchange_input' => $exchange_input, 'diyadv' => $page['data']['page']['diyadv'], 'items' => $pageitems);
 	}
 }
 ?>

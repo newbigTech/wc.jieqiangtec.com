@@ -1,7 +1,7 @@
 <?php
 /**
  * [WeEngine System] Copyright (c) 2014 WE7.CC
- * WeEngine is NOT a free software, it under the license terms, visited http://www.zheyitianshi.com/ for more details.
+ * WeEngine is NOT a free software, it under the license terms, visited http://www.we7.cc/ for more details.
  */
 defined('IN_IA') or exit('Access Denied');
 load()->model('app');
@@ -17,6 +17,7 @@ $share_tmp = pdo_fetch('SELECT title,description,thumb FROM ' . tablename('cover
 $_share['imgUrl'] = tomedia($share_tmp['thumb']);
 $_share['desc'] = $share_tmp['description'];
 $_share['title'] = $share_tmp['title'];
+$category_list = pdo_getall('site_category', array('uniacid' => $_W['uniacid'], 'multiid' => $multiid), array(), 'id');
 if (!empty($multiid)) {
 	isetcookie('__multiid', $multiid);
 }

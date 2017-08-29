@@ -19,15 +19,19 @@ class Index_EweiShopV2Page extends CashierWebPage
 			{
 				show_json(-101, '请输入有效收款金额');
 			}
+			if (!(empty($data['mobile']))) 
+			{
+				$userinfo = m('member')->getMobileMember($data['mobile']);
+			}
 			$data['paytype'] = $this->model->paytype((int) $data['paytype'], $data['auth_code']);
-			$params = array('auth_code' => $data['auth_code'], 'paytype' => $data['paytype'], 'money' => $data['money'], 'deduction' => $data['deduction'], 'mobile' => $data['mobile'], 'operatorid' => (isset($_W['cashieruser']['operator']) ? $_W['cashieruser']['operator']['id'] : 0));
+			$params = array('auth_code' => $data['auth_code'], 'paytype' => $data['paytype'], 'openid' => (isset($userinfo['openid']) ? $userinfo['openid'] : ''), 'money' => $data['money'], 'deduction' => $data['deduction'], 'mobile' => $data['mobile'], 'operatorid' => (isset($_W['cashieruser']['operator']) ? $_W['cashieruser']['operator']['id'] : 0));
 			$res = $this->model->goodsCalculate($selfgoods, $goods, $params);
 			if (is_error($res['res'])) 
 			{
 				if ($res['res']['errno'] == -2) 
 				{
 					$message = explode(':', $res['res']['message']);
-					if ($message[0] != 'USERPAYING') 
+					if (($message[0] != 'USERPAYING') && ($message[0] != 'need_query')) 
 					{
 						show_json(-101, $res['res']);
 					}
@@ -115,7 +119,8 @@ class Index_EweiShopV2Page extends CashierWebPage
 							{
 								$stock += $val['stock'];
 							}
-							$op = array_shift(array_values($options));
+							$options_val = array_values($options);
+							$op = array_shift($options_val);
 							$price = $op['marketprice'];
 						}
 					}
@@ -143,6 +148,111 @@ class Index_EweiShopV2Page extends CashierWebPage
 		$params = array_merge(array(':cashierid' => $_W['cashierid']), $params);
 		$selfgoods = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_cashier_goods') . ' WHERE cashierid=:cashierid ' . $where . ' AND status=1 AND total<>0', $params);
 		return $selfgoods;
+	}
+	public function query() 
+	{
+		global $_W;
+		global $_GPC;
+		$kwd = trim($_GPC['keyword']);
+		$params = array();
+		$params[':uniacid'] = $_W['uniacid'];
+		$condition = ' and uniacid=:uniacid';
+		if (!(empty($kwd))) 
+		{
+			$condition .= ' AND (`realname` LIKE :keyword or `nickname` LIKE :keyword or `mobile` LIKE :keyword)';
+			$params[':keyword'] = '%' . $kwd . '%';
+		}
+		$ds = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_member') . ' WHERE 1 ' . $condition . ' order by id asc', $params);
+		if ($_GPC['suggest']) 
+		{
+			exit(json_encode(array('value' => $ds)));
+		}
+		include $this->template();
+	}
+	public function orderquery() 
+	{
+		global $_W;
+		global $_GPC;
+		$orderid = $_GPC['orderid'];
+		if (!(empty($orderid))) 
+		{
+			$res = $this->model->orderQuery($orderid);
+			if (!(empty($res))) 
+			{
+				show_json(1, array('list' => $res));
+			}
+		}
+		show_json(0, '支付结果等待中!');
+	}
+	public function query_member() 
+	{
+		global $_W;
+		global $_GPC;
+		$mobile = intval($_GPC['mobile']);
+		if (!($mobile)) 
+		{
+			show_json(0);
+		}
+		$info = m('member')->getMobileMember($mobile);
+		if (!(empty($info['salt'])) && !(empty($info['pwd']))) 
+		{
+			show_json(1);
+		}
+		else 
+		{
+			show_json(2);
+		}
+		show_json(0);
+	}
+	public function verify_password() 
+	{
+		global $_W;
+		global $_GPC;
+		if ($_W['ispost']) 
+		{
+			$password = trim($_GPC['password']);
+			$mobile = intval($_GPC['mobile']);
+			$info = m('member')->getMobileMember($mobile);
+			if (md5($password . $info['salt']) == $info['pwd']) 
+			{
+				show_json(1, $info);
+			}
+		}
+		show_json(0);
+	}
+	public function set_password() 
+	{
+		global $_W;
+		global $_GPC;
+		if ($_W['ispost']) 
+		{
+			$password = trim($_GPC['password']);
+			$mobile = intval($_GPC['mobile']);
+			$info = m('member')->getMobileMember($mobile);
+			if (empty($info['salt']) && empty($info['pwd'])) 
+			{
+				$salt = random(8);
+				$pwd = md5($password . $salt);
+				pdo_update('ewei_shop_member', array('pwd' => $pwd, 'salt' => $salt), array('id' => $info['id']));
+				show_json(1, $info);
+			}
+		}
+		show_json(0);
+	}
+	public function goodsquery() 
+	{
+		global $_W;
+		global $_GPC;
+		$where = '';
+		$params = array('uniacid' => $_W['uniacid'], 'merchid' => $_W['cashieruser']['merchid']);
+		if (!(empty($_GPC['keyword']))) 
+		{
+			$where = ' AND (title LIKE :keyword OR subtitle LIKE :keyword OR shorttitle LIKE :keyword)';
+			$params[':keyword'] = '%' . $_GPC['keyword'] . '%';
+		}
+		$ds = pdo_fetchall('SELECT id,uniacid,title,subtitle,shorttitle,thumb,share_icon FROM ' . tablename('ewei_shop_goods') . ' WHERE uniacid=:uniacid AND merchid=:merchid AND cashier=1 ' . $where, $params);
+		$ds = set_medias($ds, array('thumb', 'share_icon'));
+		include $this->template('index/goodsquery');
 	}
 }
 ?>

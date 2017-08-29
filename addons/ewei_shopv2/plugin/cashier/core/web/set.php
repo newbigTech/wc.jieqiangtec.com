@@ -27,6 +27,8 @@ class Set_EweiShopV2Page extends PluginWebPage
 			$form_list = p('diyform')->getDiyformList();
 		}
 		$data = m('common')->getPluginset('cashier');
+		$url = $_W['siteroot'] . 'web/cashier.php?i=' . $_W['uniacid'];
+		$qrcode = m('qrcode')->createQrcode($url);
 		include $this->template();
 	}
 }

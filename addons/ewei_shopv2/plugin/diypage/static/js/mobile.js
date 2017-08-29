@@ -4,7 +4,11 @@ define(['core', 'tpl'], function (core, tpl) {
         modal.initNotice();
         modal.initSwiper();
         modal.initLocation();
-        modal.initAudio()
+        modal.initAudio();
+
+        $("form").submit(function () {
+            $(this).find("input[name='keywords']").blur();
+        });
     };
     modal.initNotice = function () {
         if ($(".fui-notice").length > 0) {
@@ -31,9 +35,6 @@ define(['core', 'tpl'], function (core, tpl) {
         }
 
         if ($(".swiper").length > 0) {
-
-
-
             require(['swiper'], function (modal) {
                 $(".swiper").each(function () {
                     var obj = $(this);
@@ -44,6 +45,7 @@ define(['core', 'tpl'], function (core, tpl) {
                     var free = $(this).data('free');
                     var space = $(this).data('space');
                     var callback = $(this).data('callback');
+                    var slideTo = $(this).data('slideto');
                     var options = {
                         pagination: container + ' .swiper-pagination',
                         slidesPerView: view,
@@ -54,7 +56,6 @@ define(['core', 'tpl'], function (core, tpl) {
                         spaceBetween: space > 0 ? space : 0,
                         //preventClicks : false,
                         preventLinksPropagation : true,
-
                         onSlideChangeEnd: function (swiper) {
                             if (swiper.isEnd && callback) {
                                 if (callback == 'seckill') {
@@ -72,28 +73,28 @@ define(['core', 'tpl'], function (core, tpl) {
                     if (free) {
                         options.freeMode = true
                     }
-                    var swiper = new Swiper(container, options)
-                })
+                    var swiper = new Swiper(container, options);
+                    if(slideTo){
+                        swiper.slideTo(slideTo, 0, false);
+                    }
+                });
             })
         }
     };
     modal.initLocation = function () {
         if ($(".merchgroup[data-openlocation='1']").length > 0) {
-            var mapApi = 'http://api.map.baidu.com/getscript?v=2.0&ak=ZQiFErjQB7inrGpx27M1GR5w3TxZ64k7';
-            require([mapApi], function () {
-                var geoLocation = new BMap.Geolocation();
-                window.modal = modal;
-                geoLocation.getCurrentPosition(function (result) {
-                    if (this.getStatus() == BMAP_STATUS_SUCCESS) {
-                        modal.location.lat = result.point.lat;
-                        modal.location.lng = result.point.lng;
-                        modal.initMerch()
-                    } else {
-                        FoxUI.toast.show("位置获取失败!");
-                        return
-                    }
-                }, {enableHighAccuracy: true})
-            })
+            var geoLocation = new BMap.Geolocation();
+            window.modal = modal;
+            geoLocation.getCurrentPosition(function (result) {
+                if (this.getStatus() == BMAP_STATUS_SUCCESS) {
+                    modal.location.lat = result.point.lat;
+                    modal.location.lng = result.point.lng;
+                    modal.initMerch()
+                } else {
+                    FoxUI.toast.show("位置获取失败!");
+                    return
+                }
+            }, {enableHighAccuracy: true})
         }
     };
     modal.initMerch = function () {

@@ -37,6 +37,10 @@ if (!(empty($ordersn)))
 	{
 		$url = $_W['siteroot'] . '../../app/index.php?i=' . $uniacid . '&c=entry&m=ewei_shopv2&do=mobile&r=cashier.pay.success&cashierid=' . $cashierid . '&orderid=' . $ordersn;
 	}
+	else if ($paytype == 6) 
+	{
+		$url = $_W['siteroot'] . '../../app/index.php?i=' . $uniacid . '&c=entry&m=ewei_shopv2&do=mobile&r=threen.register.threen_complete&alidata=' . $get . '&logno=' . $ordersn;
+	}
 }
 header('location: ' . $url);
 exit();

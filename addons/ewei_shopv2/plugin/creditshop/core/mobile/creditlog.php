@@ -13,6 +13,16 @@ class Creditlog_EweiShopV2Page extends PluginMobileLoginPage
 		$uniacid = $_W['uniacid'];
 		$credit = intval(m('member')->getCredit($openid, 'credit1'));
 		$member = m('member')->getMember($openid);
+		$merch_plugin = p('merch');
+		$merch_data = m('common')->getPluginset('merch');
+		if ($merch_plugin && $merch_data['is_openmerch']) 
+		{
+			$is_openmerch = 1;
+		}
+		else 
+		{
+			$is_openmerch = 0;
+		}
 		$_W['shopshare'] = array('title' => $this->set['share_title'], 'imgUrl' => tomedia($this->set['share_icon']), 'link' => mobileUrl('creditshop', array(), true), 'desc' => $this->set['share_desc']);
 		$com = p('commission');
 		if ($com) 
@@ -43,9 +53,14 @@ class Creditlog_EweiShopV2Page extends PluginMobileLoginPage
 		$openid = $_W['openid'];
 		$uniacid = $_W['uniacid'];
 		$credit = intval(m('member')->getCredit($openid, 'credit1'));
+		$merchid = intval($_GPC['merchid']);
 		$pindex = max(1, intval($_GPC['page']));
 		$psize = 10;
 		$condition = ' and log.openid=:openid and log.uniacid = :uniacid';
+		if (0 < $merchid) 
+		{
+			$condition .= ' and log.merchid = ' . $merchid . ' ';
+		}
 		$params = array(':uniacid' => $_W['uniacid'], ':openid' => $openid);
 		$sql = 'SELECT COUNT(*) FROM ' . tablename('ewei_shop_creditshop_log') . ' log where 1 ' . $condition;
 		$total = pdo_fetchcolumn($sql, $params);

@@ -99,6 +99,10 @@ class Apply_EweiShopV2Page extends PluginWebPage
 			$sql .= '  limit ' . (($pindex - 1) * $psize) . ',' . $psize;
 		}
 		$list = pdo_fetchall($sql, $params);
+		if ($status == 3) 
+		{
+			$realmoney_total = (double) pdo_fetchcolumn('select sum(a.realmoney) from ' . tablename('ewei_shop_commission_apply') . ' a ' . ' left join ' . tablename('ewei_shop_member') . ' m on m.id = a.mid' . ' left join ' . tablename('ewei_shop_commission_level') . ' l on l.id = m.agentlevel' . ' where 1 ' . $condition, $params);
+		}
 		foreach ($list as &$row ) 
 		{
 			$row['agentlevel'] = intval($row['agentlevel']);
@@ -414,7 +418,7 @@ class Apply_EweiShopV2Page extends PluginWebPage
 			$columns[] = array('title' => '审核时间', 'field' => 'checktime', 'width' => 24);
 			$columns[] = array('title' => '打款时间', 'field' => 'paytime', 'width' => 24);
 			$columns[] = array('title' => '设置无效时间', 'field' => 'invalidtime', 'width' => 24);
-			m('excel')->export($exportlist, array('title' => $title . '佣金申请数据-' . date('Y-m-d-H-i', time()), 'columns' => $columns));
+			m('excel')->export($exportlist, array('title' => $applytitle . '佣金申请数据-' . date('Y-m-d-H-i', time()), 'columns' => $columns));
 		}
 		$total = pdo_fetchcolumn('select count(a.id) from' . tablename('ewei_shop_commission_apply') . ' a ' . ' left join ' . tablename('ewei_shop_member') . ' m on m.uid = a.mid' . ' left join ' . tablename('ewei_shop_commission_level') . ' l on l.id = m.agentlevel' . ' where 1 ' . $condition, $params);
 		$pager = pagination($total, $pindex, $psize);
@@ -802,7 +806,7 @@ class Apply_EweiShopV2Page extends PluginWebPage
 				$pay *= 100;
 			}
 			$data = m('common')->getSysset('pay');
-			if (!(empty($data['paytype']['commission']))) 
+			if (!(empty($data['paytype']['commission'])) && ($apply['type'] == 1)) 
 			{
 				$result = m('finance')->payRedPack($member['openid'], $pay, $apply['applyno'], $apply, $set['texts']['commission'] . '打款', $data['paytype']);
 				pdo_update('ewei_shop_commission_apply', array('sendmoney' => $result['sendmoney'], 'senddata' => json_encode($result['senddata'])), array('id' => $apply['id']));
@@ -831,7 +835,7 @@ class Apply_EweiShopV2Page extends PluginWebPage
 			if (!(empty($sec['alipay_pay']['open']))) 
 			{
 				$batch_no_money = $pay * 100;
-				$batch_no = 'D' . date('Y') . 'CP' . $apply['id'] . 'MONEY' . $batch_no_money;
+				$batch_no = 'D' . date('Ymd') . 'CP' . $apply['id'] . 'MONEY' . $batch_no_money;
 				$res = m('finance')->AliPay(array('account' => $apply['alipay'], 'name' => $apply['realname'], 'money' => $pay), $batch_no, $sec['alipay_pay'], $set['texts']['commission'] . '打款');
 				if (is_error($res)) 
 				{
@@ -979,7 +983,7 @@ class Apply_EweiShopV2Page extends PluginWebPage
 				$commissions['level3'] = ((isset($cm3[$og['id']]) ? round($cm3[$og['id']], 2) : $commissions['level2']));
 				pdo_update('ewei_shop_order_goods', array('commissions' => iserializer($commissions)), array('id' => $og['id']));
 			}
-			plog('commission.changecommission', '修改佣金 订单号: ' . $order['ordersn']);
+			plog('commission.apply.changecommission', '修改佣金 订单号: ' . $order['ordersn']);
 			show_json(1, array('url' => referer()));
 		}
 		$cm1 = m('member')->getMember($agentid);

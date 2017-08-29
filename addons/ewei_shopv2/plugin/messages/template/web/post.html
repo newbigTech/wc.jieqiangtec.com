@@ -24,22 +24,22 @@
 <div class="form-group">
     <label class="col-sm-2 control-label">发送消息类型</label>
     <div class="col-sm-9 col-xs-12" >
-        {ife 'sale.coupon' $item}
+        {ife 'messages.template' $item}
         <label class="radio-inline coupon-radio">
             <input type="radio" name="messagetype" value="0" {if $item['messagetype'] == 0}checked="true"{/if} onclick="$('.customermessage').hide();$('.selecttemplate').show();" /> 发送模板消息
         </label>
         <label class="radio-inline coupon-radio">
-            <input type="radio" name="messagetype" value="1" {if $item['messagetype'] == 1}checked="true"{/if}  onclick="$('.selecttemplate').hide();$('.customermessage').show();"/> 发送客户消息
+            <input type="radio" name="messagetype" value="1" {if $item['messagetype'] == 1}checked="true"{/if}  onclick="$('.selecttemplate').hide();$('.customermessage').show();"/> 发送客服消息
         </label>
         <label class="radio-inline coupon-radio">
             <input type="radio" name="messagetype" value="2" {if $item['messagetype'] == 2}checked="true"{/if}  onclick="$('.selecttemplate').show();$('.customermessage').show();"/> 发送混合消息
         </label>
-        <span class='help-block'>混合消息发送方式为先发送客户消息,如果发送失败再次发送模板消息</span>
+        <span class='help-block'>混合消息发送方式为先发送客服消息,如果发送失败再次发送模板消息</span>
 
         {else}
             <div class='form-control-static'>
                 {if $item['messagetype']==0}
-                    发送客户消息
+                    发送客服消息
                 {else if $item['messagetype']==1}
                     发送模板消息
                 {else if $item['messagetype']==2}
@@ -49,6 +49,7 @@
         {/if}
     </div>
 </div>
+<!--
 
 <div class="form-group">
     <label class="col-sm-2 control-label">发送进程数</label>
@@ -60,6 +61,7 @@
         </select>
     </div>
 </div>
+-->
 
 <div class="form-group selecttemplate"  {if $item['messagetype']==1 }style="display:none"{/if}>
     <label class="col-sm-2 control-label must">选择模板</label>
@@ -77,16 +79,16 @@
 
 <div class="form-group customermessage"  {if empty($item['messagetype'])}style="display:none"{/if}>
 
-    <label class="col-sm-2 control-label"> 客户消息类型</label>
+    <label class="col-sm-2 control-label"> 客服消息类型</label>
     <div class="col-sm-9 col-xs-12" >
-        {ife 'sale.coupon' $item}
+        {ife 'messages.template' $item}
             <label class="radio-inline coupon-radio">
                 <input type="radio" name="customertype" value="0" {if $item['customertype'] == 0}checked="true"{/if} onclick="$('.custm').hide();$('.news').show();" /> 发送图文消息
             </label>
             <label class="radio-inline coupon-radio">
                 <input type="radio" name="customertype" value="1" {if $item['customertype'] == 1}checked="true"{/if}  onclick="$('.news').hide();$('.custm').show();"/> 发送文字消息
             </label>
-            <span class='help-block'>混合消息发送方式为先发送客户消息,如果发送失败再次发送模板消息</span>
+            <span class='help-block'>混合消息发送方式为先发送客服消息,如果发送失败再次发送模板消息</span>
         {else}
             <div class='form-control-static'>
                 {if $item['customertype']==0}

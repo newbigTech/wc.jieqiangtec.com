@@ -14,7 +14,7 @@
         {/if}
     </div>
 </div>
-<div class="form-group">
+<div class="form-group minbuy" {if $item['type']==4}  style="display: none"{/if}>
     <label class="col-sm-2 control-label">单次最低购买</label>
     <div class="col-sm-6 col-xs-12">
                {ife 'goods' $item}

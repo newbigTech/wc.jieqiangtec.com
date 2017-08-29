@@ -190,7 +190,7 @@ class Order_EweiShopV2Page extends PluginWebPage
 		if (!(empty($order['address']))) 
 		{
 			$user = unserialize($order['address']);
-			$user['address'] = $user['province'] . ' ' . $user['city'] . ' ' . $user['area'] . ' ' . $user['address'];
+			$user['address'] = $user['province'] . ',' . $user['city'] . ',' . $user['area'] . ',' . $user['street'] . ',' . $user['address'];
 			$item['addressdata'] = array('realname' => $user['realname'], 'mobile' => $user['mobile'], 'address' => $user['address']);
 		}
 		else 
@@ -200,7 +200,7 @@ class Order_EweiShopV2Page extends PluginWebPage
 			{
 				$user = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_member_address') . ' WHERE id = :id and uniacid=:uniacid', array(':id' => $order['addressid'], ':uniacid' => $_W['uniacid']));
 			}
-			$user['address'] = $user['province'] . ' ' . $user['city'] . ' ' . $user['area'] . ' ' . $user['address'];
+			$user['address'] = $user['province'] . ',' . $user['city'] . ',' . $user['area'] . ',' . $user['street'] . ',' . $user['address'];
 			$item['addressdata'] = array('realname' => $user['realname'], 'mobile' => $user['mobile'], 'address' => $user['address']);
 		}
 		include $this->template();
@@ -255,6 +255,9 @@ class Order_EweiShopV2Page extends PluginWebPage
 		global $_GPC;
 		$opdata = $this->opData();
 		extract($opdata);
+		$area_set = m('util')->get_area_config_set();
+		$new_area = intval($area_set['new_area']);
+		$address_street = intval($area_set['address_street']);
 		if (empty($item['addressid'])) 
 		{
 			$user = unserialize($item['carrier']);
@@ -267,7 +270,8 @@ class Order_EweiShopV2Page extends PluginWebPage
 				$user = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_member_address') . ' WHERE id = :id and uniacid=:uniacid', array(':id' => $item['addressid'], ':uniacid' => $_W['uniacid']));
 			}
 			$address_info = $user['address'];
-			$user['address'] = $user['province'] . ' ' . $user['city'] . ' ' . $user['area'] . ' ' . $user['address'];
+			$user_address = $user['address'];
+			$user['address'] = $user['province'] . ' ' . $user['city'] . ' ' . $user['area'] . ' ' . $user['street'] . ' ' . $user['address'];
 			$item['addressdata'] = $oldaddress = array('realname' => $user['realname'], 'mobile' => $user['mobile'], 'address' => $user['address']);
 		}
 		if ($_W['ispost']) 
@@ -277,6 +281,8 @@ class Order_EweiShopV2Page extends PluginWebPage
 			$province = $_GPC['province'];
 			$city = $_GPC['city'];
 			$area = $_GPC['area'];
+			$street = $_GPC['street'];
+			$changead = intval($_GPC['changead']);
 			$address = trim($_GPC['address']);
 			if (!(empty($id))) 
 			{
@@ -304,10 +310,22 @@ class Order_EweiShopV2Page extends PluginWebPage
 				$address_array = iunserializer($item['address']);
 				$address_array['realname'] = $realname;
 				$address_array['mobile'] = $mobile;
-				$address_array['province'] = $province;
-				$address_array['city'] = $city;
-				$address_array['area'] = $area;
-				$address_array['address'] = $address;
+				if ($changead) 
+				{
+					$address_array['province'] = $province;
+					$address_array['city'] = $city;
+					$address_array['area'] = $area;
+					$address_array['street'] = $street;
+					$address_array['address'] = $address;
+				}
+				else 
+				{
+					$address_array['province'] = $user['province'];
+					$address_array['city'] = $user['city'];
+					$address_array['area'] = $user['area'];
+					$address_array['street'] = $user['street'];
+					$address_array['address'] = $user_address;
+				}
 				$address_array = iserializer($address_array);
 				pdo_update('ewei_shop_groups_order', array('address' => $address_array), array('id' => $id, 'uniacid' => $_W['uniacid']));
 				plog('groups.order.changeaddress', '修改收货地址 ID: ' . $item['id'] . ' 订单号: ' . $item['orderno'] . ' <br>原地址: 收件人: ' . $oldaddress['realname'] . ' 手机号: ' . $oldaddress['mobile'] . ' 收件地址: ' . $oldaddress['address'] . '<br>新地址: 收件人: ' . $realname . ' 手机号: ' . $mobile . ' 收件地址: ' . $province . ' ' . $city . ' ' . $area . ' ' . $address);

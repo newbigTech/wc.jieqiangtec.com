@@ -422,7 +422,7 @@ class PHPMailer
      * @type SMTP
      * @access protected
      */
-    protected $smtp = null;
+    public $smtp = null;
 
     /**
      * The array of 'to' addresses.
@@ -1175,14 +1175,15 @@ class PHPMailer
     protected function smtpSend($header, $body)
     {
         $bad_rcpt = array();
-
-        if (!$this->smtpConnect()) {
-            throw new phpmailerException($this->lang('smtp_connect_failed'), self::STOP_CRITICAL);
+	    $result = $this->smtpConnect();
+        if (is_error($result)) {
+            throw new phpmailerException($result['message'], self::STOP_CRITICAL);
         }
+
         $smtp_from = ($this->Sender == '') ? $this->From : $this->Sender;
         if (!$this->smtp->mail($smtp_from)) {
             $this->setError($this->lang('from_failed') . $smtp_from . ' : ' . implode(',', $this->smtp->getError()));
-            throw new phpmailerException($this->ErrorInfo, self::STOP_CRITICAL);
+	        throw new phpmailerException($this->ErrorInfo, self::STOP_CRITICAL);
         }
 
         // Attempt to send to all recipients
@@ -1319,6 +1320,7 @@ class PHPMailer
                     $lastexception = $e;
                     //We must have connected, but then failed TLS or Auth, so close connection nicely
                     $this->smtp->quit();
+	                $this->ErrorInfo = $e->errorMessage();
                 }
             }
         }
@@ -1328,7 +1330,7 @@ class PHPMailer
         if ($this->exceptions and !is_null($lastexception)) {
             throw $lastexception;
         }
-        return false;
+        return error(1, $this->ErrorInfo);
     }
 
     /**

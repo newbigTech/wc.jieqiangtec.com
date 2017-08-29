@@ -2,7 +2,7 @@
 <div class="page-heading"> <h2>基础设置</h2> </div>
 
 
-<form id="setform"  {ifp 'sale.credit1.edit'}action="" method="post"{/if} class="form-horizontal form-validate">
+<form id="setform"  {ifp 'sale.credit1'}action="" method="post"{/if} class="form-horizontal form-validate">
     <input type="hidden" id="tab" name="tab" value="#tab_basic" />
     <div class="tabs-container">
 		<ul class="nav nav-tabs" id="myTab">
@@ -16,7 +16,7 @@
 			<div class="tab-pane   {if $_GPC['tab']=='money'}active{/if}" id="tab_money">{template 'sale/credit1/money'}</div>
 		</div>
 	</div>
-{ifp 'sale.credit1.edit'}
+{ifp 'sale.credit1'}
     <div class="form-group">
 		<label class="col-sm-2 control-label"></label>
 		<div class="col-sm-9 col-xs-12">

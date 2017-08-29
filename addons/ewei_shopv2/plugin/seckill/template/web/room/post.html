@@ -106,7 +106,7 @@
                 </select>
                 <button type="button" class="btn btn-warning" id="btn-add-time" style="margin-top:-5px;">添加时间段</button>
             </div>
-        时间段
+        时间段及商品 <small class="text text-danger" >选择时间段后设置商品</small>
     </div>
     <div class="panel-body">
         <div id="times" class="panel panel-default" {if empty($roomtimes)}style="display: none"{/if}>
@@ -127,7 +127,8 @@
                     <div class="form-group" style="border-bottom:1px solid #f2f2f2; {if !in_array($time['time'], $roomtimes)}display: none{/if}" id="time-{$time['time']}">
                         <label class="col-sm-1 control-label">{$time['time']}点</label>
                         <div class="col-sm-9">
-                            <?php echo tpl_selector_new('goodsid_'.$time['time'],array('preview'=>true,
+                            <?php echo tpl_selector_new('goodsid_'.$time['time'],array(
+                            'preview'=>true,
                             'readonly'=>true,
                             'selectorid'=>'time-'.$time['time'],
                             'multi'=>1,

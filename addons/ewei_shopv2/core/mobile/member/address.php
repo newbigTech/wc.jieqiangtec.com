@@ -1,5 +1,5 @@
 <?php
-if (!defined('IN_IA')) 
+if (!(defined('IN_IA'))) 
 {
 	exit('Access Denied');
 }
@@ -10,6 +10,9 @@ class Address_EweiShopV2Page extends MobileLoginPage
 		global $_W;
 		global $_GPC;
 		global $_S;
+		$area_set = m('util')->get_area_config_set();
+		$new_area = intval($area_set['new_area']);
+		$address_street = intval($area_set['address_street']);
 		$pindex = max(1, intval($_GPC['page']));
 		$psize = 20;
 		$condition = ' and openid=:openid and deleted=0 and  `uniacid` = :uniacid  ';
@@ -26,6 +29,14 @@ class Address_EweiShopV2Page extends MobileLoginPage
 		global $_GPC;
 		$id = intval($_GPC['id']);
 		$address = pdo_fetch('select * from ' . tablename('ewei_shop_member_address') . ' where id=:id and openid=:openid and uniacid=:uniacid limit 1 ', array(':id' => $id, ':uniacid' => $_W['uniacid'], ':openid' => $_W['openid']));
+		$area_set = m('util')->get_area_config_set();
+		$new_area = intval($area_set['new_area']);
+		$address_street = intval($area_set['address_street']);
+		$show_data = 1;
+		if ((!(empty($new_area)) && empty($address['datavalue'])) || (empty($new_area) && !(empty($address['datavalue'])))) 
+		{
+			$show_data = 0;
+		}
 		include $this->template();
 	}
 	public function setdefault() 
@@ -53,6 +64,9 @@ class Address_EweiShopV2Page extends MobileLoginPage
 		$data['province'] = $areas[0];
 		$data['city'] = $areas[1];
 		$data['area'] = $areas[2];
+		$data['street'] = trim($data['street']);
+		$data['datavalue'] = trim($data['datavalue']);
+		$data['streetdatavalue'] = trim($data['streetdatavalue']);
 		unset($data['areas']);
 		$data['openid'] = $_W['openid'];
 		$data['uniacid'] = $_W['uniacid'];
@@ -87,7 +101,7 @@ class Address_EweiShopV2Page extends MobileLoginPage
 		{
 			pdo_update('ewei_shop_member_address', array('isdefault' => 0), array('uniacid' => $_W['uniacid'], 'openid' => $_W['openid'], 'id' => $id));
 			$data2 = pdo_fetch('select id from ' . tablename('ewei_shop_member_address') . ' where openid=:openid and deleted=0 and uniacid=:uniacid order by id desc limit 1', array(':uniacid' => $_W['uniacid'], ':openid' => $_W['openid']));
-			if (!empty($data2)) 
+			if (!(empty($data2))) 
 			{
 				pdo_update('ewei_shop_member_address', array('isdefault' => 1), array('uniacid' => $_W['uniacid'], 'openid' => $_W['openid'], 'id' => $data2['id']));
 				show_json(1, array('defaultid' => $data2['id']));
@@ -99,6 +113,9 @@ class Address_EweiShopV2Page extends MobileLoginPage
 	{
 		global $_W;
 		global $_GPC;
+		$area_set = m('util')->get_area_config_set();
+		$new_area = intval($area_set['new_area']);
+		$address_street = intval($area_set['address_street']);
 		$condition = ' and openid=:openid and deleted=0 and  `uniacid` = :uniacid  ';
 		$params = array(':uniacid' => $_W['uniacid'], ':openid' => $_W['openid']);
 		$sql = 'SELECT * FROM ' . tablename('ewei_shop_member_address') . ' where 1 ' . $condition . ' ORDER BY isdefault desc, id DESC ';

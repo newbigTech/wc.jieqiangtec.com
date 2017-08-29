@@ -21,7 +21,7 @@
         {/if}
     </div>
 
-    <div class='fui-cell-info'>
+    <div class='fui-cell-info' {if $v1['data_type'] == 13}style="white-space:normal;"{/if}>
 
         {if $v1['data_type'] == 0}
 
@@ -64,30 +64,39 @@
         <input type="file"name='imgFile{php echo $i}' id='imgFile{php echo $i}' {if !is_h5app() || (is_h5app() && is_ios())}multiple="" accept="image/*" {/if} >
     </div>
 
-
-
-
     {else if $v1['data_type'] == 6}
     <input type="text" class='fui-input' id='field_data{php echo $i}' name='field_data{php echo $i}' placeholder="请输入{$v1['tp_name']}" maxlength="18" value="{php echo $f_data[$k1]}" />
 
     {else if $v1['data_type'] == 7}
-    <input type="text" class='fui-input datepicker' id="field_data{php echo $i}" name='field_data{php echo $i}' placeholder="请输入{$v1['tp_name']}"  readonly value='{if !empty($f_data[$k1])}{php echo $f_data[$k1]}{/if}'/>
+    <input type="text" class='fui-input datepicker' id="field_data{php echo $i}" name='field_data{php echo $i}' placeholder="请输入{$v1['tp_name']}" value='{if !empty($f_data[$k1])}{php echo $f_data[$k1]}{/if}' readonly/>
 
     {else if $v1['data_type'] == 8}
 
-    <input type="text" class='fui-input datepicker'  id="field_data{php echo $i}_0" name='field_data{php echo $i}' placeholder="开始日期" readonly value='{if !empty($f_data[$k1][0])}{php echo $f_data[$k1][0]}{/if}' style='width:40%;float:left;' readonly/>
+    <input type="text" class='fui-input datepicker'  id="field_data{php echo $i}_0" name='field_data{php echo $i}' placeholder="开始日期" value='{if !empty($f_data[$k1][0])}{php echo $f_data[$k1][0]}{/if}' style='width:40%;float:left;' readonly/>
 
-    <input type="text" class='fui-input datepicker'  id="field_data{php echo $i}_1" name='field_data{php echo $i}' placeholder="结束日期" readonly value='{if !empty($f_data[$k1][1])}{php echo $f_data[$k1][1]}{/if}' style='width:40%;float:left;margin-left:5px;' readonly/>
+    <input type="text" class='fui-input datepicker'  id="field_data{php echo $i}_1" name='field_data{php echo $i}' placeholder="结束日期" value='{if !empty($f_data[$k1][1])}{php echo $f_data[$k1][1]}{/if}' style='width:40%;float:left;margin-left:5px;' readonly/>
 
     {else if $v1['data_type'] == 9}
-    <input type="text" class='fui-input citypicker' id="field_data{php echo $i}" name='field_data{php echo $i}' placeholder="请选择{$v1['tp_name']}"  readonly value="{php echo !empty($f_data[$k1]['province']) && !empty($f_data[$k1]['city']) ?($f_data[$k1]['province'].' '.$f_data[$k1]['city']):''}"/>
+    <input type="text" class='fui-input citypicker' id="field_data{php echo $i}" name='field_data{php echo $i}' placeholder="请选择{$v1['tp_name']}"
+           value="{if !empty($f_data[$k1]['province'])}{$f_data[$k1]['province']}{/if}{if !empty($f_data[$k1]['city'])}{$f_data[$k1]['city']}{/if}{if !empty($f_data[$k1]['area'])}{$f_data[$k1]['area']}{/if}"
+           data-value="{if !empty($f_data[$k1]['value'])}{$f_data[$k1]['value']}{/if}"
+           data-area="{php echo intval($v1['tp_area'])}" readonly/>
 
     {else if $v1['data_type'] == 10}
     <input type="text" class='fui-input' id='field_data{php echo $i}' name='field_data{php echo $i}' placeholder="请输入{$v1['tp_name']}"  value="{php echo $f_data[$k1]['name1']}" />
     <br/>
     <input type="text" class='fui-input' id='field_data{php echo $i}_2' name='field_data{php echo $i}_2' placeholder="请输入{$v1['tp_name2']}"  value="{php echo $f_data[$k1]['name2']}" />
-    {/if}
 
+    {else if $v1['data_type'] == 11}
+    <input type="text" class='fui-input timepicker' id="field_data{php echo $i}" name='field_data{php echo $i}' placeholder="请选择{$v1['tp_name']}"  readonly value='{if !empty($f_data[$k1])}{php echo $f_data[$k1]}{/if}'/>
+
+    {else if $v1['data_type'] == 12}
+    <input type="text" class='fui-input timepicker'  id="field_data{php echo $i}_0" name='field_data{php echo $i}' placeholder="开始时间" value='{if !empty($f_data[$k1][0])}{php echo $f_data[$k1][0]}{/if}' style='width:40%;float:left;' readonly/>
+
+    <input type="text" class='fui-input timepicker'  id="field_data{php echo $i}_1" name='field_data{php echo $i}' placeholder="结束时间" value='{if !empty($f_data[$k1][1])}{php echo $f_data[$k1][1]}{/if}' style='width:40%;float:left;margin-left:5px;' readonly/>
+    {else if $v1['data_type'] == 13}
+        {$v1['tp_text']}
+    {/if}
 
 </div>
 </div>
@@ -96,51 +105,51 @@
 {php $i++;}
 {/loop}
 <script language='javascript'>
-    require(['foxui','foxui.picker'],function(){
-        $('.diyform-container .datepicker').datePicker({
-            onShow:function(){
-                {if $inPicker}
-                    $('.option-picker').css('z-index',999);
-                    $('.fui-mask').unbind('click').click(function(){
-                        $('.diyform-container .datepicker').datePicker('close');
-                    });
-                    {/if}
-                    }
-                ,onClose:function(){
-                    {if $inPicker}
-                        $('.option-picker').css('z-index',1001);
-                        $('.fui-mask').unbind('click').click(function(){
-                            FoxUI.mask.hide();
-                            $('.option-picker').removeClass('in');
-                        });
-                        {/if}
-                        }
-                    });
-                    $('.diyform-container .citypicker').cityPicker({
-                        showArea:false,
-                        onShow:function(){
+    var new_area = {php echo intval($new_area)};
+    var address_street = {php echo intval($address_street)};
+    var showArea = false;
 
-                            {if $inPicker}
-                                $('.option-picker').css('z-index',999);
-                                $('.fui-mask').unbind('click').click(function(){
-                                    $('.diyform-container .datepicker').cityPicker('close');
-                                });
-                                {/if}
-                                }
-                            ,onClose:function(){
-                                {if $inPicker}
-                                    $('.option-picker').css('z-index',1001);
-                                    $('.fui-mask').unbind('click').click(function(){
-                                        FoxUI.mask.hide();
-                                        $('.option-picker').removeClass('in');
-                                    });
-                                    {/if}
-                                    }
-                                });
-                                $('.diyform-container .diyform-container-uploader').uploader({
-                                    uploadUrl: "{php echo mobileUrl('util/uploader')}",
-                                    removeUrl:"{php echo mobileUrl('util/uploader/remove')}"
-                                });
-                            })
+    var reqParams = ['foxui','foxui.picker'];
+    if(new_area){
+        reqParams = ['foxui','foxui.picker','foxui.citydatanew'];
+    }
+
+    if ($('.citypicker').attr('data-area') == 1) {
+        showArea = true;
+    }
+
+    require(reqParams,function(){
+        $('.diyform-container .datepicker').datePicker();
+        $('.diyform-container .timepicker').timePicker();
+
+
+        $('.diyform-container .citypicker').cityPicker({
+            new_area: new_area,
+            address_street: address_street,
+            showArea:showArea,
+            onShow:function(){
+
+                {if $inPicker}
+                $('.option-picker').css('z-index',999);
+                $('.fui-mask').unbind('click').click(function(){
+                    $('.diyform-container .datepicker').cityPicker('close');
+                });
+                {/if}
+            }
+            ,onClose:function(){
+                {if $inPicker}
+                $('.option-picker').css('z-index',1001);
+                $('.fui-mask').unbind('click').click(function(){
+                    FoxUI.mask.hide();
+                    $('.option-picker').removeClass('in');
+                });
+                {/if}
+            }
+        });
+        $('.diyform-container .diyform-container-uploader').uploader({
+            uploadUrl: "{php echo mobileUrl('util/uploader')}",
+            removeUrl:"{php echo mobileUrl('util/uploader/remove')}"
+        });
+    })
 </script>
 </div>

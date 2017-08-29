@@ -141,7 +141,7 @@ define(['jquery', 'jquery.gcjs', 'foxui', 'tpl'], function ($, gc, FoxUI, tpl) {
 	//商品组
 	if ($('.fui-goods-group').length) {
 		var resizeImages = function () {
-			$('.fui-goods-group img').not(".goodsicon img").each(function () {
+			$('.fui-goods-group img').not(".exclude").each(function () {
 				$(this).height($(this).width());
 			})
 		};

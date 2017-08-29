@@ -109,6 +109,30 @@
 
         </div>
     </div>
+    <div class="form-group task-mode">
+        <label class="col-sm-2 control-label">商品自动全返</label>
+        <div class="col-sm-9 col-xs-12">
+
+            <div class="input-group">
+                <input type="text" name="fullback_receive_time" id="fullback_receive_time" class="form-control" value="{$fullback_receive_time}" />
+                <div class="input-group-addon">分钟</div>
+            </div>
+            <span class='help-block'>商品自动全返执行间隔时间，如果为空默认为 60分钟 执行一次商品全返</span>
+
+        </div>
+    </div>
+    <div class="form-group task-mode">
+        <label class="col-sm-2 control-label">商品自动上下架</label>
+        <div class="col-sm-9 col-xs-12">
+
+            <div class="input-group">
+                <input type="text" name="status_receive_time" id="status_receive_time" class="form-control" value="{$status_receive_time}" />
+                <div class="input-group-addon">分钟</div>
+            </div>
+            <span class='help-block'>商品自动上下架执行间隔时间，如果为空默认为 60分钟 执行一次商品上下架</span>
+
+        </div>
+    </div>
  
 
     <div class="form-group">

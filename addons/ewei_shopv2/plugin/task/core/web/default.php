@@ -53,7 +53,7 @@ class Default_EweiShopV2Page extends PluginWebPage
 			$default = serialize($default);
 			$update_data = array('data' => $default);
 			$result = pdo_update('ewei_shop_task_default', $update_data, array('uniacid' => $_W['uniacid']));
-			if (!(empty($result))) 
+			if ($result !== false) 
 			{
 				show_json(1, array('url' => webUrl('task/default')));
 			}
@@ -225,11 +225,9 @@ class Default_EweiShopV2Page extends PluginWebPage
 				pdo_insert('ewei_shop_task_default', $insert_data);
 			}
 		}
-		$set = '';
-		if (0 < $defaultcount) 
-		{
-			$set = unserialize($default);
-		}
+		$set = unserialize($default);
+		$url = mobileUrl('task', NULL, true);
+		$qrcode = m('qrcode')->createQrcode($url);
 		include $this->template();
 	}
 }

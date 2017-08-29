@@ -14,11 +14,36 @@
     </div>
     {/if}
 
-    {if empty($seckillinfo)}
+    {if $goods['type']==4}
+        <!--批发价格-->
+        <div class="fui-cell goods-bulk">
+            <div class="fui-cell-text  flex">
+                {if $goods['intervalfloor']>0}
+                <span>
+                        <p class="price" style="color: {$diyitem['style']['pricecolor']};"><small>￥</small>{$goods['intervalprice1']}</p>
+                        <p>{$goods['intervalnum1']} {if $goods['intervalfloor']>1}-{php echo intval($goods['intervalnum2'])-1}件{else}件以上{/if}</p>
+                    </span>
+                {/if}
+                {if $goods['intervalfloor']>1}
+                <span>
+                        <p class="price" style="color: {$diyitem['style']['pricecolor']};"><small>￥</small>{$goods['intervalprice2']}</p>
+                        <p>{$goods['intervalnum2']}{if $goods['intervalfloor']>2}-{php echo intval($goods['intervalnum3'])-1}件{else}件以上{/if}</p>
+                    </span>
+                {/if}
+                {if $goods['intervalfloor']>2}
+                <span>
+                        <p class="price" style="color: {$diyitem['style']['pricecolor']};"><small>￥</small>{$goods['intervalprice3']}</p>
+                        <p>>{$goods['intervalnum3']}件</p>
+                    </span>
+                {/if}
+            </div>
+        </div>
+    {/if}
 
+    {if empty($seckillinfo) && $goods['type']!=4}
     <div class="fui-cell">
         <div class="fui-cell-text price">
-			<span class="text-danger">
+			<span class="text-danger" style="color: {$diyitem['style']['pricecolor']};">
 			￥{if $goods['ispresell']>0 && ($goods['preselltimeend'] == 0 || $goods['preselltimeend'] > time())}{$goods['presellprice']}
                 {else}
                     {if $goods['minprice']==$goods['maxprice']}{$goods['minprice']}{else}{$goods['minprice']}~{$goods['maxprice']}{/if}
@@ -92,21 +117,27 @@
 <div class="fui-cell">
     <div class="fui-cell-text flex">
         {if is_array($goods['dispatchprice'])}
-        {if $goods['type']==1}
-        <span style="color: {$diyitem['style']['textcolor']};">快递:  {php echo number_format($goods['dispatchprice']['min'],2)} ~ {php echo number_format($goods['dispatchprice']['max'],2)}</span>
-        {/if}
+            {if $goods['type']==1 && $goods['isverify']!=2}
+                <span style="color: {$diyitem['style']['textcolor']};">快递:  {php echo number_format($goods['dispatchprice']['min'],2)} ~ {php echo number_format($goods['dispatchprice']['max'],2)}</span>
+            {/if}
         {else}
-        {if $goods['type']==1}
-        <span style="color: {$diyitem['style']['textcolor']};">快递:  {php echo $goods['dispatchprice'] == 0 ? '包邮' : number_format($goods['dispatchprice'],2)}</span>
+            {if $goods['type']==1 && $goods['isverify']!=2}
+                <span style="color: {$diyitem['style']['textcolor']};">快递:  {php echo $goods['dispatchprice'] == 0 ? '包邮' : number_format($goods['dispatchprice'],2)}</span>
+            {/if}
         {/if}
+        {if $seckillinfo==false || ( $seckillinfo && $seckillinfo.status==1)}
+            {if $goods['showtotal'] == 1}
+            <span style="color: {$diyitem['style']['textcolor']};">库存:  {$goods['total']}</span>
+            {/if}
+            <span style="color: {$diyitem['style']['textcolor']};">销量:  {php echo number_format($goods['sales'],0)} {$goods['unit']}</span>
+        {else}
+            <span></span>
+            <span></span>
         {/if}
-        {if $goods['showtotal'] == 1}
-        <span style="color: {$diyitem['style']['textcolor']};">库存:  {$goods['total']}</span>
-        {/if}
-        <span style="color: {$diyitem['style']['textcolor']};">销量:  {php echo number_format($goods['sales'],0)} {$goods['unit']}</span>
         {if $goods['province'] != '请选择省份' && $goods['city'] != '请选择城市'}
-        <span style="color: {$diyitem['style']['textcolor']};">{$goods['province']} {$goods['city']}</span>
+            <span style="color: {$diyitem['style']['textcolor']};">{$goods['province']} {$goods['city']}</span>
         {/if}
     </div>
 </div>
+
 </div>

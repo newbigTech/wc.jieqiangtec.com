@@ -23,6 +23,26 @@ class Index_EweiShopV2Page extends PluginMobilePage
 		{
 			$_W['openid'] = m('account')->checkLogin();
 		}
+		$member = m('member')->getMember($_W['openid']);
+		if ($page['type'] == 4) 
+		{
+			$comset = $_W['shopset']['commission'];
+			if (empty($comset['level'])) 
+			{
+				$this->message('未开启分销', mobileUrl());
+			}
+			if (($member['isagent'] != 1) || ($member['status'] != 1)) 
+			{
+				$jumpurl = ((!(empty($comset['no_commission_url'])) ? trim($comset['no_commission_url']) : mobileUrl('commission/register')));
+				header('location:' . $jumpurl);
+				exit();
+			}
+		}
+		else if ($page['type'] == 5) 
+		{
+			header('location:' . mobileUrl('goods'));
+			exit();
+		}
 		if (!(empty($page['data']['page']['visit'])) && ($page['data']['page']['type'] == 1)) 
 		{
 			if (empty($_W['openid'])) 
@@ -32,12 +52,11 @@ class Index_EweiShopV2Page extends PluginMobilePage
 			}
 			$title = ((!(empty($page['data']['page']['novisit']['title'])) ? $page['data']['page']['novisit']['title'] : '您没有权限访问!'));
 			$link = ((!(empty($page['data']['page']['novisit']['link'])) ? $page['data']['page']['novisit']['link'] : mobileUrl()));
-			$member = m('member')->getMember($_W['openid']);
 			$visit_m = $page['data']['page']['visitlevel']['member'];
 			$visit_c = $page['data']['page']['visitlevel']['commission'];
 			$visit_c = ((isset($visit_c) ? explode(',', $visit_c) : array()));
 			$visit_m = ((isset($visit_m) ? explode(',', $visit_m) : array()));
-			if (!(in_array((empty($member['level']) ? 'default' : $member['level']), $visit_m)) && (!(in_array($member['agentlevel'], $visit_c)) || empty($member['isagent']))) 
+			if (!(in_array((empty($member['level']) ? 'default' : $member['level']), $visit_m)) && (!(in_array($member['agentlevel'], $visit_c)) || empty($member['isagent']) || empty($member['status']))) 
 			{
 				$this->message($title, $link);
 			}
@@ -60,6 +79,8 @@ class Index_EweiShopV2Page extends PluginMobilePage
 				unset($diyitem);
 			}
 		}
+		$this->page = $page;
+		$startadv = $this->model->getStartAdv($page['diyadv']);
 		$this->model->setShare($page);
 		include $this->template();
 	}

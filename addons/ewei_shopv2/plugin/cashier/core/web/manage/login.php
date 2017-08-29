@@ -78,9 +78,8 @@ class Login_EweiShopV2Page extends CashierWebPage
 			}
 			header('Location:' . cashierUrl('login'));
 			exit();
-			return;
 		}
-		if (!(empty($user))) 
+		else if (!(empty($user))) 
 		{
 			if ($user['deleted']) 
 			{
@@ -92,12 +91,16 @@ class Login_EweiShopV2Page extends CashierWebPage
 				session_start();
 				$_SESSION['__cashier_' . (int) $_GPC['i'] . '_session'] = $user;
 				show_json(1, array('url' => cashierUrl('index')));
-				return;
 			}
-			show_json(0, '用户名密码错误!');
-			return;
+			else 
+			{
+				show_json(0, '用户名密码错误!');
+			}
 		}
-		show_json(0, '用户名不存在!');
+		else 
+		{
+			show_json(0, '用户名不存在!');
+		}
 	}
 }
 ?>

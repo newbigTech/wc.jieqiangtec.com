@@ -26,7 +26,7 @@ foreach ($sets as $key => $value )
 		continue;
 	}
 	$times = $hours * 60 * 60;
-	$orders = pdo_fetchall('select id,orderno,openid,credit,creditmoney,price,freight,status,pay_type,teamid,apppay from ' . tablename('ewei_shop_groups_order') . "\n" . '            where  uniacid=' . $_W['uniacid'] . ' and status = 1 and success = -1 and refundtime = 0 and canceltime + ' . $times . ' <= ' . time() . ' ');
+	$orders = pdo_fetchall('select id,orderno,openid,credit,creditmoney,price,freight,status,pay_type,teamid,apppay,isborrow,borrowopenid from ' . tablename('ewei_shop_groups_order') . "\n" . '            where  uniacid=' . $_W['uniacid'] . ' and status = 1 and success = -1 and refundtime = 0 and canceltime + ' . $times . ' <= ' . time() . ' ');
 	foreach ($orders as $k => $val ) 
 	{
 		$realprice = ($val['price'] - $val['creditmoney']) + $val['freight'];
@@ -38,7 +38,14 @@ foreach ($sets as $key => $value )
 		else if ($val['pay_type'] == 'wechat') 
 		{
 			$realprice = round($realprice, 2);
-			$result = m('finance')->refund($val['openid'], $val['orderno'], $val['orderno'], floatval($realprice) * 100, $realprice * 100, (!(empty($order['apppay'])) ? true : false));
+			if (empty($val['isborrow'])) 
+			{
+				$result = m('finance')->refund($val['openid'], $val['orderno'], $val['orderno'], $realprice * 100, $realprice * 100, (!(empty($order['apppay'])) ? true : false));
+			}
+			else 
+			{
+				$result = m('finance')->refundBorrow($val['borrowopenid'], $val['orderno'], $val['orderno'], $realprice * 100, $realprice * 100, (!(empty($order['apppay'])) ? true : false));
+			}
 			$refundtype = 2;
 		}
 		else 

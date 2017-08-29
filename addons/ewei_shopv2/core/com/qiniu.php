@@ -9,6 +9,7 @@ class Qiniu_EweiShopV2ComModel extends ComModel
 	{
 		global $_W;
 		global $_GPC;
+		$oldurl = $url;
 		set_time_limit(0);
 		if (empty($url)) 
 		{
@@ -51,7 +52,6 @@ class Qiniu_EweiShopV2ComModel extends ComModel
 		}
 		if (!(strexists($url, 'addons/ewei_shopv2'))) 
 		{
-			$oldurl = $url;
 			$url = tomedia($url);
 		}
 		if (!(empty($_W['setting']['remote']['type']))) 
@@ -83,16 +83,17 @@ class Qiniu_EweiShopV2ComModel extends ComModel
 					$url = IA_ROOT . '/' . $url;
 				}
 			}
-			else if (strexists($url, 'addons/ewei_shopv2')) 
-			{
-				$url = IA_ROOT . '/' . $url;
-			}
 			else 
 			{
 				$outlinkEnforce = true;
+				if (strexists($url, 'addons/ewei_shopv2')) 
+				{
+					$url = IA_ROOT . '/' . $url;
+					$outlinkEnforce = false;
+				}
 			}
 		}
-		$key = md5_file($url) . $ext;
+		$key = (($outlinkEnforce ? md5($url) : md5_file($url))) . $ext;
 		if ($outlinkEnforce) 
 		{
 			$local = ATTACHMENT_ROOT . 'ewei_shopv2_temp/';
@@ -102,7 +103,13 @@ class Qiniu_EweiShopV2ComModel extends ComModel
 				mkdirs($local);
 			}
 			$filename = $local . $key;
-			file_put_contents($filename, file_get_contents($url));
+			load()->func('communication');
+			$resp = ihttp_get($url);
+			if ($resp['code'] != 200) 
+			{
+				return $oldurl;
+			}
+			file_put_contents($filename, $resp['content']);
 			$url = $filename;
 		}
 		require_once IA_ROOT . '/framework/library/qiniu/autoload.php';
@@ -123,10 +130,11 @@ class Qiniu_EweiShopV2ComModel extends ComModel
 			$uploadmgr = new Qiniu\Storage\UploadManager();
 			$uploadtoken = $auth->uploadToken($config['bucket'], $key, 3600);
 		}
-		list($ret, $err) = $uploadmgr->putFile($uploadtoken, $key, $url);
-		if ($err !== NULL) 
+		$ret = $uploadmgr->putFile($uploadtoken, $key, $url);
+		if (!(empty($ret[1]))) 
 		{
-			return '';
+			$err = $ret[1]->getResponse()->error;
+			return error(1, $err);
 		}
 		if ($outlinkEnforce) 
 		{
@@ -134,9 +142,9 @@ class Qiniu_EweiShopV2ComModel extends ComModel
 		}
 		if (strexists($config['url'], 'http:') || strexists($config['url'], 'https:')) 
 		{
-			return trim($config['url']) . '/' . $ret['key'];
+			return trim($config['url']) . '/' . $ret[0]['key'];
 		}
-		return 'http://' . trim($config['url']) . '/' . $ret['key'];
+		return 'http://' . trim($config['url']) . '/' . $ret[0]['key'];
 	}
 	public function getConfig() 
 	{

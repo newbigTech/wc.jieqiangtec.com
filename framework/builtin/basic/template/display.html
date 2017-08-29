@@ -64,19 +64,19 @@
 				});
 			});
 		};
-        /*选择Emoji表情*/
+		/*选择Emoji表情*/
 		$scope.selectEmoji = function(obj) {
-            require(['util'], function(util){
+			require(['util'], function(util){
 				var elm = $('.emoji-triggers').eq(obj.$index);
 				var textbox = elm.parent().parent().find('.content')[0];
-    			util.emojiBrowser(function(emoji){
-    				var unshift = '[U+' + emoji.find("span").text() + ']';
-    				var newstart = textbox.selectionStart + unshift.length;
-    				var insertval = textbox.value.substr(0,textbox.selectionStart) + unshift + textbox.value.substring(textbox.selectionEnd);
-    				obj.item.content = insertval;
-    				$scope.$digest();
-    			});
-            });
+				util.emojiBrowser(function(emoji){
+					var unshift = '[U+' + emoji.find("span").text() + ']';
+					var newstart = textbox.selectionStart + unshift.length;
+					var insertval = textbox.value.substr(0,textbox.selectionStart) + unshift + textbox.value.substring(textbox.selectionEnd);
+					obj.item.content = insertval;
+					$scope.$digest();
+				});
+			});
 		};
 	};
 	window.validateReplyForm = function(form, $, _, util, $scope) {

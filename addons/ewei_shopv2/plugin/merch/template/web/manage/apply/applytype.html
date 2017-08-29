@@ -16,3 +16,13 @@
     {/if}
     <input type="hidden" name="applytype" id="applytype" value="{$item['applytype']}" />
 </div>
+
+{if empty($item['applytype']) && !empty($member)}
+<div style='float:left;height:auto;overflow: hidden;width:600px;margin-bottom:20px;font-size:18px;'>
+    <label class="col-sm-2 control-label">收款人:</label>
+    <div class="col-sm-9 col-xs-12">
+        <img src='{$member['avatar']}' style='width:50px;height:50px;padding:1px;border:1px solid #ccc' />
+        {$member['nickname']}
+    </div>
+</div>
+{/if}

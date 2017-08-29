@@ -24,7 +24,22 @@
 <form action="" method="post" class="form-horizontal form-search form-validate" id="myform">
     <h3>砍价活动设置</h3>
     <hr>
-
+    <div class="form-group">
+        <label class="col-sm-2 control-label">必须关注才能砍价</label>
+        <div class="col-sm-9 col-xs-12">
+            <label class="radio-inline">
+                <input type="checkbox" name="follow_swi" value="1" aria-invalid="false" class="valid" onclick="check()" id="follow_swi" {if !empty($res['follow_swi'])}checked{/if}> 开启
+            </label>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">诱导分享模式</label>
+        <div class="col-sm-9 col-xs-12">
+            <label class="radio-inline">
+                <input type="checkbox" name="sharestyle" value="1" aria-invalid="false" class="valid" onclick="check()" id="sharestyle" {if !empty($res['sharestyle'])}checked{/if}> 开启
+            </label>
+        </div>
+    </div>
     <div class="form-group">
         <label class="col-sm-2 control-label">砍价活动参与榜</label>
         <div class="col-sm-9 col-xs-12">
@@ -33,7 +48,6 @@
             </label>
         </div>
     </div>
-
     <div class="form-group" id="partin" style="display: none">
         <label class="col-sm-2 control-label">砍掉多少可以上榜</label>
         <div class="col-sm-9 col-xs-12" style="width: 200px">
@@ -55,9 +69,7 @@
     <div class="form-group">
         <label class="col-sm-2 control-label">全局砍价规则设置</label>
         <div class="col-sm-9 col-xs-12">
-
             {php echo tpl_ueditor('rule',$res['rule']);}
-
         </div>
     </div>
 
@@ -67,8 +79,6 @@
             <input type="hidden" name="token" value="{$_W['token']}"/>
         </div>
     </div>
-
-
 </form>
 </body>
 {template '_footer'}

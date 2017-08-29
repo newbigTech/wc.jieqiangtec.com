@@ -56,6 +56,23 @@
         </div>
     </div>
 
+    <div class="form-group">
+        <label class="col-sm-2 control-label must" style='width:90px;text-align: left;padding-left:22px;'  >保存数据</label>
+        <div class="col-sm-9 col-xs-12">
+            {ife 'diyform.temp' $item}
+            <label class='radio-inline'>
+                <input type="radio" value="0" name="savedata" {if empty($item['savedata'])}checked{/if}> 开启
+            </label>
+            <label class='radio-inline'>
+                <input type="radio" value="1" name="savedata" {if !empty($item['savedata'])}checked{/if}> 关闭
+            </label>
+            {else}
+            <div class='form-control-static'>{$item['title']}</div>
+            {/if}
+            <div class="help-block">开启后会保存最后一次填写数据 默认开启</div>
+        </div>
+    </div>
+
     {template 'diyform/temp/tpl/data'}
 
     <div class="form-group">

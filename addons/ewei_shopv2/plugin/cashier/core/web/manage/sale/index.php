@@ -83,6 +83,9 @@ class Index_EweiShopV2Page extends CashierWebPage
 			$data['enoughs'] = $enoughs;
 			$data['discount'] = floatval($data['discount']);
 			$data['coupon']['couponid'] = intval($_GPC['couponid']);
+			$data['couponpay']['time']['start'] = strtotime($_GPC['couponpaytime']['start']);
+			$data['couponpay']['time']['end'] = strtotime($_GPC['couponpaytime']['end']);
+			$data['couponpay']['discount'] = floatval($_GPC['couponpay']['discount']);
 			$this->updateUserSet($data);
 			show_json(1, array('url' => cashierUrl('sale', array('tab' => str_replace('#tab_', '', $_GPC['tab'])))));
 		}

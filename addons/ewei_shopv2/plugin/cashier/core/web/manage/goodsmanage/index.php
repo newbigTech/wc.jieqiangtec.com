@@ -202,6 +202,14 @@ class Index_EweiShopV2Page extends CashierWebPage
 		{
 			$goods_ids = implode(',', $item['goods_ids']);
 			$goods = pdo_fetchall('SELECT id,uniacid,title,thumb FROM ' . tablename('ewei_shop_goods') . ' WHERE uniacid=:uniacid AND cashier=1 AND id IN (' . $goods_ids . ')', array(':uniacid' => $_W['uniacid']));
+			if (!(empty($goods))) 
+			{
+				foreach ($goods as &$v ) 
+				{
+					$v['thumb'] = tomedia($v['thumb']);
+				}
+				unset($v);
+			}
 		}
 		include $this->template();
 	}
@@ -217,6 +225,14 @@ class Index_EweiShopV2Page extends CashierWebPage
 			$params[':keyword'] = '%' . $_GPC['keyword'] . '%';
 		}
 		$res = pdo_fetchall('SELECT id,uniacid,title,subtitle,shorttitle,thumb FROM ' . tablename('ewei_shop_goods') . ' WHERE uniacid=:uniacid AND merchid=:merchid AND cashier=1 ' . $where, $params);
+		if (!(empty($res))) 
+		{
+			foreach ($res as &$v ) 
+			{
+				$v['thumb'] = tomedia($v['thumb']);
+			}
+			unset($v);
+		}
 		show_json(1, array('list' => $res));
 	}
 }

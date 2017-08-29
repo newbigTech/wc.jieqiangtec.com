@@ -565,16 +565,17 @@ class TaskModel extends PluginModel
 	}
 	public function getGoods($param = '') 
 	{
+		load()->func('logging');
 		if (empty($param)) 
 		{
 			return false;
 		}
-		if (isset($param['join_id']) || empty($param['join_id'])) 
+		if (!(isset($param['join_id'])) || empty($param['join_id'])) 
 		{
 			return false;
 		}
 		global $_W;
-		$search_sql = 'SELECT * FROM ' . tablename('ewei_shop_task_join') . ' WHERE openid= :openid AND uniacid = :uniacid AND `join_id`=:join_id  AND is_reward=1';
+		$search_sql = 'SELECT * FROM ' . tablename('ewei_shop_task_join') . ' WHERE join_user= :openid AND uniacid = :uniacid AND `join_id`=:join_id  AND is_reward=1';
 		$data = array(':uniacid' => $_W['uniacid'], ':openid' => $param['openid'], ':join_id' => $param['join_id']);
 		$join_info = pdo_fetch($search_sql, $data);
 		if (empty($join_info)) 
@@ -689,7 +690,25 @@ class TaskModel extends PluginModel
 				$goods_id = intval($param['goods_id']);
 				if (isset($rec_reward['goods'][$goods_id]) && !(empty($rec_reward['goods'][$goods_id]))) 
 				{
-					return $rec_reward['goods'][$goods_id];
+					$createtime_sql = 'SELECT `createtime` FROM ' . tablename('ewei_shop_task_log') . ' WHERE openid= :openid AND uniacid = :uniacid AND `join_id`=:join_id  AND (recdata IS NOT NULL AND recdata !="") ';
+					$createtime_data = array(':uniacid' => $_W['uniacid'], ':openid' => $param['openid'], ':join_id' => $param['join_id']);
+					$createtime = pdo_fetchcolumn($createtime_sql, $createtime_data);
+					$rewardday_sql = 'SELECT `reward_days`,`is_goods` FROM ' . tablename('ewei_shop_task_poster') . ' WHERE  uniacid = :uniacid AND `id`=:id  AND poster_type=:poster_type ';
+					$rewardday_data = array(':uniacid' => $_W['uniacid'], ':id' => $join_info['task_id'], ':poster_type' => $join_info['task_type']);
+					$reward_days = pdo_fetch($rewardday_sql, $rewardday_data);
+					if (0 < $reward_days['reward_days']) 
+					{
+						$reward_day = $createtime + $reward_days['reward_days'];
+					}
+					else 
+					{
+						return $rec_reward['goods'][$goods_id];
+					}
+					if (time() < $reward_day) 
+					{
+						return $rec_reward['goods'][$goods_id];
+					}
+					return false;
 				}
 				return false;
 			}
@@ -708,7 +727,22 @@ class TaskModel extends PluginModel
 				$goods_id = intval($param['goods_id']);
 				if (isset($rec_reward[$rank]['goods'][$goods_id]) && !(empty($rec_reward[$rank]['goods'][$goods_id]))) 
 				{
-					return $rec_reward[$rank]['goods'][$goods_id];
+					$rewardday_sql = 'SELECT `reward_days`,`is_goods` FROM ' . tablename('ewei_shop_task_poster') . ' WHERE  uniacid = :uniacid AND `id`=:id  AND poster_type=:poster_type ';
+					$rewardday_data = array(':uniacid' => $_W['uniacid'], ':id' => $join_info['task_id'], ':poster_type' => $join_info['task_type']);
+					$reward_days = pdo_fetch($rewardday_sql, $rewardday_data);
+					if (0 < $reward_days['reward_days']) 
+					{
+						$reward_day = $rec_reward[$rank]['reward_time'] + $reward_days['reward_days'];
+					}
+					else 
+					{
+						return $rec_reward[$rank]['goods'][$goods_id];
+					}
+					if (time() < $reward_day) 
+					{
+						return $rec_reward[$rank]['goods'][$goods_id];
+					}
+					return false;
 				}
 				return false;
 			}
@@ -721,7 +755,16 @@ class TaskModel extends PluginModel
 		{
 			return false;
 		}
+		logg('task.txt', json_encode($poster));
 		global $_W;
+		if (empty($poster['autoposter'])) 
+		{
+			$_SESSION['postercontent'] = NULL;
+		}
+		else 
+		{
+			$_SESSION['postercontent'] = $poster['keyword'];
+		}
 		load()->func('logging');
 		$reward_data = unserialize($poster['reward_data']);
 		$count = $join_info['completecount'] + 1;
@@ -754,21 +797,9 @@ class TaskModel extends PluginModel
 					}
 					if (isset($val['bribery']) && (0 < $val['bribery'])) 
 					{
-						$setting = uni_setting($_W['uniacid'], array('payment'));
-						if (!(is_array($setting['payment']))) 
-						{
-							return error(1, '没有设定支付参数');
-						}
-						$sec = m('common')->getSec();
-						$sec = iunserializer($sec['sec']);
-						$certs = $sec;
-						$wechat = $setting['payment']['wechat'];
-						$sql = 'SELECT `key`,`secret` FROM ' . tablename('account_wechats') . ' WHERE `uniacid`=:uniacid limit 1';
-						$row = pdo_fetch($sql, array(':uniacid' => $_W['uniacid']));
 						$tid = rand(1, 1000) . time() . rand(1, 10000);
 						$params = array('openid' => $qr['openid'], 'tid' => $tid, 'send_name' => '推荐奖励', 'money' => $val['bribery'], 'wishing' => '推荐奖励', 'act_name' => $poster['title'], 'remark' => '推荐奖励');
-						$wechat = array('appid' => $row['key'], 'mchid' => $wechat['mchid'], 'apikey' => $wechat['apikey'], 'certs' => $certs);
-						$err = m('common')->sendredpack($params, $wechat);
+						$err = m('common')->sendredpack($params);
 						if (!(is_error($err))) 
 						{
 							$reward = unserialize($reward);
@@ -808,6 +839,24 @@ class TaskModel extends PluginModel
 					if (0 < $val['credit']) 
 					{
 						m('member')->setCredit($openid, 'credit1', $val['credit'], array(0, '扫码关注积分+' . $val['credit']));
+					}
+					if (0 < $val['bribery']) 
+					{
+						$tid = rand(1, 1000) . time() . rand(1, 10000);
+						$params = array('openid' => $openid, 'tid' => $tid, 'send_name' => '推荐奖励', 'money' => $val['bribery'], 'wishing' => '推荐奖励', 'act_name' => $poster['title'], 'remark' => '推荐奖励');
+						$err = m('common')->sendredpack($params);
+						if (!(is_error($err))) 
+						{
+							$sub_reward = unserialize($sub_reward);
+							$sub_reward['briberyOrder'] = $tid;
+							$sub_reward = serialize($sub_reward);
+							$upgrade = array('subdata' => $sub_reward);
+							pdo_update('ewei_shop_task_log', $upgrade, array('id' => $log_id));
+						}
+						else 
+						{
+							logging_run('bribery' . $err['message']);
+						}
 					}
 					if (0 < $val['money']['num']) 
 					{
@@ -898,7 +947,15 @@ class TaskModel extends PluginModel
 			else 
 			{
 				m('message')->sendCustomNotice($openid, '感谢您的关注，恭喜您获得关注奖励');
-				m('message')->sendCustomNotice($openid, '亲爱的' . $qrmember['nickname'] . '恭喜您完成任务获得奖励', mobileUrl('task', array('tabpage' => 'complete'), true));
+				m('message')->sendCustomNotice($qrmember['openid'], '亲爱的' . $qrmember['nickname'] . '恭喜您完成任务获得奖励', mobileUrl('task', array('tabpage' => 'complete'), true));
+			}
+			if (p('lottery')) 
+			{
+				$res = p('lottery')->getLottery($qrmember['openid'], 3, array('taskid' => $poster['id']));
+				if ($res) 
+				{
+					p('lottery')->getLotteryList($qrmember['openid'], array('lottery_id' => $res));
+				}
 			}
 		}
 		else 
@@ -934,21 +991,9 @@ class TaskModel extends PluginModel
 					}
 					if (0 < $val['bribery']) 
 					{
-						$setting = uni_setting($_W['uniacid'], array('payment'));
-						if (!(is_array($setting['payment']))) 
-						{
-							return error(1, '没有设定支付参数');
-						}
-						$sec = m('common')->getSec();
-						$sec = iunserializer($sec['sec']);
-						$certs = $sec;
-						$wechat = $setting['payment']['wechat'];
-						$sql = 'SELECT `key`,`secret` FROM ' . tablename('account_wechats') . ' WHERE `uniacid`=:uniacid limit 1';
-						$row = pdo_fetch($sql, array(':uniacid' => $_W['uniacid']));
 						$tid = rand(1, 1000) . time() . rand(1, 10000);
 						$params = array('openid' => $openid, 'tid' => $tid, 'send_name' => '推荐奖励', 'money' => $val['bribery'], 'wishing' => '推荐奖励', 'act_name' => $poster['title'], 'remark' => '推荐奖励');
-						$wechat = array('appid' => $row['key'], 'mchid' => $wechat['mchid'], 'apikey' => $wechat['apikey'], 'certs' => $certs);
-						$err = m('common')->sendredpack($params, $wechat);
+						$err = m('common')->sendredpack($params);
 						if (!(is_error($err))) 
 						{
 							$sub_reward = unserialize($sub_reward);
@@ -1077,12 +1122,22 @@ class TaskModel extends PluginModel
 			return false;
 		}
 		global $_W;
+		if (empty($poster['autoposter'])) 
+		{
+			$_SESSION['postercontent'] = NULL;
+		}
+		else 
+		{
+			$_SESSION['postercontent'] = $poster['keyword'];
+		}
 		$reward_data = unserialize($poster['reward_data']);
 		$rec_data = unserialize($join_info['reward_data']);
 		$count = $join_info['completecount'] + 1;
 		$is_reward = 0;
+		$needcount = 0;
 		foreach ($rec_data as $k => $val ) 
 		{
+			$needcount = $val['needcount'];
 			if ($val['needcount'] == $count) 
 			{
 				if ($is_reward == 0) 
@@ -1103,15 +1158,17 @@ class TaskModel extends PluginModel
 					}
 					else 
 					{
+						$poster['needcount'] = $needcount;
 						$this->reward_scan($count, $reward_data, $qr, $join_info, $openid, $qrmember, $member_info, $poster);
 					}
 				}
 			}
-			else if ($is_reward == 0) 
-			{
-				$is_reward = 1;
-				$this->reward_scan($count, $reward_data, $qr, $join_info, $openid, $qrmember, $member_info, $poster);
-			}
+		}
+		if ($is_reward == 0) 
+		{
+			$is_reward = 1;
+			$poster['needcount'] = $needcount;
+			$this->reward_scan($count, $reward_data, $qr, $join_info, $openid, $qrmember, $member_info, $poster);
 		}
 	}
 	protected function reward_both($count, $reward_data, $qr, $join_info, $openid, $qrmember, $member_info, $poster) 
@@ -1145,21 +1202,9 @@ class TaskModel extends PluginModel
 				}
 				if (isset($val['bribery']) && (0 < $val['bribery'])) 
 				{
-					$setting = uni_setting($_W['uniacid'], array('payment'));
-					if (!(is_array($setting['payment']))) 
-					{
-						return error(1, '没有设定支付参数');
-					}
-					$sec = m('common')->getSec();
-					$sec = iunserializer($sec['sec']);
-					$certs = $sec;
-					$wechat = $setting['payment']['wechat'];
-					$sql = 'SELECT `key`,`secret` FROM ' . tablename('account_wechats') . ' WHERE `uniacid`=:uniacid limit 1';
-					$row = pdo_fetch($sql, array(':uniacid' => $_W['uniacid']));
 					$tid = rand(1, 1000) . time() . rand(1, 10000);
 					$params = array('openid' => $qr['openid'], 'tid' => $tid, 'send_name' => '推荐奖励', 'money' => $val['bribery'], 'wishing' => '推荐奖励', 'act_name' => $poster['title'], 'remark' => '推荐奖励');
-					$wechat = array('appid' => $row['key'], 'mchid' => $wechat['mchid'], 'apikey' => $wechat['apikey'], 'certs' => $certs);
-					$err = m('common')->sendredpack($params, $wechat);
+					$err = m('common')->sendredpack($params);
 					if (!(is_error($err))) 
 					{
 						$reward = unserialize($reward);
@@ -1264,32 +1309,41 @@ class TaskModel extends PluginModel
 			{
 				m('message')->sendCustomNotice($openid, '感谢您的关注，恭喜您获得关注奖励');
 			}
-			if (!(empty($default_text['completed']))) 
+			if (!(empty($default_text['rankcomplete']))) 
 			{
 				$poster['okdays'] = $join_info['failtime'];
 				$poster['completecount'] = $count;
-				foreach ($default_text['completed'] as $key => $val ) 
+				$poster['needcount'] = $count;
+				foreach ($default_text['rankcomplete'] as $key => $val ) 
 				{
-					$default_text['completed'][$key]['value'] = $this->notice_complain($val['value'], $qrmember, $poster, $member_info, 2);
+					$default_text['rankcomplete'][$key]['value'] = $this->notice_complain($val['value'], $qrmember, $poster, $member_info, 2);
 				}
 				if ($default_text['templateid']) 
 				{
-					m('message')->sendTplNotice($qrmember['openid'], $default_text['templateid'], $default_text['completed'], mobileUrl('task', array('tabpage' => 'complete'), true));
+					m('message')->sendTplNotice($qrmember['openid'], $default_text['templateid'], $default_text['rankcomplete'], mobileUrl('task/getcompleteinfo', array('id' => $join_info['join_id']), true));
 				}
 				else 
 				{
-					m('message')->sendCustomNotice($qrmember['openid'], '亲爱的' . $qrmember['nickname'] . '恭喜您完成任务获得奖励', mobileUrl('task', array('tabpage' => 'complete'), true));
+					m('message')->sendCustomNotice($qrmember['openid'], '亲爱的' . $qrmember['nickname'] . '恭喜您完成任务获得奖励', mobileUrl('task/getcompleteinfo', array('id' => $join_info['join_id']), true));
 				}
 			}
 			else 
 			{
-				m('message')->sendCustomNotice($qrmember['openid'], '亲爱的' . $qrmember['nickname'] . '恭喜您完成任务获得奖励', mobileUrl('task', array('tabpage' => 'complete'), true));
+				m('message')->sendCustomNotice($qrmember['openid'], '亲爱的' . $qrmember['nickname'] . '恭喜您完成任务获得奖励', mobileUrl('task/getcompleteinfo', array('id' => $join_info['join_id']), true));
 			}
 		}
 		else 
 		{
 			m('message')->sendCustomNotice($openid, '感谢您的关注，恭喜您获得关注奖励');
-			m('message')->sendCustomNotice($openid, '亲爱的' . $qrmember['nickname'] . '恭喜您完成任务获得奖励', mobileUrl('task', array('tabpage' => 'complete'), true));
+			m('message')->sendCustomNotice($qrmember['openid'], '亲爱的' . $qrmember['nickname'] . '恭喜您完成任务获得奖励', mobileUrl('task/getcompleteinfo', array('id' => $join_info['join_id']), true));
+		}
+		if (p('lottery')) 
+		{
+			$res = p('lottery')->getLottery($qrmember['openid'], 3, array('taskid' => $poster['id']));
+			if ($res) 
+			{
+				p('lottery')->getLotteryList($qrmember['openid'], array('lottery_id' => $res));
+			}
 		}
 	}
 	protected function reward_scan($count, $reward_data, $qr, $join_info, $openid, $qrmember, $member_info, $poster) 
@@ -1326,21 +1380,9 @@ class TaskModel extends PluginModel
 				}
 				if (0 < $val['bribery']) 
 				{
-					$setting = uni_setting($_W['uniacid'], array('payment'));
-					if (!(is_array($setting['payment']))) 
-					{
-						return error(1, '没有设定支付参数');
-					}
-					$sec = m('common')->getSec();
-					$sec = iunserializer($sec['sec']);
-					$certs = $sec;
-					$wechat = $setting['payment']['wechat'];
-					$sql = 'SELECT `key`,`secret` FROM ' . tablename('account_wechats') . ' WHERE `uniacid`=:uniacid limit 1';
-					$row = pdo_fetch($sql, array(':uniacid' => $_W['uniacid']));
 					$tid = rand(1, 1000) . time() . rand(1, 10000);
 					$params = array('openid' => $openid, 'tid' => $tid, 'send_name' => '推荐奖励', 'money' => $val['bribery'], 'wishing' => '推荐奖励', 'act_name' => $poster['title'], 'remark' => '推荐奖励');
-					$wechat = array('appid' => $row['key'], 'mchid' => $wechat['mchid'], 'apikey' => $wechat['apikey'], 'certs' => $certs);
-					$err = m('common')->sendredpack($params, $wechat);
+					$err = m('common')->sendredpack($params);
 					if (!(is_error($err))) 
 					{
 						$sub_reward = unserialize($sub_reward);
@@ -1460,6 +1502,319 @@ class TaskModel extends PluginModel
 			m('message')->sendCustomNotice($openid, '感谢您的关注，恭喜您获得关注奖励');
 			m('message')->sendCustomNotice($qrmember['openid'], '亲爱的' . $qrmember['nickname'] . '您的海报被' . $member_info['nickname'] . '关注,增加了1点人气值', mobileUrl('task', array('tabpage' => 'runninga'), true));
 		}
+	}
+	public function getAvailableTask($status = 1, $classify = true) 
+	{
+		global $_W;
+		$status = intval($status);
+		$sql = 'SELECT * FROM ' . tablename('ewei_shop_task_extension') . ' WHERE status = :status';
+		$list = pdo_fetchall($sql, array(':status' => $status));
+		if (empty($list)) 
+		{
+			return false;
+		}
+		if (empty($classify)) 
+		{
+			return $list;
+		}
+		$return = array();
+		foreach ($list as $ik => $item ) 
+		{
+			$return[$item['classify_name']][count($return[$item['classify_name']])] = $list[$ik];
+		}
+		return $return;
+	}
+	public function checkAvailableTask($taskclass) 
+	{
+		global $_W;
+		$sql = 'SELECT * FROM ' . tablename('ewei_shop_task_extension') . ' WHERE status = 1 AND `taskclass` = :taskclass LIMIT 1';
+		return pdo_fetch($sql, array(':taskclass' => $taskclass));
+	}
+	public function checkTaskReward($taskclass = '', $num = 1, $openid = '') 
+	{
+		global $_W;
+		if (strpos('first', '1' . $taskclass)) 
+		{
+			$this->firstTask . $taskclass($openid);
+		}
+		if (empty($openid)) 
+		{
+			$openid = $_W['openid'];
+		}else{
+			$_W['openid'] = $openid;
+		}
+		if (empty($taskclass)) 
+		{
+			return false;
+		}
+		$sql = 'SELECT * FROM ' . tablename('ewei_shop_task_extension_join') . ' WHERE openid = :openid AND uniacid = :uniacid AND completetime = 0 AND endtime > ' . time();
+		$allTask = pdo_fetchall($sql, array(':openid' => $openid, ':uniacid' => $_W['uniacid']));
+		foreach ($allTask as $tk => $tv ) 
+		{
+			$a = $this->checktaskstatus($tv);
+			if (!($a)) 
+			{
+				continue;
+			}
+			$require = unserialize($tv['require_data']);
+			$progress = unserialize($tv['progress_data']);
+			if (!(array_key_exists($taskclass, $require))) 
+			{
+				continue;
+			}
+			if ($progress[$taskclass]['num'] < $require[$taskclass]['num']) 
+			{
+				$progress[$taskclass]['num'] += $num;
+			}
+			$progress_data = serialize($progress);
+			pdo_update('ewei_shop_task_extension_join', array('progress_data' => $progress_data), array('uniacid' => $_W['uniacid'], 'id' => $tv['id']));
+			foreach ($progress as $k => $v ) 
+			{
+				if ($v < $require[$k]) 
+				{
+					$isreward = false;
+					break;
+				}
+				$isreward = true;
+			}
+			if ($isreward) 
+			{
+				$reward_data = unserialize($tv['reward_data']);
+				pdo_update('ewei_shop_task_extension_join', array('openid' => $_W['openid'],'completetime' => time()), array('uniacid' => $_W['uniacid'], 'id' => $tv['id']));
+				$this->sendReward($reward_data);
+			}
+		}
+		return true;
+	}
+	public function firstTaskfirst_recharge($openid) 
+	{
+		global $_W;
+		return 1;
+	}
+	public function firstTaskfirst_order($openid) 
+	{
+		global $_W;
+		return 1;
+	}
+	public function checktaskstatus($task) 
+	{
+		global $_W;
+		$time = time();
+		if (($task['endtime'] < $time) || (0 < $task['completetime'])) 
+		{
+			return false;
+		}
+		return true;
+	}
+	public function sendReward($reward_data = array()) 
+	{
+		global $_W;
+		if (empty($reward_data)) 
+		{
+			return false;
+		}
+		$rewarded = array();
+		if (!(empty($reward_data['balance']))) 
+		{
+			m('member')->setCredit($_W['openid'], 'credit2', $reward_data['balance'], array(0, '完成任务余额+' . $reward_data['balance']));
+		}
+		if (!(empty($reward_data['redpacket']))) 
+		{
+			$tid = rand(1, 1000) . time() . rand(1, 10000);
+			$params = array('openid' => $_W['openid'], 'tid' => $tid, 'send_name' => '任务完成奖励', 'money' => $reward_data['redpacket'], 'wishing' => '任务完成奖励', 'act_name' => '任务完成奖励', 'remark' => '任务完成奖励');
+			$err = m('common')->sendredpack($params);
+			if (!(is_error($err))) 
+			{
+				$rewarded['redpacket'] = $reward_data['redpacket'];
+			}
+		}
+		if (!(empty($reward_data['coupon'])) && is_array($reward_data['coupon'])) 
+		{
+			foreach ($reward_data['coupon'] as $k => $v ) 
+			{
+				$data = array('uniacid' => $_W['uniacid'], 'merchid' => 0, 'openid' => $_W['openid'], 'couponid' => $v['id'], 'gettype' => 7, 'gettime' => time(), 'senduid' => $_W['uid']);
+				pdo_insert('ewei_shop_coupon_data', $data);
+			}
+		}
+		if (!(empty($reward_data['score']))) 
+		{
+			m('member')->setCredit($_W['openid'], 'credit1', $reward_data['score'], array(0, '完成任务积分+' . $reward_data['score']));
+		}
+		if (!(empty($reward_data['goods']))) 
+		{
+			$rewarded['goods'] = $reward_data['goods'];
+		}
+		$rewarded = serialize($rewarded);
+		pdo_update('ewei_shop_task_extension_join', array('rewarded' => $rewarded));
+	}
+	public function getNewTask($id) 
+	{
+		global $_W;
+		$openid = $_W['openid'];
+		$member = m('member')->getInfo($openid);
+		$nowtime = time();
+		$sql = 'SELECT * FROM ' . tablename('ewei_shop_task') . ' WHERE id = :id AND status = 1 AND starttime < ' . $nowtime . ' AND endtime >' . $nowtime . ' AND uniacid = :uniacid';
+		$task = pdo_fetch($sql, array(':id' => $id, ':uniacid' => $_W['uniacid']));
+		if (empty($task)) 
+		{
+			return '任务不存在';
+		}
+		$can = $this->taskFilter($task);
+		if (is_string($can)) 
+		{
+			return $can;
+		}
+		$data = array();
+		$data['uniacid'] = $_W['uniacid'];
+		$data['uid'] = $member['id'];
+		$data['title'] = $task['title'];
+		$data['taskid'] = $id;
+		$data['openid'] = $_W['openid'];
+		$progress = unserialize($task['require_data']);
+		foreach ($progress as $p => $v ) 
+		{
+			$progress[$p]['num'] = 0;
+		}
+		$progress = serialize($progress);
+		$data['progress_data'] = $progress;
+		$data['require_data'] = $task['require_data'];
+		$data['reward_data'] = $task['reward_data'];
+		$data['pickuptime'] = time();
+		$data['endtime'] = $task['endtime'];
+		$data['dotime'] = $task['dotime'];
+		$data['logo'] = $task['logo'];
+		pdo_insert('ewei_shop_task_extension_join', $data);
+		return intval(pdo_insertid());
+	}
+	public function getTaskLixt($action, $page) 
+	{
+		global $_W;
+		switch ($action) 
+		{
+			case 'single': $type = 1;
+			break;
+			case 'repeat': $type = 2;
+			break;
+			case 'first': $type = 3;
+			break;
+			case 'period': $type = 4;
+			break;
+			case 'point': $type = 5;
+			break;
+			default:
+			return false;
+		}
+		$psize = 20;
+		$pstart = ($page - 1) * $psize;
+		$sql = 'SELECT id,title,starttime,endtime,status FROM ' . tablename('ewei_shop_task') . ' WHERE `type` = :type AND uniacid = :uniacid ORDER BY endtime DESC LIMIT ' . $pstart . ',' . $psize;
+		return pdo_fetchall($sql, array(':uniacid' => $_W['uniacid'], ':type' => $type));
+	}
+	public function taskFilter($task) 
+	{
+		global $_W;
+		$type = $task['type'];
+		if ((time() < $task['starttime']) || ($task['endtime'] < time()) || empty($task['status'])) 
+		{
+			return '不是接任务的时间';
+		}
+		switch ($type) 
+		{
+			case 1: $sql = 'SELECT COUNT(*) FROM ' . tablename('ewei_shop_task_extension_join') . ' WHERE taskid = :taskid AND openid = :openid AND uniacid = :uniacid';
+			$all = pdo_fetchcolumn($sql, array(':taskid' => $task['id'], ':uniacid' => $_W['uniacid'], ':openid' => $_W['openid']));
+			if (!(empty($all))) 
+			{
+				return '已参加过';
+			}
+			break;
+			case 2: $sql = 'SELECT COUNT(*) FROM ' . tablename('ewei_shop_task_extension_join') . ' WHERE taskid = :taskid AND openid = :openid AND completetime = 0 AND uniacid = :uniacid';
+			$res = pdo_fetchcolumn($sql, array(':taskid' => $task['id'], ':uniacid' => $_W['uniacid'], ':openid' => $_W['openid']));
+			if (!(empty($res))) 
+			{
+				return '任务未完成不能继续领';
+			}
+			$sql1 = 'SELECT completetime FROM ' . tablename('ewei_shop_task_extension_join') . ' WHERE taskid = :taskid AND openid = :openid AND uniacid = :uniacid ORDER BY completetime DESC';
+			$completetime = pdo_fetchcolumn($sql1, array(':taskid' => $task['id'], ':uniacid' => $_W['uniacid'], ':openid' => $_W['openid']));
+			$cantime = $task['repeat'] + $completetime;
+			if (time() < $cantime) 
+			{
+				return (('请在' . $cantime) - time()) . '秒后领取';
+			}
+			$hourl = date('Y-m-d H:00:00', time());
+			$hourr = date('Y-m-d H:59:59', time());
+			$hourl = strtotime($hourl);
+			$hourr = strtotime($hourr);
+			$sql2 = 'SELECT COUNT(*) FROM ' . tablename('ewei_shop_task_extension_join') . ' WHERE taskid = :taskid AND uniacid = :uniacid AND openid = :openid AND completetime > ' . $hourl . ' AND completetime < ' . $hourr . ' AND completetime != 0';
+			$num = pdo_fetchcolumn($sql2, array(':taskid' => $task['id'], ':uniacid' => $_W['uniacid'], ':openid' => $_W['openid']));
+			if ($task['maxtimes'] < $num) 
+			{
+				return '每' . $task['everyhours'] . '小时只能接' . $task['maxtimes'] . '次任务';
+			}
+			break;
+			case 3: $sql = 'SELECT COUNT(*) FROM ' . tablename('ewei_shop_task_extension_join') . ' WHERE taskid = :taskid AND openid = :openid AND  uniacid = :uniacid';
+			$all = pdo_fetchcolumn($sql, array(':taskid' => $task['id'], ':uniacid' => $_W['uniacid'], ':openid' => $_W['openid']));
+			if (!(empty($all))) 
+			{
+				return '已参加过';
+			}
+			break;
+			case 4: return '周期任务可由重复任务替代';
+			case 5: return '目标任务暂不开放';
+		}
+	}
+	public function getRecordsList($page, $taskid) 
+	{
+		global $_W;
+		$psize = 20;
+		$pstart = ($page - 1) * $psize;
+		$sql = 'SELECT * FROM ' . tablename('ewei_shop_task_log') . ' WHERE taskid = :taskid AND uniacid = :uniacid ORDER BY id DESC LIMIT ' . $pstart . ',' . $psize;
+		return pdo_fetch($sql, array(':taskid' => $taskid, ':uniacid' => $_W['uniacid']));
+	}
+	public function checkFirst($taskclass) 
+	{
+		global $_W;
+		$funcname = 'first' . $taskclass;
+		return $this->$funcname();
+	}
+	public function firstcommission_member() 
+	{
+	}
+	public function getUserTaskList($type) 
+	{
+		global $_W;
+		$time = time();
+		$condition = ' AND `type` = 2 ';
+		if ($type == 1) 
+		{
+			$condition = 'AND ( `type` = 3 OR `type` = 1) ';
+		}
+		$sql = 'SELECT * FROM ' . tablename('ewei_shop_task') . ' WHERE status = 1 ' . $condition . ' AND starttime < ' . $time . ' AND endtime > ' . $time . ' AND uniacid = :uniacid';
+		return pdo_fetchall($sql, array(':uniacid' => $_W['uniacid']));
+	}
+	public function getMyTaskList($condition = '=') 
+	{
+		global $_W;
+		$condition2 = '';
+		if ($condition == '=') 
+		{
+			$condition2 .= ' AND  a.endtime > ' . time();
+		}
+		$sql = 'SELECT a.* FROM ' . tablename('ewei_shop_task_extension_join') . ' a JOIN ' . tablename('ewei_shop_task') . ' b ON a.taskid = b.id WHERE a.openid = :openid AND a.completetime ' . $condition . ' 0 ' . $condition2 . ' AND a.uniacid = :uniacid';
+		return pdo_fetchall($sql, array(':uniacid' => $_W['uniacid'], ':openid' => $_W['openid']));
+	}
+	public function failTask() 
+	{
+		global $_W;
+		$sql = 'SELECT a.* FROM ' . tablename('ewei_shop_task_extension_join') . ' a JOIN ' . tablename('ewei_shop_task') . ' b ON a.taskid = b.id WHERE a.openid = :openid AND a.completetime = 0 AND a.endtime < ' . time() . ' AND a.uniacid = :uniacid';
+		return pdo_fetchall($sql, array(':uniacid' => $_W['uniacid'], ':openid' => $_W['openid']));
+	}
+	public function returnName($taskclass) 
+	{
+		if (strpos('1' . $taskclass, 'cost_goods')) 
+		{
+			return '购买指定商品';
+		}
+		$sql = 'SELECT taskname FROM ' . tablename('ewei_shop_task_extension') . ' WHERE taskclass = :taskclass';
+		return pdo_fetchcolumn($sql, array(':taskclass' => $taskclass));
 	}
 }
 ?>

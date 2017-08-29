@@ -45,12 +45,18 @@
 {if !empty($item['addressid'])}
 <!--快递 取消发货-->
 
-{if $detial_flag == 1}
+{if $detial_flag == 1 && $item['status']!=3}
 {ifp 'order.op.send'}<a class="btn btn-success btn-xs" data-toggle="ajaxModal"  href="{php echo webUrl('order/op/changeexpress', array('id' => $item['id']))}">修改物流</a>&nbsp;&nbsp;&nbsp;{/if}
 {/if}
 {ifp 'order.op.finish'}{if strexists($_W['action'],'order.list')}{/if}<a class="btn btn-primary btn-xs" data-toggle='ajaxPost'  href="{php echo webUrl('order/op/finish', array('id' => $item['id']))}" data-confirm="确认订单收货吗？">确认收货</a>{/if}
 {ifp 'order.op.sendcancel'}{if strexists($_W['action'],'order.list')}<br/>{/if}
 <br><a class="btn-xs" data-toggle='ajaxModal'  href="{php echo webUrl('order/op/sendcancel', array('id' => $item['id']))}" >取消发货</a>{/if}
+{else}
+    {php $isonly = m('order')->checkisonlyverifygoods($item['id'])}
+
+    {if $isonly}
+        {ifp 'order.op.finish'}{if strexists($_W['action'],'order.list')}{/if}<a class="btn btn-primary btn-xs" data-toggle='ajaxPost'  href="{php echo webUrl('order/op/finish', array('id' => $item['id']))}" data-confirm="确认完成订单吗？">确认完成</a>{/if}
+    {/if}
 
 {/if}
 

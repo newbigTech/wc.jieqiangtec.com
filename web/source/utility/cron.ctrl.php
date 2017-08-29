@@ -1,8 +1,11 @@
 <?php
-
+/**
+ * [WeEngine System] Copyright (c) 2014 WE7.CC
+ * WeEngine is NOT a free software, it under the license terms, visited http://www.we7.cc/ for more details.
+ */
 defined('IN_IA') or exit('Access Denied');
 error_reporting(0);
-global $_W;
+
 if (!in_array($do, array('log'))) {
 	exit('Access Denied');
 }
@@ -16,6 +19,7 @@ if($do == 'log') {
 		foreach($data as &$da) {
 			$da['createtime'] = date('Y-m-d H:i:s', $da['createtime']);
 		}
+		unset($da);
 	}
-	message(array('items' => $data), '', 'ajax');
+	iajax(0, array('items' => $data));
 }

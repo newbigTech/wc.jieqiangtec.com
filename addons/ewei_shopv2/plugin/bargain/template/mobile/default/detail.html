@@ -127,7 +127,7 @@
             </a>
             <a href="{php echo mobileUrl('order/create',array('id'=>$res['goods_id']));}" class="nav-item lynn-bargain-a lynn-bargain-now-a" data-nocache="true"><span>原价购买</span></a>
             {if $swi==0}
-            <a {if !$act_swi['id']}href="{php echo mobileurl('bargain/join',array('goods'=>$res['id']));}"{else}onclick="FoxUI.confirm('您已经发起过一次本商品的砍价活动,是否立即查看？','砍价提示',callback)"{/if} class="nav-item lynn-bargain-a lynn-bargain-share-a"><span style="border: 1px solid {$res['custom']['btn_color']};background-color: {$res['custom']['btn_color']}" data-nocache="true">立即砍价</span></a>{/if}
+            <a {if !$act_swi['id']}href="{php echo mobileurl('bargain/join',array('goods'=>$res['id']));}"{else}onclick="FoxUI.confirm('您已经发起过一次本商品的砍价活动,是否立即查看？','砍价提示',callback)"{/if} class="nav-item lynn-bargain-a lynn-bargain-share-a external"><span style="border: 1px solid {$res['custom']['btn_color']};background-color: {$res['custom']['btn_color']}" data-nocache="true">立即砍价</span></a>{/if}
 
             {if $swi==1}<a class="nav-item lynn-bargain-a lynn-bargain-now-a"><span style="color: #ccc">尚未开始</span></a>{/if}
             {if $swi==2}<a href="" class="nav-item lynn-bargain-a lynn-bargain-now-a"><span style="color: #ccc">已经结束</span></a>{/if}

@@ -1,6 +1,5 @@
 <?php
-
-if (!defined('IN_IA')) {
+if (!(defined('IN_IA'))) {
 	exit('Access Denied');
 }
 
@@ -15,7 +14,7 @@ class Detail_EweiShopV2Page extends MerchWebPage
 		$id = intval($_GPC['id']);
 		$merch_user = $_W['merch_user'];
 		$p = p('commission');
-		$item = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_order') . ' WHERE id = :id and uniacid=:uniacid and merchid = :merchid', array(':id' => $id, ':uniacid' => $_W['uniacid'], 'merchid' => $_W['merchid']));
+		$item = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_order') . ' WHERE id = :id and uniacid=:uniacid and merchid=:merchid Limit 1', array(':id' => $id, ':uniacid' => $_W['uniacid'], ':merchid' => $_W['merchid']));
 		$item['statusvalue'] = $item['status'];
 		$item['paytypevalue'] = $item['paytype'];
 		$sets = $this->model->getSet();
@@ -34,7 +33,7 @@ class Detail_EweiShopV2Page extends MerchWebPage
 
 
 		$member = m('member')->getMember($item['openid']);
-		$dispatch = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_dispatch') . ' WHERE id = :id and uniacid=:uniacid and merchid = :merchid', array(':id' => $item['dispatchid'], ':uniacid' => $_W['uniacid'], 'merchid' => $_W['merchid']));
+		$dispatch = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_dispatch') . ' WHERE id = :id and uniacid=:uniacid and merchid = :merchid', array(':id' => $item['dispatchid'], ':uniacid' => $_W['uniacid'], ':merchid' => $_W['merchid']));
 
 		if (empty($item['addressid'])) {
 			$user = unserialize($item['carrier']);
@@ -42,17 +41,17 @@ class Detail_EweiShopV2Page extends MerchWebPage
 		 else {
 			$user = iunserializer($item['address']);
 
-			if (!is_array($user)) {
+			if (!(is_array($user))) {
 				$user = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_member_address') . ' WHERE id = :id and uniacid=:uniacid', array(':id' => $item['addressid'], ':uniacid' => $_W['uniacid']));
 			}
 
 
 			$address_info = $user['address'];
-			$user['address'] = $user['province'] . ' ' . $user['city'] . ' ' . $user['area'] . ' ' . $user['address'];
+			$user['address'] = $user['province'] . ' ' . $user['city'] . ' ' . $user['area'] . ' ' . $user['street'] . ' ' . $user['address'];
 			$item['addressdata'] = array('realname' => $user['realname'], 'mobile' => $user['mobile'], 'address' => $user['address']);
 		}
 
-		$refund = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_order_refund') . ' WHERE orderid = :orderid and uniacid=:uniacid and merchid = :merchid order by id desc', array(':orderid' => $item['id'], ':uniacid' => $_W['uniacid'], 'merchid' => $_W['merchid']));
+		$refund = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_order_refund') . ' WHERE orderid = :orderid and uniacid=:uniacid and merchid = :merchid order by id desc', array(':orderid' => $item['id'], ':uniacid' => $_W['uniacid'], ':merchid' => $_W['merchid']));
 		$diyformfields = '';
 
 		if (p('diyform')) {
@@ -63,12 +62,12 @@ class Detail_EweiShopV2Page extends MerchWebPage
 		$goods = pdo_fetchall('SELECT g.*, o.goodssn as option_goodssn, o.productsn as option_productsn,o.total,g.type,o.optionname,o.optionid,o.price as orderprice,o.realprice,o.changeprice,o.oldprice,o.commission1,o.commission2,o.commission3,o.commissions' . $diyformfields . ' FROM ' . tablename('ewei_shop_order_goods') . ' o left join ' . tablename('ewei_shop_goods') . ' g on o.goodsid=g.id ' . ' WHERE o.orderid=:orderid and o.uniacid=:uniacid and o.merchid=:merchid', array(':orderid' => $id, ':uniacid' => $_W['uniacid'], ':merchid' => $_W['merchid']));
 
 		foreach ($goods as &$r ) {
-			if (!empty($r['option_goodssn'])) {
+			if (!(empty($r['option_goodssn']))) {
 				$r['goodssn'] = $r['option_goodssn'];
 			}
 
 
-			if (!empty($r['option_productsn'])) {
+			if (!(empty($r['option_productsn']))) {
 				$r['productsn'] = $r['option_productsn'];
 			}
 
@@ -99,7 +98,7 @@ class Detail_EweiShopV2Page extends MerchWebPage
 				$oc3 = 0;
 				$commissions = iunserializer($og['commissions']);
 
-				if (!empty($m1)) {
+				if (!(empty($m1))) {
 					if (is_array($commissions)) {
 						$oc1 = ((isset($commissions['level1']) ? floatval($commissions['level1']) : 0));
 					}
@@ -114,7 +113,7 @@ class Detail_EweiShopV2Page extends MerchWebPage
 				}
 
 
-				if (!empty($m2)) {
+				if (!(empty($m2))) {
 					if (is_array($commissions)) {
 						$oc2 = ((isset($commissions['level2']) ? floatval($commissions['level2']) : 0));
 					}
@@ -129,7 +128,7 @@ class Detail_EweiShopV2Page extends MerchWebPage
 				}
 
 
-				if (!empty($m3)) {
+				if (!(empty($m3))) {
 					if (is_array($commissions)) {
 						$oc3 = ((isset($commissions['level3']) ? floatval($commissions['level3']) : 0));
 					}
@@ -163,7 +162,7 @@ class Detail_EweiShopV2Page extends MerchWebPage
 		$paras = array(':uniacid' => $_W['uniacid'], ':merchid' => $_W['merchid']);
 		$totals = array();
 		$coupon = false;
-		if (com('coupon') && !empty($item['couponid'])) {
+		if (com('coupon') && !(empty($item['couponid']))) {
 			$coupon = com('coupon')->getCouponByDataID($item['couponid']);
 		}
 
@@ -175,16 +174,15 @@ class Detail_EweiShopV2Page extends MerchWebPage
 			$diyform_set = p('diyform')->getSet();
 
 			foreach ($goods as $g ) {
-				if (empty($g['diyformdata'])) {
-					continue;
+				while (!(empty($g['diyformdata']))) {
+					break;
 				}
-				break;
 			}
 
-			if (!empty($item['diyformid'])) {
+			if (!(empty($item['diyformid']))) {
 				$orderdiyformid = $item['diyformid'];
 
-				if (!empty($orderdiyformid)) {
+				if (!(empty($orderdiyformid))) {
 					$order_fields = iunserializer($item['diyformfields']);
 					$order_data = iunserializer($item['diyformdata']);
 				}
@@ -197,13 +195,13 @@ class Detail_EweiShopV2Page extends MerchWebPage
 		if (com('verify')) {
 			$verifyinfo = iunserializer($item['verifyinfo']);
 
-			if (!empty($item['verifyopenid'])) {
+			if (!(empty($item['verifyopenid']))) {
 				$saler = m('member')->getMember($item['verifyopenid']);
 				$saler['salername'] = pdo_fetchcolumn('select salername from ' . tablename('ewei_shop_merch_saler') . ' where openid=:openid and uniacid=:uniacid and merchid = :merchid limit 1 ', array(':uniacid' => $_W['uniacid'], ':merchid' => $_W['merchid'], ':openid' => $item['verifyopenid']));
 			}
 
 
-			if (!empty($item['verifystoreid'])) {
+			if (!(empty($item['verifystoreid']))) {
 				$store = pdo_fetch('select * from ' . tablename('ewei_shop_merch_store') . ' where id=:storeid limit 1 ', array(':storeid' => $item['verifystoreid']));
 			}
 

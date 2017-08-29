@@ -46,10 +46,10 @@ class build_EweiShopV2Page extends PluginPfMobilePage
 		}
 		$img = '';
 		$is_waiting = false;
-		$task_count = pdo_fetchcolumn('select COUNT(*) from ' . tablename('ewei_shop_task_join') . ' where uniacid=:uniacid and join_user=:join_user and task_type=' . $poster['poster_type'] . ' and failtime>' . time(), array(':uniacid' => $_W['uniacid'], ':join_user' => $member['openid']));
+		$task_count = pdo_fetchcolumn('select COUNT(*) from ' . tablename('ewei_shop_task_join') . ' where uniacid=:uniacid and join_user=:join_user and task_type=' . $poster['poster_type'] . ' and is_reward=0 and failtime>' . time(), array(':uniacid' => $_W['uniacid'], ':join_user' => $member['openid']));
 		if ($task_count) 
 		{
-			$task_info = pdo_fetch('select `needcount`,`completecount`,`is_reward`,`failtime` from ' . tablename('ewei_shop_task_join') . ' where uniacid=:uniacid and join_user=:join_user and task_id=:task_id and task_type=:task_type and failtime>' . time() . ' order by `addtime` DESC limit 1', array(':uniacid' => $_W['uniacid'], ':join_user' => $member['openid'], ':task_id' => $poster['id'], ':task_type' => $poster['poster_type']));
+			$task_info = pdo_fetch('select `needcount`,`completecount`,`is_reward`,`failtime` from ' . tablename('ewei_shop_task_join') . ' where uniacid=:uniacid and join_user=:join_user and task_id=:task_id and task_type=:task_type and  failtime>' . time() . ' order by `addtime` DESC limit 1', array(':uniacid' => $_W['uniacid'], ':join_user' => $member['openid'], ':task_id' => $poster['id'], ':task_type' => $poster['poster_type']));
 			if ($task_info) 
 			{
 				$is_waiting = true;
@@ -129,10 +129,10 @@ class build_EweiShopV2Page extends PluginPfMobilePage
 						return;
 						m('message')->sendCustomNotice($openid, '您已经有另外类型的海报任务正在进行，不能同时参加');
 						return;
-						$end_task_count = pdo_fetchcolumn('select COUNT(*) from ' . tablename('ewei_shop_task_join') . ' where uniacid=:uniacid and join_user=:join_user and task_type=' . $poster['poster_type'] . ' and failtime<' . time(), array(':uniacid' => $_W['uniacid'], ':join_user' => $member['openid']));
+						$end_task_count = pdo_fetchcolumn('select COUNT(*) from ' . tablename('ewei_shop_task_join') . ' where uniacid=:uniacid and join_user=:join_user and task_type=' . $poster['poster_type'] . ' and (is_reward=1 or failtime<' . time() . ')', array(':uniacid' => $_W['uniacid'], ':join_user' => $member['openid']));
 						if ($end_task_count) 
 						{
-							$end_task_info = pdo_fetch('select `needcount`,`completecount`,`failtime` from ' . tablename('ewei_shop_task_join') . ' where uniacid=:uniacid and join_user=:join_user and task_id=:task_id and task_type=:task_type and failtime<' . time() . ' order by `addtime` DESC limit 1', array(':uniacid' => $_W['uniacid'], ':join_user' => $member['openid'], ':task_id' => $poster['id'], ':task_type' => $poster['poster_type']));
+							$end_task_info = pdo_fetch('select `needcount`,`completecount`,`failtime` from ' . tablename('ewei_shop_task_join') . ' where uniacid=:uniacid and join_user=:join_user and task_id=:task_id and task_type=:task_type and (is_reward=1 or failtime<' . time() . ') order by `addtime` DESC limit 1', array(':uniacid' => $_W['uniacid'], ':join_user' => $member['openid'], ':task_id' => $poster['id'], ':task_type' => $poster['poster_type']));
 							if ($end_task_info) 
 							{
 								if ($poster['is_repeat']) 
@@ -167,8 +167,8 @@ class build_EweiShopV2Page extends PluginPfMobilePage
 			}
 			else 
 			{
-				$end_task_count = pdo_fetchcolumn('select COUNT(*) from ' . tablename('ewei_shop_task_join') . ' where uniacid=:uniacid and join_user=:join_user and task_type=' . $poster['poster_type'] . ' and failtime<' . time(), array(':uniacid' => $_W['uniacid'], ':join_user' => $member['openid']));
-				$end_task_info = pdo_fetch('select `needcount`,`completecount`,`failtime` from ' . tablename('ewei_shop_task_join') . ' where uniacid=:uniacid and join_user=:join_user and task_id=:task_id and task_type=:task_type and failtime<' . time() . ' order by `addtime` DESC limit 1', array(':uniacid' => $_W['uniacid'], ':join_user' => $member['openid'], ':task_id' => $poster['id'], ':task_type' => $poster['poster_type']));
+				$end_task_count = pdo_fetchcolumn('select COUNT(*) from ' . tablename('ewei_shop_task_join') . ' where uniacid=:uniacid and join_user=:join_user and task_type=' . $poster['poster_type'] . ' and (is_reward=1 or failtime<' . time() . ')', array(':uniacid' => $_W['uniacid'], ':join_user' => $member['openid']));
+				$end_task_info = pdo_fetch('select `needcount`,`completecount`,`failtime` from ' . tablename('ewei_shop_task_join') . ' where uniacid=:uniacid and join_user=:join_user and task_id=:task_id and task_type=:task_type and (is_reward=1 or failtime<' . time() . ') order by `addtime` DESC limit 1', array(':uniacid' => $_W['uniacid'], ':join_user' => $member['openid'], ':task_id' => $poster['id'], ':task_type' => $poster['poster_type']));
 				$is_waiting = true;
 				$img = $this->join_task($member, $poster);
 				m('message')->sendCustomNotice($openid, '您已经参加过此任务，不能重复参加');

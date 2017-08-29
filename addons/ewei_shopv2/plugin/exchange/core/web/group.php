@@ -54,8 +54,8 @@ class Group_EweiShopV2Page extends PluginWebPage
 		$id = $_GPC['id'];
 		$t1 = tablename('ewei_shop_coupon');
 		$t2 = tablename('ewei_shop_coupon_category');
-		$all = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_goods') . ' WHERE uniacid = :uniacid AND deleted = 0 ' . "\r\n" . '        AND hasoption = 0', array(':uniacid' => $_W['uniacid']));
-		$hasoption = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_goods') . ' WHERE uniacid = :uniacid AND deleted = 0 ' . "\r\n" . '        AND hasoption = 1', array(':uniacid' => $_W['uniacid']));
+		$all = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_goods') . ' WHERE uniacid = :uniacid AND deleted = 0 ' . "\r\r" . '        AND hasoption = 0', array(':uniacid' => $_W['uniacid']));
+		$hasoption = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_goods') . ' WHERE uniacid = :uniacid AND deleted = 0 ' . "\r\r" . '        AND hasoption = 1', array(':uniacid' => $_W['uniacid']));
 		$i = 0;
 		foreach ($hasoption as $e => $item ) 
 		{
@@ -146,6 +146,20 @@ class Group_EweiShopV2Page extends PluginWebPage
 				$balance = floatval($_GPC['balance']);
 				$balance_left = floatval($_GPC['balance_left']);
 				$balance_right = floatval($_GPC['balance_right']);
+				if ($balance_type == 1) 
+				{
+					if ($balance <= 0) 
+					{
+						show_json(0, '余额面值必须大于0');
+					}
+				}
+				else if ($balance_type == 2) 
+				{
+					if ((intval($balance_left) <= 0) || (intval($balance_right) <= 0)) 
+					{
+						show_json(0, '余额面值必须大于0');
+					}
+				}
 			}
 			if (in_array(3, $select)) 
 			{
@@ -153,6 +167,24 @@ class Group_EweiShopV2Page extends PluginWebPage
 				$red = floatval($_GPC['red']);
 				$red_left = floatval($_GPC['red_left']);
 				$red_right = floatval($_GPC['red_right']);
+				if ($red_type == 1) 
+				{
+					if (intval($red) < 1) 
+					{
+						show_json(0, '红包面值不能小于1元');
+					}
+				}
+				else if ($red_type == 2) 
+				{
+					if ((intval($red_left) < 1) || (intval($red_right) < 1)) 
+					{
+						show_json(0, '红包面值不能小于1元');
+					}
+				}
+				$sendname = trim($_GPC['sendname']);
+				$wishing = trim($_GPC['wishing']);
+				$actname = trim($_GPC['actname']);
+				$remark = trim($_GPC['remark']);
 			}
 			if (in_array(4, $select)) 
 			{
@@ -165,11 +197,15 @@ class Group_EweiShopV2Page extends PluginWebPage
 			{
 				$coupon_type = intval($_GPC['coupontype']);
 				$coupon = $_GPC['checkbox'];
+				if (empty($coupon)) 
+				{
+					show_json(0, '请至少选择一个优惠券');
+				}
 				$coupon = json_encode($coupon);
 			}
 			if (!(empty($title)) && !(empty($endtime)) && !(empty($starttime)) && ($select != false)) 
 			{
-				$data = array('title' => $title, 'endtime' => $endtime, 'starttime' => $starttime, 'type' => $type, 'value' => $value, 'mode' => 6, 'status' => 1, 'uniacid' => $_W['uniacid'], 'score' => $score, 'max' => $max, 'coupon' => $coupon, 'balance' => $balance, 'red' => $red, 'red_left' => $red_left, 'red_right' => $red_right, 'balance_left' => $balance_left, 'balance_right' => $balance_right, 'score_left' => $score_left, 'score_right' => $score_right, 'score_type' => $score_type, 'balance_type' => $balance_type, 'red_type' => $red_type, 'coupon_type' => $coupon_type, 'goods' => $json_goods, 'img' => '../addons/ewei_shopv2/plugin/exchange/static/img/exchange.jpg', 'title_reply' => '组合兑换', 'content' => '欢迎来到兑换中心,点击进入兑换', 'code_type' => intval($_GPC['code_type']), 'binding' => $binding, 'postage' => $postage, 'postage_type' => $postagetype);
+				$data = array('title' => $title, 'endtime' => $endtime, 'starttime' => $starttime, 'type' => $type, 'value' => $value, 'mode' => 6, 'status' => 1, 'uniacid' => $_W['uniacid'], 'score' => $score, 'max' => $max, 'coupon' => $coupon, 'balance' => $balance, 'red' => $red, 'red_left' => $red_left, 'red_right' => $red_right, 'balance_left' => $balance_left, 'balance_right' => $balance_right, 'score_left' => $score_left, 'score_right' => $score_right, 'score_type' => $score_type, 'balance_type' => $balance_type, 'red_type' => $red_type, 'coupon_type' => $coupon_type, 'goods' => $json_goods, 'img' => '../addons/ewei_shopv2/plugin/exchange/static/img/exchange.jpg', 'title_reply' => '组合兑换', 'content' => '欢迎来到兑换中心,点击进入兑换', 'code_type' => intval($_GPC['code_type']), 'binding' => $binding, 'postage' => $postage, 'postage_type' => $postagetype, 'sendname' => $sendname, 'wishing' => $wishing, 'actname' => $actname, 'remark' => $remark);
 				pdo_insert('ewei_shop_exchange_group', $data);
 				$insert_id = pdo_insertid();
 				if (!(empty($insert_id))) 
@@ -257,6 +293,24 @@ class Group_EweiShopV2Page extends PluginWebPage
 				$red = floatval($_GPC['red']);
 				$red_left = floatval($_GPC['red_left']);
 				$red_right = floatval($_GPC['red_right']);
+				if ($red_type == 1) 
+				{
+					if (intval($red) < 1) 
+					{
+						show_json(0, '红包面值不能小于1元');
+					}
+				}
+				else if ($red_type == 2) 
+				{
+					if ((intval($red_left) < 1) || (intval($red_right) < 1)) 
+					{
+						show_json(0, '红包面值不能小于1元');
+					}
+				}
+				$sendname = trim($_GPC['sendname']);
+				$wishing = trim($_GPC['wishing']);
+				$actname = trim($_GPC['actname']);
+				$remark = trim($_GPC['remark']);
 			}
 			if (in_array(4, $select)) 
 			{
@@ -269,11 +323,15 @@ class Group_EweiShopV2Page extends PluginWebPage
 			{
 				$coupon_type = intval($_GPC['coupontype']);
 				$coupon = $_GPC['checkbox'];
+				if (empty($coupon)) 
+				{
+					show_json(0, '请至少选择一个优惠券');
+				}
 				$coupon = json_encode($coupon);
 			}
 			if (!(empty($title)) && !(empty($endtime)) && !(empty($starttime)) && ($select != false)) 
 			{
-				$data = array('title' => $title, 'endtime' => $endtime, 'starttime' => $starttime, 'type' => $type, 'value' => $value, 'mode' => 6, 'status' => 1, 'uniacid' => $_W['uniacid'], 'score' => $score, 'max' => $max, 'coupon' => $coupon, 'balance' => $balance, 'red' => $red, 'red_left' => $red_left, 'red_right' => $red_right, 'balance_left' => $balance_left, 'balance_right' => $balance_right, 'score_left' => $score_left, 'score_right' => $score_right, 'score_type' => $score_type, 'balance_type' => $balance_type, 'red_type' => $red_type, 'coupon_type' => $coupon_type, 'goods' => $json_goods, 'code_type' => intval($_GPC['code_type']), 'binding' => $binding, 'postage' => $postage, 'postage_type' => $postagetype);
+				$data = array('title' => $title, 'endtime' => $endtime, 'starttime' => $starttime, 'type' => $type, 'value' => $value, 'mode' => 6, 'status' => 1, 'uniacid' => $_W['uniacid'], 'score' => $score, 'max' => $max, 'coupon' => $coupon, 'balance' => $balance, 'red' => $red, 'red_left' => $red_left, 'red_right' => $red_right, 'balance_left' => $balance_left, 'balance_right' => $balance_right, 'score_left' => $score_left, 'score_right' => $score_right, 'score_type' => $score_type, 'balance_type' => $balance_type, 'red_type' => $red_type, 'coupon_type' => $coupon_type, 'goods' => $json_goods, 'binding' => $binding, 'postage' => $postage, 'postage_type' => $postagetype, 'sendname' => $sendname, 'wishing' => $wishing, 'actname' => $actname, 'remark' => $remark);
 				pdo_update('ewei_shop_exchange_group', $data, array('id' => $id, 'uniacid' => $_W['uniacid']));
 				show_json(1, '保存成功');
 			}
@@ -284,7 +342,7 @@ class Group_EweiShopV2Page extends PluginWebPage
 		global $_GPC;
 		global $_W;
 		$id = (int) $_GPC['id'];
-		$res = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_exchange_group') . ' ' . "\r\n" . '            WHERE id = :id AND uniacid = :uniacid', array(':id' => $id, ':uniacid' => $_W['uniacid']));
+		$res = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_exchange_group') . ' ' . "\r\r" . '            WHERE id = :id AND uniacid = :uniacid', array(':id' => $id, ':uniacid' => $_W['uniacid']));
 		@session_start();
 		if ((0 < intval($_GPC['ajax'])) && (0 < intval($_GPC['loop']))) 
 		{
@@ -308,11 +366,14 @@ class Group_EweiShopV2Page extends PluginWebPage
 			$length = intval($_GPC['length']);
 			$num = (int) $_GPC['num'];
 			$date = (int) $_GPC['date'];
-			$date = max(1, $date);
-			$date = min($date, 30);
+			if ($res['code_type'] == 0) 
+			{
+				$date = max(1, $date);
+				$date = min($date, 30);
+			}
 			$endtime = ($date * 24 * 60 * 60) + time();
 			$endtime = date('Y-m-d H:i:s', $endtime);
-			echo intval($_GPC['loop']);
+			echo intval($_GPC['loop']) . '&' . $dir_pre;
 			while (0 < $num) 
 			{
 				if ($res['code_type'] === 1) 
@@ -333,8 +394,17 @@ class Group_EweiShopV2Page extends PluginWebPage
 					$scene = rand(1, 100000);
 				}
 				$exist = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('qrcode') . ' WHERE qrcid = :qrcid AND uniacid = :uniacid', array(':qrcid' => $scene, ':uniacid' => $_W['uniacid']));
+				while (!(empty($exist))) 
+				{
+				}
 				pdo_update('ewei_shop_exchange_code', array('key' => $key, 'scene' => $scene, 'serial' => $serial), array('id' => $rand_id));
-				pdo_insert('rule', array('uniacid' => $_W['uniacid'], 'name' => 'ewei_shopv2:exchange:goods', 'module' => 'ewei_shopv2', 'displayorder' => $rand_id, 'status' => 1));
+				$insert = array('uniacid' => $_W['uniacid'], 'name' => 'ewei_shopv2:exchange:group', 'module' => 'reply', 'displayorder' => $rand_id, 'status' => 1);
+				if (IMS_VERSION == '1.0') 
+				{
+					$insert['containtype'] = (($res == '0' ? 'news' : 'basic'));
+					$insert['module'] = (($res == '0' ? 'news' : 'basic'));
+				}
+				pdo_insert('rule', $insert);
 				$rid = pdo_insertid();
 				pdo_query('UPDATE ' . tablename('ewei_shop_exchange_group') . ' SET total = total + 1 WHERE uniacid = :uniacid AND id = :id', array(':uniacid' => $_W['uniacid'], ':id' => $id));
 				if ($res['reply_type'] == 0) 
@@ -353,6 +423,10 @@ class Group_EweiShopV2Page extends PluginWebPage
 					$arr = array('rid' => $rid, 'content' => $content);
 					pdo_insert('basic_reply', $arr);
 				}
+				if (IMS_VERSION == '1.0') 
+				{
+					$module = 'reply';
+				}
 				pdo_insert('rule_keyword', array('rid' => $rid, 'uniacid' => $_W['uniacid'], 'module' => $module, 'content' => md5($key), 'type' => 1, 'displayorder' => $rand_id, 'status' => 1));
 				if ($res['code_type'] < 2) 
 				{
@@ -361,7 +435,7 @@ class Group_EweiShopV2Page extends PluginWebPage
 					$customMessageSendUrl = 'https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token=' . $token;
 					if ($res['code_type'] == 0) 
 					{
-						$postJosnData = '{"expire_seconds": ' . $expire . ', "action_name": "QR_SCENE", ' . "\r\n" . '                    "action_info": {"scene": {"scene_id": ' . $scene . '}}}';
+						$postJosnData = '{"expire_seconds": ' . $expire . ', "action_name": "QR_SCENE", ' . "\r\r" . '                    "action_info": {"scene": {"scene_id": ' . $scene . '}}}';
 					}
 					else 
 					{
@@ -382,11 +456,37 @@ class Group_EweiShopV2Page extends PluginWebPage
 					mkdirs($dirname);
 					$fileContents = file_get_contents($qr_url);
 					file_put_contents($dirname . '/' . $key . '.png', $fileContents);
+					fopen('../addons/ewei_shopv2/data/qrcode/' . $_W['uniacid'] . '/exchange/' . $dir_pre . '.zip', 'wr');
 					$zip = new ZipArchive();
-					if ($zip->open('../addons/ewei_shopv2/data/qrcode/' . $_W['uniacid'] . '/exchange/' . $dir_pre . '.zip', ZipArchive::OVERWRITE) === true) 
+					$res = $zip->open('../addons/ewei_shopv2/data/qrcode/' . $_W['uniacid'] . '/exchange/' . $dir_pre . '.zip', ZipArchive::OVERWRITE);
+					if ($res === true) 
 					{
 						$this->addFileToZip('../addons/ewei_shopv2/data/qrcode/' . $_W['uniacid'] . '/exchange/' . $dir_pre, $zip);
 						$zip->close();
+					}
+					else 
+					{
+						switch ($res) 
+						{
+							case ZipArchive: exit('File already exists.');
+							break;
+							case ZipArchive: exit('Zip archive inconsistent.');
+							break;
+							case ZipArchive: exit('Malloc failure.');
+							break;
+							case ZipArchive: exit('No such file.');
+							break;
+							case ZipArchive: exit('Not a zip archive.');
+							break;
+							case ZipArchive: exit('Can\'t open file.');
+							break;
+							case ZipArchive: exit('Read error.');
+							break;
+							case ZipArchive: exit('Seek error.');
+							break;
+							default: exit('Unknow Error');
+							break;
+						}
 					}
 					if (intval($_GPC['end']) == 1) 
 					{
@@ -405,7 +505,8 @@ class Group_EweiShopV2Page extends PluginWebPage
 						load()->func('file');
 						mkdirs($dirname);
 						require IA_ROOT . '/framework/library/qrcode/phpqrcode.php';
-						QRcode::png($content_url, $dirname . '/' . $key . '.png', QR_ECLEVEL_L, 10, 3);
+						QRcode::png($content_url, $dirname . '/' . $serial . '.png', QR_ECLEVEL_L, 10, 3);
+						fopen('../addons/ewei_shopv2/data/qrcode/' . $_W['uniacid'] . '/exchange/' . $dir_pre . '.zip', 'wr');
 						$zip = new ZipArchive();
 						if ($zip->open('../addons/ewei_shopv2/data/qrcode/' . $_W['uniacid'] . '/exchange/' . $dir_pre . '.zip', ZipArchive::OVERWRITE) === true) 
 						{
@@ -427,13 +528,13 @@ class Group_EweiShopV2Page extends PluginWebPage
 						if (!(file_exists('../addons/ewei_shopv2/data/qrcode/' . $_W['uniacid'] . '/exchange/' . $dir_pre . '.txt'))) 
 						{
 							$text = fopen('../addons/ewei_shopv2/data/qrcode/' . $_W['uniacid'] . '/exchange/' . $dir_pre . '.txt', 'w');
-							fwrite($text, $key . $br);
+							fwrite($text, $key . '_' . $serial . $br);
 							fclose($text);
 						}
 						else 
 						{
 							$text = fopen('../addons/ewei_shopv2/data/qrcode/' . $_W['uniacid'] . '/exchange/' . $dir_pre . '.txt', 'a+');
-							fwrite($text, $key . $br);
+							fwrite($text, $key . '_' . $serial . $br);
 							fclose($text);
 						}
 						if (intval($_GPC['end']) == 1) 
@@ -442,16 +543,20 @@ class Group_EweiShopV2Page extends PluginWebPage
 							require_once IA_ROOT . '/framework/library/phpexcel/PHPExcel/Writer/Excel5.php';
 							$excel = new PHPExcel();
 							$writer = new PHPExcel_Writer_Excel5($excel);
-							$excel->getActiveSheet()->setCellValue('A1', '编号');
-							$excel->getActiveSheet()->setCellValue('B1', '兑换码CDKEY');
+							$excel->getActiveSheet()->setCellValue('A1', '兑换码');
+							$excel->getActiveSheet()->setCellValue('B1', '编号');
 							$excel->getActiveSheet()->setCellValue('C1', '所属兑换活动');
 							$file = fopen('../addons/ewei_shopv2/data/qrcode/' . $_W['uniacid'] . '/exchange/' . $dir_pre . '.txt', 'r');
-							dump($text);
 							$line = 2;
+							if (empty($file)) 
+							{
+								exit();
+							}
 							while (!(feof($file))) 
 							{
-								$v = fgets($file);
-								$excel->getActiveSheet()->setCellValue('A' . $line, $v)->setCellValue('B' . $line, '兑换码CDKEY')->setCellValue('C' . $line, '兑换活动');
+								$v0 = fgets($file);
+								$v = explode('_', $v0);
+								$excel->getActiveSheet()->setCellValue('A' . $line, ' ' . $v[0])->setCellValue('B' . $line, $v[1])->setCellValue('C' . $line, $res['title']);
 								++$line;
 							}
 							fclose($file);
@@ -517,7 +622,7 @@ class Group_EweiShopV2Page extends PluginWebPage
 		}
 		$pstart = $psize * ($page - 1);
 		$id = $_GPC['id'];
-		$res = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_exchange_group') . ' ' . "\r\n" . '            WHERE id = :id AND uniacid = :uniacid', array(':id' => $id, ':uniacid' => $_W['uniacid']));
+		$res = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_exchange_group') . ' ' . "\r\r" . '            WHERE id = :id AND uniacid = :uniacid', array(':id' => $id, ':uniacid' => $_W['uniacid']));
 		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_exchange_code') . ' WHERE groupid = :id AND uniacid=:uniacid AND status = 1 AND unix_timestamp(endtime)>' . time() . ' ORDER BY id DESC LIMIT ' . $pstart . ',' . $psize, array(':id' => $id, ':uniacid' => $_W['uniacid']));
 		$dno = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_shop_exchange_code') . ' WHERE groupid = :id AND uniacid=:uniacid AND status = 1 AND unix_timestamp(endtime)>' . time(), array(':id' => $id, ':uniacid' => $_W['uniacid']));
 		$dyet = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_shop_exchange_code') . ' WHERE groupid = :id AND uniacid=:uniacid AND status = 2', array(':id' => $id, ':uniacid' => $_W['uniacid']));
@@ -546,7 +651,7 @@ class Group_EweiShopV2Page extends PluginWebPage
 		}
 		$pstart = $psize * ($page - 1);
 		$id = $_GPC['id'];
-		$res = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_exchange_group') . ' ' . "\r\n" . '            WHERE id = :id AND uniacid = :uniacid', array(':id' => $id, ':uniacid' => $_W['uniacid']));
+		$res = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_exchange_group') . ' ' . "\r\r" . '            WHERE id = :id AND uniacid = :uniacid', array(':id' => $id, ':uniacid' => $_W['uniacid']));
 		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_exchange_code') . ' WHERE groupid = :id AND uniacid=:uniacid AND status = 2 ORDER BY id DESC LIMIT ' . $pstart . ',' . $psize, array(':id' => $id, ':uniacid' => $_W['uniacid']));
 		$dno = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_shop_exchange_code') . ' WHERE groupid = :id AND uniacid=:uniacid AND status = 1 AND unix_timestamp(endtime)>' . time(), array(':id' => $id, ':uniacid' => $_W['uniacid']));
 		$dyet = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_shop_exchange_code') . ' WHERE groupid = :id AND uniacid=:uniacid AND status = 2', array(':id' => $id, ':uniacid' => $_W['uniacid']));
@@ -575,7 +680,7 @@ class Group_EweiShopV2Page extends PluginWebPage
 		}
 		$pstart = $psize * ($page - 1);
 		$id = $_GPC['id'];
-		$res = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_exchange_group') . ' ' . "\r\n" . '            WHERE id = :id AND uniacid = :uniacid', array(':id' => $id, ':uniacid' => $_W['uniacid']));
+		$res = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_exchange_group') . ' ' . "\r\r" . '            WHERE id = :id AND uniacid = :uniacid', array(':id' => $id, ':uniacid' => $_W['uniacid']));
 		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_exchange_code') . ' WHERE groupid = :id AND uniacid=:uniacid AND status != 2 AND unix_timestamp(endtime)<' . time() . ' ORDER BY id DESC LIMIT ' . $pstart . ',' . $psize, array(':id' => $id, ':uniacid' => $_W['uniacid']));
 		$dno = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_shop_exchange_code') . ' WHERE groupid = :id AND uniacid=:uniacid AND status = 1 AND unix_timestamp(endtime)>' . time(), array(':id' => $id, ':uniacid' => $_W['uniacid']));
 		$dyet = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_shop_exchange_code') . ' WHERE groupid = :id AND uniacid=:uniacid AND status = 2', array(':id' => $id, ':uniacid' => $_W['uniacid']));
@@ -667,8 +772,8 @@ class Group_EweiShopV2Page extends PluginWebPage
 		global $_W;
 		global $_GPC;
 		$id = $_GPC['id'];
-		$all = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_goods') . ' WHERE uniacid = :uniacid AND deleted = 0 ' . "\r\n" . '        AND hasoption = 0', array(':uniacid' => $_W['uniacid']));
-		$hasoption = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_goods') . ' WHERE uniacid = :uniacid AND deleted = 0 ' . "\r\n" . '        AND hasoption = 1', array(':uniacid' => $_W['uniacid']));
+		$all = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_goods') . ' WHERE uniacid = :uniacid AND deleted = 0 ' . "\r\r" . '        AND hasoption = 0', array(':uniacid' => $_W['uniacid']));
+		$hasoption = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_goods') . ' WHERE uniacid = :uniacid AND deleted = 0 ' . "\r\r" . '        AND hasoption = 1', array(':uniacid' => $_W['uniacid']));
 		$i = 0;
 		foreach ($hasoption as $e => $item ) 
 		{
@@ -690,6 +795,7 @@ class Group_EweiShopV2Page extends PluginWebPage
 		global $_W;
 		$key = $_GPC['key'];
 		$type = $_GPC['type'];
+		$id = intval($_GPC['id']);
 		$res = pdo_fetch('SELECT * FROM ' . tablename('qrcode') . ' WHERE keyword = :keyword AND uniacid = :uniacid', array(':uniacid' => $_W['uniacid'], ':keyword' => md5($key)));
 		$qrcode_url = 'https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=' . $res['ticket'];
 		include $this->template();
@@ -760,7 +866,7 @@ class Group_EweiShopV2Page extends PluginWebPage
 				$a = pdo_delete('ewei_shop_exchange_code', array('id' => $value, 'key' => $key, 'uniacid' => $_W['uniacid']));
 				$t1 = tablename('qrcode');
 				$t2 = tablename('qrcode_stat');
-				$res = pdo_query('DELETE ' . $t1 . ',' . $t2 . ' FROM ' . $t1 . ' LEFT JOIN ' . $t2 . ' ON ' . $t1 . '.id = ' . $t2 . '.qid ' . "\r\n" . '                    WHERE ' . $t1 . '.keyword = :key', array(':key' => md5($key)));
+				$res = pdo_query('DELETE ' . $t1 . ',' . $t2 . ' FROM ' . $t1 . ' LEFT JOIN ' . $t2 . ' ON ' . $t1 . '.id = ' . $t2 . '.qid ' . "\r\r" . '                    WHERE ' . $t1 . '.keyword = :key', array(':key' => md5($key)));
 				$b = pdo_delete('rule', array('displayorder' => $value, 'uniacid' => $_W['uniacid']));
 				$c = pdo_delete('rule_keyword', array('content' => $key, 'uniacid' => $_W['uniacid']));
 				$d = pdo_delete('news_reply', array('displayorder' => $value));
@@ -822,14 +928,14 @@ class Group_EweiShopV2Page extends PluginWebPage
 				{
 					foreach ($goods['goods'] as $k => $v ) 
 					{
-						$all[$k] = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_goods') . ' WHERE uniacid = :uniacid AND deleted = 0 ' . "\r\n" . '        AND hasoption = 0 AND merchid = 0 AND id = :id', array(':id' => $v, ':uniacid' => $_W['uniacid']));
+						$all[$k] = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_goods') . ' WHERE uniacid = :uniacid AND deleted = 0 ' . "\r\r" . '        AND hasoption = 0 AND id = :id', array(':id' => $v, ':uniacid' => $_W['uniacid']));
 					}
 				}
 				if ($goods['option'] != false) 
 				{
 					foreach ($goods['option'] as $ke => $v ) 
 					{
-						$hasoption[$ke] = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_goods') . ' WHERE uniacid = :uniacid AND deleted = 0 AND hasoption = 1 AND merchid = 0 AND id = :id', array(':id' => $ke, ':uniacid' => $_W['uniacid']));
+						$hasoption[$ke] = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_goods') . ' WHERE uniacid = :uniacid AND deleted = 0 AND hasoption = 1 AND id = :id', array(':id' => $ke, ':uniacid' => $_W['uniacid']));
 					}
 				}
 			}
@@ -933,7 +1039,8 @@ class Group_EweiShopV2Page extends PluginWebPage
 		global $_W;
 		global $_GPC;
 		$key = trim($_GPC['key']);
-		$url = mobileUrl('exchange', array('key' => $key), 1);
+		$id = intval($_GPC['id']);
+		$url = mobileUrl('exchange', array('key' => $key, 'codetype' => 1, 'id' => $id), 1);
 		require IA_ROOT . '/framework/library/qrcode/phpqrcode.php';
 		QRcode::png($url, false, QR_ECLEVEL_L, 10, 3);
 	}

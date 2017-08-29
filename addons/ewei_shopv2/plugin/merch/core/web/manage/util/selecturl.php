@@ -39,6 +39,10 @@ class Selecturl_EweiShopV2Page extends MerchWebPage
 				$allpagetype = p('diypage')->getPageType();
 			}
 		}
+		if (p('quick')) 
+		{
+			$quickList = p('quick')->getPageList($_W['merchid']);
+		}
 		include $this->template();
 	}
 	public function query() 

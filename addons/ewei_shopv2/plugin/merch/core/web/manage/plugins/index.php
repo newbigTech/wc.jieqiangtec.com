@@ -10,33 +10,10 @@ class Index_EweiShopV2Page extends MerchWebPage
 	{
 		global $_W;
 		global $_GPC;
-		$category = m('plugin')->getList(1);
-		$has_plugins = array();
-		if (p('exhelper')) 
-		{
-			$has_plugins[] = 'exhelper';
-		}
-		if (p('taobao')) 
-		{
-			$has_plugins[] = 'taobao';
-		}
-		if (p('diypage')) 
-		{
-			$has_plugins[] = 'diypage';
-		}
-		$plugins_list = array();
-		$plugins_all = array();
-		foreach ($category as $key => $value ) 
-		{
-			foreach ($value['plugins'] as $k => $v ) 
-			{
-				$plugins_all[$v['identity']] = $v;
-				if (in_array($v['identity'], $has_plugins)) 
-				{
-					$plugins_list[] = $v;
-				}
-			}
-		}
+		$merchid = $_W['merchid'];
+		$plugins_data = $this->model->getPluginList($merchid);
+		$plugins_list = $plugins_data['plugins_list'];
+		$plugins_all = $plugins_data['plugins_all'];
 		$cashier = false;
 		if (p('cashier')) 
 		{

@@ -130,7 +130,7 @@
 					util.image('', function (data) {
 						imgitem.find('img').attr('src', data['url']);
 						imgitem.find('input').val(data['attachment']);
-					});
+					},null,{dest_dir:"merch/{php echo $_W['merchid']}"});
 				});
 			});
 			require(['jquery.ui'] ,function(){

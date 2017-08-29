@@ -26,7 +26,7 @@
                 <div class="input-group-btn">
                     <button class="btn btn-default btn-sm"  type="button" data-toggle='refresh'><i class='fa fa-refresh'></i></button>
                     {ifp 'sysset.tmessage.delete'}
-                    <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle='batch-remove' data-confirm="确认要删除?" data-href="{php echo webUrl('sysset/tmessage',array('op'=>'delete'))}"><i class='fa fa-trash'></i> 删除</button>
+                    <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle='batch-remove' data-confirm="确认要删除?" data-href="{php echo webUrl('sysset/tmessage/delete')}"><i class='fa fa-trash'></i> 删除</button>
                     {/if}
                 </div>
             </div>

@@ -100,6 +100,14 @@
 {template 'sns/board/board_item'}
 
 <div id="sns-board-post-page" class='fui-page sns-board-post-page'>
+    <script type="text/javascript">
+        $(function () {
+            $(".btn-add-post").off('click').on('click',function () {
+                $(".fui-cell-info .post-input").val('');
+                $(".fui-cell-info .icon-pic").empty();
+            })
+        })
+    </script>
     <div class="fui-header">
         <div class="fui-header-left">
             <a class="back">取消</a>
@@ -113,13 +121,13 @@
 
             <div class="fui-cell">
                 <div class="fui-cell-info">
-                    <input type="text" class="fui-input" placeholder="标题 3-25个字" id="title" minlength="3" maxlength="25"/>
+                    <input type="text" class="fui-input post-input" placeholder="标题 3-25个字" id="title" minlength="3" maxlength="25"/>
                 </div>
             </div>
 
             <div class="fui-cell">
                 <div class="fui-cell-info">
-                    <textarea placeholder="内容 10-1000个字" rows="8" id="content" minlength="10" maxlength="1000"></textarea>
+                    <textarea placeholder="内容 10-1000个字" class="post-input" rows="8" id="content" minlength="10" maxlength="1000"></textarea>
                 </div>
             </div>
             <div class="fui-cell reply-func-cell">

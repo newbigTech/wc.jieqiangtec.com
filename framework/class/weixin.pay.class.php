@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * [WeEngine System] Copyright (c) 2014 WE7.CC
+ * WeEngine is NOT a free software, it under the license terms, visited http://www.we7.cc/ for more details.
+ */
 defined('IN_IA') or exit('Access Denied');
 class WeiXinPay extends pay{
 	public $wxpay;
@@ -7,12 +10,25 @@ class WeiXinPay extends pay{
 		global $_W;
 		$setting = uni_setting($_W['uniacid']);
 		$wxpay = $setting['payment']['wechat'];
-		$this->wxpay = array(
-			'appid' => $_W['account']['key'],
-			'mch_id' => $wxpay['mchid'],
-			'key' => $wxpay['apikey'],
-			'notify_url' => $_W['siteroot'] . 'payment/wechat/notify.php',
-		);
+		if (intval($wxpay['switch']) == 3) {
+			$oauth_account = uni_setting($wxpay['service'], array('payment'));
+			$oauth_acid = pdo_getcolumn('uni_account', array('uniacid' => $wxpay['service']), 'default_acid');
+			$oauth_appid = pdo_getcolumn('account_wechats', array('acid' => $oauth_acid), 'key');
+			$this->wxpay = array(
+				'appid' => $oauth_appid,
+				'mch_id' => $oauth_account['payment']['wechat_facilitator']['mchid'],
+				'sub_mch_id' => $wxpay['sub_mch_id'],
+				'key' => $oauth_account['payment']['wechat_facilitator']['signkey'],
+				'notify_url' => $_W['siteroot'] . 'payment/wechat/notify.php',
+			);
+		} else {
+			$this->wxpay = array(
+				'appid' => $_W['account']['key'],
+				'mch_id' => $wxpay['mchid'],
+				'key' => $wxpay['apikey'],
+				'notify_url' => $_W['siteroot'] . 'payment/wechat/notify.php',
+			);
+		}
 	}
 
 	public function array2url($params, $force = false) {
@@ -168,10 +184,14 @@ class WeiXinPay extends pay{
 		}
 		$uniontid = $params['uniontid'];
 		unset($params['uniontid']);
+
 		$params['appid'] = $this->wxpay['appid'];
 		$params['mch_id'] = $this->wxpay['mch_id'];
 		$params['spbill_create_ip'] = CLIENT_IP;
 		$params['nonce_str'] = random(32);
+		if (!empty($this->wxpay['sub_mch_id'])) {
+			$params['sub_mch_id'] = $this->wxpay['sub_mch_id'];
+		}
 		$params['sign'] = $this->bulidSign($params);
 		$result = $this->httpWxurl('https://api.mch.weixin.qq.com/pay/micropay', $params);
 		if(is_error($result)) {
@@ -315,6 +335,7 @@ EOF;
 			'prepay_id' => $result['prepay_id'],
 			'nonce_str' =>  random(32),
 			'result_code' => 'SUCCESS',
+			'code_url' => $result['code_url'],
 		);
 		$params['sign'] = $this->bulidSign($params);
 		return $params;

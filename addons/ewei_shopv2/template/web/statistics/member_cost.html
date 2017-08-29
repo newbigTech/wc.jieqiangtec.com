@@ -56,7 +56,7 @@
             <labe class='label label-default'  style='padding:8px;'>&nbsp;{php echo ($pindex -1)* $psize + $key + 1}&nbsp;</labe>
             {/if}
         </td>
-        <td><img src="{$item['avatar']}" style='padding:1px;width:30px;height:30px;border:1px solid #ccc' />
+        <td><img src="{php echo tomedia($item['avatar'])}" style='padding:1px;width:30px;height:30px;border:1px solid #ccc' />
             {$item['nickname']}</td>
         <td>{$item['realname']}</td>
         <td>{$item['mobile']}</td>

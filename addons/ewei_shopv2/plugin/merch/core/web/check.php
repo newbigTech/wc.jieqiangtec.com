@@ -113,8 +113,7 @@ class Check_EweiShopV2Page extends PluginWebPage
 			}
 			m('excel')->export($list, array('title' => '提现申请数据', 'columns' => $columns));
 		}
-		$total = pdo_fetchcolumn('select COUNT(u.id) from ' . tablename('ewei_shop_merch_bill') . ' b ' . ' left join ' . tablename('ewei_shop_merch_user') . ' u on b.merchid = u.id' . ' where 1 ' . $condition . ' GROUP BY u.id', $params);
-		$total = count($total);
+		$total = pdo_fetchcolumn('select COUNT(1) from ' . tablename('ewei_shop_merch_bill') . ' b ' . ' left join ' . tablename('ewei_shop_merch_user') . ' u on b.merchid = u.id' . ' where 1 ' . $condition, $params);
 		$pager = pagination($total, $pindex, $psize);
 		$groups = $this->model->getGroups();
 		include $this->template('merch/check/index');
@@ -150,6 +149,14 @@ class Check_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 		$status = intval($_GPC['status']);
 		$item = $this->model->getOneApply($id);
+		if (empty($item['applytype'])) 
+		{
+			$merch_user = pdo_fetch('select * from ' . tablename('ewei_shop_merch_user') . ' where uniacid=:uniacid and id=' . $item['merchid'], array(':uniacid' => $_W['uniacid']));
+			if (!(empty($merch_user['payopenid']))) 
+			{
+				$member = m('member')->getMember($merch_user['payopenid']);
+			}
+		}
 		$apply_type = array(0 => '微信钱包', 2 => '支付宝', 3 => '银行卡');
 		if ($status == 1) 
 		{
@@ -269,11 +276,14 @@ class Check_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 		$bpid = $_GPC['bpid'];
 		$type = intval($_GPC['type']);
-		if (empty($bpid) && is_array($bpid)) 
+		if (empty($bpid)) 
 		{
-			show_json(0, '参数错误!');
+			if ($type == 1) 
+			{
+				show_json(0, '参数错误!');
+			}
 		}
-		if (!(empty($item))) 
+		else 
 		{
 			$bpid = array_unique($bpid);
 		}

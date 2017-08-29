@@ -108,7 +108,7 @@
 .verify-pop.pop .qrcode .inner .text img {
     max-width: 100%;
 }
-.sortMenu{height:2rem;padding:0;background: #fff;border-bottom:1px solid #e7e7e7;overflow: initial;}
+.sortMenu{height:2rem;padding:0;background: #fff;border-bottom:1px solid #e7e7e7;overflow: initial !important;}
 .sortMenu > li{list-style: none;padding:0.2rem;line-height: 1.6rem;font-size:0.7rem;text-align: center;color:#555;border-right:1px solid #e7e7e7;overflow: initial;}
 .sort-mask{top:6.4rem;opacity: 0.5;}
 .sortmenu_rule,.sortmenu_cate,.sortmenu_sort{

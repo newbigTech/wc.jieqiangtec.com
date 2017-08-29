@@ -372,6 +372,7 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 	{
 		global $_W;
 		global $_GPC;
+		$isFollowed = $this->model->checkFollowed();
 		$id = $_GPC['id'];
 		$ajax = $_GPC['ajax'];
 		$myMid = (int) m('member')->getMid();
@@ -385,7 +386,7 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 		{
 			$id = 1;
 		}
-		$account_set = pdo_get('ewei_shop_bargain_account', array('id' => $_W['uniacid']), array('partin', 'rule'));
+		$account_set = pdo_get('ewei_shop_bargain_account', array('id' => $_W['uniacid']), array('partin', 'rule', 'sharestyle'));
 		$res = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_bargain_actor') . ' WHERE id = :id', array(':id' => $id));
 		$res2 = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_bargain_goods') . ' WHERE id = :id AND status=\'0\'', array(':id' => $res['goods_id']));
 		$ewei_detail = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_goods') . ' WHERE id = :id AND status = \'1\' AND bargain > 0 AND deleted=0', array(':id' => $res2['goods_id']));
@@ -497,6 +498,10 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 		}
 		if ($ajax == 151) 
 		{
+			if ($isFollowed !== true) 
+			{
+				exit('请先关注再砍价');
+			}
 			echo $this->cut($id, $time_limit, $min_price, $res2['each_time'], $res2['total_time'], $max_price, $res2['probability']);
 			exit();
 			return;
@@ -590,7 +595,6 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 		}
 		if (!(empty($res['initiate']))) 
 		{
-			$count = pdo_get('ewei_shop_bargain_actor', array('goods_id' => $goods_id, 'openid' => $_W['openid'], 'status' => 0), 'id');
 			if (!(empty($count['id']))) 
 			{
 				echo '<script>window.location.href = \'' . mobileUrl('bargain/bargain', array('id' => $count['id'])) . '\'</script>';
@@ -628,7 +632,7 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 		}
 		if ($id) 
 		{
-			$url = mobileUrl('bargain/bargain', array(id => $id), true);
+			$url = mobileUrl('bargain/bargain', array('id' => $id), true);
 			header('Location:' . $url);
 			return;
 		}
@@ -691,7 +695,6 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 		{
 			$cut_price = $min_price - $now_price['now_price'];
 			$cut_price = round($cut_price, 2);
-			$now_price['now_price'] += $cut_price;
 			if (0 < $cut_price) 
 			{
 				$cut_price = -1 * $cut_price;
@@ -742,10 +745,10 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 	{
 		global $_W;
 		global $_GPC;
-		$time = date('Y-m-d H:i:s', time());
+		$time = date('Y-m-d H:i', time());
 		$datas[] = array('name' => '砍价金额', 'value' => $cut_price);
 		$datas[] = array('name' => '当前金额', 'value' => $now_price);
-		$datas[] = array('name' => '砍价时间', 'value' => date('Y-m-d H:i:s'));
+		$datas[] = array('name' => '砍价时间', 'value' => $time);
 		$datas[] = array('name' => '砍价人昵称', 'value' => $nickname);
 		$datas[] = array('name' => '砍掉或增加', 'value' => $iORr);
 		$datas[] = array('name' => '成功或失败', 'value' => $sORf);
@@ -760,7 +763,7 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 		else 
 		{
 			$tag = 'bargain_message';
-			$text = '砍价成功通知：' . "\n\n" . $nickname . '帮您砍价' . $sORf . '，' . "\n" . '砍价结果：' . $iORr . '了' . $cut_price . '元' . "\n" . '砍价时间：' . time() . "\n" . '当前成交价：' . $now_price . '元' . "\n" . $remark;
+			$text = '砍价成功通知：' . "\n\n" . $nickname . '帮您砍价' . $sORf . '，' . "\n" . '砍价结果：' . $iORr . '了' . $cut_price . '元' . "\n" . '砍价时间：' . $time . "\n" . '当前成交价：' . $now_price . '元' . "\n" . $remark;
 			$message = array( 'first' => array('value' => '砍价' . $sORf . '通知' . "\n", 'color' => '#000000'), 'keyword1' => array('title' => '任务名称', 'value' => $nickname . '帮你砍价' . $sORf, 'color' => '#000000'), 'keyword2' => array('title' => '通知类型', 'value' => '砍价' . $sORf . '通知', 'color' => '#000000'), 'remark' => array('value' => '砍价金额：' . $iORr . '了' . $sORf . '元' . "\n" . '砍价时间：' . $time . "\n" . '当前价格：' . $now_price . '元' . "\n\n" . '点击立即下单', 'color' => '#000000') );
 		}
 		$this->sendNotice(array('openid' => $openid, 'tag' => $tag, 'default' => $message, 'cusdefault' => $text, 'url' => $url, 'datas' => $datas));

@@ -10,7 +10,27 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 		global $_W;
 		global $_GPC;
 		$codetype = intval($_GPC['codetype']);
+		$key = trim($_GPC['key']);
+		$all = 0;
+		$all = intval($_GPC['all']);
 		$id = intval($_GPC['id']);
+		if (!(empty($all)) && !(empty($codetype))) 
+		{
+			include $this->template('exchange/common');
+			exit();
+		}
+		else if (!(empty($all)) && empty($codetype)) 
+		{
+			$keyresult = pdo_fetch('SELECT groupid FROM ' . tablename('ewei_shop_exchange_code') . ' WHERE `key` = :code AND uniacid = :uniacid', array(':code' => $key, ':uniacid' => $_W['uniacid']));
+			if (empty($keyresult)) 
+			{
+				show_json(0, '兑换码不存在或已过期');
+			}
+			else 
+			{
+				$id = $keyresult['groupid'];
+			}
+		}
 		if (empty($id) && !(empty($codetype))) 
 		{
 			$this->message('页面不存在', '', 'error');
@@ -19,16 +39,17 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 		{
 			$_SESSION['exchangeGroupId'] = $id;
 		}
-		$key = trim($_GPC['key']);
 		if (!(empty($codetype))) 
 		{
 			$res = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_exchange_group') . ' WHERE id = :id AND uniacid = :uniacid', array(':uniacid' => $_W['uniacid'], ':id' => $id));
 			$banner = json_decode($res['banner'], 1);
-			if (p('diypage')) 
+			$plugin_diypage = p('diypage');
+			if ($plugin_diypage) 
 			{
-				$diypage = p('diypage')->exchangePage($res['diypage']);
+				$diypage = $plugin_diypage->exchangePage($res['diypage']);
 				if ($diypage) 
 				{
+					$startadv = $plugin_diypage->getStartAdv($diypage['diyadv']);
 					include $this->template('diypage/exchange');
 					exit();
 				}
@@ -55,26 +76,58 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 	private function is_exchange($key) 
 	{
 		global $_W;
+		$set = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_exchange_setting') . ' WHERE uniacid = :uniacid', array(':uniacid' => $_W['uniacid']));
+		$this->counterror($set);
+		$time = strtotime('now');
+		$time = date('Y-m-d');
+		$time1 = $time . ' 00:00:00';
+		$time2 = $time . ' 23:59:59';
+		$time1 = strtotime($time1);
+		$time2 = strtotime($time2);
+		if (empty($_W['openid'])) 
+		{
+			show_json(0, '你的账号无法兑换，请登陆！');
+		}
+		else if (!(empty($set['alllimit']))) 
+		{
+			$exchangelimit = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_shop_exchange_record') . ' WHERE openid =:openid AND uniacid = :uniacid AND `time` > :timea AND `time` <= :timeb', array(':uniacid' => $_W['uniacid'], ':openid' => $_W['openid'], ':timea' => $time1, ':timeb' => $time2));
+			if ($set['alllimit'] <= intval($exchangelimit)) 
+			{
+				show_json(0, '您的今日兑换次数已达上限');
+			}
+		}
 		if (empty($_SESSION['exchangeGroupId'])) 
 		{
 			$return = array('0', '兑换超时,请重试');
 			return $return;
 		}
+		if (!(empty($set['grouplimit']))) 
+		{
+			$exchangelimit2 = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_shop_exchange_record') . ' WHERE openid =:openid AND uniacid = :uniacid AND `time` > :timea AND `time` <= :timeb AND groupid = :groupid', array(':uniacid' => $_W['uniacid'], ':openid' => $_W['openid'], ':timea' => $time1, ':timeb' => $time2, ':groupid' => $_SESSION['exchangeGroupId']));
+			if ($set['grouplimit'] <= intval($exchangelimit2)) 
+			{
+				show_json(0, '您的今日兑换次数已达上限');
+			}
+		}
 		$_SESSION['exchange_key'] = NULL;
 		$return = array();
 		$table1 = tablename('ewei_shop_exchange_group');
 		$table2 = tablename('ewei_shop_exchange_code');
+		$this->model->checkRepeatExchange($key);
 		$codeResult = pdo_fetch('SELECT * FROM ' . $table2 . ' WHERE uniacid = :uniacid AND `key` = :key', array(':uniacid' => $_W['uniacid'], ':key' => $key));
 		if ($_SESSION['exchangeGroupId'] != $codeResult['groupid']) 
 		{
 			$return = array('0', '兑换码不存在或已失效');
+			pdo_query('UPDATE ' . tablename('ewei_shop_exchange_query') . ' SET `errorcount` = `errorcount` + 1 WHERE openid = :openid', array(':openid' => $_W['openid']));
 			return $return;
 		}
 		if ($codeResult === false) 
 		{
 			$return = array('0', '兑换码不存在或已失效');
+			pdo_query('UPDATE ' . tablename('ewei_shop_exchange_query') . ' SET `errorcount` = `errorcount` + 1 WHERE openid = :openid', array(':openid' => $_W['openid']));
 			return $return;
 		}
+		pdo_query('UPDATE ' . tablename('ewei_shop_exchange_query') . ' SET `errorcount` = 0 AND `unfreeze`=0 WHERE openid = :openid', array(':openid' => $_W['openid']));
 		if ($codeResult['status'] == 2) 
 		{
 			$return = array('0', '兑换码已兑换');
@@ -180,6 +233,7 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 			}
 			else if ($groupResult['type'] == 2) 
 			{
+				$channel = 1;
 				$balance = rand($groupResult['balance_left'] * 100, $groupResult['balance_right'] * 100) / 100;
 			}
 			else if ($groupResult['type'] == 3) 
@@ -194,12 +248,14 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 			$balance_res = intval($balance_res);
 			if ($balance_res === 1) 
 			{
-				pdo_update('ewei_shop_exchange_code', array('status' => 2), array('key' => $key, 'uniacid' => $_W['uniacid'], 'status' => 1));
-				pdo_query('UPDATE ' . tablename('ewei_shop_exchange_group') . ' SET `use` = `use` + 1 WHERE uniacid = :uniacid AND `id` = :id', array(':uniacid' => $_W['uniacid'], ':id' => $codeResult['groupid']));
+				$repeatcount = $this->model->setRepeatCount($key);
+				if (empty($repeatcount)) 
+				{
+					pdo_update('ewei_shop_exchange_code', array('status' => 2), array('key' => $key, 'uniacid' => $_W['uniacid'], 'status' => 1, 'repeatcount' => 1));
+				}
 				$info = m('member')->getInfo($_W['openid']);
 				$record = array('key' => $key, 'uniacid' => $_W['uniacid'], 'balance' => $balance, 'time' => time(), 'openid' => $_W['openid'], 'nickname' => $info['nickname'], 'mode' => 2, 'title' => $groupResult['title'], 'groupid' => $groupResult['id'], 'serial' => $codeResult['serial']);
 				pdo_insert('ewei_shop_exchange_record', $record);
-				$this->notice($balance, $_W['openid'], $type);
 				pdo_query('UPDATE ' . $table1 . ' SET `use` = `use` + 1 WHERE id = :id AND uniacid = :uniacid', array(':id' => $groupResult['id'], ':uniacid' => $_W['uniacid']));
 				show_json(1, '恭喜！成功兑换了' . $balance . '元');
 				$this->message('成功充值了' . $balance . '元');
@@ -266,12 +322,14 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 			$balance_res = intval($balance_res);
 			if ($balance_res === 1) 
 			{
-				pdo_update('ewei_shop_exchange_code', array('status' => 2), array('key' => $key, 'uniacid' => $_W['uniacid'], 'status' => 1));
-				pdo_query('UPDATE ' . tablename('ewei_shop_exchange_group') . ' SET `use` = `use` + 1 WHERE uniacid = :uniacid AND `id` = :id', array(':uniacid' => $_W['uniacid'], ':id' => $codeResult['groupid']));
+				$repeatcount = $this->model->setRepeatCount($key);
+				if (empty($repeatcount)) 
+				{
+					pdo_update('ewei_shop_exchange_code', array('status' => 2), array('key' => $key, 'uniacid' => $_W['uniacid'], 'status' => 1, 'repeatcount' => 1));
+				}
 				$info = m('member')->getInfo($_W['openid']);
 				$record = array('key' => $key, 'uniacid' => $_W['uniacid'], 'score' => $score, 'time' => time(), 'openid' => $_W['openid'], 'nickname' => $info['nickname'], 'mode' => 4, 'title' => $groupResult['title'], 'groupid' => $groupResult['id'], 'serial' => $codeResult['serial']);
 				pdo_insert('ewei_shop_exchange_record', $record);
-				$this->notice($score, $_W['openid'], 3);
 				pdo_query('UPDATE ' . $table1 . ' SET `use` = `use` + 1 WHERE id = :id AND uniacid = :uniacid', array(':id' => $groupResult['id'], ':uniacid' => $_W['uniacid']));
 				show_json(1, '成功兑换了' . $score . '个积分');
 				$this->message('成功兑换了' . $score . '个积分');
@@ -325,15 +383,6 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 		$exchange = trim($_GPC['exchange']);
 		if ($exchange == '1') 
 		{
-			load()->model('payment');
-			$setting = uni_setting($_W['uniacid'], array('payment'));
-			if (isset($setting['payment']['wechat']) && is_array($setting['payment']['wechat'])) 
-			{
-				$wechat = $setting['payment']['wechat'];
-			}
-			$account = pdo_get('account_wechats', array('uniacid' => $_W['uniacid']), array('key', 'secret'));
-			$sec = m('common')->getSec();
-			$sec = iunserializer($sec['sec']);
 			if ($groupResult['type'] == 1) 
 			{
 				$red = $groupResult['red'];
@@ -342,13 +391,15 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 			{
 				$red = rand($groupResult['red_left'] * 100, $groupResult['red_right'] * 100) / 100;
 			}
-			$params = array('openid' => $_W['openid'], 'tid' => time(), 'send_name' => '人人店:兑换中心', 'money' => $red, 'wishing' => '红包兑换', 'act_name' => '红包兑换活动', 'remark' => '兑换中心:红包兑换');
-			$wechat = array('appid' => $account['key'], 'mchid' => $wechat['mchid'], 'apikey' => $wechat['apikey'], 'certs' => $sec);
-			$result = m('common')->sendredpack($params, $wechat);
+			$params = array('openid' => $_W['openid'], 'tid' => time(), 'send_name' => $groupResult['sendname'], 'money' => $red, 'wishing' => $groupResult['wishing'], 'act_name' => $groupResult['actname'], 'remark' => $groupResult['remark']);
+			$result = m('common')->sendredpack($params);
 			if (!(is_error($result))) 
 			{
-				pdo_update('ewei_shop_exchange_code', array('status' => 2), array('key' => $key, 'uniacid' => $_W['uniacid'], 'status' => 1));
-				pdo_query('UPDATE ' . tablename('ewei_shop_exchange_group') . ' SET `use` = `use` + 1 WHERE uniacid = :uniacid AND `id` = :id', array(':uniacid' => $_W['uniacid'], ':id' => $codeResult['groupid']));
+				$repeatcount = $this->model->setRepeatCount($key);
+				if (empty($repeatcount)) 
+				{
+					pdo_update('ewei_shop_exchange_code', array('status' => 2), array('key' => $key, 'uniacid' => $_W['uniacid'], 'status' => 1, 'repeatcount' => 1));
+				}
 				$info = m('member')->getInfo($_W['openid']);
 				$record = array('key' => $key, 'uniacid' => $_W['uniacid'], 'red' => $red, 'time' => time(), 'openid' => $_W['openid'], 'nickname' => $info['nickname'], 'mode' => 3, 'title' => $groupResult['title'], 'groupid' => $groupResult['id'], 'serial' => $codeResult['serial']);
 				pdo_insert('ewei_shop_exchange_record', $record);
@@ -445,7 +496,11 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 				pdo_insert('ewei_shop_coupon_data', $data);
 			}
 			$this->model->sendMessage($resp, 1, $m);
-			pdo_update('ewei_shop_exchange_code', array('status' => 2), array('key' => $key, 'uniacid' => $_W['uniacid']));
+			$repeatcount = $this->model->setRepeatCount($key);
+			if (empty($repeatcount)) 
+			{
+				pdo_update('ewei_shop_exchange_code', array('status' => 2), array('key' => $key, 'uniacid' => $_W['uniacid'], 'status' => 1, 'repeatcount' => 1));
+			}
 			$info = m('member')->getInfo($_W['openid']);
 			$record = array('key' => $key, 'uniacid' => $_W['uniacid'], 'coupon' => $record_coupon, 'time' => time(), 'openid' => $_W['openid'], 'nickname' => $info['nickname'], 'mode' => 5, 'title' => $groupResult['title'], 'groupid' => $groupResult['id'], 'serial' => $codeResult['serial']);
 			pdo_insert('ewei_shop_exchange_record', $record);
@@ -592,6 +647,16 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 				show_json(0, '你的兑换码不能兑换余额');
 				$this->message('你的兑换码不能兑换余额');
 			}
+			$checkSubmit = $this->checkSubmit('exchange_plugin');
+			if (is_error($checkSubmit)) 
+			{
+				show_json(0, $checkSubmit['message']);
+			}
+			$checkSubmit = $this->checkSubmitGlobal('exchange_key_' . $key);
+			if (is_error($checkSubmit)) 
+			{
+				show_json(0, $checkSubmit['message']);
+			}
 			$type = 1;
 			$member = m('member')->getMember($_W['openid']);
 			if ($groupResult['balance_type'] == 1) 
@@ -617,7 +682,6 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 			if ($balance_res === 1) 
 			{
 				pdo_update('ewei_shop_exchange_code', array('balancestatus' => 2), array('key' => $key, 'uniacid' => $_W['uniacid']));
-				pdo_query('UPDATE ' . tablename('ewei_shop_exchange_group') . ' SET `use` = `use` + 1 WHERE uniacid = :uniacid AND `id` = :id', array(':uniacid' => $_W['uniacid'], ':id' => $codeResult['groupid']));
 				$info = m('member')->getInfo($_W['openid']);
 				$record_exist = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_shop_exchange_record') . ' WHERE `key`=:key AND uniacid = :uniacid', array(':uniacid' => $_W['uniacid'], 'key' => $key));
 				if (empty($record_exist)) 
@@ -633,8 +697,8 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 				if ((($codeResult['scorestatus'] == 2) || empty($groupResult['score_type'])) && (($codeResult['redstatus'] == 2) || empty($groupResult['red_type'])) && (($codeResult['couponstatus'] == 2) || empty($groupResult['coupon_type'])) && (($codeResult['goodsstatus'] == 2) || empty($groupResult['type']))) 
 				{
 					pdo_update('ewei_shop_exchange_code', array('status' => 2), array('key' => $key, 'uniacid' => $_W['uniacid']));
+					pdo_query('UPDATE ' . tablename('ewei_shop_exchange_group') . ' SET `use` = `use` + 1 WHERE uniacid = :uniacid AND `id` = :id', array(':uniacid' => $_W['uniacid'], ':id' => $codeResult['groupid']));
 				}
-				$this->notice($balance, $_W['openid'], $type);
 				show_json(1, '成功充值了' . $balance . '元');
 				$this->message('成功充值了' . $balance . '元');
 			}
@@ -648,20 +712,24 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 		{
 			if ($codeResult['redstatus'] == 2) 
 			{
-				show_json(0, '已兑换过余额');
-				$this->message('已兑换过余额');
+				show_json(0, '已兑换过红包');
+				$this->message('已兑换过红包');
 			}
 			if (($groupResult['red'] <= 0) && ($groupResult['red_left'] <= 0) && ($groupResult['red_right'] <= 0)) 
 			{
 				show_json(0, '你的兑换码不能兑换红包');
 				$this->message('你的兑换码不能兑换红包');
 			}
-			load()->model('payment');
-			$setting = uni_setting($_W['uniacid'], array('payment'));
-			@$wechat = $setting['payment']['wechat'];
-			$account = pdo_get('account_wechats', array('uniacid' => $_W['uniacid']), array('key', 'secret'));
-			$sec = m('common')->getSec();
-			$sec = iunserializer($sec['sec']);
+			$checkSubmit = $this->checkSubmit('exchange_plugin');
+			if (is_error($checkSubmit)) 
+			{
+				show_json(0, $checkSubmit['message']);
+			}
+			$checkSubmit = $this->checkSubmitGlobal('exchange_key_' . $key);
+			if (is_error($checkSubmit)) 
+			{
+				show_json(0, $checkSubmit['message']);
+			}
 			if ($groupResult['red_type'] == 1) 
 			{
 				$red = $groupResult['red'];
@@ -670,17 +738,11 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 			{
 				$red = rand($groupResult['red_left'] * 100, $groupResult['red_right'] * 100) / 100;
 			}
-			$params = array('openid' => $_W['openid'], 'tid' => time(), 'send_name' => '人人店:兑换中心', 'money' => $red, 'wishing' => '红包兑换', 'act_name' => '红包兑换活动', 'remark' => '兑换中心:红包兑换');
-			if (empty($wechat['mchid']) || empty($wechat['apikey'])) 
-			{
-				show_json(0, '红包暂停兑换，请稍后再试');
-			}
-			$wechat = array('appid' => $account['key'], 'mchid' => $wechat['mchid'], 'apikey' => $wechat['apikey'], 'certs' => $sec);
-			$result = m('common')->sendredpack($params, $wechat);
+			$params = array('openid' => $_W['openid'], 'tid' => time(), 'send_name' => $groupResult['sendname'], 'money' => $red, 'wishing' => $groupResult['wishing'], 'act_name' => $groupResult['actname'], 'remark' => $groupResult['remark']);
+			$result = m('common')->sendredpack($params);
 			if (!(is_error($result))) 
 			{
 				pdo_update('ewei_shop_exchange_code', array('redstatus' => 2), array('key' => $key, 'uniacid' => $_W['uniacid']));
-				pdo_query('UPDATE ' . tablename('ewei_shop_exchange_group') . ' SET `use` = `use` + 1 WHERE uniacid = :uniacid AND `id` = :id', array(':uniacid' => $_W['uniacid'], ':id' => $codeResult['groupid']));
 				$info = m('member')->getInfo($_W['openid']);
 				$record_exist = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_shop_exchange_record') . ' WHERE `key`=:key AND uniacid = :uniacid', array(':uniacid' => $_W['uniacid'], 'key' => $key));
 				if (empty($record_exist)) 
@@ -696,14 +758,14 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 				if ((($codeResult['balancestatus'] == 2) || empty($groupResult['balance_type'])) && (($codeResult['scorestatus'] == 2) || empty($groupResult['score_type'])) && (($codeResult['couponstatus'] == 2) || empty($groupResult['coupon_type'])) && (($codeResult['goodsstatus'] == 2) || empty($groupResult['type']))) 
 				{
 					pdo_update('ewei_shop_exchange_code', array('status' => 2), array('key' => $key, 'uniacid' => $_W['uniacid']));
+					pdo_query('UPDATE ' . tablename('ewei_shop_exchange_group') . ' SET `use` = `use` + 1 WHERE uniacid = :uniacid AND `id` = :id', array(':uniacid' => $_W['uniacid'], ':id' => $codeResult['groupid']));
 				}
 				show_json(1, '成功兑换了' . $red . '元红包');
 				$this->message('成功兑换了' . $red . '元红包');
 			}
 			else 
 			{
-				show_json(0, '很遗憾，兑换失败了！');
-				$this->message('兑换失败了,请稍后再试');
+				show_json(0, $result['message']);
 			}
 		}
 		else if ($exchange == '3') 
@@ -717,6 +779,16 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 			{
 				show_json(0, '你的兑换码不能兑换积分');
 				$this->message('你的兑换码不能兑换积分');
+			}
+			$checkSubmit = $this->checkSubmit('exchange_plugin');
+			if (is_error($checkSubmit)) 
+			{
+				show_json(0, $checkSubmit['message']);
+			}
+			$checkSubmit = $this->checkSubmitGlobal('exchange_key_' . $key);
+			if (is_error($checkSubmit)) 
+			{
+				show_json(0, $checkSubmit['message']);
 			}
 			$member = m('member')->getMember($_W['openid']);
 			if ($groupResult['score_type'] == 1) 
@@ -732,7 +804,6 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 			if ($balance_res === 1) 
 			{
 				pdo_update('ewei_shop_exchange_code', array('scorestatus' => 2), array('key' => $key, 'uniacid' => $_W['uniacid']));
-				pdo_query('UPDATE ' . tablename('ewei_shop_exchange_group') . ' SET `use` = `use` + 1 WHERE uniacid = :uniacid AND `id` = :id', array(':uniacid' => $_W['uniacid'], ':id' => $codeResult['groupid']));
 				$info = m('member')->getInfo($_W['openid']);
 				$record_exist = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_shop_exchange_record') . ' WHERE `key`=:key AND uniacid = :uniacid', array(':uniacid' => $_W['uniacid'], 'key' => $key));
 				if (empty($record_exist)) 
@@ -748,8 +819,8 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 				if ((($codeResult['balancestatus'] == 2) || empty($groupResult['balance_type'])) && (($codeResult['redstatus'] == 2) || empty($groupResult['red_type'])) && (($codeResult['couponstatus'] == 2) || empty($groupResult['coupon_type'])) && (($codeResult['goodsstatus'] == 2) || empty($groupResult['type']))) 
 				{
 					pdo_update('ewei_shop_exchange_code', array('status' => 2), array('key' => $key, 'uniacid' => $_W['uniacid']));
+					pdo_query('UPDATE ' . tablename('ewei_shop_exchange_group') . ' SET `use` = `use` + 1 WHERE uniacid = :uniacid AND `id` = :id', array(':uniacid' => $_W['uniacid'], ':id' => $codeResult['groupid']));
 				}
-				$this->notice($score, $_W['openid'], 3);
 				show_json(1, '成功兑换了' . $score . '个积分');
 				$this->message('成功兑换了' . $score . '个积分');
 			}
@@ -770,6 +841,16 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 			{
 				show_json(0, '你的兑换码不能兑换优惠券');
 				$this->message('你的兑换码不能兑换优惠券');
+			}
+			$checkSubmit = $this->checkSubmit('exchange_plugin');
+			if (is_error($checkSubmit)) 
+			{
+				show_json(0, $checkSubmit['message']);
+			}
+			$checkSubmit = $this->checkSubmitGlobal('exchange_key_' . $key);
+			if (is_error($checkSubmit)) 
+			{
+				show_json(0, $checkSubmit['message']);
 			}
 			$coupon = json_decode($groupResult['coupon'], true);
 			if (empty($coupon[0])) 
@@ -794,7 +875,7 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 				$condition = 'id = ' . $coupon[$rand];
 				$record_coupon = json_encode($coupon[$rand]);
 			}
-			$allCoupon = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_coupon') . ' WHERE ' . $condition . ' and uniacid=:uniacid and merchid=0', array(':uniacid' => $_W['uniacid']));
+			$allCoupon = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_coupon') . ' WHERE ' . $condition . ' and uniacid=:uniacid', array(':uniacid' => $_W['uniacid']));
 			if (empty($allCoupon[0])) 
 			{
 				show_json(0, '没有可兑换的优惠券');
@@ -828,6 +909,7 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 			if ((($codeResult['balancestatus'] == 2) || empty($groupResult['balance_type'])) && (($codeResult['scorestatus'] == 2) || empty($groupResult['score_type'])) && (($codeResult['redstatus'] == 2) || empty($groupResult['red_type'])) && (($codeResult['goodsstatus'] == 2) || empty($groupResult['type']))) 
 			{
 				pdo_update('ewei_shop_exchange_code', array('status' => 2), array('key' => $key, 'uniacid' => $_W['uniacid']));
+				pdo_query('UPDATE ' . tablename('ewei_shop_exchange_group') . ' SET `use` = `use` + 1 WHERE uniacid = :uniacid AND `id` = :id', array(':uniacid' => $_W['uniacid'], ':id' => $codeResult['groupid']));
 			}
 			show_json(1, '恭喜，兑换成功！');
 			$this->message('兑换成功');
@@ -887,7 +969,7 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 			include $this->template();
 		}
 	}
-	private function chongzhi($type, $id, $changetype, $num, $remark, $channel = 1) 
+	private function chongzhi($type, $id, $changetype, $num, $remark, $balancetype = 0) 
 	{
 		global $_W;
 		$profile = m('member')->getMember($id, true);
@@ -904,9 +986,20 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 		{
 			$num = -$num;
 		}
-		m('member')->setCredit($profile['openid'], $type, $num, array($_W['uid'], '后台会员充值' . $typestr . ' ' . $remark));
-		$set = m('common')->getSysset('shop');
-		$logno = m('common')->createNO('member_log', 'logno', 'RC');
+		m('member')->setCredit($profile['openid'], $type, $num, array($_W['uid'], '兑换中心' . $typestr . ' ' . $remark));
+		if ($type == 'credit1') 
+		{
+			$this->model->sendExchangeMessage($profile['openid'], $num);
+		}
+		if ($type == 'credit2') 
+		{
+			$set = m('common')->getSysset('shop');
+			$logno = m('common')->createNO('member_log', 'logno', 'RC');
+			$data = array('openid' => $profile['openid'], 'logno' => $logno, 'uniacid' => $_W['uniacid'], 'type' => '0', 'createtime' => TIMESTAMP, 'status' => '1', 'title' => $set['name'] . '兑换中心', 'money' => $num, 'remark' => $remark, 'rechargetype' => 'exchange');
+			pdo_insert('ewei_shop_member_log', $data);
+			$logid = pdo_insertid();
+			$this->model->sendExchangeMessage($profile['openid'], $num, $balancetype);
+		}
 		return 1;
 	}
 	public function modal() 
@@ -923,6 +1016,7 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 		$goods = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_goods') . ' WHERE id = :id AND uniacid = :uniacid', array(':id' => $id, ':uniacid' => $_W['uniacid']));
 		$optionstr = trim($_GPC['option']);
 		$optionid = explode('-', $optionstr);
+		$count = 0;
 		foreach ($optionid as $k => $v ) 
 		{
 			$option[$k] = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_goods_option') . ' WHERE id = :id AND uniacid = :uniacid', array(':id' => $v, ':uniacid' => $_W['uniacid']));
@@ -1014,6 +1108,7 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 		}
 		);
 		$price = 0;
+		$calprice = array();
 		if ($group['type'] == 1) 
 		{
 			if (0 < $group['max']) 
@@ -1093,27 +1188,6 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 		QRcode::png($url, false, QR_ECLEVEL_L, 10, 3);
 		exit();
 	}
-	public function notice($m, $openid, $type) 
-	{
-		if ($type == 1) 
-		{
-			$type = '余额兑换';
-			$danwei = '元';
-		}
-		else if ($type == 2) 
-		{
-			$type = '余额充值';
-			$danwei = '元';
-		}
-		else 
-		{
-			$type = '积分兑换';
-			$danwei = '积分';
-		}
-		$message = array( 'first' => array('value' => '恭喜您充值成功!', 'color' => '#4a5077'), 'money' => array('title' => '成功充值', 'value' => $m . $danwei, 'color' => '#4a5077'), 'product' => array('title' => '充值方式', 'value' => $type, 'color' => '#4a5077'), 'remark' => array('value' => "\r\n" . '谢谢您对我们的支持！', 'color' => '#4a5077') );
-		@m('notice')->sendNotice(array('openid' => $openid, 'tag' => 'recharge_ok', 'default' => $message, 'url' => mobileUrl('member', array(), 1)));
-		return 1;
-	}
 	public function groupexchange() 
 	{
 		global $_GPC;
@@ -1138,7 +1212,7 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 		if (!(empty($group['type']))) 
 		{
 			$arr['goods']['has'] = 1;
-			if ($group['type'] == 1) 
+			if (($group['type'] == 1) || ($group['type'] == 3)) 
 			{
 				if (($group['mode'] == 1) || ($group['mode'] == 6)) 
 				{
@@ -1147,7 +1221,7 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 				}
 				else if ($group['mode'] == 2) 
 				{
-					$arr['balance']['type'] = 1;
+					$arr['balance']['type'] = $group['type'];
 					$arr['balance']['val'] = $group['balance'];
 				}
 				else if ($group['mode'] == 3) 
@@ -1310,6 +1384,33 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 			$arr['coupon']['has'] = 0;
 		}
 		show_json(1, $arr);
+	}
+	public function counterror($set) 
+	{
+		global $_W;
+		if ($set == false) 
+		{
+			return;
+		}
+		$query = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_exchange_query') . ' WHERE openid = :openid AND uniacid = :uniacid', array(':uniacid' => $_W['uniacid'], ':openid' => $_W['openid']));
+		if (empty($query)) 
+		{
+			pdo_insert('ewei_shop_exchange_query', array('uniacid' => $_W['uniacid'], 'openid' => $_W['openid'], 'querytime' => time()));
+		}
+		if ($query['querytime'] < strtotime(date('Y-m-d', time()) . ' 00:00:00')) 
+		{
+			pdo_update('ewei_shop_exchange_query', array('errorcount' => 0, 'querytime' => time()));
+		}
+		if (time() < $query['unfreeze']) 
+		{
+			show_json(0, '请' . ($query['unfreeze'] - time()) . '秒后再试');
+		}
+		if (!(empty($set['mistake'])) && ($set['mistake'] <= $query['errorcount'])) 
+		{
+			pdo_update('ewei_shop_exchange_query', array('unfreeze' => time() + ($set['freeze'] * 86400)), array('uniacid' => $_W['uniacid'], 'openid' => $_W['openid']));
+			pdo_update('ewei_shop_exchange_query', array('errorcount' => 0, 'unfreeze' => time() + ($set['freeze'] * 86400)), array('uniacid' => $_W['uniacid'], 'openid' => $_W['openid']));
+			show_json(0, '错误次数太多,' . ($set['freeze'] * 86400) . '秒后再试');
+		}
 	}
 }
 ?>

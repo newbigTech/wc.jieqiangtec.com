@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * [WeEngine System] Copyright (c) 2014 WE7.CC
+ * WeEngine is NOT a free software, it under the license terms, visited http://www.we7.cc/ for more details.
+ */
 defined('IN_IA') or exit('Access Denied');
 
 if (isset($_W['uniacid'])) {
@@ -70,5 +73,30 @@ if (!function_exists('uni_setting')) {
 			$fields = '';
 		}
 		return uni_setting_load($fields, $uniacid);
+	}
+}
+if (!function_exists('activity_token_owned')) {
+	function activity_token_owned($uid, $filter = array(), $pindex = 1, $psize = 10) {
+		return activity_coupon_owned();
+	}
+}
+if (!function_exists('activity_token_info')) {
+	function activity_token_info($couponid, $uniacid) {
+		return activity_coupon_info($couponid);
+	}
+}
+if (!function_exists('activity_token_grant')) {
+	function activity_token_grant($uid, $couponid, $module = '', $remark = '') {
+		return activity_coupon_grant($couponid,$uid);
+	}
+}
+if (!function_exists('activity_token_use')) {
+	function activity_token_use($uid, $couponid, $operator, $clerk_id = 0, $recid = '', $module = 'system', $clerk_type = 1, $store_id = 0) {
+		return activity_coupon_use($couponid,$recid, $module);
+	}
+}
+if (!function_exists('activity_token_available')) {
+	function activity_token_available($uid, $pindex = 1, $psize = 0) {
+		return activity_coupon_available();
 	}
 }

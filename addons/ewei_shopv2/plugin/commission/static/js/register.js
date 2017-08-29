@@ -1,1 +1,103 @@
-eval(function(p,a,c,k,e,d){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a)>35?String.fromCharCode(c+29):c.toString(36))};if(!''.replace(/^/,String)){while(c--){d[e(c)]=k[c]||e(c)}k=[function(e){return d[e]}];e=function(){return'\\w+'};c=1};while(c--){if(k[c]){p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c])}}return p}('10([\'f\',\'C\',\'Z/11/g\'],2(f,C,g){7 5={9:{F:\'\',A:0}};5.14=2(B,9){5.9=$.13(5.9,9||{});$(\'.3-Y\').c(2(){7 3=$(X);4(3.G(\'u\')){b}7 6=3.6();7 i=S;7 h={};4($(".g-a").R>0){i=g.Q(\'.T-H-y .g-a\');4(!i){b}h={W:i}}J{4($(\'#w\').15()){e.j.8(\'请填写您的姓名!\');b}4(!$(\'#s\').16()){e.j.8(\'请填写正确手机号!\');b}h={\'1g\':B,\'w\':$(\'#w\').n(),\'s\':$(\'#s\').n(),\'D\':$(\'#D\').n()}}4(5.9.A==1){4(!$(\'#18\').17(\'19\')){e.j.8(\'请阅读并了解【\'+5.9.F+\'】!\');b}}3.G(\'u\',1).6(\'正在处理...\');f.1k(\'H/y\',h,2(k){4(k.1h==0){3.1j(\'u\').6(6);e.j.8(k.l.t);b}7 l=k.l;4(l.V==\'1\'){e.t.8({d:\'d d-1d O\',r:"恭喜您审核通过!",I:[{o:\'进入商城\',p:\'3-O\',K:2(){P.L=f.N(\'\')}}]})}J{e.t.8({d:\'d d-1c o-1a\',r:"您的申请已经提交，请等待审核!",I:[{o:\'先去商城逛逛\',p:\'3-1e\',K:2(){P.L=f.N(\'\')}}]})}},M,M)});$("#3-z").v(\'c\').c(2(){7 6=$(".q-z-12").6();a=1f 1b({r:6,p:"1i-5",U:2(){a.m()}});a.8();$(\'.x-q\').E(\'.m\').v(\'c\').c(2(){a.m()});$(\'.x-q\').E(\'.3\').v(\'c\').c(2(){a.m()})})};b 5});',62,83,'||function|btn|if|modal|html|var|show|params|container|return|click|icon|FoxUI|core|diyform|data|diyformdata|toast|pjson|result|close|val|text|extraClass|pop|content|mobile|message|stop|unbind|realname|verify|register|apply|open_protocol|mid|tpl|weixin|find|applytitle|attr|commission|buttons|else|onclick|href|true|getUrl|success|location|getData|length|false|page|maskClick|check|memberdata|this|submit|biz|define|plugin|hidden|extend|init|isEmpty|isMobile|prop|agree|checked|warning|FoxUIModal|info|roundcheck|danger|new|agentid|status|popup|removeAttr|json'.split('|'),0,{}))
+define(['core', 'tpl', 'biz/plugin/diyform'], function(core, tpl, diyform) {
+	var modal = {
+		params: {
+			applytitle: '',
+			open_protocol: 0
+		}
+	};
+	modal.init = function(mid, params) {
+		modal.params = $.extend(modal.params, params || {});
+		$('.btn-submit').click(function() {
+			var btn = $(this);
+			if (btn.attr('stop')) {
+				return
+			}
+			var html = btn.html();
+			var diyformdata = false;
+			var data = {};
+			if ($(".diyform-container").length > 0) {
+				diyformdata = diyform.getData('.page-commission-register .diyform-container');
+				if (!diyformdata) {
+					return
+				}
+				data = {
+					memberdata: diyformdata
+				}
+			} else {
+				if ($('#realname').isEmpty()) {
+					FoxUI.toast.show('请填写您的姓名!');
+					return
+				}
+				if (!$('#mobile').isMobile()) {
+					FoxUI.toast.show('请填写正确手机号!');
+					return
+				}
+				data = {
+					'agentid': mid,
+					'realname': $('#realname').val(),
+					'mobile': $('#mobile').val(),
+					'weixin': $('#weixin').val(),
+					'icode': $('#icode').val()
+				}
+			}
+			if (modal.params.open_protocol == 1) {
+				if (!$('#agree').prop('checked')) {
+					FoxUI.toast.show('请阅读并了解【' + modal.params.applytitle + '】!');
+					return
+				}
+			}
+			btn.attr('stop', 1).html('正在处理...');
+			core.json('commission/register', data, function(pjson) {
+				if (pjson.status == 0) {
+					btn.removeAttr('stop').html(html);
+					FoxUI.toast.show(pjson.result.message);
+					return
+				}
+				var result = pjson.result;
+				if (result.check == '1') {
+					FoxUI.message.show({
+						icon: 'icon icon-roundcheck success',
+						content: "恭喜您审核通过!",
+						buttons: [{
+							text: '进入商城',
+							extraClass: 'btn-success',
+							onclick: function() {
+								location.href = core.getUrl('')
+							}
+						}]
+					})
+				} else {
+					FoxUI.message.show({
+						icon: 'icon icon-info text-warning',
+						content: "您的申请已经提交，请等待审核!",
+						buttons: [{
+							text: '先去商城逛逛',
+							extraClass: 'btn-danger',
+							onclick: function() {
+								location.href = core.getUrl('')
+							}
+						}]
+					})
+				}
+			}, true, true)
+		});
+		$("#btn-apply").unbind('click').click(function() {
+			var html = $(".pop-apply-hidden").html();
+			container = new FoxUIModal({
+				content: html,
+				extraClass: "popup-modal",
+				maskClick: function() {
+					container.close()
+				}
+			});
+			container.show();
+			$('.verify-pop').find('.close').unbind('click').click(function() {
+				container.close()
+			});
+			$('.verify-pop').find('.btn').unbind('click').click(function() {
+				container.close()
+			})
+		})
+	};
+	return modal
+});

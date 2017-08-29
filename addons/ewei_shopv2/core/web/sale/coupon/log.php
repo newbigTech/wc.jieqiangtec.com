@@ -105,19 +105,55 @@ class Log_EweiShopV2Page extends ComWebPage
 			}
 			else if ($row['gettype'] == 3) 
 			{
-				$row['gettypestr'] = '超级海报';
+				$row['gettypestr'] = '任务海报';
 			}
 			else if ($row['gettype'] == 4) 
 			{
-				$row['gettypestr'] = '活动海报';
+				$row['gettypestr'] = '超级海报';
 			}
 			else if ($row['gettype'] == 5) 
 			{
-				$row['gettypestr'] = '口令优惠券';
+				$row['gettypestr'] = '活动海报';
 			}
 			else if ($row['gettype'] == 6) 
 			{
 				$row['gettypestr'] = '任务发送';
+			}
+			else if ($row['gettype'] == 7) 
+			{
+				$row['gettypestr'] = '兑换中心';
+			}
+			else if ($row['gettype'] == 8) 
+			{
+				$row['gettypestr'] = '快速领取';
+			}
+			else if ($row['gettype'] == 9) 
+			{
+				$row['gettypestr'] = '收银台发送';
+			}
+			else if ($row['gettype'] == 10) 
+			{
+				$row['gettypestr'] = '微信会员卡激活发送';
+			}
+			else if ($row['gettype'] == 11) 
+			{
+				$row['gettypestr'] = '直播间领取优惠券';
+			}
+			else if ($row['gettype'] == 12) 
+			{
+				$row['gettypestr'] = '直播间推送优惠券';
+			}
+			else if ($row['gettype'] == 13) 
+			{
+				$row['gettypestr'] = '口令优惠券';
+			}
+			else if ($row['gettype'] == 14) 
+			{
+				$row['gettypestr'] = '新人领券';
+			}
+			else if ($row['gettype'] == 15) 
+			{
+				$row['gettypestr'] = '发券分享';
 			}
 		}
 		unset($row);
@@ -141,7 +177,7 @@ class Log_EweiShopV2Page extends ComWebPage
 			plog('sale.coupon.log.export', '导出优惠券发放记录');
 		}
 		$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_shop_coupon_data') . ' d ' . ' left join ' . tablename('ewei_shop_coupon') . ' c on d.couponid = c.id ' . ' left join ' . tablename('ewei_shop_member') . ' m on m.openid = d.openid and m.uniacid = d.uniacid ' . 'where 1 and ' . $condition, $params);
-		$pager = pagination($total, $pindex, $psize);
+		$pager = pagination2($total, $pindex, $psize);
 		include $this->template();
 	}
 }

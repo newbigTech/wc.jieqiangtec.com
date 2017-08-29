@@ -16,6 +16,7 @@
 <ul>
     {ifp 'sysset.trade'}<li  {if $_W['routes']=='sysset.trade'}class="active"{/if}><a href="{php echo webUrl('sysset/trade')}">交易设置</a></li>{/if}
     {ifp 'sysset.payset'}<li  {if $_W['routes']=='sysset.payset'}class="active"{/if}><a href="{php echo webUrl('sysset/payset')}">支付方式</a></li>{/if}
+    {ifp 'sysset.payset'}<li  {if $_W['routes']=='sysset.payment'}class="active"{/if}><a href="{php echo webUrl('sysset/payment')}">支付管理</a></li>{/if}
 </ul>
 {/if}
 
@@ -38,7 +39,6 @@
 {ifp 'sysset.sms.set|sysset.sms.temp'}
 <div class='menu-header'>短信配置</div>
 <ul>
-
     {ifp 'sysset.sms.set'}
     <li  {if $_W['routes']=='sysset.sms.set'}class="active"{/if}><a href="{php echo webUrl('sysset/sms/set')}">短信接口设置</a></li>
     {/if}
@@ -62,6 +62,8 @@
     {ifp 'sysset.member'}<li  {if $_W['routes']=='sysset.member'}class="active"{/if}><a href="{php echo webUrl('sysset/member')}">会员设置</a></li>{/if}
     {ifp 'sysset.category'}<li  {if $_W['routes']=='sysset.category'}class="active"{/if}><a href="{php echo webUrl('sysset/category')}">分类层级</a></li>{/if}
     {ifp 'sysset.contact'}<li  {if $_W['routes']=='sysset.contact'}class="active"{/if}><a href="{php echo webUrl('sysset/contact')}">联系方式</a></li>{/if}
+    {ifp 'sysset.area'}<li  {if $_W['routes']=='sysset.area'}class="active"{/if}><a href="{php echo webUrl('sysset/area')}">地址库设置</a></li>{/if}
+    {ifp 'sysset.express'}<li  {if $_W['routes']=='sysset.express'}class="active"{/if}><a href="{php echo webUrl('sysset/express')}">物流信息接口</a></li>{/if}
 </ul>
 {/if}
 

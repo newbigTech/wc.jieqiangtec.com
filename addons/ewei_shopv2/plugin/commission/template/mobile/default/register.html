@@ -93,6 +93,13 @@
                 <div class='fui-cell-info overflow'><span class='text-danger'>{if !empty($agent)}{$agent['nickname']}{else}总店{/if}</span> (请核对)</div>
             </div>
 
+            {if empty($agent)}
+            <div class='fui-cell'>
+                <div class='fui-cell-label'>{php echo $this->set['texts']['icode']}</div>
+                <div class='fui-cell-info'><input type="text" class='fui-input' id='icode' placeholder="请填写{php echo $this->set['texts']['icode']}" value="{if $mid>0}{$mid}{/if}" /></div>
+            </div>
+            {/if}
+
             {if $template_flag}
 
             {template 'diyform/formfields'}

@@ -14,13 +14,24 @@
             <a class='btn btn-primary btn-sm' href="{php echo webUrl('sale/coupon/goodssend/add')}"><i class='fa fa-plus'></i> 添加任务</a>
         {/if}
     </span>
-    <h2>发送任务</h2> </div>
+    <h2>购物送券</h2> </div>
 <ul class="nav nav-arrow-next nav-tabs" id="myTab">
-    <li  >
-        <a href="{php echo webUrl('sale/coupon/sendtask')}">满额送优惠券</a>
+    <li style="position: relative;">
+        <a href="{php echo webUrl('sale/coupon/shareticket')}">分享发券</a>
+        <span style="position:absolute;right: 9px;top: -7px;"><img src="../addons/ewei_shopv2/static/images/new.png" alt="" ></span>
+    </li>
+    <li style="position: relative;">
+        <a href="{php echo webUrl('sale/coupon/setticket')}">新人发券</a>
+        <span style="position:absolute;right: 9px;top: -7px;"><img src="../addons/ewei_shopv2/static/images/new.png" alt="" ></span>
+    </li>
+    <li>
+        <a href="{php echo webUrl('sale/coupon/sendtask')}">满额送券</a>
     </li>
     <li class="active">
-        <a href="{php echo webUrl('sale/coupon/goodssend')}">购买指定商品送优惠券</a>
+        <a href="{php echo webUrl('sale/coupon/goodssend')}">购物送券</a>
+    </li>
+    <li >
+        <a href="{php echo webUrl('sale/coupon/usesendtask')}">用券送券</a>
     </li>
 </ul>
 <form action="" method="post">

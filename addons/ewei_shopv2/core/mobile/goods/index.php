@@ -16,10 +16,10 @@ class Index_EweiShopV2Page extends MobilePage
 		if ($plugin_commission && (0 < intval($_W['shopset']['commission']['level']))) 
 		{
 			$mid = intval($_GPC['mid']);
-			if (!(empty($mid))) 
+			if (!(empty($mid)) && empty($_W['shopset']['commission']['closemyshop']) && !(empty($_W['shopset']['commission']['select_goods']))) 
 			{
 				$shop = p('commission')->getShop($mid);
-				if (empty($shop['selectcategory'])) 
+				if (empty($shop['selectcategory']) && !(empty($shop['selectgoods']))) 
 				{
 					$opencategory = false;
 				}

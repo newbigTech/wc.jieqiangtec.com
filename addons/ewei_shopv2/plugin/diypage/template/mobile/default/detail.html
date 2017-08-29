@@ -13,9 +13,22 @@
 
     .btn-like {color: {$diypage['navbar']['style']['iconcolor']}}
     .btn-like.icon-likefill {color: #f01}
+
+    .fui-cell-group{width:100%;}
+    .fullback-title{color:#999999;font-size:0.7rem;padding:0.75rem 0 0.5rem 0;}
+    .fullback-info{}
+    .fullback-info p{height:1rem;line-height: 1rem;font-size:0.625rem;color:#333;display: inline-block;padding:0 0.5rem 0 0;}
+    .fullback-info p i{border:none;height:0.75rem;width:0.75rem;display: inline-block;background: #ff4753;color:#fff;font-size:0.4rem;line-height: 0.8rem;text-align: center; font-style: normal;border-radius: 0.75rem;-webkit-border-radius: 0.75rem;margin-right:0.25rem;}
+    .fullback-remark{line-height: 1rem;font-size:0.6rem;color:#666;padding:0.2rem 0;}
 </style>
 <link rel="stylesheet" href="../addons/ewei_shopv2/static/js/dist/swiper/swiper.min.css">
 <link href="../addons/ewei_shopv2/plugin/diypage/static/css/foxui.diy.css?v=201610091000"rel="stylesheet"type="text/css"/>
+<link rel="stylesheet" type="text/css" href="../addons/ewei_shopv2/template/mobile/default/static/css/coupon.css?v=2.0.0">
+<link rel="stylesheet" type="text/css" href="../addons/ewei_shopv2/template/mobile/default/static/css/coupon-new.css?v=2017030302">
+
+{if !empty($islive)}
+    <link rel="stylesheet" type="text/css" href="../addons/ewei_shopv2/plugin/live/static/css/living.css?v=20170628" />
+{/if}
 
 <div class='fui-page fui-page-current  page-goods-detail' id='page-goods-detail-index'>
     {if $diypage['followbar']}
@@ -28,16 +41,20 @@
                 <a class="back" id="btn-back"></a>
             </div>
             <div class="title">
-                <div id="tab" class="fui-tab fui-tab-danger">
-                    <a data-tab="tab1" class="tab active">{if !empty($diypage['tab']['params']['goodstext'])}{$diypage['tab']['params']['goodstext']}{else}商品{/if}</a>
-                    <a data-tab="tab2" class="tab">{if !empty($diypage['tab']['params']['detailtext'])}{$diypage['tab']['params']['detailtext']}{else}详情{/if}</a>
-                    {if count($params)>0}
-                    <a data-tab="tab3" class="tab">参数</a>
-                    {/if}
-                    {if $getComments}
-                    <a  data-tab="tab4" class="tab" style="display:none" id="tabcomment">评价</a>
-                    {/if}
-                </div>
+                {if $new_temp}
+                    商品详情
+                {else}
+                    <div id="tab" class="fui-tab fui-tab-danger">
+                        <a data-tab="tab1" class="tab active">{if !empty($diypage['tab']['params']['goodstext'])}{$diypage['tab']['params']['goodstext']}{else}商品{/if}</a>
+                        <a data-tab="tab2" class="tab">{if !empty($diypage['tab']['params']['detailtext'])}{$diypage['tab']['params']['detailtext']}{else}详情{/if}</a>
+                        {if count($params)>0}
+                        <a data-tab="tab3" class="tab">参数</a>
+                        {/if}
+                        {if $getComments}
+                        <a  data-tab="tab4" class="tab" style="display:none" id="tabcomment">评价</a>
+                        {/if}
+                    </div>
+                {/if}
             </div>
             <div class="fui-header-right"></div>
         </div>
@@ -72,6 +89,7 @@
             </div>
         {/if}
 
+{if !$new_temp}
         <div class='fui-content comment-block  {if !$goods['canbuy']}notbuy{/if}' data-getcount='1' id='comments-list-container'>
             <div class='fui-icon-group col-5 '>
                 <div class='fui-icon-col' data-level='all'><span class='text-danger'>全部<br/><span class="count"></span></span></div>
@@ -89,6 +107,7 @@
             <div class="text-danger look-basic"><i class='icon icon-unfold'></i> <span>上拉返回商品详情</span></div>
             <div class='content-block content-images'></div>
         </div>
+{/if}
 
         <div class='fui-content basic-block pulldown {if !$goods['canbuy']}notbuy{/if}'>
         {if !empty($err)}
@@ -100,15 +119,14 @@
                 <i class="icon icon-qrcode" id="alert-click"></i>
             {/if}
 
-
             {loop $diypage['items'] $diyitem}
                 {if $diyitem['id']=='detail_comment'}
                     <div id='comments-container'></div>
                 {elseif $diyitem['id']=='detail_pullup'}
-                    {if empty($diyitem['params']['hide'])}
-                        <div class="fui-cell-group">
+                    {if empty($diyitem['params']['hide']) && !$new_temp}
+                        <div class="fui-cell-group" style="background: {$diyitem['style']['background']}; margin-top: {$diyitem['style']['margintop']}px;">
                             <div class="fui-cell">
-                                <div class="fui-cell-text text-center look-detail"><i class='icon icon-fold'></i> <span>上拉查看图文详情</span></div>
+                                <div class="fui-cell-text text-center look-detail" style="color: {$diyitem['style']['textcolor']}"><i class='icon icon-fold'></i> <span>上拉查看图文详情</span></div>
                             </div>
                         </div>
                     {/if}
@@ -116,9 +134,108 @@
                     {template 'diypage/template/tpl_'.$diyitem['id']}
                 {/if}
             {/loop}
-{/if}
-</div>
 
+            {if $new_temp}
+                {if count($params)>0 || $showComments}
+                    <div class="fui-tab fui-tab-danger detail-tab" id="tabnew">
+                        <a data-tab="tab2" class="active">{if !empty($diypage['tab']['params']['detailtext'])}{$diypage['tab']['params']['detailtext']}{else}详情{/if}</a>
+                        {if count($params)>0}
+                            <a data-tab="tab3">参数</a>
+                        {/if}
+                        {if $showComments}
+                            <a data-tab="tab4">评价</a>
+                        {/if}
+                    </div>
+                {else}
+                    <div class="fui-cell-group">
+                        <div class="fui-cell">
+                            <div class="fui-cell-info">商品详情</div>
+                        </div>
+                    </div>
+                {/if}
+                <div class="detail-tab-panel">
+                    <div class="tab-panel show detail-block" data-tab="tab2">
+                        <div class="content-block content-images"></div>
+                    </div>
+                    <div class="tab-panel" data-tab="tab3">
+                        <div class="fui-cell-group">
+                            {if !empty($params)}
+                            {loop $params $p}
+                            <div class="fui-cell">
+                                <div class="fui-cell-label" >{$p['title']}</div>
+                                <div class="fui-cell-info overflow">{$p['value']}</div>
+                            </div>
+                            {/loop}
+                            {else}
+                            <div class="fui-cell">
+                                <div class="fui-cell-info text-align">商品没有参数</div>
+                            </div>
+                            {/if}
+                        </div>
+                    </div>
+                    <div class="tab-panel comment-block" data-tab="tab4" data-getcount='1' id='comments-list-container'>
+                        <div class='fui-icon-group col-5 '>
+                            <div class='fui-icon-col' data-level='all'><span class='text-danger'>全部<br/><span class="count"></span></span></div>
+                            <div class='fui-icon-col' data-level='good'><span>好评<br/><span class="count"></span></span></div>
+                            <div class='fui-icon-col' data-level='normal'><span>中评<br/><span class="count"></span></span></div>
+                            <div class='fui-icon-col' data-level='bad'><span>差评<br/><span class="count"></span></span></div>
+                            <div class='fui-icon-col' data-level='pic'><span>晒图<br/><span class="count"></span></span></div>
+                        </div>
+                        <div class='content-empty' style='display:none;'>暂时没有任何评价
+                        </div>
+                        <div class='container' id="comments-all"></div>
+                        <div class='infinite-loading'><span class='fui-preloader'></span><span class='text'> 正在加载...</span></div>
+                    </div>
+                </div>
+            {/if}
+
+        {/if}
+    </div>
+
+{if $isgift && $goods['total'] > 0}
+<div id='gift-picker-modal' style="margin:-100%;">
+    <div class='gift-picker'>
+        <div class="fui-cell-group fui-sale-group" style='margin-top:0;'>
+            <div class="fui-cell">
+                <div class="fui-cell-text dispatching">
+                    请选择赠品:
+                    <div class="dispatching-info" style="max-height:12rem;overflow-y: auto ">
+                        {loop $gifts $item}
+                        <div class="fui-list goods-item align-start" data-giftid="{$item['id']}">
+                            <div class="fui-list-media">
+                                <input type="radio" name="checkbox" class="fui-radio fui-radio-danger gift-item" value="{$item['id']}" style="display: list-item;">
+                            </div>
+                            <div class="fui-list-inner">
+                                {loop $item['gift'] $gift}
+                                <div class="fui-list">
+                                    <div class="fui-list-media image-media" style="position: initial;">
+                                        <a href="javascript:void(0);">
+                                            <img class="round" src="{php echo tomedia($gift['thumb'])}" data-lazyloaded="true">
+                                        </a>
+                                    </div>
+                                    <div class="fui-list-inner">
+                                        <a href="javascript:void(0);">
+                                            <div class="text">
+                                                {$gift['title']}
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <div class='fui-list-angle'>
+                                        <span class="price">&yen;<del class='marketprice'>{$gift['marketprice']}</del></span>
+                                    </div>
+                                </div>
+                                {/loop}
+                            </div>
+                        </div>
+                        {/loop}
+                    </div>
+                </div>
+            </div>
+            <div class='btn btn-danger block'>确定</div>
+        </div>
+    </div>
+</div>
+{/if}
 
 {if $goods['canbuy']}
     <div class="fui-navbar bottom-buttons" style="background: {$diypage['navbar']['style']['background']};">
@@ -143,13 +260,13 @@
         {/if}
 
         {if $canAddCart && empty($diypage['navbar']['params']['hidecartbtn'])}
-        <a  class="nav-item btn cartbtn" style="background: {$diypage['navbar']['style']['cartcolor']};">加入购物车</a>
+        <a  class="nav-item btn cartbtn" style="background: {$diypage['navbar']['style']['cartcolor']};"  data-type="{$goods['type']}">加入购物车</a>
         {/if}
         {if empty($seckillinfo) || $seckillinfo['status']==0 || $seckillinfo['status']==-1}
-        <a  class="nav-item btn buybtn" style="background: {$diypage['navbar']['style']['buycolor']};">{php echo !empty($diypage['navbar']['params']['textbuy'])?$diypage['navbar']['params']['textbuy']:"立刻购买"}</a>
+        <a  class="nav-item btn buybtn" style="background: {$diypage['navbar']['style']['buycolor']};"  data-type="{$goods['type']}">{php echo !empty($diypage['navbar']['params']['textbuy'])?$diypage['navbar']['params']['textbuy']:"立刻购买"}</a>
         {else}
 
-        <a  class="nav-item btn buybtn" style="color: {$diypage['seckill']['style']['buybtntextwait']};background: {$diypage['seckill']['style']['buybtnbgwait']};">
+        <a  class="nav-item btn buybtn" style="color: {$diypage['seckill']['style']['buybtntextwait']};background: {$diypage['seckill']['style']['buybtnbgwait']};"  data-type="{$goods['type']}">
             {php echo !empty($diypage['seckill']['params']['buybtn'])?$diypage['seckill']['params']['buybtn']:"原价购买"}
         </a>
 
@@ -158,23 +275,24 @@
 {/if}
 
 {if $has_city}
-    <div id='city-picker-modal' style="margin: -100%;">
-        <div class='city-picker'>
-            <div class="fui-cell-group fui-sale-group" style='margin-top:0;'>
-                <div class="fui-cell">
-                    <div class="fui-cell-text dispatching">
-                        不配送区域:
-                        <div class="dispatching-info">
-                            {loop $citys $item}
-                            <i>{$item}</i>
-                            {/loop}
-                        </div>
+<div id='city-picker-modal' style="margin: -100%;">
+    <div class='city-picker'>
+        <div class='fui-cell-title'>促销活动</div>
+        <div class="fui-cell-group fui-sale-group" style='margin-top:0;'>
+            <div class="fui-cell">
+                <div class="fui-cell-text dispatching">
+                    {if empty($onlysent)}不{else}只{/if}配送区域:
+                    <div class="dispatching-info">
+                        {loop $citys $item}
+                        <i>{$item}</i>
+                        {/loop}
                     </div>
                 </div>
-                <div class='btn btn-danger block'>确定</div>
             </div>
+            <div class='btn btn-danger block'>确定</div>
         </div>
     </div>
+</div>
 {/if}
 
 <div id='sale-picker-modal' style="margin: -100%;">
@@ -229,7 +347,72 @@
         </div>
     </div>
 </div>
-{template 'goods/picker'}
+
+{if $isfullback}
+<div id='fullback-picker-modal' style="margin: -100%;">
+    <div class='city-picker'>
+        <div class="fui-cell-group fui-sale-group" style='margin-top:0;'>
+
+            <div class="fui-cell">
+                <div class="fui-cell-text">
+                    <div class="fullback-title">全返说明：</div>
+                    <div class="fullback-info">
+                        <p><i>&yen;</i>全返总额：
+                            {if $fullbackgoods['type']>0}
+                            {if $goods['hasoption'] > 0 && $fullbackgoods['minallfullbackallratio'] != $fullbackgoods['maxallfullbackallratio']}
+                            {php echo price_format($fullbackgoods['minallfullbackallratio'],2)}% ~ {php echo price_format($fullbackgoods['maxallfullbackallratio'],2)}%
+                            {else}
+                            {php echo price_format($fullbackgoods['minallfullbackallratio'],2)}%
+                            {/if}
+                            {else}
+                            {if $goods['hasoption'] > 0 && $fullbackgoods['minallfullbackallprice'] != $fullbackgoods['maxallfullbackallprice']}
+                            &yen;{php echo price_format($fullbackgoods['minallfullbackallprice'],2)} ~ &yen;{php echo price_format($fullbackgoods['maxallfullbackallprice'],2)}
+                            {else}
+                            &yen;{php echo price_format($fullbackgoods['minallfullbackallprice'],2)}
+                            {/if}
+                            {/if}
+                        </p>
+                        <p><i>&yen;</i>每天返：
+                            {if $fullbackgoods['type']>0}
+                            {if $goods['hasoption'] > 0 && $fullbackgoods['minfullbackratio'] != $fullbackgoods['maxfullbackratio']}
+                            {php echo price_format($fullbackgoods['minfullbackratio'],2)}% ~ {php echo price_format($fullbackgoods['maxfullbackratio'],2)}%
+                            {else}
+                            {php echo price_format($fullbackgoods['fullbackratio'],2)}%
+                            {/if}
+                            {else}
+                            {if $goods['hasoption'] > 0 && $fullbackgoods['minfullbackprice'] != $fullbackgoods['maxfullbackprice']}
+                            &yen;{php echo price_format($fullbackgoods['minfullbackprice'],2)} ~ &yen;{php echo price_format($fullbackgoods['maxfullbackprice'],2)}
+                            {else}
+                            &yen;{php echo price_format($fullbackgoods['fullbackprice'],2)}
+                            {/if}
+                            {/if}
+                        </p>
+                        <p><i>&yen;</i>时间：
+                            {if $goods['hasoption'] > 0 && $fullbackgoods['minday'] != $fullbackgoods['maxday']}
+                            {$fullbackgoods['minday']} ~ {$fullbackgoods['maxday']}
+                            {else}
+                            {$fullbackgoods['day']}
+                            {/if}天
+                        </p>
+                    </div>
+                    {if $fullbackgoods['startday']>0}
+                    <div class="fullback-remark">
+                        确认收货 {$fullbackgoods['startday']}天后开始全返。如申请退款，则全返金额退还。
+                    </div>
+                    {/if}
+                </div>
+            </div>
+            <div class='btn btn-danger block' style="margin:0;border-radius: 0;height:2.5rem;line-height: 2.5rem;">确定</div>
+        </div>
+    </div>
+</div>
+{/if}
+
+{if $goods['type']==4}
+    {template 'goods/wholesalePicker'}
+{else}
+    {template 'goods/picker'}
+{/if}
 
 {if $getComments}
 <script type='text/html' id='tpl_goods_detail_comments_list'>
@@ -351,14 +534,20 @@
     <div class='content'>请点击右上角<br/>通过【发送给朋友】<br/>邀请好友购买</div>
 </div>
 
-
+{template 'sale/coupon/util/couponpicker'}
 
 <script language="javascript">
 
     require(['biz/goods/detail'], function (modal) {
         modal.init({
             goodsid:"{$goods['id']}",
-            getComments : "{$getComments}"
+            getComments : "{$getComments}",
+            seckillinfo: {php echo json_encode($seckillinfo)},
+            attachurl_local:"{$GLOBALS['_W']['attachurl_local']}",
+            attachurl_remote:"{$GLOBALS['_W']['attachurl_remote']}",
+            coupons: {php echo json_encode($coupons)},
+            new_temp: {$new_temp},
+            liveid: {$liveid}
         });
     });
 
@@ -376,7 +565,7 @@
             $(".alert-qrcode-i").qrcode({
                 typeNumber: 0,      //计算模式
                 correctLevel: 0,//纠错等级
-                text:"{php echo $_W['siteroot'].'app/'.mobileUrl('goods/detail', array('id'=>$goods['id']))}"/*{php echo $_W['siteroot'].'app/'.mobileUrl('goods/detail', array('id'=>$goods['id']))}*/
+                text:"{php echo mobileUrl('goods/detail', array('id'=>$goods['id'],'mid'=>$mid),true)}"
             });
         });
     </script>
@@ -411,8 +600,8 @@
             <div class="share-text1">截屏保存分享给您的朋友</div>
         </div>
     </div>
-    {else}
-        <div class="alert-content">
+    {elseif $commission_data['codeShare'] == 2}
+    <div class="alert-content">
         <div class="alert2">
             <div class="fui-list alert2-goods">
                 <div class="fui-list-media">
@@ -434,7 +623,17 @@
             <div class="share-text2">截屏保存分享给您的朋友</div>
             <a href="javascript:void(0);" class="alert-close2">{$_W['shopset']['shop']['name']}</a>
         </div>
+    </div>
+    {else}
+    <div class="alert-content">
+        <div class="alert" style="padding:0;background: #f5f4f9;border:none;-webkit-border-radius: 0.3rem;border-radius: 0.3rem;top:2rem;">
+            <i class="alert-close alert-close1 icon icon-close" style="right: -0.7rem;top: -0.8rem;background: #e1040d;border:none;z-index:10"></i>
+            <div class="fui-list alert-header" style="-webkit-border-radius: 0.3rem;border-radius: 0.3rem;padding:0;">
+                <img src="{php echo tomedia($goodscode)}" class="alert-goods-img" alt="">
+            </div>
+
         </div>
+    </div>
     {/if}
 </div>
 <style type="text/css">
@@ -445,6 +644,14 @@
 
 {if !empty($diypage['diylayer'])}
         {php echo $this->diyLayer(false, false, $goods['merchid'])}
+{/if}
+
+{if !empty($diypage['danmu'])}
+    {php $this->diyDanmu(true)}
+{/if}
+
+{if !empty($startadv)}
+    {template 'diypage/startadv'}
 {/if}
 
 {template '_footer'}

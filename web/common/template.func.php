@@ -1,8 +1,12 @@
 <?php
-
+/**
+ * [WeEngine System] Copyright (c) 2014 WE7.CC
+ * WeEngine is NOT a free software, it under the license terms, visited http://www.we7.cc/ for more details.
+ */
 defined('IN_IA') or exit('Access Denied');
 
  
+
 function template($filename, $flag = TEMPLATE_DISPLAY) {
 	global $_W;
 	$source = IA_ROOT . "/web/themes/{$_W['template']}/{$filename}.html";
@@ -72,6 +76,8 @@ function template_parse($str, $inmodule = false) {
 	$str = preg_replace('/{url\s+(\S+)\s+(array\(.+?\))}/', '<?php echo url($1, $2);?>', $str);
 	$str = preg_replace('/{media\s+(\S+)}/', '<?php echo tomedia($1);?>', $str);
 	$str = preg_replace_callback('/<\?php([^\?]+)\?>/s', "template_addquote", $str);
+	$str = preg_replace_callback('/{hook\s+(.+?)}/s', "template_modulehook_parser", $str);
+	$str = preg_replace('/{\/hook}/', '<?php ; ?>', $str);
 	$str = preg_replace('/{([A-Z_\x7f-\xff][A-Z0-9_\x7f-\xff]*)}/s', '<?php echo $1;?>', $str);
 	$str = str_replace('{##', '{', $str);
 	$str = str_replace('##}', '}', $str);
@@ -86,4 +92,53 @@ function template_addquote($matchs) {
 	$code = "<?php {$matchs[1]}?>";
 	$code = preg_replace('/\[([a-zA-Z0-9_\-\.\x7f-\xff]+)\](?![a-zA-Z0-9_\-\.\x7f-\xff\[\]]*[\'"])/s', "['$1']", $code);
 	return str_replace('\\\"', '\"', $code);
+}
+
+function template_modulehook_parser($params = array()) {
+	load()->model('module');
+	if (empty($params[1])) {
+		return '';
+	}
+	$params = explode(' ', $params[1]);
+	if (empty($params)) {
+		return '';
+	}
+	$plugin = array();
+	foreach ($params as $row) {
+		$row = explode('=', $row);
+		$plugin[$row[0]] = str_replace(array("'", '"'), '', $row[1]);
+		$row[1] = urldecode($row[1]);
+	}
+	$plugin_info = module_fetch($plugin['module']);
+	if (empty($plugin_info)) {
+		return false;
+	}
+
+	if (empty($plugin['return']) || $plugin['return'] == 'false') {
+			} else {
+			}
+	if (empty($plugin['func']) || empty($plugin['module'])) {
+		return false;
+	}
+
+	if (defined('IN_SYS')) {
+		$plugin['func'] = "hookWeb{$plugin['func']}";
+	} else {
+		$plugin['func'] = "hookMobile{$plugin['func']}";
+	}
+
+	$plugin_module = WeUtility::createModuleHook($plugin_info['name']);
+	if (method_exists($plugin_module, $plugin['func']) && $plugin_module instanceof WeModuleHook) {
+		$hookparams = var_export($plugin, true);
+		if (!empty($hookparams)) {
+			$hookparams = preg_replace("/'(\\$[a-zA-Z_\x7f-\xff\[\]\']*?)'/", '$1', $hookparams);
+		} else {
+			$hookparams = 'array()';
+		}
+		$php = "<?php \$plugin_module = WeUtility::createModuleHook('{$plugin_info['name']}');call_user_func_array(array(\$plugin_module, '{$plugin['func']}'), array('params' => {$hookparams})); ?>";
+		return $php;
+	} else {
+		$php = "<!--模块 {$plugin_info['name']} 不存在嵌入点 {$plugin['func']}-->";
+		return $php;
+	}
 }

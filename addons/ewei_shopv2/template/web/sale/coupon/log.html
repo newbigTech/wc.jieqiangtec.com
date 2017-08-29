@@ -40,11 +40,19 @@
                 <option value='0' {if $_GPC['gettype']=='0'}selected{/if}>后台发放</option>
                 <option value='1' {if $_GPC['gettype']=='1'}selected{/if}>领券中心</option>
                 <option value='2' {if $_GPC['gettype']=='2'}selected{/if}>积分商城</option>
-                <option value='3' {if $_GPC['gettype']=='3'}selected{/if}>超级海报</option>
-                <option value='4' {if $_GPC['gettype']=='4'}selected{/if}>活动海报</option>
-                <option value='5' {if $_GPC['gettype']=='5'}selected{/if}>口令优惠券</option>
+                <option value='3' {if $_GPC['gettype']=='3'}selected{/if}>任务海报</option>
+                <option value='4' {if $_GPC['gettype']=='4'}selected{/if}>超级海报</option>
+                <option value='5' {if $_GPC['gettype']=='5'}selected{/if}>活动海报</option>
                 <option value='6' {if $_GPC['gettype']=='6'}selected{/if}>任务发送</option>
                 <option value='7' {if $_GPC['gettype']=='7'}selected{/if}>兑换中心</option>
+                <option value='8' {if $_GPC['gettype']=='8'}selected{/if}>快速领取</option>
+                <option value='9' {if $_GPC['gettype']=='9'}selected{/if}>收银台发送</option>
+                <option value='10' {if $_GPC['gettype']=='10'}selected{/if}>微信会员卡激活发送</option>
+                <option value='11' {if $_GPC['gettype']=='11'}selected{/if}>直播间领取优惠券</option>
+                <option value='12' {if $_GPC['gettype']=='12'}selected{/if}>直播间推送优惠券</option>
+                <option value='13' {if $_GPC['gettype']=='13'}selected{/if}>口令优惠券</option>
+                <option value='14' {if $_GPC['gettype']=='14'}selected{/if}>新人领券</option>
+                <option value='15' {if $_GPC['gettype']=='15'}selected{/if}>发券分享</option>
             </select>
 
             <select name='used' class='form-control input-sm select-sm'>
@@ -68,6 +76,7 @@
             </select>
 
             <select name='searchfield' class='form-control input-sm select-sm'>
+                <option value='' >关键词</option>
                 <option value='coupon' {if $_GPC['searchfield']=='coupon'}selected{/if}>优惠券</option>
                 <option value='member' {if $_GPC['searchfield']=='member'}selected{/if} >会员</option>
             </select>
@@ -135,7 +144,7 @@
         </td>
         <td>
             <span data-toggle='tooltip'  title='{$row['nickname']}'>
-            <img src='{$row['avatar']}' style='width:30px;height:30px;padding1px;border:1px solid #ccc' />
+            <img src='{php echo tomedia($row['avatar'])}' style='width:30px;height:30px;padding1px;border:1px solid #ccc' />
             {if empty($row['nickname'])}未更新{else}{$row['nickname']}{/if}</span>
         </td>
         <td>

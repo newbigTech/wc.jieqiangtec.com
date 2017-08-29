@@ -194,8 +194,8 @@ border-radius: 22px;margin-top:4px;}
 .lynn-flink-info-bot a img{width:170px;height:60px;}
 /*经典案例*/
 .lynn-banner{}
-.lynn-banner-info{width:1200px;margin:0 auto;}
-.lynn-banner-info img{width:1200px;height:340px;}
+.lynn-banner-info{text-align: center;}
+.lynn-banner-info img{width:100%;}
 .lynn-case-menu{height:60px;background: #f8f7f7;}
 .lynn-case-menu-ul{height:60px;width:1200px;margin:0 auto;padding:17px 0 17px 47px;margin:0 auto;display: block;overflow: hidden;}
 .lynn-case-menu-ul li{height:26px;line-height: 26px;float:left;padding:0;margin:0;overflow: hidden;}

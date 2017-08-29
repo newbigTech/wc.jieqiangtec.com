@@ -4,6 +4,7 @@
     <div class="page-heading">
     <span class="pull-right">
         {ifp 'exchange.group.creat'}
+        {if $res['code_type'] == 3}<a class="btn btn-danger btn-sm" data-href="{php echo webUrl('exchange/goods/import',array('id'=>$id));}" data-toggle="ajaxModal"><i class="fa fa-download"></i> 导入兑换码</a>{/if}
             <a class="btn btn-primary btn-sm" data-href="{php echo webUrl('exchange/group/creat',array('id'=>$id));}" data-toggle="ajaxModal"><i class="fa fa-plus"></i> 生成兑换券</a>
         {/if}
         <a class="btn btn-default btn-sm" href="{php echo webUrl('exchange/group');}">返回列表</a>
@@ -129,9 +130,12 @@
             <td><span class="label label-danger" data-toggle="ajaxSwitch" data-confirm="确认暂停此兑换活动？" data-switch-refresh="true" data-switch-value="1" data-switch-value0="">
                       {if strtotime($value['endtime'])<time()}已过期{else}未发放{/if}</span></td>
             {/if}
-            {if $value['status']==1}
+            {if $value['goodsstatus']!=2 &&$value['balancestatus']!=2&&$value['redstatus']!=2&&$value['scorestatus']!=2&&$value['couponstatus']!=2}
             <td><span class="label label-primary" data-toggle="ajaxSwitch" data-confirm="确认暂停此兑换活动？" data-switch-refresh="true" data-switch-value="1" data-switch-value0="">
                       {if strtotime($value['endtime'])<time()}已过期{else}未兑换{/if}</span></td>
+            {elseif $value['status'] != 2}
+            <td><span class="label label-success" data-toggle="ajaxSwitch" data-confirm="确认暂停此兑换活动？" data-switch-refresh="true" data-switch-value="1" data-switch-value0="">
+                      {if strtotime($value['endtime'])<time()}已过期{else}兑换中{/if}</span></td>
             {/if}
             {if $value['status']==2}
             <td><span class="label label-warning" data-toggle="ajaxSwitch" data-confirm="确认暂停此兑换活动？" data-switch-refresh="true" data-switch-value="1" data-switch-value0="">
@@ -144,7 +148,7 @@
             </td>
             <td>
                 {if $value['type']!=3}
-                <a class="btn btn-default btn-sm" data-toggle="ajaxModal" data-href="{php echo webUrl('exchange/group/qrcode',array('key'=>$value['key'],'type'=>$value['type']));}" title="编辑"><i class="fa fa-search"></i> 二维码</a>
+                <a class="btn btn-default btn-sm" data-toggle="ajaxModal" data-href="{php echo webUrl('exchange/group/qrcode',array('key'=>$value['key'],'type'=>$value['type'],'id'=$id));}" title="编辑"><i class="fa fa-search"></i> 二维码</a>
                 {else}
                 <a href="javascript:;" class="btn btn-default btn-sm js-clip" data-url="&nbsp;{$value['key']}"><i class="fa fa-link"></i> 复制</a>
                 {/if}
@@ -155,7 +159,7 @@
                 {if $value['type']<2}
                 <a class="btn btn-default btn-sm" href="{php echo webUrl('exchange/goods/down',array('key'=>$value['key']));}"><i class="fa fa fa-download"></i> 下载</a>
                 {/if}
-                {if $value['type'] == 2}<a class="btn btn-default btn-sm" href="{$value['qrcode_url']}" download="{$value['serial']}.png"><i class="fa fa fa-download"></i> 下载</a>
+                {if $value['type'] == 2}<a class="btn btn-default btn-sm" href="{$value['qrcode_url']}&id={$id}" download="{$value['serial']}.png"><i class="fa fa fa-download"></i> 下载</a>
                 {/if}
                 {ifp 'exchange.group.destroy'}
                 <a class="btn btn-default btn-sm" data-toggle="ajaxRemove"

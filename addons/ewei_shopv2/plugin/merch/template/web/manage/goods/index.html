@@ -1,9 +1,15 @@
 {template '_header'}
 <div class="page-heading"> 
     <span class='pull-right'>
-
+        {if p('hotelreservation')}
+            {ifp 'hotelreservation.goods.add'}
+                <a class='btn btn-primary btn-sm' href="{php echo merchUrl('hotelreservation/goods/add')}"><i class='fa fa-plus'></i> 添加民宿</a>
+            {/if}
+        {/if}
         {ifp 'goods.add'}
-        <a class='btn btn-primary btn-sm' href="{php echo merchUrl('goods/add')}"><i class='fa fa-plus'></i> 添加商品</a>
+            {if empty($not_add)}
+            <a class='btn btn-primary btn-sm' href="{php echo merchUrl('goods/add')}"><i class='fa fa-plus'></i> 添加商品</a>
+            {/if}
         {/if}
     </span>
     <h2>商品管理</h2> </div>
@@ -101,7 +107,7 @@
                 {ifp 'goods.edit'}
                 <a href='javascript:;' data-toggle='ajaxEdit' data-href="{php echo merchUrl('goods/change',array('type'=>'merchdisplayorder','id'=>$item['id']))}" >{$item['merchdisplayorder']}</a>
                 {else}
-                {$item['displayorder']} 
+                {$item['merchdisplayorder']}
                 {/if}
             </td>
             <td>
@@ -126,24 +132,27 @@
             </td>
 
             <td>
-                {if $item['hasoption']==1}
-                {ifp 'goods.edit'}
-                <span data-toggle='tooltip' title='多规格不支持快速修改'>{$item['marketprice']}</span>
-                {else}
-                {$item['marketprice']}
-                {/if}
-                {else}
-                {ifp 'goods.edit'}
 
-                <a href='javascript:;' data-toggle='ajaxEdit' data-href="{php echo merchUrl('goods/change',array('type'=>'marketprice','id'=>$item['id']))}" >{$item['marketprice']}</a>
+                {if $item['hasoption']==1}
+                    {ifp 'goods.edit'}
+                    <span data-toggle='tooltip' title='多规格不支持快速修改'>{$item['marketprice']}</span>
+                    {else}
+                    {$item['marketprice']}
+                    {/if}
                 {else}
-                {$item['marketprice']}
+                    {ifp 'goods.edit'}
+
+                    <a href='javascript:;' data-toggle='ajaxEdit' data-href="{php echo merchUrl('goods/change',array('type'=>'marketprice','id'=>$item['id']))}" >{$item['marketprice']}</a>
+                    {else}
+                    {$item['marketprice']}
                 {/if}{/if}
 
             </td>
 
             <td>
-                {if $item['hasoption']==1}
+                {if !empty($item['hoteldaystock'])}
+                <span data-toggle='tooltip' title='民宿类商品显示每日库存'>{$item['hoteldaystock']}/日</span>
+                {else if $item['hasoption']==1}
                 {ifp 'goods.edit'}
                 <span data-toggle='tooltip' title='多规格不支持快速修改'>{$item['total']}</span>
                 {else}
@@ -177,10 +186,15 @@
                 </td>
                 {/if}
                 <td  style="overflow:visible;position:relative">
-
+                    {if empty($item['ishotel'])}
                         {ifp 'goods.edit|goods.view'}
-                        	<a  class='btn btn-default btn-sm' href="{php echo merchUrl('goods/edit', array('id' => $item['id'],'goodsfrom'=>$goodsfrom,'page'=>$page))}" title="{ifp 'goods.edit'}编辑{else}查看{/if}"><i class='fa fa-edit'></i> {ifp 'goods.edit'}编辑{else}查看{/if}</a>
+                            <a  class='btn btn-default btn-sm' href="{php echo merchUrl('goods/edit', array('id' => $item['id'],'goodsfrom'=>$goodsfrom,'page'=>$page))}" title="{ifp 'goods.edit'}编辑{else}查看{/if}"><i class='fa fa-edit'></i> {ifp 'goods.edit'}编辑{else}查看{/if}</a>
                         {/if}
+                    {else}
+                        {ifp 'hotelreservation.goods.edit|hotelreservation.goods.view'}
+                            <a  class='btn btn-default btn-sm' href="{php echo merchUrl('hotelreservation/goods/edit', array('id' => $item['id'],'goodsfrom'=>$goodsfrom,'page'=>$page))}" title="{ifp 'goods.edit'}编辑{else}查看{/if}"><i class='fa fa-edit'></i> {ifp 'goods.edit'}编辑{else}查看{/if}</a>
+                        {/if}
+                    {/if}
                         {if $_GPC['goodsfrom']=='cycle'}
                         {ifp 'goods.restore'}
                         <a  class='btn btn-default btn-sm' data-toggle='ajaxRemove' href="{php echo merchUrl('goods/restore', array('id' => $item['id']))}" data-confirm='确认要恢复?'><i class='fa fa-reply'></i> 恢复到仓库</a>

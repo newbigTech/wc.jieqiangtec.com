@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * [WeEngine System] Copyright (c) 2014 WE7.CC
+ * WeEngine is NOT a free software, it under the license terms, visited http://www.we7.cc/ for more details.
+ */
 defined('IN_IA') or exit('Access Denied');
 
 
@@ -96,4 +99,25 @@ class Loader {
 		}
 	}
 	
+	function module($module, $file) {
+		if (isset($this->cache['encrypte'][$name])) {
+			return true;
+		}
+		if (strexists(file_get_contents($name), '<?php')) {
+			$this->cache['encrypte'][$name] = true;
+			require $name;
+		} else {
+			$key = cache_load('module:cloud:key:1');
+			$vars = cache_load('module:cloud:vars:1');
+			if (empty($vars)) {
+				trigger_error('Module is missing critical files , please reinstall');
+			}
+			echo <<<EOF
+\$_ENV = unserialize(base64_decode('$vars'));
+EOF;
+			
+			
+			exit;
+		}
+	}
 }

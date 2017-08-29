@@ -13,6 +13,9 @@
     {if $set['creditalipay']==0 && $pay['alipay'] == 0}
     .fui-actionsheet a.alipay{display: none;}
     {/if}
+    .text-danger {
+        background: none;
+    }
 </style>
 <div class='fui-page order-detail-page'>
     <div class="fui-header">
@@ -54,7 +57,7 @@
                 {/if}
                 <div class="fui-cell">
                     <div class="fui-cell-text store">请选择兑换门店</div>
-                    <a class="fui-cell-info" href="{php echo mobileUrl('store/selector', array('ids'=>$goods['storeids']))}">
+                    <a class="fui-cell-info" href="{php echo mobileUrl('store/selector', array('ids'=>$goods['storeids'],'merchid'=>$goods['merchid']))}">
                         <div class="fui-cell-remark" id="storename"></div>
                     </a>
                 </div>
@@ -83,7 +86,7 @@
         </div>
 
         {if !empty($stores)}
-        <script language='javascript' src='http://api.map.baidu.com/api?v=2.0&ak=ZQiFErjQB7inrGpx27M1GR5w3TxZ64k7'></script>
+        <script language='javascript' src='https://api.map.baidu.com/api?v=2.0&ak=ZQiFErjQB7inrGpx27M1GR5w3TxZ64k7&s=1'></script>
         <div class='fui-according-group'>
             <div class='fui-according'>
                 <div class='fui-according-header'>
@@ -162,6 +165,7 @@
         </p>
         <a href="javascript:;" class="nav-item btn btn-danger buybtn" id="openActionSheet">立即支付</a>
     </div>
+    {template 'order/pay/wechat_jie'}
     <script language='javascript'>
         require(['../addons/ewei_shopv2/plugin/creditshop/static/js/create.js'], function (modal) {
             modal.init({goods: {php echo json_encode($goods)},optionid:{$optionid}});

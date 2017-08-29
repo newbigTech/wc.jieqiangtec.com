@@ -64,7 +64,7 @@
 		<tbody>  
 			{loop $list $row}
 			<tr>
-				<td><span data-toggle='tooltip' title='{$row['nickname']}'><img src='{$row['avatar']}' style='width:20px;height:20px;padding1px;border:1px solid #ccc' /> {$row['nickname']}</span>
+				<td><span data-toggle='tooltip' title='{$row['nickname']}'><img src='{php echo tomedia($row['avatar'])}' style='width:20px;height:20px;padding1px;border:1px solid #ccc' /> {$row['nickname']}</span>
 				<td>{$row['realname']}<br/>{$row['mobile']}</td>
 				<td>{$row['times']}</td>
 				<td>

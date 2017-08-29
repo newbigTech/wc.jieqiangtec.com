@@ -1,5 +1,5 @@
 <?php
-if (!defined('IN_IA')) 
+if (!(defined('IN_IA'))) 
 {
 	exit('Access Denied');
 }
@@ -15,13 +15,13 @@ class Short_EweiShopV2Page extends MerchWebPage
 		$psize = 20;
 		$condition = ' uniacid = :uniacid AND deleted = :deleted and merchid=:merchid';
 		$params = array(':uniacid' => $_W['uniacid'], ':deleted' => '0', ':merchid' => $merchid);
-		if (!empty($_GPC['keyword'])) 
+		if (!(empty($_GPC['keyword']))) 
 		{
 			$_GPC['keyword'] = trim($_GPC['keyword']);
 			$condition .= ' AND ( title LIKE :title or shorttitle like :title ) ';
 			$params[':title'] = '%' . trim($_GPC['keyword']) . '%';
 		}
-		if (!empty($_GPC['shorttitle'])) 
+		if (!(empty($_GPC['shorttitle']))) 
 		{
 			$_GPC['shorttitle'] = intval($_GPC['shorttitle']);
 			if ($_GPC['shorttitle'] < 2) 

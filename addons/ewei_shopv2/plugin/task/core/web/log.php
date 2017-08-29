@@ -12,7 +12,7 @@ class Log_EweiShopV2Page extends PluginWebPage
 		$pindex = max(1, intval($_GPC['page']));
 		$psize = 10;
 		$params = array(':uniacid' => $_W['uniacid']);
-		$condition = ' and log.uniacid=:uniacid and log.task_type=1 and log.taskid=' . intval($_GPC['id']);
+		$condition = ' and log.uniacid=:uniacid and log.task_type=' . $_GPC['type'] . ' and log.taskid=' . intval($_GPC['id']);
 		$searchfield = strtolower(trim($_GPC['searchfield']));
 		$keyword = trim($_GPC['keyword']);
 		if (!(empty($searchfield)) && !(empty($keyword))) 

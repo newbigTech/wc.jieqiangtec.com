@@ -1,6 +1,6 @@
 
 <ul class="menu-head-top">
-    <li {if $_W['controller']=='shop'} class="active" {/if}><a href="{php echo merchUrl('shop')}">店铺概述 <i class="fa fa-caret-right"></i></a></li>
+    <li {if $_W['routes']=='shop' || empty($_W['routes'])}class="active" {/if}><a href="{php echo merchUrl('shop')}">店铺概述 <i class="fa fa-caret-right"></i></a></li>
 </ul>
 
 

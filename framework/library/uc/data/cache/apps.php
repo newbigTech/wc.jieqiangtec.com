@@ -22,7 +22,7 @@ $_CACHE['apps'] = array (
     'appid' => '2',
     'type' => 'OTHER',
     'name' => 'Î¢ÐÅÏµÍ³',
-    'url' => 'http://www.v-888.com',
+    'url' => 'http://we7.cc',
     'ip' => '',
     'viewprourl' => '',
     'apifilename' => 'uc.php?uniacid=1',

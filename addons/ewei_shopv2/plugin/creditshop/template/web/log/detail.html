@@ -46,7 +46,8 @@
         <div class="col-sm-9 col-xs-12">
             <div class='form-control-static'>
             {if $goods['credit']>0}-{$goods['credit']}积分<br/>{/if}
-            {if $goods['money'] > 0 || $goods['dispatch'] > 0} -{php echo number_format($goods['money'] + $goods['dispatch'],2)}现金 {/if}
+            {if $goods['money'] > 0} -{php echo number_format($goods['money'],2)}现金<br />{/if}
+            <!--{if $log['dispatch'] > 0}{/if}-->
             </div>
         </div>
     </div>

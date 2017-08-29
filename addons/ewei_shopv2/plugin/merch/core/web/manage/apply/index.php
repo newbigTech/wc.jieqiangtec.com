@@ -1,20 +1,17 @@
 <?php
-
-if (!defined('IN_IA')) {
+if (!(defined('IN_IA'))) 
+{
 	exit('Access Denied');
 }
-
-
 require EWEI_SHOPV2_PLUGIN . 'merch/core/inc/page_merch.php';
-class Index_EweiShopV2Page extends MerchWebPage
+class Index_EweiShopV2Page extends MerchWebPage 
 {
-	public function main()
+	public function main() 
 	{
 		global $_W;
 		include $this->template();
 	}
-
-	public function ajaxgettotalprice()
+	public function ajaxgettotalprice() 
 	{
 		global $_W;
 		$merchid = $_W['merchid'];
@@ -22,6 +19,4 @@ class Index_EweiShopV2Page extends MerchWebPage
 		show_json(1, $totals);
 	}
 }
-
-
 ?>

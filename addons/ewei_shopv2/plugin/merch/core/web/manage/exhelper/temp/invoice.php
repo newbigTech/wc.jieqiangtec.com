@@ -1,5 +1,5 @@
 <?php
-if (!defined('IN_IA')) 
+if (!(defined('IN_IA'))) 
 {
 	exit('Access Denied');
 }
@@ -30,10 +30,10 @@ class Invoice_EweiShopV2Page extends MerchWebPage
 		$id = intval($_GPC['id']);
 		$type = 2;
 		$express_list = m('express')->getExpressList();
-		if (!empty($id)) 
+		if (!(empty($id))) 
 		{
 			$item = pdo_fetch('select * from ' . tablename('ewei_shop_exhelper_express') . ' where id=:id and type=:type and uniacid=:uniacid and merchid=:merchid limit 1', array(':id' => $id, ':type' => $type, ':uniacid' => $_W['uniacid'], ':merchid' => $merchid));
-			if (!empty($item)) 
+			if (!(empty($item))) 
 			{
 				$elements = htmlspecialchars_decode($item['datas']);
 				$elements = json_decode($elements, true);
@@ -43,7 +43,7 @@ class Invoice_EweiShopV2Page extends MerchWebPage
 		{
 			$id = intval($_GPC['id']);
 			$data = array('isdefault' => intval($_GPC['isdefault']), 'expressname' => trim($_GPC['expressname']), 'expresscom' => trim($_GPC['expresscom']), 'express' => trim($_GPC['express']), 'height' => trim($_GPC['height']), 'datas' => trim($_GPC['datas']), 'bg' => trim($_GPC['bg']), 'type' => 2);
-			if (!empty($id)) 
+			if (!(empty($id))) 
 			{
 				pdo_update('ewei_shop_exhelper_express', $data, array('id' => $id));
 				plog('merch.exhelper.temp.invonice.edit', '修改发货单信息 ID: ' . $id);
@@ -56,7 +56,7 @@ class Invoice_EweiShopV2Page extends MerchWebPage
 				$id = pdo_insertid();
 				plog('merch.exhelper.temp.invonice.add', '添加发货单模板 ID: ' . $id);
 			}
-			if (!empty($data['isdefault'])) 
+			if (!(empty($data['isdefault']))) 
 			{
 				pdo_update('ewei_shop_exhelper_express', array('isdefault' => 0), array('type' => 2, 'uniacid' => $_W['uniacid'], 'merchid' => $merchid));
 				pdo_update('ewei_shop_exhelper_express', array('isdefault' => 1), array('type' => 2, 'id' => $id, 'merchid' => $merchid));

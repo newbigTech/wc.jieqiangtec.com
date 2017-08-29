@@ -15,7 +15,7 @@ class Index_EweiShopV2Page extends SystemPage
 			$data = array();
 			$data['type'] = $this->type;
 			$_GPC['data']['logo'] = save_media($_GPC['data']['logo']);
-			$data['content'] = json_encode($_GPC['data']);
+			$data['content'] = iserializer($_GPC['data']);
 			$res = pdo_fetch('select id from ' . tablename('ewei_shop_system_site') . ' where `type`=:type', array(':type' => $this->type));
 			if (empty($res)) 
 			{
@@ -45,7 +45,17 @@ class Index_EweiShopV2Page extends SystemPage
 			closedir($handle);
 		}
 		$res = pdo_fetch('select * from ' . tablename('ewei_shop_system_site') . ' where `type`=:type', array(':type' => $this->type));
-		$data = json_decode($res['content'], true);
+		if (!(empty($res['content'])) && !(is_array($res['content']))) 
+		{
+			if (strexists($res['content'], '{"')) 
+			{
+				$data = json_decode($res['content'], true);
+			}
+			else 
+			{
+				$data = unserialize($res['content']);
+			}
+		}
 		include $this->template();
 	}
 }

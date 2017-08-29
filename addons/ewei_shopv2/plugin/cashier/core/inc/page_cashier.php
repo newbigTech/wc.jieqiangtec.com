@@ -48,7 +48,7 @@ class CashierWebPage extends PluginWebPage
 				$this->message('账号已到期!', cashierUrl('quit'));
 			}
 		}
-		if (!($this->model->is_perm($_W['routes'])) && ($_W['routes'] != 'login') && ($_W['routes'] != 'quit')) 
+		if (!($this->model->is_perm($_W['routes'])) && ($_W['routes'] != 'login') && ($_W['routes'] != 'quit') && ($_W['routes'] != 'qr')) 
 		{
 			$this->message('暂时没有权限查看!');
 		}
@@ -58,7 +58,6 @@ class CashierWebPage extends PluginWebPage
 		global $_W;
 		global $_GPC;
 		load()->func('tpl');
-		$_W['routes'];
 		if (empty($filename)) 
 		{
 			$filename = str_replace('.', '/', $_W['routes']);
@@ -113,7 +112,6 @@ class CashierWebPage extends PluginWebPage
 	public function getUserSet($name = '') 
 	{
 		global $_W;
-		
 		return $this->model->getUserSet($name, $_W['cashierid']);
 	}
 	public function updateUserSet($data = array()) 

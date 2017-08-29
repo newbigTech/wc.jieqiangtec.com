@@ -63,6 +63,39 @@ if (!(function_exists('plugin_run')))
 		return call_user_func_array(array($plugin, $names[1]), $args);
 	}
 }
+if (!(function_exists('socket'))) 
+{
+	function socket($name) 
+	{
+		static $_plugins = array();
+		if (isset($_plugins[$name])) 
+		{
+			return $_plugins[$name];
+		}
+		$socket = EWEI_SHOPV2_PLUGIN . strtolower($name) . '/core/socket.php';
+		if (!(is_file($socket))) 
+		{
+			return false;
+		}
+		require_once EWEI_SHOPV2_CORE . 'inc/plugin_model.php';
+		require_once $socket;
+		$class_name = ucfirst($name) . 'Socket';
+		if (!(class_exists($class_name))) 
+		{
+			return false;
+		}
+		$_plugins[$name] = new $class_name($name);
+		if (com_run('perm::check_plugin', $name)) 
+		{
+			if (!(function_exists('redis')) || is_error(redis())) 
+			{
+				return false;
+			}
+			return $_plugins[$name];
+		}
+		return false;
+	}
+}
 if (!(function_exists('p'))) 
 {
 	function p($name = '') 
@@ -81,7 +114,7 @@ if (!(function_exists('p')))
 		require_once $model;
 		$class_name = ucfirst($name) . 'Model';
 		$_plugins[$name] = new $class_name($name);
-		if (com_run('perm::check_plugin', $name)) 
+		if (com_run('perm::check_plugin', $name) || ($name == 'grant') || ($name == 'qpay')) 
 		{
 			if ($name == 'seckill') 
 			{
@@ -180,7 +213,7 @@ if (!(function_exists('set_medias')))
 	{
 		if (empty($list)) 
 		{
-			return '';
+			return array();
 		}
 		if (empty($fields)) 
 		{
@@ -270,9 +303,14 @@ if (!(function_exists('is_weixin')))
 {
 	function is_weixin() 
 	{
+		global $_W;
 		if (EWEI_SHOPV2_DEBUG) 
 		{
 			return true;
+		}
+		if ($_W['shopset']['wap']['inwap']) 
+		{
+			return false;
 		}
 		if (empty($_SERVER['HTTP_USER_AGENT']) || ((strpos($_SERVER['HTTP_USER_AGENT'], 'MicroMessenger') === false) && (strpos($_SERVER['HTTP_USER_AGENT'], 'Windows Phone') === false))) 
 		{
@@ -435,6 +473,17 @@ if (!(function_exists('shop_template_parse')))
 				return $str;
 			}
 		}
+		if (strexists($_W['siteurl'], 'newstoreant.php')) 
+		{
+			if (p('newstore')) 
+			{
+				$str = preg_replace('/{ifp\\s+(.+?)}/', '<?php if(mcv($1)) { ?>', $str);
+				$str = preg_replace('/{ifpp\\s+(.+?)}/', '<?php if(mcp($1)) { ?>', $str);
+				$str = preg_replace('/{ife\\s+(\\S+)\\s+(\\S+)}/', '<?php if( mce($1 ,$2) ) { ?>', $str);
+				$str = preg_replace('/{ifs\\s+(.+?)}/', '<?php if( mcs($1) ) { ?>', $str);
+				return $str;
+			}
+		}
 		$str = preg_replace('/{ifp\\s+(.+?)}/', '<?php if(cv($1)) { ?>', $str);
 		$str = preg_replace('/{ifpp\\s+(.+?)}/', '<?php if(cp($1)) { ?>', $str);
 		$str = preg_replace('/{ife\\s+(\\S+)\\s+(\\S+)}/', '<?php if( ce($1 ,$2) ) { ?>', $str);
@@ -560,6 +609,10 @@ if (!(function_exists('tpl_selector')))
 		{
 			$html .= '<div class=\'input-group multi-img-details container\' ' . $show . '>';
 		}
+		else if ($options['type'] == 'coupon') 
+		{
+			$html .= '<div class=\'input-group multi-audio-details\' ' . $show . '>' . "\r\n" . '                        <table class=\'table\'>' . "\r\n" . '                            <thead>' . "\r\n" . '                            <tr>' . "\r\n" . '                                <th style=\'width:100px;\'>优惠券名称</th>' . "\r\n" . '                                <th style=\'width:200px;\'></th>' . "\r\n" . '                                <th>优惠券总数</th>' . "\r\n" . '                                <th>每人限领数量</th>' . "\r\n" . '                                <th style=\'width:80px;\'>操作</th>' . "\r\n" . '                            </tr>' . "\r\n" . '                            </thead>' . "\r\n" . '                            <tbody id=\'param-items\' class=\'ui-sortable container\'>';
+		}
 		else 
 		{
 			$html .= '<div class=\'input-group multi-audio-details container\' ' . $show . '>';
@@ -568,12 +621,20 @@ if (!(function_exists('tpl_selector')))
 		{
 			if ($options['type'] == 'image') 
 			{
-				$html .= '<div class=\'multi-item\' data-' . $options['key'] . '=\'' . $item[$options['key']] . '\' data-name=\'' . $name . '\'>' . "\r\n" . '                                      <img class=\'img-responsive img-thumbnail\' src=\'' . tomedia($item[$options['thumb']]) . '\'>' . "\r\n" . '                                      <div class=\'img-nickname\'>' . $item[$options['text']] . '</div>' . "\r\n" . '                                     <input type=\'hidden\' value=\'' . $item[$options['key']] . '\' name=\'' . $id . '\'>' . "\r\n" . '                                     <em onclick=\'biz.selector.remove(this,"' . $name . '")\'  class=\'close\'>×</em>' . "\r\n" . '                            <div style=\'clear:both;\'></div>' . "\r\n" . '                         </div>';
+				$html .= '<div class=\'multi-item\' data-' . $options['key'] . '=\'' . $item[$options['key']] . '\' data-name=\'' . $name . '\'>' . "\r\n" . '                                      <img class=\'img-responsive img-thumbnail\' src=\'' . tomedia($item[$options['thumb']]) . '\' onerror=\'this.src="../addons/ewei_shopv2/static/images/nopic.png"\'>' . "\r\n" . '                                      <div class=\'img-nickname\'>' . $item[$options['text']] . '</div>' . "\r\n" . '                                     <input type=\'hidden\' value=\'' . $item[$options['key']] . '\' name=\'' . $id . '\'>' . "\r\n" . '                                     <em onclick=\'biz.selector.remove(this,"' . $name . '")\'  class=\'close\'>×</em>' . "\r\n" . '                            <div style=\'clear:both;\'></div>' . "\r\n" . '                         </div>';
+			}
+			else if ($options['type'] == 'coupon') 
+			{
+				$html .= "\r\n" . '                <tr class=\'multi-product-item\' data-' . $options['key'] . '=\'' . $item[$options['key']] . '\'>' . "\r\n" . '                    <input type=\'hidden\' class=\'form-control img-textname\' readonly=\'\' value=\'' . $item[$options['text']] . '\'>' . "\r\n" . '                    <input type=\'hidden\' value=\'' . $item[$options['key']] . '\' name=\'couponid[]\'>' . "\r\n" . '                    <td style=\'width:80px;\'>' . "\r\n" . '                        <img src=\'' . tomedia($item[$options['thumb']]) . '\' style=\'width:70px;border:1px solid #ccc;padding:1px\' onerror=\'this.src="../addons/ewei_shopv2/static/images/nopic.png"\'>' . "\r\n" . '                    </td>' . "\r\n" . '                    <td style=\'width:220px;\'>' . $item[$options['text']] . '</td>' . "\r\n" . '                    <td>' . "\r\n" . '                        <input class=\'form-control valid\' type=\'text\' value=\'' . $item['coupontotal'] . '\' name=\'coupontotal' . $item[$options['key']] . '\'>' . "\r\n" . '                    </td>' . "\r\n" . '                    <td>' . "\r\n" . '                        <input class=\'form-control valid\' type=\'text\' value=\'' . $item['couponlimit'] . '\' name=\'couponlimit' . $item[$options['key']] . '\'>' . "\r\n" . '                    </td>' . "\r\n" . '                    <td>' . "\r\n" . '                        <button class=\'btn btn-default\' onclick=\'biz.selector.remove(this,"' . $name . '")\' type=\'button\'><i class=\'fa fa-remove\'></i></button>' . "\r\n" . '                    </td>' . "\r\n" . '                </tr>' . "\r\n" . '                ';
 			}
 			else 
 			{
 				$html .= '<div class=\'multi-audio-item \' data-' . $options['key'] . '=\'' . $item[$options['key']] . '\' >' . "\r\n" . '                       <div class=\'input-group\'>' . "\r\n" . '                       <input type=\'text\' class=\'form-control img-textname\' readonly=\'\' value=\'' . $item[$options['text']] . '\'>' . "\r\n" . '                       <input type=\'hidden\'  value=\'' . $item[$options['key']] . '\' name=\'' . $id . '\'> ' . "\r\n" . '                       <div class=\'input-group-btn\'><button class=\'btn btn-default\' onclick=\'biz.selector.remove(this,"' . $name . '")\' type=\'button\'><i class=\'fa fa-remove\'></i></button>' . "\r\n" . '                       </div></div></div>';
 			}
+		}
+		if ($options['type'] == 'coupon') 
+		{
+			$html .= '</tbody></table>';
 		}
 		$html .= '</div></div>';
 		return $html;
@@ -637,17 +698,29 @@ if (!(function_exists('tpl_selector_new')))
 		$show = (($options['preview'] ? '' : ' style=\'display:none\''));
 		if ($options['type'] == 'image') 
 		{
-			$html .= '<div class=\'input-group multi-img-details container\' ' . $show . '>';
+			$html .= '<div class=\'input-group multi-img-details container\' ' . $show . '>' . "\r\n" . '                    <div id=\'param-items' . $options['selectorid'] . '\' class=\'ui-sortable\'>';
+		}
+		else if ($options['type'] == 'product') 
+		{
+			$html .= '<div class=\'input-group multi-audio-details container\' ' . $show . '>' . "\r\n" . '<table class=\'table\' style=\'width:600px;\'>' . "\r\n" . '                    <thead>' . "\r\n" . '                        <tr>' . "\r\n" . '                            <th style=\'width:80px;\'>商品名称</th>' . "\r\n" . '                            <th style=\'width:220px;\'></th>' . "\r\n" . '                            <th>价格/分销佣金</th>' . "\r\n" . '                            <th style=\'width:50px;\'>操作</th>' . "\r\n" . '                        </tr>' . "\r\n" . '                    </thead>' . "\r\n" . '                    <tbody id=\'param-items' . $options['selectorid'] . '\' class=\'ui-sortable\'>';
+		}
+		else if ($options['type'] == 'fullback') 
+		{
+			$html .= '<div class=\'input-group multi-audio-details container\' ' . $show . '>' . "\r\n" . '<table class=\'table\' style=\'width:600px;\'>' . "\r\n" . '                    <tbody id=\'param-items' . $options['selectorid'] . '\' class=\'ui-sortable\'>';
+		}
+		else if ($options['type'] == 'live') 
+		{
+			$html .= '<div class=\'input-group multi-audio-details container\' ' . $show . '>' . "\r\n" . '<table class=\'table\' style=\'width:600px;\'>' . "\r\n" . '                    <thead>' . "\r\n" . '                        <tr>' . "\r\n" . '                            <th style=\'width:80px;\'>商品名称</th>' . "\r\n" . '                            <th style=\'width:220px;\'></th>' . "\r\n" . '                            <th>直播间价格</th>' . "\r\n" . '                            <th style=\'width:50px;\'>操作</th>' . "\r\n" . '                        </tr>' . "\r\n" . '                    </thead>' . "\r\n" . '                    <tbody id=\'param-items' . $options['selectorid'] . '\' class=\'ui-sortable\'>';
 		}
 		else 
 		{
-			$html .= '<div class=\'input-group multi-audio-details container\' ' . $show . '>' . "\r\n" . '<table class=\'table\' style=\'width:600px;\'>' . "\r\n" . '                    <thead>' . "\r\n" . '                        <tr>' . "\r\n" . '                            <th style=\'width:80px;\'>商品名称</th>' . "\r\n" . '                            <th style=\'width:220px;\'></th>' . "\r\n" . '                            <th>价格/分销佣金</th>' . "\r\n" . '                            <th style=\'width:50px;\'>操作</th>' . "\r\n" . '                        </tr>' . "\r\n" . '                    </thead>' . "\r\n" . '                    <tbody id=\'param-items' . $options['selectorid'] . '\' class=\'ui-sortable\'>';
+			$html .= '<div class=\'input-group multi-img-details container\' ' . $show . '>';
 		}
 		foreach ($options['items'] as $item ) 
 		{
 			if ($options['type'] == 'image') 
 			{
-				$html .= '<div class=\'multi-item\' data-' . $options['key'] . '=\'' . $item[$options['key']] . '\' data-name=\'' . $name . '\'>' . "\r\n" . '                                      <img class=\'img-responsive img-thumbnail\' src=\'' . tomedia($item[$options['thumb']]) . '\'>' . "\r\n" . '                                      <div class=\'img-nickname\'>' . $item[$options['text']] . '</div>' . "\r\n" . '                                     <input type=\'hidden\' value=\'' . $item[$options['key']] . '\' name=\'' . $id . '\'>' . "\r\n" . '                                     <em onclick=\'biz.selector_new.remove(this,"' . $name . '")\'  class=\'close\'>×</em>' . "\r\n" . '                         </div>';
+				$html .= '<div class=\'multi-item\' data-' . $options['key'] . '=\'' . $item[$options['key']] . '\' data-name=\'' . $name . '\'>' . "\r\n" . '                                      <img class=\'img-responsive img-thumbnail\' src=\'' . tomedia($item[$options['thumb']]) . '\' >' . "\r\n" . '                                      <div class=\'img-nickname\'>' . $item[$options['text']] . '</div>' . "\r\n" . '                                     <input type=\'hidden\' value=\'' . $item[$options['key']] . '\' name=\'' . $id . '\'>' . "\r\n" . '                                     <em onclick=\'biz.selector_new.remove(this,"' . $name . '")\'  class=\'close\'>×</em>' . "\r\n" . '                         </div>';
 			}
 			else if ($options['type'] == 'product') 
 			{
@@ -659,7 +732,7 @@ if (!(function_exists('tpl_selector_new')))
 				{
 					$optiontitle = '&yen;' . $item['packageprice'];
 				}
-				$html .= "\r\n" . '                    <tr class=\'multi-product-item\' data-' . $options['key'] . '=\'' . $item['goodsid'] . '\' >' . "\r\n" . '                        <input type=\'hidden\' class=\'form-control img-textname\' readonly=\'\' value=\'' . $item[$options['text']] . '\'>' . "\r\n" . '                       <input type=\'hidden\'  value=\'' . $item['goodsid'] . '\' name=\'' . $id . '\'>' . "\r\n" . '                        <td style=\'width:80px;\'>' . "\r\n" . '                            <img src=\'' . tomedia($item[$options['thumb']]) . '\' style=\'width:70px;border:1px solid #ccc;padding:1px\'>' . "\r\n" . '                        </td>' . "\r\n" . '                        <td style=\'width:220px;\'>' . $item[$options['text']] . '</td>' . "\r\n" . '                        <td>';
+				$html .= "\r\n" . '                    <tr class=\'multi-product-item\' data-' . $options['key'] . '=\'' . $item['goodsid'] . '\' >' . "\r\n" . '                        <input type=\'hidden\' class=\'form-control img-textname\' readonly=\'\' value=\'' . $item[$options['text']] . '\'>' . "\r\n" . '                       <input type=\'hidden\'  value=\'' . $item['goodsid'] . '\' name=\'' . $id . '\'>' . "\r\n" . '                        <td style=\'width:80px;\'>' . "\r\n" . '                            <img src=\'' . tomedia($item[$options['thumb']]) . '\' style=\'width:70px;border:1px solid #ccc;padding:1px\' onerror="this.src=\'../addons/ewei_shopv2/static/images/nopic.png\'">' . "\r\n" . '                        </td>' . "\r\n" . '                        <td style=\'width:220px;\'>' . $item[$options['text']] . '</td>' . "\r\n" . '                        <td>';
 				$optionurl = ((empty($options['optionurl']) ? 'sale/package/hasoption' : str_replace('.', '/', $options['optionurl'])));
 				if ($item['optiontitle']) 
 				{
@@ -681,10 +754,68 @@ if (!(function_exists('tpl_selector_new')))
 				}
 				$html .= "\r\n" . '                        </td>' . "\r\n" . '                        <td><a href=\'javascript:void(0);\' class=\'btn btn-default btn-sm\' onclick=\'biz.selector_new.remove(this,"' . $name . '")\' title=\'删除\'>' . "\r\n" . '                        <i class=\'fa fa-times\'></i></a></td>' . "\r\n" . '                    </tr>';
 			}
+			else if ($options['type'] == 'fullback') 
+			{
+				$html .= "\r\n" . '                    <tr class=\'multi-product-item\' data-' . $options['key'] . '=\'' . $item['goodsid'] . '\' >' . "\r\n" . '                        <input type=\'hidden\' class=\'form-control img-textname\' readonly=\'\' value=\'' . $item[$options['text']] . '\'>' . "\r\n" . '                       <input type=\'hidden\'  value=\'' . $item['goodsid'] . '\' name=\'' . $id . '\'>' . "\r\n" . '                        <td style=\'width:80px;\'>' . "\r\n" . '                            <img src=\'' . tomedia($item[$options['thumb']]) . '\' style=\'width:70px;border:1px solid #ccc;padding:1px\' onerror="this.src=\'../addons/ewei_shopv2/static/images/nopic.png\'">' . "\r\n" . '                        </td>' . "\r\n" . '                        <td style=\'width:220px;\'>' . $item[$options['text']] . '</td>' . "\r\n" . '                        <td>';
+				$optionurl = ((empty($options['optionurl']) ? 'sale/fullback/hasoption' : str_replace('.', '/', $options['optionurl'])));
+				if (0 < $item['hasoption']) 
+				{
+					if ($item['type'] == 0) 
+					{
+						$opcontent = '&yen;' . $item['minallfullbackallprice'] . ' ~ &yen;' . $item['maxallfullbackallprice'];
+					}
+					else 
+					{
+						$opcontent = $item['minallfullbackallratio'] . '% ~ ' . $item['maxallfullbackallratio'] . '%';
+					}
+					$html .= '<a class=\'btn btn-default btn-sm\' data-toggle=\'ajaxModal\' href=\'' . webUrl($optionurl, array('goodsid' => $item['goodsid'], 'id' => $item['id'])) . '\' id=\'optiontitle' . $item['goodsid'] . '\'>' . $opcontent . '</a>' . "\r\n" . '                            <input type=\'hidden\' id=\'fullbackgoods' . $item['goodsid'] . '\' value=\'' . $item['optionid'] . '\' name=\'fullbackgoods[' . $item['goodsid'] . ']\'>';
+					foreach ($item['option'] as $option ) 
+					{
+						$html .= '<input type=\'hidden\' value=\'' . $option['allfullbackprice'] . ',' . $option['fullbackprice'] . ',' . $option['allfullbackratio'] . ',' . $option['fullbackratio'] . ',' . $option['day'] . '\'' . "\r\n" . '                        name=\'fullbackgoodsoption' . $option['id'] . '\' >';
+					}
+				}
+				else 
+				{
+					if ($item['type'] == 0) 
+					{
+						$content = '&yen;' . $item['minallfullbackallprice'];
+					}
+					else 
+					{
+						$content = $item['minallfullbackallratio'] . '%';
+					}
+					$html .= '<a class=\'btn btn-default btn-sm\' data-toggle=\'ajaxModal\' href=\'' . webUrl($optionurl, array('goodsid' => $item['goodsid'], 'id' => $item['id'])) . '\' id=\'' . $options['selectorid'] . 'optiontitle' . $item['goodsid'] . '\'>' . $content . '</a>' . "\r\n" . '                            <input type=\'hidden\' id=\'fullbackgoods' . $item['goodsid'] . '\' value=\'\' name=\'fullbackgoods[' . $item['goodsid'] . ']\'>' . "\r\n" . '                    <input type=\'hidden\' value=\'' . $item['minallfullbackallprice'] . ',' . $item['fullbackprice'] . ',' . $item['minallfullbackallratio'] . ',' . $item['fullbackratio'] . ',' . $item['day'] . '\' name=\'goods' . $item['goodsid'] . '\' >';
+				}
+				$html .= "\r\n" . '                        </td>' . "\r\n" . '                        <td style=\'text-align: right;\'><a href=\'javascript:void(0);\' class=\'btn btn-default btn-sm\' onclick=\'biz.selector_new.remove(this,"' . $name . '")\' title=\'删除\'>' . "\r\n" . '                        <i class=\'fa fa-times\'></i></a></td>' . "\r\n" . '                    </tr>';
+			}
+			else if ($options['type'] == 'live') 
+			{
+				$html .= "\r\n" . '                    <tr class=\'multi-product-item\' data-' . $options['key'] . '=\'' . $item['id'] . '\' >' . "\r\n" . '                        <input type=\'hidden\' class=\'form-control img-textname\' readonly=\'\' value=\'' . $item[$options['text']] . '\'>' . "\r\n" . '                       <input type=\'hidden\'  value=\'' . $item['id'] . '\' name=\'' . $id . '\'>' . "\r\n" . '                        <td style=\'width:80px;\'>' . "\r\n" . '                            <img src=\'' . tomedia($item[$options['thumb']]) . '\' style=\'width:70px;border:1px solid #ccc;padding:1px\' onerror="this.src=\'../addons/ewei_shopv2/static/images/nopic.png\'">' . "\r\n" . '                        </td>' . "\r\n" . '                        <td style=\'width:220px;\'>' . $item[$options['text']] . '</td>' . "\r\n" . '                        <td>';
+				$optionurl = ((empty($options['optionurl']) ? 'live/room/hasoption' : str_replace('.', '/', $options['optionurl'])));
+				if (0 < $item['hasoption']) 
+				{
+					$opcontent = '&yen;' . $item['minliveprice'] . ' ~ &yen;' . $item['maxliveprice'];
+					$html .= '<a class=\'btn btn-default btn-sm\' data-toggle=\'ajaxModal\' href=\'' . webUrl($optionurl, array('goodsid' => $item['id'], 'id' => $item['id'])) . '\' id=\'optiontitle' . $item['id'] . '\'>' . $opcontent . '</a>' . "\r\n" . '                            <input type=\'hidden\' id=\'livegoods' . $item['id'] . '\' value=\'' . $item['optionid'] . '\' name=\'livegoods[' . $item['id'] . ']\'>';
+					foreach ($item['option'] as $option ) 
+					{
+						$html .= '<input type=\'hidden\' value=\'' . $option['liveprice'] . '\' name=\'livegoodsoption' . $option['id'] . '\' >';
+					}
+				}
+				else 
+				{
+					$content = '&yen;' . $item['liveprice'];
+					$html .= '<a class=\'btn btn-default btn-sm\' data-toggle=\'ajaxModal\' href=\'' . webUrl($optionurl, array('goodsid' => $item['id'], 'id' => $item['id'])) . '\' id=\'' . $options['selectorid'] . 'optiontitle' . $item['id'] . '\'>' . $content . '</a>' . "\r\n" . '                            <input type=\'hidden\' id=\'livegoods' . $item['id'] . '\' value=\'\' name=\'livegoods[' . $item['id'] . ']\'>' . "\r\n" . '                    <input type=\'hidden\' value=\'' . $item['liveprice'] . '\' name=\'goods' . $item['id'] . '\' >';
+				}
+				$html .= "\r\n" . '                        </td>' . "\r\n" . '                        <td style=\'text-align: right;\'><a href=\'javascript:void(0);\' class=\'btn btn-default btn-sm\' onclick=\'biz.selector_new.remove(this,"' . $name . '")\' title=\'删除\'>' . "\r\n" . '                        <i class=\'fa fa-times\'></i></a></td>' . "\r\n" . '                    </tr>';
+			}
 			else 
 			{
 				$html .= '<div class=\'multi-audio-item \' data-' . $options['key'] . '=\'' . $item[$options['c']] . '\' >' . "\r\n" . '                       <div class=\'input-group\'>' . "\r\n" . '                       <input type=\'text\' class=\'form-control img-textname\' readonly=\'\' value=\'' . $item[$options['text']] . '\'>' . "\r\n" . '                       <input type=\'hidden\'  value=\'' . $item[$options['key']] . '\' name=\'' . $id . '\'>' . "\r\n" . '                       <div class=\'input-group-btn\'><button class=\'btn btn-default\' onclick=\'biz.selector_new.remove(this,"' . $name . '")\' type=\'button\'><i class=\'fa fa-remove\'></i></button>' . "\r\n" . '                       </div></div></div>';
 			}
+		}
+		if ($options['type'] == 'image') 
+		{
+			$html .= '</div>';
 		}
 		$html .= '</tbody>' . "\r\n" . '                </table></div></div>';
 		return $html;
@@ -699,12 +830,12 @@ if (!(function_exists('tpl_daterange')))
 		$s = '';
 		if (empty($time) && !(defined('TPL_INIT_DATERANGE_DATE'))) 
 		{
-			$s = "\r\n" . '<script type="text/javascript">' . "\r\n\t" . 'require(["daterangepicker"], function($){' . "\r\n\t\t" . '$(function(){' . "\r\n\t\t\t" . '$(".daterange.daterange-date").each(function(){' . "\r\n" . '         ' . "\r\n\t\t\t\t" . 'var elm = this;' . "\r\n" . '                                        var container =$(elm).parent().prev(); ' . "\r\n\t\t\t\t" . '$(this).daterangepicker({' . "\r\n\t\t\t\t\t" . ' ' . "\r\n\t\t\t\t\t" . 'format: "YYYY-MM-DD"' . "\r\n\t\t\t\t" . '}, function(start, end){' . "\r\n\t\t\t\t\t" . '$(elm).find(".date-title").html(start.toDateStr() + " 至 " + end.toDateStr());' . "\r\n\t\t\t\t\t" . 'container.find(":input:first").val(start.toDateTimeStr());' . "\r\n\t\t\t\t\t" . 'container.find(":input:last").val(end.toDateTimeStr());' . "\r\n\t\t\t\t" . '});' . "\r\n\t\t\t" . '});' . "\r\n\t\t" . '});' . "\r\n\t" . '});' . "\r\n" . '</script> ' . "\r\n";
+			$s = "\r\n" . '<script type="text/javascript">' . "\r\n\t" . 'require(["daterangepicker"], function(){' . "\r\n\t\t" . '$(function(){' . "\r\n\t\t\t" . '$(".daterange.daterange-date").each(function(){' . "\r\n\t\t\t\t" . 'var elm = this;' . "\r\n" . '                var container =$(elm).parent().prev();' . "\r\n\t\t\t\t" . '$(this).daterangepicker({' . "\r\n\t\t\t\t\t" . 'format: "YYYY-MM-DD"' . "\r\n\t\t\t\t" . '}, function(start, end){' . "\r\n\t\t\t\t\t" . '$(elm).find(".date-title").html(start.toDateStr() + " 至 " + end.toDateStr());' . "\r\n\t\t\t\t\t" . 'container.find(":input:first").val(start.toDateTimeStr());' . "\r\n\t\t\t\t\t" . 'container.find(":input:last").val(end.toDateTimeStr());' . "\r\n\t\t\t\t" . '});' . "\r\n\t\t\t" . '});' . "\r\n\t\t" . '});' . "\r\n\t" . '});' . "\r\n" . '</script> ' . "\r\n";
 			define('TPL_INIT_DATERANGE_DATE', true);
 		}
 		if (!(empty($time)) && !(defined('TPL_INIT_DATERANGE_TIME'))) 
 		{
-			$s = "\r\n" . '<script type="text/javascript">' . "\r\n\t" . 'require(["daterangepicker"], function($){' . "\r\n\t\t" . '$(function(){' . "\r\n\t\t\t" . '$(".daterange.daterange-time").each(function(){' . "\r\n" . '               ' . "\r\n\t\t\t\t" . 'var elm = this;' . "\r\n" . '                                       var container =$(elm).parent().prev(); ' . "\r\n\t\t\t\t" . '$(this).daterangepicker({' . "\r\n\t\t\t\t\r\n\t\t\t\t\t" . 'format: "YYYY-MM-DD HH:mm",' . "\r\n\t\t\t\t\t" . 'timePicker: true,' . "\r\n\t\t\t\t\t" . 'timePicker12Hour : false,' . "\r\n\t\t\t\t\t" . 'timePickerIncrement: 1,' . "\r\n\t\t\t\t\t" . 'minuteStep: 1' . "\r\n\t\t\t\t" . '}, function(start, end){' . "\r\n\t\t\t\t\t" . '$(elm).find(".date-title").html(start.toDateTimeStr() + " 至 " + end.toDateTimeStr());' . "\r\n\t\t\t\t\t" . 'container.find(":input:first").val(start.toDateTimeStr());' . "\r\n\t\t\t\t\t" . 'container.find(":input:last").val(end.toDateTimeStr());' . "\r\n\t\t\t\t" . '});' . "\r\n\t\t\t" . '});' . "\r\n\t\t" . '});' . "\r\n\t" . '});' . "\r\n" . '     function clearTime(obj){' . "\r\n" . '         ' . "\r\n" . '              $(obj).prev().html("<span class=date-title>" + $(obj).attr("placeholder") + "</span>");' . "\r\n" . '              $(obj).parent().prev().find("input").val("");' . "\r\n" . '    }' . "\r\n" . '</script>' . "\r\n";
+			$s = "\r\n" . '<script type="text/javascript">' . "\r\n\t" . 'require(["daterangepicker"], function(){' . "\r\n\t\t" . '$(function(){' . "\r\n\t\t\t" . '$(".daterange.daterange-time").each(function(){' . "\r\n\t\t\t\t" . 'var elm = this;' . "\r\n" . '                 var container =$(elm).parent().prev();' . "\r\n\t\t\t\t" . '$(this).daterangepicker({' . "\r\n\t\t\t\t\t" . 'format: "YYYY-MM-DD HH:mm",' . "\r\n\t\t\t\t\t" . 'timePicker: true,' . "\r\n\t\t\t\t\t" . 'timePicker12Hour : false,' . "\r\n\t\t\t\t\t" . 'timePickerIncrement: 1,' . "\r\n\t\t\t\t\t" . 'minuteStep: 1' . "\r\n\t\t\t\t" . '}, function(start, end){' . "\r\n\t\t\t\t\t" . '$(elm).find(".date-title").html(start.toDateTimeStr() + " 至 " + end.toDateTimeStr());' . "\r\n\t\t\t\t\t" . 'container.find(":input:first").val(start.toDateTimeStr());' . "\r\n\t\t\t\t\t" . 'container.find(":input:last").val(end.toDateTimeStr());' . "\r\n\t\t\t\t" . '});' . "\r\n\t\t\t" . '});' . "\r\n\t\t" . '});' . "\r\n\t" . '});' . "\r\n" . '     function clearTime(obj){' . "\r\n" . '              $(obj).prev().html("<span class=date-title>" + $(obj).attr("placeholder") + "</span>");' . "\r\n" . '              $(obj).parent().prev().find("input").val("");' . "\r\n" . '    }' . "\r\n" . '</script>' . "\r\n";
 			define('TPL_INIT_DATERANGE_TIME', true);
 		}
 		$str = $placeholder;
@@ -722,7 +853,7 @@ if (!(function_exists('tpl_daterange')))
 				$str = date('Y-m-d H:i', strtotime($value['starttime'])) . ' 至 ' . date('Y-m-d  H:i', strtotime($value['endtime']));
 			}
 		}
-		$s .= '<div style="float:left">' . "\r\n\t" . '<input name="' . $name . '[start]' . '" type="hidden" value="' . $value['starttime'] . '" />' . "\r\n\t" . '<input name="' . $name . '[end]' . '" type="hidden" value="' . $value['endtime'] . '" />' . "\r\n" . '           </div>' . "\r\n" . '          <div class="btn-group ' . (($small ? 'btn-group-sm' : '')) . '" style="padding-right:0;"  >' . "\r\n" . '          ' . "\r\n\t" . '<button style="width:240px" class="btn btn-default daterange ' . ((!(empty($time)) ? 'daterange-time' : 'daterange-date')) . '"  type="button"><span class="date-title">' . $str . '</span></button>' . "\r\n" . '        <button class="btn btn-default ' . (($small ? 'btn-sm' : '')) . '" " type="button" onclick="clearTime(this)" placeholder="' . $placeholder . '"><i class="fa fa-remove"></i></button>' . "\r\n" . '         </div>' . "\r\n\t";
+		$s .= '<div style="float:left">' . "\r\n\t" . '<input name="' . $name . '[start]' . '" type="hidden" value="' . $value['starttime'] . '" />' . "\r\n\t" . '<input name="' . $name . '[end]' . '" type="hidden" value="' . $value['endtime'] . '" />' . "\r\n" . '           </div>' . "\r\n" . '          <div class="btn-group ' . (($small ? 'btn-group-sm' : '')) . '" style="' . $value['style'] . 'padding-right:0;"  >' . "\r\n" . '          ' . "\r\n\t" . '<button style="width:240px" class="btn btn-default daterange ' . ((!(empty($time)) ? 'daterange-time' : 'daterange-date')) . '"  type="button"><span class="date-title">' . $str . '</span></button>' . "\r\n" . '        <button class="btn btn-default ' . (($small ? 'btn-sm' : '')) . '" " type="button" onclick="clearTime(this)" placeholder="' . $placeholder . '"><i class="fa fa-remove"></i></button>' . "\r\n" . '         </div>' . "\r\n\t";
 		return $s;
 	}
 }
@@ -787,6 +918,14 @@ if (!(function_exists('mobileUrl')))
 		{
 			unset($query['merchid']);
 		}
+		if (empty($query['liveid'])) 
+		{
+			$liveid = intval($_GPC['liveid']);
+			if (!(empty($liveid))) 
+			{
+				$query['liveid'] = $liveid;
+			}
+		}
 		if ($full) 
 		{
 			return $_W['siteroot'] . 'app/' . substr(murl('entry', $query, true), 2);
@@ -807,6 +946,13 @@ if (!(function_exists('webUrl')))
 				if (function_exists('merchUrl')) 
 				{
 					return merchUrl($do, $query, $full);
+				}
+			}
+			if ($_W['plugin'] == 'newstore') 
+			{
+				if (function_exists('newstoreUrl')) 
+				{
+					return newstoreUrl($do, $query, $full);
 				}
 			}
 		}
@@ -884,7 +1030,7 @@ if (!(function_exists('cut_str')))
 	{
 		if ($code == 'UTF-8') 
 		{
-			$pa = '/[' . "\x1" . '-]|[' . "\xc2" . '-' . "\xdf" . '][' . "\x80" . '-' . "\xbf" . ']|' . "\xe0" . '[' . "\xa0" . '-' . "\xbf" . '][' . "\x80" . '-' . "\xbf" . ']|[' . "\xe1" . '-' . "\xef" . '][' . "\x80" . '-' . "\xbf" . '][' . "\x80" . '-' . "\xbf" . ']|' . "\xf0" . '[' . "\x90" . '-' . "\xbf" . '][' . "\x80" . '-' . "\xbf" . '][' . "\x80" . '-' . "\xbf" . ']|[' . "\xf1" . '-' . "\xf7" . '][' . "\x80" . '-' . "\xbf" . '][' . "\x80" . '-' . "\xbf" . '][' . "\x80" . '-' . "\xbf" . ']/';
+			$pa = '/[' . "\x01" . '-' . "\x7f" . ']|[' . "\xc2" . '-' . "\xdf" . '][' . "\x80" . '-' . "\xbf" . ']|' . "\xe0" . '[' . "\xa0" . '-' . "\xbf" . '][' . "\x80" . '-' . "\xbf" . ']|[' . "\xe1" . '-' . "\xef" . '][' . "\x80" . '-' . "\xbf" . '][' . "\x80" . '-' . "\xbf" . ']|' . "\xf0" . '[' . "\x90" . '-' . "\xbf" . '][' . "\x80" . '-' . "\xbf" . '][' . "\x80" . '-' . "\xbf" . ']|[' . "\xf1" . '-' . "\xf7" . '][' . "\x80" . '-' . "\xbf" . '][' . "\x80" . '-' . "\xbf" . '][' . "\x80" . '-' . "\xbf" . ']/';
 			preg_match_all($pa, $string, $t_string);
 			if ($sublen < (count($t_string[0]) - $start)) 
 			{
@@ -932,7 +1078,7 @@ if (!(function_exists('save_media')))
 		if ($com) 
 		{
 			$qiniu_url = $com->save($url, NULL, $enforceQiniu);
-			if (!(empty($qiniu_url))) 
+			if (!(empty($qiniu_url)) && !(is_error($qiniu_url))) 
 			{
 				return $qiniu_url;
 			}
@@ -1046,6 +1192,43 @@ if (!(function_exists('price_format')))
 		return $price;
 	}
 }
+if (!(function_exists('createRedPack'))) 
+{
+	function createRedPack($money, $sum, $min = 0.01) 
+	{
+		if (($money / $sum) < $min) 
+		{
+			return false;
+		}
+		$_leftMoneyPackage = array('remainSize' => (int) $sum, 'remainMoney' => round($money, 2));
+		$array_money = array();
+		$i = 0;
+		while ($i < $sum) 
+		{
+			if (($money / $sum) == 0.01) 
+			{
+				array_push($array_money, 0.01);
+				continue;
+			}
+			if ($_leftMoneyPackage['remainSize'] == 1) 
+			{
+				--$_leftMoneyPackage['remainSize'];
+				array_push($array_money, round($_leftMoneyPackage['remainMoney'], 2));
+				break;
+			}
+			$r = lcg_value();
+			$max = ($_leftMoneyPackage['remainMoney'] / $_leftMoneyPackage['remainSize']) * 2;
+			$tem_money = $r * $max;
+			$tem_money = (($tem_money <= $min ? 0.01 : $tem_money));
+			$tem_money = floor($tem_money * 100) / 100;
+			--$_leftMoneyPackage['remainSize'];
+			$_leftMoneyPackage['remainMoney'] -= $tem_money;
+			array_push($array_money, (double) $tem_money);
+			++$i;
+		}
+		return $array_money;
+	}
+}
 if (!(function_exists('redis'))) 
 {
 	function redis() 
@@ -1088,12 +1271,37 @@ if (!(function_exists('redis')))
 			{
 				$redis_temp->auth($config['requirepass']);
 			}
-			$ping = $redis_temp->ping();
+			try 
+			{
+				$ping = $redis_temp->ping();
+			}
+			catch (ErrorException $e) 
+			{
+				return error(-1, 'redis 无法正常工作，请检查 redis 服务');
+			}
 			if ($ping != '+PONG') 
 			{
 				return error(-1, 'redis 无法正常工作，请检查 redis 服务');
 			}
 			$redis = $redis_temp;
+		}
+		else 
+		{
+			try 
+			{
+				$ping = $redis->ping();
+			}
+			catch (ErrorException $e) 
+			{
+				$redis = NULL;
+				$redis = redis();
+				$ping = $redis->ping();
+			}
+			if ($ping != '+PONG') 
+			{
+				$redis = NULL;
+				$redis = redis();
+			}
 		}
 		return $redis;
 	}
@@ -1105,6 +1313,304 @@ if (!(function_exists('logg')))
 		global $_W;
 		$data = ((is_array($data) ? json_encode($data, JSON_UNESCAPED_UNICODE) : $data));
 		file_put_contents(IA_ROOT . '/' . $name, $data);
+	}
+}
+if (!(function_exists('is_wxerror'))) 
+{
+	function is_wxerror($data) 
+	{
+		if (!(is_array($data)) || !(array_key_exists('errcode', $data)) || (array_key_exists('errcode', $data) && ($data['errcode'] == 0))) 
+		{
+			return false;
+		}
+		return true;
+	}
+}
+if (!(function_exists('set_wxerrmsg'))) 
+{
+	function set_wxerrmsg($data) 
+	{
+		$errors = array(-1 => '系统繁忙，此时请稍候再试', 0 => '请求成功', 40001 => '获取access_token时AppSecret错误，或者access_token无效。请认真比对AppSecret的正确性，或查看是否正在为恰当的公众号调用接口', 40002 => '不合法的凭证类型', 40003 => '不合法的OpenID，请确认OpenID（该用户）是否已关注公众号，或是否是其他公众号的OpenID', 40004 => '不合法的媒体文件类型', 40005 => '不合法的文件类型', 40006 => '不合法的文件大小', 40007 => '不合法的媒体文件id', 40008 => '不合法的消息类型', 40009 => '不合法的图片文件大小', 40010 => '不合法的语音文件大小', 40011 => '不合法的视频文件大小', 40012 => '不合法的缩略图文件大小', 40013 => '不合法的AppID，请检查AppID的正确性，避免异常字符，注意大小写', 40014 => '不合法的access_token，请认真比对access_token的有效性（如是否过期），或查看是否正在为恰当的公众号调用接口', 40015 => '不合法的菜单类型', 40016 => '不合法的按钮个数', 40017 => '不合法的按钮个数', 40018 => '不合法的按钮名字长度', 40019 => '不合法的按钮KEY长度', 40020 => '不合法的按钮URL长度', 40021 => '不合法的菜单版本号', 40022 => '不合法的子菜单级数', 40023 => '不合法的子菜单按钮个数', 40024 => '不合法的子菜单按钮类型', 40025 => '不合法的子菜单按钮名字长度', 40026 => '不合法的子菜单按钮KEY长度', 40027 => '不合法的子菜单按钮URL长度', 40028 => '不合法的自定义菜单使用用户', 40029 => '不合法的oauth_code', 40030 => '不合法的refresh_token', 40031 => '不合法的openid列表', 40032 => '不合法的openid列表长度', 40033 => '不合法的请求字符，不能包含\\uxxxx格式的字符', 40035 => '不合法的参数', 40038 => '不合法的请求格式', 40039 => '不合法的URL长度', 40050 => '不合法的分组id', 40051 => '分组名字不合法', 40117 => '分组名字不合法', 40118 => 'media_id大小不合法', 40119 => 'button类型错误', 40120 => 'button类型错误', 40121 => '不合法的media_id类型', 40132 => '微信号不合法', 40137 => '不支持的图片格式', 40155 => '请勿添加其他公众号的主页链接', 41001 => '缺少access_token参数', 41002 => '缺少appid参数', 41003 => '缺少refresh_token参数', 41004 => '缺少secret参数', 41005 => '缺少多媒体文件数据', 41006 => '缺少media_id参数', 41007 => '缺少子菜单数据', 41008 => '缺少oauth code', 41009 => '缺少openid', 42001 => 'access_token超时，请检查access_token的有效期，请参考基础支持-获取access_token中，对access_token的详细机制说明', 42002 => 'refresh_token超时', 42003 => 'oauth_code超时', 42007 => '用户修改微信密码，accesstoken和refreshtoken失效，需要重新授权', 43001 => '需要GET请求', 43002 => '需要POST请求', 43003 => '需要HTTPS请求', 43004 => '需要接收者关注', 43005 => '需要好友关系', 43019 => '需要将接收者从黑名单中移除', 44001 => '多媒体文件为空', 44002 => 'POST的数据包为空', 44003 => '图文消息内容为空', 44004 => '文本消息内容为空', 45001 => '多媒体文件大小超过限制', 45002 => '消息内容超过限制', 45003 => '标题字段超过限制', 45004 => '描述字段超过限制', 45005 => '链接字段超过限制', 45006 => '图片链接字段超过限制', 45007 => '语音播放时间超过限制', 45008 => '图文消息超过限制', 45009 => '接口调用超过限制', 45010 => '创建菜单个数超过限制', 45011 => 'API调用太频繁，请稍候再试', 45015 => '回复时间超过限制', 45016 => '系统分组，不允许修改', 45017 => '分组名字过长', 45018 => '分组数量超过上限', 45047 => '客服接口下行条数超过上限', 46001 => '不存在媒体数据', 46002 => '不存在的菜单版本', 46003 => '不存在的菜单数据', 46004 => '不存在的用户', 47001 => '解析JSON/XML内容错误', 48001 => 'api功能未授权，请确认公众号已获得该接口，可以在公众平台官网-开发者中心页中查看接口权限', 48002 => '粉丝拒收消息（粉丝在公众号选项中，关闭了“接收消息”）', 48004 => 'api接口被封禁，请登录mp.weixin.qq.com查看详情', 48005 => 'api禁止删除被自动回复和自定义菜单引用的素材', 48006 => 'api禁止清零调用次数，因为清零次数达到上限', 50001 => '用户未授权该api', 50002 => '用户受限，可能是违规后接口被封禁', 61451 => '参数错误(invalid parameter)', 61452 => '无效客服账号(invalid kf_account)', 61453 => '客服帐号已存在(kf_account exsited)', 61454 => '客服帐号名长度超过限制(仅允许10个英文字符，不包括@及@后的公众号的微信号)(invalid   kf_acount length)', 61455 => '客服帐号名包含非法字符(仅允许英文+数字)(illegal character in     kf_account)', 61457 => '无效头像文件类型(invalid   file type)', 61450 => '系统错误(system error)', 61500 => '日期格式错误', 65301 => '不存在此menuid对应的个性化菜单', 65302 => '没有相应的用户', 65303 => '没有默认菜单，不能创建个性化菜单', 65304 => 'MatchRule信息为空', 65305 => '个性化菜单数量受限', 65306 => '不支持个性化菜单的帐号', 65307 => '个性化菜单信息为空', 65308 => '包含没有响应类型的button', 65309 => '个性化菜单开关处于关闭状态', 65310 => '填写了省份或城市信息，国家信息不能为空', 65311 => '填写了城市信息，省份信息不能为空', 65312 => '不合法的国家信息', 65313 => '不合法的省份信息', 65314 => '不合法的城市信息', 65316 => '该公众号的菜单设置了过多的域名外跳（最多跳转到3个域名的链接）', 65317 => '不合法的URL', 9001001 => 'POST数据参数不合法', 9001002 => '远端服务不可用', 9001003 => 'Ticket不合法', 9001004 => '获取摇周边用户信息失败', 9001005 => '获取商户信息失败', 9001006 => '获取OpenID失败', 9001007 => '上传文件缺失', 9001008 => '上传素材的文件类型不合法', 9001009 => '上传素材的文件尺寸不合法', 9001010 => '上传失败', 9001020 => '帐号不合法', 9001021 => '已有设备激活率低于50%，不能新增设备', 9001022 => '设备申请数不合法，必须为大于0的数字', 9001023 => '已存在审核中的设备ID申请', 9001024 => '一次查询设备ID数量不能超过50', 9001025 => '设备ID不合法', 9001026 => '页面ID不合法', 9001027 => '页面参数不合法', 9001028 => '一次删除页面ID数量不能超过10', 9001029 => '页面已应用在设备中，请先解除应用关系再删除', 9001030 => '一次查询页面ID数量不能超过50', 9001031 => '时间区间不合法', 9001032 => '保存设备与页面的绑定关系参数错误', 9001033 => '门店ID不合法', 9001034 => '设备备注信息过长', 9001035 => '设备申请参数不合法', 9001036 => '查询起始值begin不合法');
+		if (array_key_exists($data['errcode'], $errors)) 
+		{
+			$data['errmsg'] = $errors[$data['errcode']];
+		}
+		return $data;
+	}
+}
+if (!(function_exists('tpl_form_field_image2'))) 
+{
+	function tpl_form_field_image2($name, $value = '', $default = '', $options = array()) 
+	{
+		global $_W;
+		if (empty($default)) 
+		{
+			$default = '../addons/ewei_shopv2/static/images/nopic.png';
+		}
+		$val = $default;
+		if (!(empty($value))) 
+		{
+			$val = tomedia($value);
+		}
+		else 
+		{
+			$val = '../addons/ewei_shopv2/static/images/default-pic.jpg';
+		}
+		if (!(empty($options['global']))) 
+		{
+			$options['global'] = true;
+		}
+		else 
+		{
+			$options['global'] = false;
+		}
+		if (empty($options['class_extra'])) 
+		{
+			$options['class_extra'] = '';
+		}
+		if (isset($options['dest_dir']) && !(empty($options['dest_dir']))) 
+		{
+			if (!(preg_match('/^\\w+([\\/]\\w+)?$/i', $options['dest_dir']))) 
+			{
+				exit('图片上传目录错误,只能指定最多两级目录,如: "we7_store","we7_store/d1"');
+			}
+		}
+		$options['direct'] = true;
+		$options['multiple'] = false;
+		if (isset($options['thumb'])) 
+		{
+			$options['thumb'] = !(empty($options['thumb']));
+		}
+		$options['fileSizeLimit'] = intval($GLOBALS['_W']['setting']['upload']['image']['limit']) * 1024;
+		$s = '';
+		if (!(defined('TPL_INIT_IMAGE'))) 
+		{
+			$s = "\r\n\t\t" . '<script type="text/javascript">' . "\r\n\t\t\t" . 'function showImageDialog(elm, opts, options) {' . "\r\n\t\t\t\t" . 'require(["util"], function(util){' . "\r\n\t\t\t\t\t" . 'var btn = $(elm);' . "\r\n\t\t\t\t\t" . 'var ipt = btn.parent().prev();' . "\r\n\t\t\t\t\t" . 'var val = ipt.val();' . "\r\n\t\t\t\t\t" . 'var img = ipt.parent().next().children();' . "\r\n\t\t\t\t\t" . 'options = ' . str_replace('"', '\'', json_encode($options)) . ';' . "\r\n\t\t\t\t\t" . 'util.image(val, function(url){' . "\r\n\t\t\t\t\t\t" . 'if(url.url){' . "\r\n\t\t\t\t\t\t\t" . 'if(img.length > 0){' . "\r\n\t\t\t\t\t\t\t\t" . 'img.get(0).src = url.url;' . "\r\n\t\t\t\t\t\t\t\t" . 'img.closest(".input-group").show();' . "\r\n\t\t\t\t\t\t\t" . '}' . "\r\n\t\t\t\t\t\t\t" . 'ipt.val(url.attachment);' . "\r\n\t\t\t\t\t\t\t" . 'ipt.attr("filename",url.filename);' . "\r\n\t\t\t\t\t\t\t" . 'ipt.attr("url",url.url);' . "\r\n\t\t\t\t\t\t" . '}' . "\r\n\t\t\t\t\t\t" . 'if(url.media_id){' . "\r\n\t\t\t\t\t\t\t" . 'if(img.length > 0){' . "\r\n\t\t\t\t\t\t\t\t" . 'img.get(0).src = "";' . "\r\n\t\t\t\t\t\t\t" . '}' . "\r\n\t\t\t\t\t\t\t" . 'ipt.val(url.media_id);' . "\r\n\t\t\t\t\t\t" . '}' . "\r\n\t\t\t\t\t" . '}, options);' . "\r\n\t\t\t\t" . '});' . "\r\n\t\t\t" . '}' . "\r\n\t\t\t" . 'function deleteImage(elm){' . "\r\n\t\t\t\t" . 'require(["jquery"], function($){' . "\r\n\t\t\t\t\t" . '$(elm).prev().attr("src", "../addons/ewei_shopv2/static/images/default-pic.jpg");' . "\r\n\t\t\t\t\t" . '$(elm).parent().prev().find("input").val("");' . "\r\n\t\t\t\t" . '});' . "\r\n\t\t\t" . '}' . "\r\n\t\t" . '</script>';
+			define('TPL_INIT_IMAGE', true);
+		}
+		$s .= "\r\n\t\t" . '<div class="input-group ' . $options['class_extra'] . '">' . "\r\n\t\t\t" . '<input type="text" name="' . $name . '" value="' . $value . '"' . (($options['extras']['text'] ? $options['extras']['text'] : '')) . ' class="form-control" autocomplete="off">' . "\r\n\t\t\t" . '<span class="input-group-btn">' . "\r\n\t\t\t\t" . '<button class="btn btn-default" type="button" onclick="showImageDialog(this);">选择图片</button>' . "\r\n\t\t\t" . '</span>' . "\r\n\t\t" . '</div>';
+		$s .= '<div class="input-group ' . $options['class_extra'] . '" style="margin-top:.5em;"><img src="' . $val . '" onerror="this.src=\'' . $default . '\'; this.title=\'图片未找到.\'" class="img-responsive img-thumbnail" ' . (($options['extras']['image'] ? $options['extras']['image'] : '')) . ' width="150" />' . "\r\n" . '                <em class="close" style="position:absolute; top: 0px; right: -14px;" title="删除这张图片" onclick="deleteImage(this)">×</em>' . "\r\n" . '            </div>';
+		return $s;
+	}
+}
+if (!(function_exists('tpl_form_field_multi_image2'))) 
+{
+	function tpl_form_field_multi_image2($name, $value = array(), $options = array()) 
+	{
+		global $_W;
+		$options['multiple'] = true;
+		$options['direct'] = false;
+		$options['fileSizeLimit'] = intval($GLOBALS['_W']['setting']['upload']['image']['limit']) * 1024;
+		if (isset($options['dest_dir']) && !(empty($options['dest_dir']))) 
+		{
+			if (!(preg_match('/^\\w+([\\/]\\w+)?$/i', $options['dest_dir']))) 
+			{
+				exit('图片上传目录错误,只能指定最多两级目录,如: "we7_store","we7_store/d1"');
+			}
+		}
+		$s = '';
+		if (!(defined('TPL_INIT_MULTI_IMAGE'))) 
+		{
+			$s = "\r\n" . '<script type="text/javascript">' . "\r\n\t" . 'function uploadMultiImage(elm) {' . "\r\n\t\t" . 'var name = $(elm).next().val();' . "\r\n\t\t" . 'util.image( "", function(urls){' . "\r\n\t\t\t" . '$.each(urls, function(idx, url){' . "\r\n\t\t\t\t" . '$(elm).parent().parent().next().append(\'<div class="multi-item"><img onerror="this.src=\\\'../addons/ewei_shopv2/static/images/nopic.png\\\'; this.title=\\\'图片未找到.\\\'" src="\'+url.url+\'" class="img-responsive img-thumbnail"><input type="hidden" name="\'+name+\'[]" value="\'+url.attachment+\'"><em class="close" title="删除这张图片" onclick="deleteMultiImage(this)">×</em></div>\');' . "\r\n\t\t\t" . '});' . "\r\n\t\t" . '}, ' . json_encode($options) . ');' . "\r\n\t" . '}' . "\r\n\t" . 'function deleteMultiImage(elm){' . "\r\n\t\t" . 'require(["jquery"], function($){' . "\r\n\t\t\t" . '$(elm).parent().remove();' . "\r\n\t\t" . '});' . "\r\n\t" . '}' . "\r\n" . '</script>';
+			define('TPL_INIT_MULTI_IMAGE', true);
+		}
+		$s .= '<div class="input-group">' . "\r\n\t" . '<input type="text" class="form-control" readonly="readonly" value="" placeholder="批量上传图片" autocomplete="off">' . "\r\n\t" . '<span class="input-group-btn">' . "\r\n\t\t" . '<button class="btn btn-default" type="button" onclick="uploadMultiImage(this);">选择图片</button>' . "\r\n\t\t" . '<input type="hidden" value="' . $name . '" />' . "\r\n\t" . '</span>' . "\r\n" . '</div>' . "\r\n" . '<div class="input-group multi-img-details">';
+		if (is_array($value) && (0 < count($value))) 
+		{
+			foreach ($value as $row ) 
+			{
+				$s .= "\r\n" . '<div class="multi-item">' . "\r\n\t" . '<img src="' . tomedia($row) . '" onerror="this.src=\'../addons/ewei_shopv2/static/images/nopic.png\'; this.title=\'图片未找到.\'" class="img-responsive img-thumbnail">' . "\r\n\t" . '<input type="hidden" name="' . $name . '[]" value="' . $row . '" >' . "\r\n\t" . '<em class="close" title="删除这张图片" onclick="deleteMultiImage(this)">×</em>' . "\r\n" . '</div>';
+			}
+		}
+		$s .= '</div>';
+		return $s;
+	}
+}
+if (!(function_exists('pagination2'))) 
+{
+	function pagination2($total, $pageIndex, $pageSize = 15, $url = '', $context = array('before' => 5, 'after' => 4, 'ajaxcallback' => '', 'callbackfuncname' => '')) 
+	{
+		global $_W;
+		if (empty($_W['shopset']['template']['style_v3'])) 
+		{
+			return pagination($total, $pageIndex, $pageSize, $url, $context);
+		}
+		$pdata = array('tcount' => 0, 'tpage' => 0, 'cindex' => 0, 'findex' => 0, 'pindex' => 0, 'nindex' => 0, 'lindex' => 0, 'options' => '');
+		if ($context['ajaxcallback']) 
+		{
+			$context['isajax'] = true;
+		}
+		if ($context['callbackfuncname']) 
+		{
+			$callbackfunc = $context['callbackfuncname'];
+		}
+		$html = '<div><ul class="pagination pagination-centered"><li><span class="nobg">共' . $total . '条记录</span></li></ul>';
+		if (empty($_W['shopset']['template']['style_v3'])) 
+		{
+			$html = '';
+		}
+		if (!(empty($total))) 
+		{
+			$pdata['tcount'] = $total;
+			$pdata['tpage'] = ((empty($pageSize) || ($pageSize < 0) ? 1 : ceil($total / $pageSize)));
+			if (1 < $pdata['tpage']) 
+			{
+				$html .= '<ul class="pagination pagination-centered">';
+				$cindex = $pageIndex;
+				$cindex = min($cindex, $pdata['tpage']);
+				$cindex = max($cindex, 1);
+				$pdata['cindex'] = $cindex;
+				$pdata['findex'] = 1;
+				$pdata['pindex'] = ((1 < $cindex ? $cindex - 1 : 1));
+				$pdata['nindex'] = (($cindex < $pdata['tpage'] ? $cindex + 1 : $pdata['tpage']));
+				$pdata['lindex'] = $pdata['tpage'];
+				if ($context['isajax']) 
+				{
+					if (empty($url)) 
+					{
+						$url = $_W['script_name'] . '?' . http_build_query($_GET);
+					}
+					$pdata['faa'] = 'href="javascript:;" page="' . $pdata['findex'] . '" ' . (($callbackfunc ? 'onclick="' . $callbackfunc . '(\'' . $url . '\', \'' . $pdata['findex'] . '\', this);return false;"' : ''));
+					$pdata['paa'] = 'href="javascript:;" page="' . $pdata['pindex'] . '" ' . (($callbackfunc ? 'onclick="' . $callbackfunc . '(\'' . $url . '\', \'' . $pdata['pindex'] . '\', this);return false;"' : ''));
+					$pdata['naa'] = 'href="javascript:;" page="' . $pdata['nindex'] . '" ' . (($callbackfunc ? 'onclick="' . $callbackfunc . '(\'' . $url . '\', \'' . $pdata['nindex'] . '\', this);return false;"' : ''));
+					$pdata['laa'] = 'href="javascript:;" page="' . $pdata['lindex'] . '" ' . (($callbackfunc ? 'onclick="' . $callbackfunc . '(\'' . $url . '\', \'' . $pdata['lindex'] . '\', this);return false;"' : ''));
+				}
+				else if ($url) 
+				{
+					$pdata['jump'] = 'href="?' . str_replace('*', $pdata['lindex'], $url) . '"';
+					$pdata['faa'] = 'href="?' . str_replace('*', $pdata['findex'], $url) . '"';
+					$pdata['paa'] = 'href="?' . str_replace('*', $pdata['pindex'], $url) . '"';
+					$pdata['naa'] = 'href="?' . str_replace('*', $pdata['nindex'], $url) . '"';
+					$pdata['laa'] = 'href="?' . str_replace('*', $pdata['lindex'], $url) . '"';
+				}
+				else 
+				{
+					$jump_get = $_GET;
+					$jump_get['page'] = '';
+					$pdata['jump'] = 'href="' . $_W['script_name'] . '?' . http_build_query($jump_get) . $pdata['cindex'] . '" data-href="' . $_W['script_name'] . '?' . http_build_query($jump_get) . '"';
+					$_GET['page'] = $pdata['findex'];
+					$pdata['faa'] = 'href="' . $_W['script_name'] . '?' . http_build_query($_GET) . '"';
+					$_GET['page'] = $pdata['pindex'];
+					$pdata['paa'] = 'href="' . $_W['script_name'] . '?' . http_build_query($_GET) . '"';
+					$_GET['page'] = $pdata['nindex'];
+					$pdata['naa'] = 'href="' . $_W['script_name'] . '?' . http_build_query($_GET) . '"';
+					$_GET['page'] = $pdata['lindex'];
+					$pdata['laa'] = 'href="' . $_W['script_name'] . '?' . http_build_query($_GET) . '"';
+				}
+				if (1 < $pdata['cindex']) 
+				{
+					$html .= '<li><a ' . $pdata['faa'] . ' class="pager-nav">首页</a></li>';
+					$html .= '<li><a ' . $pdata['paa'] . ' class="pager-nav">&laquo;上一页</a></li>';
+				}
+				if (!($context['before']) && ($context['before'] != 0)) 
+				{
+					$context['before'] = 5;
+				}
+				if (!($context['after']) && ($context['after'] != 0)) 
+				{
+					$context['after'] = 4;
+				}
+				if (($context['after'] != 0) && ($context['before'] != 0)) 
+				{
+					$range = array();
+					$range['start'] = max(1, $pdata['cindex'] - $context['before']);
+					$range['end'] = min($pdata['tpage'], $pdata['cindex'] + $context['after']);
+					if (($range['end'] - $range['start']) < ($context['before'] + $context['after'])) 
+					{
+						$range['end'] = min($pdata['tpage'], $range['start'] + $context['before'] + $context['after']);
+						$range['start'] = max(1, $range['end'] - $context['before'] - $context['after']);
+					}
+					$i = $range['start'];
+					while ($i <= $range['end']) 
+					{
+						if ($context['isajax']) 
+						{
+							$aa = 'href="javascript:;" page="' . $i . '" ' . (($callbackfunc ? 'onclick="' . $callbackfunc . '(\'' . $url . '\', \'' . $i . '\', this);return false;"' : ''));
+						}
+						else if ($url) 
+						{
+							$aa = 'href="?' . str_replace('*', $i, $url) . '"';
+						}
+						else 
+						{
+							$_GET['page'] = $i;
+							$aa = 'href="?' . http_build_query($_GET) . '"';
+						}
+						$html .= (($i == $pdata['cindex'] ? '<li class="active"><a href="javascript:;">' . $i . '</a></li>' : '<li><a ' . $aa . '>' . $i . '</a></li>'));
+						++$i;
+					}
+				}
+				if ($pdata['cindex'] < $pdata['tpage']) 
+				{
+					$html .= '<li><a ' . $pdata['naa'] . ' class="pager-nav">下一页&raquo;</a></li>';
+					$html .= '<li><a ' . $pdata['laa'] . ' class="pager-nav">尾页</a></li>';
+				}
+				$html .= '</ul>';
+				if (5 < $pdata['tpage']) 
+				{
+					$html .= '<ul class="pagination pagination-centered">';
+					$html .= '<li><span class=\'input\' style=\'margin-right: 0;\'><input value=\'' . $pdata['cindex'] . '\' type=\'tel\'/></span></li>';
+					$html .= '<li><a ' . $pdata['jump'] . ' class="pager-nav pager-nav-jump">跳转</a></li>';
+					$html .= '</ul>';
+					$html .= '<script>$(function() {$(".pagination .input input").bind("input propertychange", function() {var val=$(this).val(),elm=$(this).closest("ul").find(".pager-nav-jump"),href=elm.data("href");elm.attr("href", href+val)}).on("keydown", function(e) {if (e.keyCode == "13") {var val=$(this).val(),elm=$(this).closest("ul").find(".pager-nav-jump"),href=elm.data("href"); location.href=href+val;}});})</script>';
+				}
+			}
+		}
+		$html .= '</div>';
+		return $html;
+	}
+}
+if (!(function_exists('tpl_form_field_editor'))) 
+{
+	function tpl_form_field_editor($params = array(), $callback = NULL) 
+	{
+		$html = '<span class="form-editor-group">';
+		$html .= '<span class="form-control-static form-editor-show">';
+		$html .= '<a class="form-editor-text">' . $params['value'] . '</a>';
+		$html .= '<a class="text-primary form-editor-btn">修改</a>';
+		$html .= '</span>';
+		$html .= '<span class="input-group form-editor-edit">';
+		$html .= '<input class="form-control form-editor-input" value="' . $params['value'] . '" name="' . $params['name'] . '"';
+		if (!(empty($params['placeholder']))) 
+		{
+			$html .= 'placeholder="' . $params['placeholder'] . '"';
+		}
+		if (!(empty($params['id']))) 
+		{
+			$html .= 'id="' . $params['id'] . '"';
+		}
+		if (!(empty($params['data-rule-required'])) || !(empty($params['required']))) 
+		{
+			$html .= ' data-rule-required="true"';
+		}
+		if (!(empty($params['data-msg-required']))) 
+		{
+			$html .= ' data-msg-required="' . $params['data-msg-required'] . '"';
+		}
+		$html .= ' /><span class="input-group-btn">';
+		$html .= '<span class="btn btn-default form-editor-finish"';
+		if ($callback) 
+		{
+			$html .= 'data-callback="' . $callback . '"';
+		}
+		$html .= '><i class="icow icow-wancheng"></i></span>';
+		$html .= '</span>';
+		$html .= '</span>';
+		return $html;
+	}
+}
+if (!(function_exists('tpl_form_field_position'))) 
+{
+	function tpl_form_field_position($field, $value = array()) 
+	{
+		$s = '';
+		if (!(defined('TPL_INIT_COORDINATE'))) 
+		{
+			$s .= '<script type="text/javascript">' . "\r\n" . '                    function showCoordinate(elm) {' . "\r\n" . '                        ' . "\r\n" . '                            var val = {};' . "\r\n" . '                            val.lng = parseFloat($(elm).parent().prev().prev().find(":text").val());' . "\r\n" . '                            val.lat = parseFloat($(elm).parent().prev().find(":text").val());' . "\r\n" . '                            val = biz.BdMapToTxMap(val.lat,val.lng);' . "\r\n" . '                            biz.map(val, function(r){' . "\r\n" . '                                r = biz.TxMapToBdMap(r.lat,r.lng);' . "\r\n" . '                                $(elm).parent().prev().prev().find(":text").val(r.lng);' . "\r\n" . '                                $(elm).parent().prev().find(":text").val(r.lat);' . "\r\n" . '    //' . "\t\t\t\t\t\t\t" . '$("#address").val(r.label);' . "\r\n" . '                            },"' . EWEI_SHOPV2_URL . 'template/web/util/area/map.html' . '");' . "\r\n" . '    }' . "\r\n" . '    ' . "\r\n" . '                </script>';
+			define('TPL_INIT_COORDINATE', true);
+		}
+		$s .= "\r\n" . '            <div class="row row-fix">' . "\r\n" . '                <div class="col-xs-4 col-sm-4">' . "\r\n" . '                    <input type="text" name="' . $field . '[lng]" value="' . $value['lng'] . '" placeholder="地理经度"  class="form-control" />' . "\r\n" . '                </div>' . "\r\n" . '                <div class="col-xs-4 col-sm-4">' . "\r\n" . '                    <input type="text" name="' . $field . '[lat]" value="' . $value['lat'] . '" placeholder="地理纬度"  class="form-control" />' . "\r\n" . '                </div>' . "\r\n" . '                <div class="col-xs-4 col-sm-4">' . "\r\n" . '                    <button onclick="showCoordinate(this);" class="btn btn-default" type="button">选择坐标</button>' . "\r\n" . '                </div>' . "\r\n" . '            </div>';
+		return $s;
 	}
 }
 ?>

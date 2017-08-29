@@ -80,11 +80,22 @@
                     </div>
                 </div>
                 <div class="form-group">
+                    <label class="col-sm-2 control-label">一码多兑</label>
+                    <div class="col-sm-9  col-xs-12">
+                        <div class="input-group">
+                            <span class="input-group-addon">本组的每个兑换码可以兑换</span>
+                            <input type="text" name="repeat" class="form-control" value="{$setting['repeat']}">
+                            <span class="input-group-addon">次（默认1次） 兑完指定次数后失效</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
                     <label class="col-sm-2 control-label">用户扫码绑定</label>
                     <div class="col-sm-9  col-xs-12">
                         <label for="binding" class="radio-inline"><input type="checkbox" name="binding" id="binding" {if $setting['binding'] == 1}checked{/if}> 开启扫码绑定</label>
                     </div>
                 </div>
+
                 <div class="form-group">
                     <label class="col-sm-2 control-label"></label>
                     <div class="col-sm-9  col-xs-12">

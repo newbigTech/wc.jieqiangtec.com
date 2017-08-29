@@ -120,6 +120,7 @@ class Team_EweiShopV2Page extends PluginMobileLoginPage
 		$groupsset = pdo_fetch('select description,groups_description,discount,headstype,headsmoney,headsdiscount from ' . tablename('ewei_shop_groups_set') . "\n\t\t\t\t\t" . 'where uniacid = :uniacid ', array(':uniacid' => $uniacid));
 		$groupsset['groups_description'] = m('ui')->lazy($groupsset['groups_description']);
 		$goods = pdo_fetch('SELECT * FROM' . tablename('ewei_shop_groups_goods') . 'WHERE  uniacid = ' . $uniacid . ' and id = ' . $order['goodid']);
+		$goods['content'] = m('ui')->lazy($goods['content']);
 		if (!(empty($goods['thumb_url']))) 
 		{
 			$goods['thumb_url'] = array_merge(iunserializer($goods['thumb_url']));

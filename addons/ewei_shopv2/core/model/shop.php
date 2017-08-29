@@ -1,5 +1,5 @@
 <?php
-if (!defined('IN_IA')) 
+if (!(defined('IN_IA'))) 
 {
 	exit('Access Denied');
 }
@@ -16,13 +16,22 @@ class Shop_EweiShopV2Model
 			$category = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_category') . ' WHERE uniacid =:uniacid AND enabled=1 ORDER BY parentid ASC, displayorder DESC', array(':uniacid' => $_W['uniacid']));
 			foreach ($category as $index => $row ) 
 			{
-				if (!empty($row['parentid'])) 
+				if (!(empty($row['parentid']))) 
 				{
+					if ($row[$row['parentid']]['parentid'] == 0) 
+					{
+						$row[$row['parentid']]['level'] = 2;
+					}
+					else 
+					{
+						$row[$row['parentid']]['level'] = 3;
+					}
 					$children[$row['parentid']][] = $row;
 					unset($category[$index]);
 				}
 				else 
 				{
+					$row['level'] = 1;
 					$parents[] = $row;
 				}
 			}
@@ -102,13 +111,18 @@ class Shop_EweiShopV2Model
 	{
 		if (strexists($_SERVER['REQUEST_URI'], '/web/')) 
 		{
-			return NULL;
+			return;
 		}
 		global $_S;
-		$close = $_S['close'];
-		if (!empty($close['flag'])) 
+		global $_W;
+		if ($_W['plugin'] == 'mmanage') 
 		{
-			if (!empty($close['url'])) 
+			return;
+		}
+		$close = $_S['close'];
+		if (!(empty($close['flag']))) 
+		{
+			if (!(empty($close['url']))) 
 			{
 				header('location: ' . $close['url']);
 				exit();

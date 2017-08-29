@@ -2,7 +2,7 @@
 
 <div class="page-heading"> 
     <span class='pull-right'>
-        {ifp 'creditshop.category.add'}
+        {ifp 'creditshop.category.add' && $_W['merchid']==0}
         	<a class="btn btn-primary btn-sm" href="{php echo webUrl('creditshop/category/add')}">添加新商品分类</a>
         {/if}
     </span>
@@ -17,7 +17,9 @@
                 <th style='width:80px'>显示顺序</th>
                 <th>标题</th>
                 <th style="width: 60px">状态</th>
+                {if $_W['merchid']==0}
                 <th style="width: 150px;">操作</th>
+                {/if}
             </tr>
         </thead>
         <tbody id="sort">
@@ -25,7 +27,7 @@
                 <tr>
                     <td>{$row['id']}</td>
                     <td>
-                        {ifp 'creditshop.category.edit'}
+                        {ifp 'creditshop.category.edit' && $_W['merchid']==0}
                             <a href='javascript:;' data-toggle='ajaxEdit' data-href="{php echo webUrl('creditshop/category/displayorder',array('id'=>$row['id']))}" >{$row['displayorder']}</a>
                         {else}
                             {$row['displayorder']}
@@ -43,6 +45,7 @@
                           >
                           {if $row['enabled']==1}显示{else}隐藏{/if}</span>
                     </td>
+                    {if $_W['merchid']==0}
                     <td style="text-align:left;">
                         {ifp 'creditshop.category.view|creditshop.category.edit'}
 	                        <a href="{php echo webUrl('creditshop/category/edit', array('id' => $row['id']))}" class="btn btn-default btn-sm" title="{ifp 'creditshop.category.edit'}修改{else}查看{/if}">
@@ -53,6 +56,7 @@
                         	<a data-toggle='ajaxRemove' href="{php echo webUrl('creditshop/category/delete', array('id' => $row['id']))}"class="btn btn-default btn-sm" data-confirm="确认删除此分类?" title="删除"><i class="fa fa-trash"></i> 删除</a>
                         {/if}
                     </td>
+                    {/if}
                 </tr>
             {/loop}
         </tbody>

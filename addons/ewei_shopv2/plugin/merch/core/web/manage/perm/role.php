@@ -1,6 +1,5 @@
 <?php
-
-if (!defined('IN_IA')) {
+if (!(defined('IN_IA'))) {
 	exit('Access Denied');
 }
 
@@ -18,7 +17,7 @@ class Role_EweiShopV2Page extends MerchWebPage
 		$condition = ' and uniacid = :uniacid and deleted=0 and merchid=:merchid';
 		$params = array(':uniacid' => $_W['uniacid'], ':merchid' => $_W['merchid']);
 
-		if (!empty($_GPC['keyword'])) {
+		if (!(empty($_GPC['keyword']))) {
 			$_GPC['keyword'] = trim($_GPC['keyword']);
 			$condition .= ' and rolename like :keyword';
 			$params[':keyword'] = '%' . $_GPC['keyword'] . '%';
@@ -54,16 +53,17 @@ class Role_EweiShopV2Page extends MerchWebPage
 		$item = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_merch_perm_role') . ' WHERE id =:id and deleted=0 and uniacid=:uniacid limit 1', array(':uniacid' => $_W['uniacid'], ':id' => $id));
 		$perms = p('merch')->formatPerms();
 		$role_perms = array();
+		$user_perms = array();
 
-		if (!empty($item)) {
-			$role_perms = explode(',', $item['perms']);
+		if (!(empty($item))) {
+			$user_perms = $role_perms = explode(',', $item['perms']);
 		}
 
 
 		if ($_W['ispost']) {
 			$data = array('uniacid' => $_W['uniacid'], 'merchid' => $_W['merchid'], 'rolename' => trim($_GPC['rolename']), 'status' => intval($_GPC['status']), 'perms' => (is_array($_GPC['perms']) ? implode(',', $_GPC['perms']) : ''));
 
-			if (!empty($id)) {
+			if (!(empty($id))) {
 				pdo_update('ewei_shop_merch_perm_role', $data, array('id' => $id, 'uniacid' => $_W['uniacid'], 'merchid' => $_W['merchid']));
 				mplog('perm.role.edit', '修改角色 ID: ' . $id);
 			}
@@ -130,9 +130,10 @@ class Role_EweiShopV2Page extends MerchWebPage
 		$kwd = trim($_GPC['keyword']);
 		$params = array();
 		$params[':uniacid'] = $_W['uniacid'];
-		$condition = ' and uniacid=:uniacid and deleted=0';
+		$params[':merchid'] = $_W['merchid'];
+		$condition = ' and uniacid=:uniacid and merchid=:merchid and deleted=0';
 
-		if (!empty($kwd)) {
+		if (!(empty($kwd))) {
 			$condition .= ' AND `rolename` LIKE :keyword';
 			$params[':keyword'] = '%' . $kwd . '%';
 		}

@@ -37,7 +37,7 @@ class Order_EweiShopV2Page extends CashierWebPage
 			$params[':start'] = intval($start);
 			$params[':end'] = intval($end);
 		}
-		$goods = pdo_fetchall('SELECT id,orderid,isgoods FROM ' . tablename('ewei_shop_cashier_pay_log') . ' WHERE uniacid=:uniacid AND cashierid=:cashierid AND status=0 AND createtime < ' . (time() - (3600 * 12)), array(':uniacid' => $_W['uniacid'], ':cashierid' => $_W['cashierid']), 'id');
+		$goods = pdo_fetchall('SELECT id,orderid,isgoods FROM ' . tablename('ewei_shop_cashier_pay_log') . ' WHERE uniacid=:uniacid AND cashierid=:cashierid AND status=0 AND createtime < ' . (time() - (3600 * 24)), array(':uniacid' => $_W['uniacid'], ':cashierid' => $_W['cashierid']), 'id');
 		$gids = array();
 		$selfgids = array();
 		foreach ($goods as $v ) 
@@ -68,9 +68,20 @@ class Order_EweiShopV2Page extends CashierWebPage
 		$list = pdo_fetchall($sql, $params);
 		$operator = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_cashier_operator') . ' WHERE uniacid=:uniacid AND cashierid=:cashierid ORDER BY id DESC', array(':uniacid' => $_W['uniacid'], ':cashierid' => $_W['cashierid']), 'id');
 		$total = (int) pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_cashier_pay_log') . ' where uniacid=:uniacid ' . $condition, $params);
-		$total_money = (double) pdo_fetchcolumn('select sum(money) from ' . tablename('ewei_shop_cashier_pay_log') . ' where uniacid=:uniacid ' . $condition, $params);
+		$total_money = (double) pdo_fetchcolumn('select sum(money+deduction) from ' . tablename('ewei_shop_cashier_pay_log') . ' where uniacid=:uniacid ' . $condition, $params);
 		$pager = pagination($total, $pindex, $psize);
 		include $this->template();
+	}
+	public function refund() 
+	{
+		global $_W;
+		global $_GPC;
+		$res = $this->model->refund($_GPC['id']);
+		if (is_error($res)) 
+		{
+			show_json(0, $res['message']);
+		}
+		show_json(1);
 	}
 }
 ?>

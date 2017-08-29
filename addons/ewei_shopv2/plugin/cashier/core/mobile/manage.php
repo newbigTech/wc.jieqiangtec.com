@@ -11,7 +11,7 @@ class Manage_EweiShopV2Page extends CashierMobilePage
 		global $_W;
 		parent::__construct();
 		$userset = $this->model->getUserSet('', $_W['cashierid']);
-		if ($_W['openid'] != $_W['cashieruser']['manageopenid']) 
+		if (empty($_W['openid']) || (($_W['openid'] != $_W['cashieruser']['manageopenid']) && !(strexists($_W['cashieruser']['management'], $_W['openid'])))) 
 		{
 			$this->message('您不是我们的管理员!', 'close', 'error');
 		}
@@ -57,8 +57,8 @@ class Manage_EweiShopV2Page extends CashierMobilePage
 				$endtime = time();
 			}
 		}
-		$list = pdo_fetchall('SELECT *,FROM_UNIXTIME(paytime) as paytime FROM ' . tablename('ewei_shop_cashier_pay_log') . ' WHERE uniacid=:uniacid AND status=1 AND cashierid=:cashierid AND createtime BETWEEN :starttime AND :endtime ORDER BY id DESC LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize, array(':uniacid' => $_W['uniacid'], ':cashierid' => $_W['cashierid'], ':starttime' => $starttime, ':endtime' => $endtime));
-		$total = pdo_fetch('SELECT COUNT(*) total,SUM(money) money FROM ' . tablename('ewei_shop_cashier_pay_log') . ' WHERE uniacid=:uniacid AND status=1 AND cashierid=:cashierid AND createtime BETWEEN :starttime AND :endtime', array(':uniacid' => $_W['uniacid'], ':cashierid' => $_W['cashierid'], ':starttime' => $starttime, ':endtime' => $endtime));
+		$list = pdo_fetchall('SELECT *,money+deduction money,FROM_UNIXTIME(paytime) as paytime FROM ' . tablename('ewei_shop_cashier_pay_log') . ' WHERE uniacid=:uniacid AND status=1 AND cashierid=:cashierid AND createtime BETWEEN :starttime AND :endtime ORDER BY id DESC LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize, array(':uniacid' => $_W['uniacid'], ':cashierid' => $_W['cashierid'], ':starttime' => $starttime, ':endtime' => $endtime));
+		$total = pdo_fetch('SELECT COUNT(*) total,SUM(money+deduction) money FROM ' . tablename('ewei_shop_cashier_pay_log') . ' WHERE uniacid=:uniacid AND status=1 AND cashierid=:cashierid AND createtime BETWEEN :starttime AND :endtime', array(':uniacid' => $_W['uniacid'], ':cashierid' => $_W['cashierid'], ':starttime' => $starttime, ':endtime' => $endtime));
 		show_json(1, array('total' => intval($total['total']), 'money' => floatval($total['money']), 'list' => $list, 'pagesize' => $psize));
 	}
 }

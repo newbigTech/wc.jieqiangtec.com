@@ -1,5 +1,4 @@
 <?php
-
 require '../framework/bootstrap.inc.php';
 load()->web('common');
 load()->web('template');
@@ -19,5 +18,4 @@ define('ES_DEFAULT_ACTION', 'index');
 define('ES_EMPTY_CONTROLLER', 'empty');
 require './core/bootstrap.php';
 exit();
-
 ?>

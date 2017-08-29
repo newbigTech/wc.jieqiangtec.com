@@ -31,7 +31,7 @@
 						  {if $row['backredpack']>0}返 {$row['backredpack']} 红包;{/if}
 						  {/if}</td>
 	  <td>{$row['last']}</td>
-            <td style="width:80px;"><a href="javascript:;" onclick='biz.selector.set(this, {"id":"{$row['id']}","couponname":"{$row['couponname']}","thumb":"{$row['thumb']}","total":"{$row['total']}","money":"{$row['money']}","credit":"{$row['credit']}","usecredit2":"{$row['usecredit2']}"})'>选择</a></td>
+            <td style="width:80px;"><a href="javascript:;" onclick='biz.selector.set(this, {php echo json_encode($row)})'>选择</a></td>
         </tr>
         {/loop}
         {if count($ds)<=0}

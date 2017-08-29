@@ -1,12 +1,11 @@
 <?php
-
-if (!defined('ES_PATH')) {
+if (!(defined('ES_PATH'))) 
+{
 	exit('Access Denied');
 }
-
-class ContactController extends Controller
+class ContactController extends Controller 
 {
-	public function index()
+	public function index() 
 	{
 		global $_W;
 		global $_GPC;
@@ -20,6 +19,4 @@ class ContactController extends Controller
 		include $this->template('contact/index');
 	}
 }
-
-
 ?>

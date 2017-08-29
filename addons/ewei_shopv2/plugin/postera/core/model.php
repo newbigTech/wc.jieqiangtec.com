@@ -332,6 +332,15 @@ class PosteraModel extends PluginModel
 	public function checkMember($openid = '') 
 	{
 		global $_W;
+		$redis = redis();
+		if (!(is_error($redis))) 
+		{
+			$member = $redis->get($openid . '_postera_checkMember');
+			if (!(empty($member))) 
+			{
+				return json_decode($member, true);
+			}
+		}
 		$acc = WeiXinAccount::create($_W['acid']);
 		$userinfo = $acc->fansQueryInfo($openid);
 		$userinfo['avatar'] = $userinfo['headimgurl'];
@@ -360,6 +369,10 @@ class PosteraModel extends PluginModel
 			$member['city'] = $userinfo['city'];
 			pdo_update('ewei_shop_member', $member, array('id' => $member['id']));
 			$member['isnew'] = false;
+		}
+		if (!(is_error($redis))) 
+		{
+			$redis->set($openid . '_postera_checkMember', json_encode($member), 20);
 		}
 		return $member;
 	}

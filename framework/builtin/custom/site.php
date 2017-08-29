@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * [WeEngine System] Copyright (c) 2014 WE7.CC
+ * WeEngine is NOT a free software, it under the license terms, visited http://www.we7.cc/ for more details.
+ */
 defined('IN_IA') or exit('Access Denied');
 
 class CustomModuleSite extends WeModuleSite {
@@ -21,7 +24,7 @@ class CustomModuleSite extends WeModuleSite {
 			if(!empty($_GPC['nickname']) && empty($_GPC['openid'])) {
 				$user = pdo_fetch('SELECT b.openid,a.avatar,b.nickname FROM ' . tablename('mc_members') . ' AS a LEFT JOIN ' . tablename('mc_mapping_fans') . ' AS b ON a.uid = b.uid WHERE b.acid = :acid AND a.nickname = :nickname', array(':nickname' => trim($_GPC['nickname']), ':acid' => $_W['acid']));
 				if(empty($user['openid'])) {
-					message('没有找到昵称为 "'. $_GPC['nickname'] .'" 的用户', $this->createWebUrl('chatlog', array('acid' => $acid, 'nickname' => $_GPC['nickname'], 'openid' => $_GPC['openid'], 'starttime' => $_GPC['starttime'])), 'error');
+					itoast('没有找到昵称为 "'. $_GPC['nickname'] .'" 的用户', $this->createWebUrl('chatlog', array('acid' => $acid, 'nickname' => $_GPC['nickname'], 'openid' => $_GPC['openid'], 'starttime' => $_GPC['starttime'])), 'error');
 				} else {
 					if(!empty($user['avatar'])) {
 						$avatar = tomedia($user['avatar']);
@@ -37,7 +40,7 @@ class CustomModuleSite extends WeModuleSite {
 				}
 			}
 			if(empty($user['openid'])) {
-				message('请输入粉丝昵称或者粉丝openid', referer(), 'error');
+				itoast('请输入粉丝昵称或者粉丝openid', referer(), 'error');
 			}
 			if($acid > 0 && !empty($starttime) && !empty($endtime)) {
 				$pindex = max(1, intval($_GPC['page']));

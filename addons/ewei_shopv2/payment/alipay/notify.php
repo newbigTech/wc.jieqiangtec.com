@@ -52,7 +52,8 @@ class aliApy
 		$this->strs = explode(':', $this->body);
 		$this->type = intval($this->strs[1]);
 		$this->total_fee = round($this->post['total_fee'], 2);
-		$_W['uniacid'] = $_W['weid'] = intval($this->strs[0]);
+		$GLOBALS['_W']['uniacid'] = intval($this->strs[0]);
+		$_W['uniacid'] = intval($this->strs[0]);
 		$this->init();
 	}
 	public function init() 
@@ -68,6 +69,10 @@ class aliApy
 		else if ($this->type == '2') 
 		{
 			$this->cashier();
+		}
+		else if ($this->type == '6') 
+		{
+			$this->threen();
 		}
 		exit('success');
 	}
@@ -101,7 +106,7 @@ class aliApy
 				if (method_exists($site, $method)) 
 				{
 					$ret = array();
-					$ret['weid'] = $log['weid'];
+					$ret['acid'] = $log['acid'];
 					$ret['uniacid'] = $log['uniacid'];
 					$ret['result'] = 'success';
 					$ret['type'] = 'alipay';
@@ -128,6 +133,28 @@ class aliApy
 					}
 				}
 			}
+		}
+	}
+	public function threen() 
+	{
+		global $_W;
+		if (!($this->publicMethod())) 
+		{
+			exit('threen');
+		}
+		$logno = trim($this->post['out_trade_no']);
+		if (empty($logno)) 
+		{
+			exit();
+		}
+		$log = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_threen_log') . ' WHERE `uniacid`=:uniacid and id=:id limit 1', array(':uniacid' => $_W['uniacid'], ':id' => $logno));
+		if ($this->post['total_fee'] != $log['moneychange']) 
+		{
+			exit('fail');
+		}
+		if (p('threen')) 
+		{
+			p('threen')->payResult($log['logno'], 'alipay', ($this->isapp ? true : false));
 		}
 	}
 	public function recharge() 
@@ -172,7 +199,7 @@ class aliApy
 	}
 	public function batch_trans_notify() 
 	{
-		$post = explode('MONEY', substr($this->post['batch_no'], 7));
+		$post = explode('MONEY', substr($this->post['batch_no'], 11));
 		$id = $post[0];
 		$money = $post[1];
 		if (strexists($this->post['batch_no'], 'CP')) 
@@ -197,7 +224,8 @@ class aliApy
 		{
 			exit();
 		}
-		$_W['uniacid'] = $_W['acid'] = $apply['uniacid'];
+		$GLOBALS['_W']['uniacid'] = $apply['uniacid'];
+		$_W['uniacid'] = $apply['uniacid'];
 		$agentid = $apply['mid'];
 		$member = p('commission')->getInfo($agentid, array('total', 'ok', 'apply', 'lock', 'check'));
 		$hasagent = 0 < $member['agentcount'];
@@ -370,7 +398,8 @@ class aliApy
 		{
 			exit();
 		}
-		$_W['uniacid'] = $_W['acid'] = $log['uniacid'];
+		$GLOBALS['_W']['uniacid'] = $log['uniacid'];
+		$_W['uniacid'] = $log['uniacid'];
 		pdo_update('ewei_shop_member_log', array('status' => 1), array('id' => $id, 'uniacid' => $_W['uniacid']));
 		m('notice')->sendMemberLogMessage($log['id']);
 		$member = m('member')->getMember($log['openid']);
@@ -398,7 +427,8 @@ class aliApy
 		{
 			exit();
 		}
-		$_W['uniacid'] = $_W['acid'] = $item['uniacid'];
+		$GLOBALS['_W']['uniacid'] = $item['uniacid'];
+		$_W['uniacid'] = $item['uniacid'];
 		$time = time();
 		$goods = pdo_fetchall('SELECT g.id,g.credit, o.total,o.realprice FROM ' . tablename('ewei_shop_order_goods') . ' o left join ' . tablename('ewei_shop_goods') . ' g on o.goodsid=g.id ' . ' WHERE o.orderid=:orderid and o.uniacid=:uniacid', array(':orderid' => $item['id'], ':uniacid' => $item['uniacid']));
 		$credits = m('order')->getGoodsCredit($goods);
@@ -421,7 +451,7 @@ class aliApy
 		$change_refund['reply'] = '';
 		$change_refund['status'] = 1;
 		$change_refund['refundtype'] = $refundtype;
-		$change_refund['price'] = $money;
+		$change_refund['price'] = round($money / 100, 2);
 		$change_refund['refundtime'] = $time;
 		if (empty($refund['operatetime'])) 
 		{
@@ -458,7 +488,8 @@ class aliApy
 		{
 			exit();
 		}
-		$_W['uniacid'] = $_W['acid'] = $log['uniacid'];
+		$GLOBALS['_W']['uniacid'] = $log['uniacid'];
+		$_W['uniacid'] = $log['uniacid'];
 		pdo_update('ewei_shop_member_log', array('status' => 3), array('id' => $id, 'uniacid' => $_W['uniacid']));
 		$refundmoney = $log['money'] + $log['gives'];
 		m('member')->setCredit($log['openid'], 'credit2', -$refundmoney, array(0, '充值退款'));

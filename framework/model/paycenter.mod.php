@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * [WeEngine System] Copyright (c) 2014 WE7.CC
+ * WeEngine is NOT a free software, it under the license terms, visited http://www.we7.cc/ for more details.
+ */
 defined('IN_IA') or exit('Access Denied');
 
 function paycenter_order_status() {
@@ -40,12 +43,12 @@ function paycenter_order_trade_types() {
 function paycenter_check_login() {
 	global $_W, $_GPC;
 	if(empty($_W['uid']) && $_GPC['do'] != 'login') {
-		message('抱歉，您无权进行该操作，请先登录', murl('entry', array('m' => 'paycenter', 'do' => 'login'), true, true), 'error');
+		itoast('抱歉，您无权进行该操作，请先登录', murl('entry', array('m' => 'we7_coupon', 'do' => 'clerk', 'op' => 'login'), true, true), 'error');
 	}
 	if($_W['user']['type'] == ACCOUNT_OPERATE_CLERK) {
 		isetcookie('__uniacid', $_W['user']['uniacid'], 7 * 86400);
 		isetcookie('__uid', $_W['uid'], 7 * 86400);
 	} else {
-		message('非法访问', '', 'error');
+		itoast('非法访问', '', 'error');
 	}
 }

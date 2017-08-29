@@ -1,4 +1,10 @@
 <?php
+/**
+ * [WeEngine System] Copyright (c) 2014 WE7.CC
+ * WeEngine is NOT a free software, it under the license terms, visited http://www.we7.cc/ for more details.
+ */
+defined('IN_IA') or exit('Access Denied');
+
 
 function site_cover($coverparams = array()) {
 	$where = '';
@@ -62,7 +68,6 @@ function site_cover($coverparams = array()) {
 	return true;
 }
 
-
 function site_cover_delete($page_id) {
 	global $_W;
 	$page_id = intval($page_id);
@@ -75,5 +80,3 @@ function site_cover_delete($page_id) {
 	}
 	return true;
 }
-
-

@@ -55,6 +55,19 @@
 
         </div>
 
+        <div class="fui-cell-group">
+            <div class="fui-cell must ">
+                <div class="fui-cell-label">帐号</div>
+                <div class="fui-cell-info"><input type="text" class="fui-input" id="uname" placeholder="帐号" value="{$reg['uname']}" maxlength="20"></div>
+            </div>
+            <div class="fui-cell must ">
+                <div class="fui-cell-label">密码</div>
+                <div class="fui-cell-info"><input type="tel" class="fui-input" id="upass" placeholder="密码" value="" maxlength="20"/></div>
+            </div>
+            <div class="fui-cell-tip">用于登录多商户后台,请认真填写</div>
+
+        </div>
+
                 {if $template_flag}
 
                 {template 'diyform/formfields'}

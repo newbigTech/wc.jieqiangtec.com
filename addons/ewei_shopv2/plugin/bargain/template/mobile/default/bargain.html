@@ -6,7 +6,10 @@
 <link rel="stylesheet" type="text/css" href="../addons/ewei_shopv2/plugin/bargain/static/css/style.css">
 <link rel="stylesheet" type="text/css" href="../addons/ewei_shopv2/plugin/bargain/static/css/bargain.css">
 
-
+<style>
+    #alert-mask2{position: fixed;background: rgba(0, 0, 0, 0.8) none repeat scroll 0 0;width: 100%;height: 100%;left: 0;top: 0;z-index: 1000;-moz-transition-duration: 400ms;-webkit-transition-duration: 400ms;transition-duration: 400ms;}
+    #alert-mask3{position: fixed;background: rgba(0, 0, 0, 0.9) none repeat scroll 0 0;width: 100%;height: 100%;left: 0;top: 0;z-index: 1000;-moz-transition-duration: 400ms;-webkit-transition-duration: 400ms;transition-duration: 400ms;}
+</style>
     <script type="text/javascript">
 
         function GetUrlPara()
@@ -141,7 +144,7 @@
 
                 {if $myself_swi && $trade_swi!=1}<span><a onclick="bargain()" class="right" id="fuceng"><i class="fu"></i>砍一刀</a></span>{/if}
 
-                {if !$myself_swi && $trade_swi!=1}<span><a href="javascript:void(0)" onclick="FoxUI.alert('请复制链接发送给您的好友')" class="right "><i class="fu"></i>找人帮砍</a></span>{/if}
+                {if !$myself_swi && $trade_swi!=1}<span><a href="javascript:void(0)" onclick="$('#share').show()" class="right "><i class="fu"></i>找人帮砍</a></span>{/if}
             </div>
             {/if}
             {if $swi === 222}
@@ -211,8 +214,6 @@
     </div>
 
 </div>
-
-<!--<div id="mcover" onclick="this.style.display='none';" style="display: none;z-index: 1;"><div id="alert-mask" style="position:absolute;z-index:1;"></div><img src="/addons/ewei_shopv2/plugin/bargain/static/images/tishi.png" style="position:absolute;z-index:2;margin-top: 20%;margin-left: 10%;width: 80%"></div>-->
 <script type="text/javascript">
     $(function(){
         $("#bargainTab a").on("click",function(){
@@ -242,11 +243,37 @@
 </script>
 <div style="display: none;" id="bargainres">
     <div class="lynn-bargain-bg" style="position:absolute;z-index:10000;height: 100%">
-
         <p>恭喜您</p>
         <span id="myDiv">1</span><br><br><br><br>
         <a class="lynn-bargain-bg-a" style="width: 130px;height: 35px;" onclick="tiao()"><span style="margin-top: 6px;font-size: 1.5em;color: #FFFFFF" data-nocache="">知道了</span></a>
     </div>
+
     <div id="alert-mask" style="position:absolute;z-index:1;"></div>
+</div>
+
+{if $isFollowed!==true}
+<div>
+    <div style="position: absolute;top: 5rem;z-index: 2;width: 70%;left:15%;height: 70vw;text-align: center">
+        <p style="color: #fff">长按二维码关注后才能砍价</p>
+        <img src="{$isFollowed[1]}" alt="" width="100%">
+        <a class="btn btn-danger external" href="{php echo mobileUrl('bargain/bargain',array('id'=>$id,'timstamp'=>time()),1);}">我已关注</a>
+    </div>
+    <div id="alert-mask2" style="position:absolute;z-index:1;"></div>
+</div>
+{/if}
+<div style="display: none" id="share">
+    {if empty($account_set['sharestyle'])}
+    <div style="position: absolute;top: 5rem;z-index: 2;width: 70%;left:15%;height: 70vw;text-align: center">
+        <p style="color: #fff;height:100%;width: 100%;overflow: auto;word-wrap:break-word;
+word-break:break-all;">长按复制链接<br><br>{php echo mobileUrl('bargain/bargain',array('id'=>$id,'mid'=>intval($_GPC['mid'])),1);}</p>
+        <a class="btn btn-danger external" onclick="$('#share').hide()">我复制好了</a>
+    </div>
+    {/if}
+    <div id="alert-mask3" style="position:absolute;z-index:1;" onclick="$('#share').hide()">
+        {if !empty($account_set['sharestyle'])}
+        <img src="../addons/ewei_shopv2/static/images/peerpayshare.png" alt="" width="100%" >
+        <div style='font-family: "Microsoft YaHei UI", "微软雅黑", "宋体";color: #fff;text-align: center;'>转发给好友帮你砍价</div>
+        {/if}
+    </div>
 </div>
 {template '_footer'}

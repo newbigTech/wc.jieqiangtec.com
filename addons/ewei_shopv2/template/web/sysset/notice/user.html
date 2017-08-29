@@ -10,7 +10,7 @@
             {loop $salers $saler}
             <div class="multi-item saler-item" openid='{$saler['openid']}'>
             <input type="hidden" value="{$saler['openid']}" name="openids[]">
-            <img class="img-responsive img-thumbnail" src='{$saler['avatar']}' onerror="this.src='./resource/images/nopic.jpg'; this.title='图片未找到.'">
+            <img class="img-responsive img-thumbnail" src='{php echo tomedia($saler['avatar'])}' onerror="this.src='./resource/images/nopic.jpg'; this.title='图片未找到.'">
             <div class='img-nickname'>{$saler['nickname']}</div>
             <input type="hidden" value="{$saler['openid']}" name="openids[]">
         </div>

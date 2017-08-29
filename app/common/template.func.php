@@ -1,7 +1,7 @@
 <?php
 /**
  * [WeEngine System] Copyright (c) 2014 WE7.CC
- * WeEngine is NOT a free software, it under the license terms, visited http://www.zheyitianshi.com/ for more details.
+ * WeEngine is NOT a free software, it under the license terms, visited http://www.we7.cc/ for more details.
  */
 defined('IN_IA') or exit('Access Denied');
 
@@ -28,7 +28,7 @@ function template_page($id, $flag = TEMPLATE_DISPLAY) {
 		return '';
 	}
 	$page['params'] = json_decode($page['params'], true);
-	$GLOBALS['title'] = $page['title'];
+	$GLOBALS['title'] = htmlentities($page['title'], ENT_QUOTES, 'UTF-8');
 	$GLOBALS['_share'] = array('desc' => $page['description'], 'title' => $page['title'], 'imgUrl' => tomedia($page['params']['0']['params']['thumb']));;
 
 	$compile = IA_ROOT . "/data/tpl/app/{$id}.{$_W['template']}.tpl.php";
@@ -41,8 +41,8 @@ function template_page($id, $flag = TEMPLATE_DISPLAY) {
 	if (!empty($page['params'][0]['params']['bgColor'])) {
 		$content .= '<style>body{background-color:'.$page['params'][0]['params']['bgColor'].' !important;}</style>';
 	}
-	$content .= '<script type="text/javascript"> var scale = 1, marginLeft, marginTop; var width = window.screen.width; var height = window.screen.height; width / height > 320 / 480 ? (scale = height / 568,  marginLeft = (width / scale - 320) / 2) : (scale = width / 320, marginTop = (height / scale - 568) / 2); window != window.top && $(".container").css({width: "100%", height: "100%", overflow: "hidden", "transform-origin": "top left", transform: "scale(" + scale + ")"}); $(".container div").eq(0).css({"marginTop" : marginTop, "marginLeft": marginLeft}); $("meta[name='."'".'viewport'."'".']").attr("content", "width=320, initial-scale=" + scale + ", maximum-scale=" + scale + ", user-scalable=no"); </script>';
-	$content .= "<script type=\"text/javascript\" src=\"./resource/js/app/common.js\"></script>";
+	$GLOBALS['bottom_menu'] = $page['params'][0]['property'][0]['params']['bottom_menu'];
+	$content .= '<script type="text/javascript"> var scale = 1, marginLeft, marginTop; var width = window.screen.width; var height = window.screen.height; width / height > 320 / 568 ? (scale = height / 568,  marginLeft = (width / scale - 320) / 2, width = "320px") : (scale = width / 320, marginTop = (height / scale - 568) / 2, width = "100%"); window != window.top && $(".container").css({width: "100%", height: "100%", overflow: "hidden", "transform-origin": "top left", transform: "scale(" + scale + ")"}); $(".container div").eq(0).css({"width" : width, "marginTop" : marginTop, "marginLeft": marginLeft}); $("meta[name='."'".'viewport'."'".']").attr("content", "width=320, initial-scale=" + scale + ", maximum-scale=" + scale + ", user-scalable=no"); </script>';
 	file_put_contents($compile, $content);
 	switch ($flag) {
 		case TEMPLATE_DISPLAY:
@@ -123,6 +123,17 @@ function template_compile($from, $to) {
 }
 
 function template_parse($str) {
+	$check_repeat_template = array(
+		"'common\\/header'",
+		"'common\\/footer'",
+	);
+	foreach ($check_repeat_template as $template) {
+		if (preg_match_all('/{template\s+'.$template.'}/', $str, $match) > 1) {
+			$replace = stripslashes($template);
+			$str = preg_replace('/{template\s+'.$template.'}/i', '<?php (!empty($this) && $this instanceof WeModuleSite) ? (include $this->template('.$replace.', TEMPLATE_INCLUDEPATH)) : (include template('.$replace.', TEMPLATE_INCLUDEPATH));?>', $str, 1);
+			$str = preg_replace('/{template\s+'.$template.'}/i', '', $str);
+		}
+	}
 	$str = preg_replace('/<!--{(.+?)}-->/s', '{$1}', $str);
 	$str = preg_replace('/{template\s+(.+?)}/', '<?php (!empty($this) && $this instanceof WeModuleSite) ? (include $this->template($1, TEMPLATE_INCLUDEPATH)) : (include template($1, TEMPLATE_INCLUDEPATH));?>', $str);
 	$str = preg_replace('/{php\s+(.+?)}/', '<?php $1?>', $str);
@@ -139,7 +150,9 @@ function template_parse($str) {
 	$str = preg_replace('/{url\s+(\S+)\s+(array\(.+?\))}/', '<?php echo url($1, $2);?>', $str);
 	$str = preg_replace('/{media\s+(\S+)}/', '<?php echo tomedia($1);?>', $str);
 	$str = preg_replace_callback('/{data\s+(.+?)}/s', "moduledata", $str);
+	$str = preg_replace_callback('/{hook\s+(.+?)}/s', "template_modulehook_parser", $str);
 	$str = preg_replace('/{\/data}/', '<?php } } ?>', $str);
+	$str = preg_replace('/{\/hook}/', '<?php ; ?>', $str);
 	$str = preg_replace_callback('/<\?php([^\?]+)\?>/s', "template_addquote", $str);
 	$str = preg_replace('/{([A-Z_\x7f-\xff][A-Z0-9_\x7f-\xff]*)}/s', '<?php echo $1;?>', $str);
 	$str = str_replace('{##', '{', $str);
@@ -170,6 +183,7 @@ function moduledata($params = '') {
 	foreach ($params as $row) {
 		$row = explode('=', $row);
 		$data[$row[0]] = str_replace(array("'", '"'), '', $row[1]);
+		$row[1] = urldecode($row[1]);
 	}
 	$funcname = $data['func'];
 	$assign = !empty($data['assign']) ? $data['assign'] : $funcname;
@@ -183,7 +197,6 @@ function moduledata($params = '') {
 	$data['index'] = !empty($data['index']) ? $data['index'] : 'iteration';
 	if (!empty($data['module'])) {
 		$modulename = $data['module'];
-		unset($data['module']);
 	} else {
 		list($modulename) = explode('_', $data['func']);
 	}
@@ -229,10 +242,10 @@ function modulefunc($modulename, $funcname, $params) {
 
 function site_navs($params = array()) {
 	global $_W, $multi, $cid, $ishomepage;
-	$condition = '';
+	$condition = array();
 	if(!$cid || !$ishomepage) {
 		if (!empty($params['section'])) {
-			$condition = " AND section = '".intval($params['section'])."'";
+			$condition['section'] = intval($params['section']);
 		}
 		if(empty($params['multiid'])) {
 			load()->model('account');
@@ -241,10 +254,19 @@ function site_navs($params = array()) {
 		} else{
 			$multiid = intval($params['multiid']);
 		}
-		$navs = pdo_fetchall("SELECT id, name, description, url, icon, css, position, module FROM ".tablename('site_nav')." WHERE position = '1' AND status = 1 AND uniacid = '{$_W['uniacid']}' AND multiid = '{$multiid}' $condition ORDER BY displayorder DESC, id DESC");
+		$condition['position'] = 1;
+		$condition['status'] = 1;
+		$condition['uniacid'] = $_W['uniacid'];
+		$condition['multiid'] = $multiid;
+		$fields = array('id', 'name', 'description', 'url', 'icon', 'css', 'position', 'module');
+		$navs = pdo_getall('site_nav', $condition, $fields, '', 'section ASC, displayorder DESC, id DESC');
 	} else {
-		$condition = " AND parentid = '".$cid."'";
-		$navs = pdo_fetchall("SELECT * FROM ".tablename('site_category')." WHERE enabled = '1' AND uniacid = '{$_W['uniacid']}' $condition ORDER BY displayorder DESC, id DESC");
+		$condition = array(
+					'parentid' => $cid,
+					'enabled' => 1,
+					'uniacid' => $_W['uniacid']
+				);
+		$navs = pdo_getall('site_category', $condition, array(), '', 'displayorder DESC, id DESC');
 	}
 	if(!empty($navs)) {
 		foreach ($navs as &$row) {
@@ -285,16 +307,15 @@ function site_article($params = array()) {
 		$psize = max(1, $limit);
 	}
 	$result = array();
-
 	$condition = " WHERE uniacid = :uniacid ";
 	$pars = array(':uniacid' => $_W['uniacid']);
 	if (!empty($cid)) {
-		$category = pdo_fetch("SELECT parentid FROM ".tablename('site_category')." WHERE id = :id", array(':id' => $cid));
-		if (!empty($category['parentid'])) {
+		$category = pdo_getcolumn('site_category', array('id' => $cid, 'enabled' => 1), 'parentid');
+		if (!empty($category)) {
 			$condition .= " AND ccate = :ccate ";
 			$pars[':ccate'] = $cid;
 		} else {
-			$condition .= " AND pcate = :pcate ";
+			$condition .= " AND pcate = :pcate";
 			$pars[':pcate'] = $cid;
 		}
 	}
@@ -372,7 +393,7 @@ function site_slide_search($params = array()) {
 		foreach($list as &$row) {
 			if (!strexists($row['url'], './')) {
 				if (!strexists($row['url'], 'http')) {
-					$row['url'] = $_W['sitescheme'] . $row['url'];
+					$row['url'] = '//' . $row['url'];
 				}
 			}
 			$row['thumb'] = tomedia($row['thumb']);
@@ -386,9 +407,12 @@ function app_slide($params = array()) {
 }
 
 function site_widget_link($params = array()) {
-	$widgetparams = json_decode($params['params'], true);
+	$params['widgetdata'] = urldecode($params['widgetdata']);
+	$widget = json_decode($params['widgetdata'], true);
+	$widgetparams = !empty($widget['params']) ? $widget['params'] : array();
+
 	$sql = 'SELECT * FROM ' .tablename('site_article')." WHERE uniacid = :uniacid ";
-	$sqlparams = array(':uniacid' => $params['uniacid']);
+	$sqlparams = array(':uniacid' => $widget['uniacid']);
 	if (!empty($widgetparams['selectCate']['pid'])) {
 		$sql .= " AND pcate = :pid";
 		$sqlparams[':pid'] = $widgetparams['selectCate']['pid'];
@@ -417,6 +441,7 @@ function site_widget_link($params = array()) {
 			$row['thumb_url'] = tomedia($row['thumb']);
 			$row['url'] = url('site/site/detail', array('id' => $row['id']));
 		}
+		unset($row);
 	}
 	return (array)$list;
 }
@@ -435,7 +460,9 @@ function site_quickmenu() {
 			$site_multi_info = pdo_get('site_multi', array('id' => $id,'uniacid' => $_W['uniacid']));		
 			$multiid = empty($site_multi_info) ? '' : $id;
 		} else {
-			isetcookie('__multiid', '');
+			if(!($_GPC['c'] == 'home' && $_GPC['a'] == 'page')){
+				@isetcookie('__multiid', '');
+			}
 		}
 		if (empty($multiid)) {
 			$setting = uni_setting($_W['uniacid'], array('default_site'));
@@ -447,7 +474,13 @@ function site_quickmenu() {
 		return false;
 	}
 	$quickmenu['params'] = json_decode($quickmenu['params'], true);
-	if ($_GPC['c'] == 'home' && empty($quickmenu['params']['position']['homepage'])) {
+	if ($_GPC['c'] == 'home' && $_GPC['a'] != 'page' && empty($quickmenu['params']['position']['homepage'])) {
+		return false;
+	}
+	if ($_GPC['c'] == 'home' && $_GPC['a'] == 'page' && empty($quickmenu['params']['position']['page'])) {
+		return false;
+	}
+	if ($_GPC['c'] == 'site' && empty($quickmenu['params']['position']['article'])) {
 		return false;
 	}
 	if (!empty($_GPC['m']) && !empty($quickmenu['params']['ignoreModules'][$_GPC['m']])) {
@@ -469,4 +502,53 @@ function site_quickmenu() {
 		}
 	});
 </script>";
+}
+
+function template_modulehook_parser($params = array()) {
+	load()->model('module');
+	if (empty($params[1])) {
+		return '';
+	}
+	$params = explode(' ', $params[1]);
+	if (empty($params)) {
+		return '';
+	}
+	$plugin = array();
+	foreach ($params as $row) {
+		$row = explode('=', $row);
+		$plugin[$row[0]] = str_replace(array("'", '"'), '', $row[1]);
+		$row[1] = urldecode($row[1]);
+	}
+	$plugin_info = module_fetch($plugin['module']);
+	if (empty($plugin_info)) {
+		return false;
+	}
+
+	if (empty($plugin['return']) || $plugin['return'] == 'false') {
+			} else {
+			}
+	if (empty($plugin['func']) || empty($plugin['module'])) {
+		return false;
+	}
+
+	if (defined('IN_SYS')) {
+		$plugin['func'] = "hookWeb{$plugin['func']}";
+	} else {
+		$plugin['func'] = "hookMobile{$plugin['func']}";
+	}
+
+	$plugin_module = WeUtility::createModuleHook($plugin_info['name']);
+	if (method_exists($plugin_module, $plugin['func']) && $plugin_module instanceof WeModuleHook) {
+		$hookparams = var_export($plugin, true);
+		if (!empty($hookparams)) {
+			$hookparams = preg_replace("/'(\\$[a-zA-Z_\x7f-\xff\[\]\']*?)'/", '$1', $hookparams);
+		} else {
+			$hookparams = 'array()';
+		}
+		$php = "<?php \$plugin_module = WeUtility::createModuleHook('{$plugin_info['name']}');call_user_func_array(array(\$plugin_module, '{$plugin['func']}'), array('params' => {$hookparams})); ?>";
+		return $php;
+	} else {
+		$php = "<!--模块 {$plugin_info['name']} 不存在嵌入点 {$plugin['func']}-->";
+		return $php;
+	}
 }

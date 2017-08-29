@@ -1,7 +1,9 @@
 <script type="text/html" id="tpl_show_notice">
     <div class="drag" data-itemid="<%itemid%>">
-        <div class="fui-notice" style="background: <%style.background%>">
-            <div class="image"><img src="<%imgsrc params.iconurl%>" onerror="this.src='../addons/ewei_shopv2/static/images/hotdot.jpg'"></div>
+        <div class="fui-notice" style="background: <%style.background%>; border-color: <%style.bordercolor%>;">
+            <%if params.iconurl%>
+                <div class="image"><img src="<%imgsrc params.iconurl%>" onerror="this.src='../addons/ewei_shopv2/static/images/hotdot.jpg'"></div>
+            <%/if%>
             <div class="icon"><i class="icon icon-notification1" style="font-size: 0.7rem; color: <%style.iconcolor%>;"></i></div>
             <div class="text" style="color: <%style.color%>;">
                 <%if params.noticedata=='0'%>这里将读取商城的公告进行滚动显示<%/if%>
@@ -623,49 +625,66 @@
     <div class="drag" data-itemid="<%itemid%>">
         <div class="fui-cell-group fui-cell-click  fui-sale-group" style="background: <%style.background%>; margin-top: <%style.margintop%>px; margin-bottom: <%style.marginbottom%>px;">
             <%each data as sale%>
-            <%if sale.type=='yushou'%>
+                <%if sale.type=='yushou'%>
+                    <div class="fui-cell">
+                        <div class="fui-cell-text" style="color: <%style.textcolor%>;"><label class="label label-default">预售</label> 预计发货时间：购买后<span class="text-danger" style="color: <%style.textcolorhigh%>;"> 7 </span>天发货</div>
+                    </div>
+                <%/if%>
+                <%if sale.type=='erci'%>
                 <div class="fui-cell">
-                    <div class="fui-cell-text" style="color: <%style.textcolor%>;"><label class="label label-default">预售</label> 预计发货时间：购买后<span class="text-danger" style="color: <%style.salecolorhigh%>;"> 7 </span>天发货</div>
+                    <div class="fui-cell-text" style="color: <%style.textcolor%>;">此商品二次购买 可享受 <span class="text-danger" style="color: <%style.textcolorhigh%>;"> 5 </span> 折优惠</div>
                 </div>
-            <%/if%>
-            <%if sale.type=='erci'%>
-            <div class="fui-cell">
-                <div class="fui-cell-text" style="color: <%style.textcolor%>;">此商品二次购买 可享受 <span class="text-danger" style="color: <%style.salecolorhigh%>;"> 5 </span> 折优惠</div>
-            </div>
-            <%/if%>
-            <%if sale.type=='huiyuan'%>
-            <div class="fui-cell">
-                <div class="fui-cell-text" style="color: <%style.textcolor%>;">您的会员等级是<span class="text-danger" style="color: <%style.salecolorhigh%>;"> VIP </span>可享受 <span class="text-danger" style="color: <%style.salecolorhigh%>;">￥10</span> 的价格</div>
-            </div>
-            <%/if%>
-            <%if sale.type=='youhui'%>
-            <div class="fui-cell">
-                <div class="fui-cell-text" style="color: <%style.textcolor%>;">优惠 全场满 <span class="text-danger" style="color: <%style.textcolorhigh%>;">￥100</span> 包邮</div>
-                <div class="fui-cell-remark"></div>
-            </div>
-            <%/if%>
-            <%if sale.type=='jifen'%>
-            <div class="fui-cell">
-                <div class="fui-cell-text" style="color: <%style.textcolor%>;">积分  购买赠送 <span class="text-danger" style="color: <%style.textcolorhigh%>;">20</span> 积分</div>
-                <div class="fui-cell-remark"></div>
-            </div>
-            <%/if%>
-            <%if sale.type=='bupeisong'%>
-            <div class="fui-cell">
-                <div class="fui-cell-text" style="color: <%style.textcolor%>;">不配送区域: 天津辖区 天津辖县</div>
-                <div class="fui-cell-remark"></div>
-            </div>
-            <%/if%>
-            <%if sale.type=='biaoqian'%>
-            <div class="fui-cell">
-                <div class="fui-cell-text">
-                    <span class="label label-danger" style="border-radius: 5px;">货到付款</span>
-                    <span class="label label-danger" style="border-radius: 5px;">正品保证</span>
-                    <span class="label label-danger" style="border-radius: 5px;">保修</span>
-                    <span class="label label-danger" style="border-radius: 5px;">发票</span>
+                <%/if%>
+                <%if sale.type=='huiyuan'%>
+                <div class="fui-cell">
+                    <div class="fui-cell-text" style="color: <%style.textcolor%>;">您的会员等级是<span class="text-danger" style="color: <%style.textcolorhigh%>;"> VIP </span>可享受 <span class="text-danger" style="color: <%style.textcolorhigh%>;">￥10</span> 的价格</div>
                 </div>
-            </div>
-            <%/if%>
+                <%/if%>
+                <%if sale.type=='youhui'%>
+                <div class="fui-cell">
+                    <div class="fui-cell-text" style="color: <%style.textcolor%>;">优惠 全场满 <span class="text-danger" style="color: <%style.textcolorhigh%>;">￥100</span> 包邮</div>
+                    <div class="fui-cell-remark"></div>
+                </div>
+                <%/if%>
+                <%if sale.type=='jifen'%>
+                <div class="fui-cell">
+                    <div class="fui-cell-text" style="color: <%style.textcolor%>;">积分  购买赠送 <span class="text-danger" style="color: <%style.textcolorhigh%>;">20</span> 积分</div>
+                    <div class="fui-cell-remark"></div>
+                </div>
+                <%/if%>
+                <%if sale.type=='bupeisong'%>
+                <div class="fui-cell">
+                    <div class="fui-cell-text" style="color: <%style.textcolor%>;">不配送区域: 天津辖区 天津辖县</div>
+                    <div class="fui-cell-remark"></div>
+                </div>
+                <%/if%>
+                <%if sale.type=='biaoqian'%>
+                <div class="fui-cell">
+                    <div class="fui-cell-text">
+                        <span class="label label-danger" style="border-radius: 5px;">货到付款</span>
+                        <span class="label label-danger" style="border-radius: 5px;">正品保证</span>
+                        <span class="label label-danger" style="border-radius: 5px;">保修</span>
+                        <span class="label label-danger" style="border-radius: 5px;">发票</span>
+                    </div>
+                </div>
+                <%/if%>
+                <%if sale.type=='coupon'%>
+                <div class="fui-cell">
+                    <div class="fui-cell-text" style="color: <%style.textcolor%>;">领取可用优惠券</div>
+                    <div class="fui-cell-remark"></div>
+                </div>
+                <%/if%>
+                <%if sale.type=='zengpin'%>
+                <div class="fui-cell">
+                    <div class="fui-cell-text" style="color: <%style.textcolor%>;">赠品: 赠品名称</div>
+                </div>
+                <%/if%>
+                <%if sale.type=='fullback'%>
+                <div class="fui-cell">
+                    <div class="fui-cell-text" style="color: <%style.textcolorhigh%>;">该商品享受 <b>￥1.00~￥1.00</b> 的全返</div>
+                    <div class="fui-cell-remark"></div>
+                </div>
+                <%/if%>
             <%/each%>
         </div>
     </div>
@@ -822,8 +841,8 @@
                         </div>
                         <div class="fui-list-inner store-inner">
                             <div class="title" style="font-size: 14px; color: <%style.shopnamecolor%>;"><span class="storename">总店001</span></div>
-                            <div class="text" style="font-size: 12px; color: <%style.shopinfocolor%>;">地址: <span class="realname">江苏省无锡市梁溪区XXXXX路XXXX号</span></div>
-                            <div class="text" style="font-size: 12px; color: <%style.shopinfocolor%>;">电话: <span class="address">0510-88888888</span></div>
+                            <div class="text" style="font-size: 12px; color: <%style.shopinfocolor%>;">地址: <span class="realname">山东省济南市市中区XXXXX路XXXX号</span></div>
+                            <div class="text" style="font-size: 12px; color: <%style.shopinfocolor%>;">电话: <span class="address">0531-88888888</span></div>
                         </div>
                         <div class="fui-list-angle ">
                             <a><i class=" icon icon-phone" style="color: <%style.navtelcolor||'green'%>"></i></a>
@@ -1327,7 +1346,7 @@
                     </div>
                 <%/if%>
                 <div class="center <%params.searchstyle%>">
-                    <input value="<%params.placeholder%>" style="opacity: <%style.opacity%>; background: <%style.searchbackground%>; color: <%style.searchtextcolor%>;" />
+                    <input value="<%params.placeholder%>" style="opacity: <%style.opacityinput%>; background: <%style.searchbackground%>; color: <%style.searchtextcolor%>;" />
                 </div>
                 <%if (params.rightnav==1&&params.rightnavicon!='') || (params.rightnav==2&&params.rightnavimg!='')%>
                     <div class="rightnav">
@@ -1448,6 +1467,20 @@
                 <p>3. 这里显示的是活动规则</p>
                 <p>(活动规则读取商品设置)</p>
             </div>
+        </div>
+    </div>
+</script>
+
+<script type="text/html" id="tpl_show_tabbar">
+    <div class="drag" data-itemid="<%itemid%>">
+        <div class="fui-tab fui-tab-danger">
+            <%define index=0%>
+            <%each data as item%>
+                <%if index <= style.scrollnum-1%>
+                    <a <%if index==0%>class="active" style="color: <%style.activecolor%>; border-color: <%style.activecolor%>; background: <%style.activebackground%>;"<%else%>style="color: <%style.color%>;"<%/if%>><%item.text||'未设置'%></a>
+                <%/if%>
+                <%define index++%>
+            <%/each%>
         </div>
     </div>
 </script>

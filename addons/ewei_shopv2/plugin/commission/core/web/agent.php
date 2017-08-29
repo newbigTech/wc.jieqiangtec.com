@@ -181,21 +181,22 @@ class Agent_EweiShopV2Page extends PluginWebPage
 		$level11 = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_member') . ' where isagent=0 and agentid=:agentid and uniacid=:uniacid limit 1', array(':agentid' => $agentid, ':uniacid' => $_W['uniacid']));
 		$condition = '';
 		$params = array();
-		if (empty($level)) 
+		$hasagent = false;
+		if (empty($level) && !(empty($this->set['level']))) 
 		{
 			$condition = ' and ( dm.agentid=' . $member['id'];
-			if (0 < $level1) 
+			if ((0 < $level1) && (1 < $this->set['level'])) 
 			{
 				$condition .= ' or  dm.agentid in( ' . implode(',', array_keys($member['level1_agentids'])) . ')';
 			}
-			if (0 < $level2) 
+			if ((0 < $level2) && (2 < $this->set['level'])) 
 			{
 				$condition .= ' or  dm.agentid in( ' . implode(',', array_keys($member['level2_agentids'])) . ')';
 			}
 			$condition .= ' )';
 			$hasagent = true;
 		}
-		else if ($level == 1) 
+		else if (($level == 1) && (0 < $this->set['level'])) 
 		{
 			if (0 < $level1) 
 			{
@@ -203,7 +204,7 @@ class Agent_EweiShopV2Page extends PluginWebPage
 				$hasagent = true;
 			}
 		}
-		else if ($level == 2) 
+		else if (($level == 2) && (1 < $this->set['level'])) 
 		{
 			if (0 < $level2) 
 			{
@@ -211,7 +212,7 @@ class Agent_EweiShopV2Page extends PluginWebPage
 				$hasagent = true;
 			}
 		}
-		else if ($level == 3) 
+		else if (($level == 3) && (2 < $this->set['level'])) 
 		{
 			if (0 < $level3) 
 			{
@@ -288,7 +289,12 @@ class Agent_EweiShopV2Page extends PluginWebPage
 		if ($hasagent) 
 		{
 			$total = pdo_fetchcolumn('select count(dm.id) from' . tablename('ewei_shop_member') . ' dm ' . ' left join ' . tablename('ewei_shop_member') . ' p on p.id = dm.agentid ' . ' left join ' . tablename('mc_mapping_fans') . 'f on f.openid=dm.openid' . ' where dm.uniacid =' . $_W['uniacid'] . '  ' . $condition, $params);
-			$list = pdo_fetchall('select dm.*,p.nickname as parentname,p.avatar as parentavatar  from ' . tablename('ewei_shop_member') . ' dm ' . ' left join ' . tablename('ewei_shop_member') . ' p on p.id = dm.agentid ' . ' left join ' . tablename('mc_mapping_fans') . 'f on f.openid=dm.openid  and f.uniacid=' . $_W['uniacid'] . ' where dm.uniacid = ' . $_W['uniacid'] . '  ' . $condition . '   ORDER BY dm.agenttime desc limit ' . (($pindex - 1) * $psize) . ',' . $psize, $params);
+			$sql = 'select dm.*,p.nickname as parentname,p.avatar as parentavatar  from ' . tablename('ewei_shop_member') . ' dm ' . ' left join ' . tablename('ewei_shop_member') . ' p on p.id = dm.agentid ' . ' left join ' . tablename('mc_mapping_fans') . 'f on f.openid=dm.openid  and f.uniacid=' . $_W['uniacid'] . ' where dm.uniacid = ' . $_W['uniacid'] . '  ' . $condition . '   ORDER BY dm.agenttime desc';
+			if (empty($_GPC['export'])) 
+			{
+				$sql .= ' limit ' . (($pindex - 1) * $psize) . ',' . $psize;
+			}
+			$list = pdo_fetchall($sql, $params);
 			$pager = pagination($total, $pindex, $psize);
 			foreach ($list as &$row ) 
 			{

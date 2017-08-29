@@ -65,7 +65,8 @@
                             {ifp 'messages.template.edit'}
                             <a class='btn btn-default  btn-sm' href="{php echo webUrl('messages/template/edit', array('id' => $row['id']))}" ><i class='fa fa-edit'></i> {ifp 'messages.template.edit'}编辑{else}查看{/if}</a>{/if}
                             {ifp 'messages.template.delete'}<a class='btn btn-default  btn-sm'  data-toggle='ajaxRemove' href="{php echo webUrl('messages/template/delete', array('id' => $row['id']))}" data-confirm="确认删除此模板吗？" ><i class='fa fa-trash'></i> 删除</a>{/if}
-                            
+                            <a class='btn btn-default  btn-sm'   data-toggle="ajaxModal" href="{php echo webUrl('messages/template/check', array('id'=>$row['id']))}" title='校验模板'><i class='fa fa-credit-card'></i> 校验模板</a>
+                       </td>
                     </tr>
                     {/loop}
                  

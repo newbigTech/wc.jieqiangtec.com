@@ -74,7 +74,7 @@
                 <span class="help-block">默认为空或者默认0都为不限制</span>
             </div>
         </div>
-
+		
 
                 <div class="form-group"></div>
                   <div class="form-group">
@@ -139,23 +139,29 @@
              $('.type-user').hide();
          }
      })
- })
-   $('form').submit(function(){
-       var type =$(":radio[name=type]:checked").val();
-       if(type=='0'){
-        if ($(':input[name=user]').isEmpty()) {
-             Tip.focus($(':input[name=user]'), '请选择用户!');
-             return false;
+ });
+    $('form').submit(function () {
+        var $this = $(this);
+        var type = $(":radio[name=type]:checked").val();
+        if (type == '0') {
+            if ($(':input[name=user]').isEmpty()) {
+                tip.msgbox.err('请选择用户!');
+                $(':input[name=user]').focus();
+                $this.attr('stop', 1);
+                return false;
+            }
+        } else {
+            if ($(":input[name='acid']").isEmpty()) {
+                tip.msgbox.err('请选择公众号!');
+                $(':input[name=acid]').focus();
+                $this.attr('stop', 1);
+                return false;
+            }
         }
-    }else{
-        if ($(':input[name=account]').isEmpty()) {
-             Tip.focus($(':input[name=account]'), '请选择公众号!');
-             return  false;
-        }
-    }
+        $this.removeAttr('stop');
         return true;
-       
-   })
+
+    })
   
 </script>
 {template '_footer'}

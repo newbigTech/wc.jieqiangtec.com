@@ -58,7 +58,7 @@ class Category_EweiShopV2Page extends PluginWebPage
 		$item = pdo_fetch('select * from ' . tablename('ewei_shop_creditshop_category') . ' where id=:id and uniacid=:uniacid limit 1', array(':id' => $id, ':uniacid' => $_W['uniacid']));
 		if (!(empty($item))) 
 		{
-			$url = mobileUrl('creditshop/list', array('cate' => $item['id']), true);
+			$url = mobileUrl('creditshop/lists', array('cate' => $item['id']), true);
 			$qrcode = m('qrcode')->createQrcode($url);
 		}
 		include $this->template();

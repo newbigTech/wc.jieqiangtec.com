@@ -34,7 +34,8 @@
             <select name="type" class="form-control input-sm select-sm" style="width:120px;">
                 <option value="" {if $_GPC['type']==''}selected{/if}>服务商</option>
                 <option value="juhe" {if $_GPC['type']=='juhe'}selected{/if}>聚合数据</option>
-                <option value="dayu" {if $_GPC['type']=='dayu'}selected{/if}>阿里大于</option>
+                <option value="dayu" {if $_GPC['type']=='dayu'}selected{/if}>阿里大于(老用户)</option>
+                <option value="aliyun" {if $_GPC['type']=='aliyun'}selected{/if}>阿里云短信</option>
                 <option value="emay" {if $_GPC['type']=='emay'}selected{/if}>亿美软通</option>
             </select>
             <select name="status" class="form-control input-sm select-sm" style="width:80px;">
@@ -56,7 +57,7 @@
             <tr>
                 <th style="width:25px;"><input type='checkbox'/></th>
                 <th>模板名称</th>
-                <th style="width: 100px; text-align: center;">服务商</th>
+                <th style="width: 120px; text-align: center;">服务商</th>
                 <th style="width: 80px; text-align: center;">状态</th>
                 {ifp 'sysset.sms.temp.testsend'}
                 <th style="width: 100px; text-align: center;">测试发送</th>
@@ -75,7 +76,9 @@
                     {if $item['type']=='juhe'}
                         <span class="label label-primary">聚合数据</span>
                     {elseif $item['type']=='dayu'}
-                        <span class="label label-success">阿里大于</span>
+                        <span class="label label-success">阿里大于(老用户)</span>
+                    {elseif $item['type']=='aliyun'}
+                        <span class="label label-success">阿里云短信</span>
                     {elseif $item['type']=='emay'}
                         <span class="label label-warning">亿美软通</span>
                     {/if}

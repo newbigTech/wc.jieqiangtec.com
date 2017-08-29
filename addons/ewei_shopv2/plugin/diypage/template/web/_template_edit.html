@@ -122,6 +122,29 @@
         </div>
     </div>
 
+    <div class="line"></div>
+
+    <div class="form-group">
+        <div class="col-sm-2 control-label">启动广告</div>
+        <div class="col-sm-10">
+            <select class="form-control input-sm diy-bind" data-bind="diyadv">
+                <option value="0" <%if page.diyadv=='0'||!page.diyadv%>selected="selected"<%/if%>>不显示</option>
+                <%each diyadvs as diyadv%>
+                <option value="<%diyadv.id%>" <%if page.diyadv==diyadv.id%>selected="selected"<%/if%>><%diyadv.name%></option>
+                <%/each%>
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-sm-2 control-label">下单提醒</div>
+        <div class="col-sm-10">
+            <label class="radio-inline"><input type="radio" name="danmu" value="0" class="diy-bind" data-bind="danmu" <%if page.danmu=='0' || !page.danmu%>checked="checked"<%/if%> > 不显示</label>
+            <label class="radio-inline"><input type="radio" name="danmu" value="1" class="diy-bind" data-bind="danmu" <%if page.danmu=='1'%>checked="checked"<%/if%>> 显示</label>
+            <div class="help-block">提示：设置请至 <a href="{php echo webUrl('diypage/shop/danmu')}" target="_blank">下单提醒</a> 中设置 未设置则不显示</div>
+        </div>
+    </div>
+
     <%if page.type==1%>
         <div class="line"></div>
 
@@ -306,6 +329,16 @@
     </div>
 
     <div class="form-group">
+        <div class="col-sm-2 control-label">边框颜色</div>
+        <div class="col-sm-4">
+            <div class="input-group input-group-sm">
+                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="bordercolor" value="<%style.bordercolor||'#e2e2e2'%>" type="color" />
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#e2e2e2').trigger('propertychange')">重置</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
         <div class="col-sm-2 control-label">小图标颜色</div>
         <div class="col-sm-4">
             <div class="input-group input-group-sm">
@@ -334,7 +367,7 @@
             </div>
             <div class="input-group " style="margin-top:.5em;">
                 <img src="<%imgsrc params.iconurl%>" onerror="this.src='../addons/ewei_shopv2/static/images/nopic.jpg';" class="img-responsive img-thumbnail" width="150" id="iconimg">
-                <span class="close" style="position:absolute; top: -10px; right: -14px;" title="重置默认图片" onclick="$('#iconsrc').val('../addons/ewei_shopv2/static/images/hotdot.jpg').trigger('change');$(this).prev().attr('src', '../addons/ewei_shopv2/static/images/hotdot.jpg')">×</span>
+                <span class="close" style="position:absolute; top: -10px; right: -14px;" title="移除图片" onclick="$('#iconsrc').val('').trigger('change');$(this).prev().attr('src', '')">×</span>
             </div>
         </div>
     </div>
@@ -1273,7 +1306,7 @@
         <div class="col-sm-10">
             <label class="radio-inline"><input type="radio" name="goodsdata" value="0" class="diy-bind" data-bind-child="params" data-bind="goodsdata" data-bind-init="true" <%if params.goodsdata=='0'%>checked="checked"<%/if%>> 手动选择</label>
             <label class="radio-inline"><input type="radio" name="goodsdata" value="1" class="diy-bind" data-bind-child="params" data-bind="goodsdata" data-bind-init="true" <%if params.goodsdata=='1'%>checked="checked"<%/if%> > 选择分类</label>
-            <%if (merch==0||!merch)&&(!params.goodstype||params.goodstype==0)%>
+            <%if !params.goodstype||params.goodstype==0%>
                 <label class="radio-inline"><input type="radio" name="goodsdata" value="2" class="diy-bind" data-bind-child="params" data-bind="goodsdata" data-bind-init="true" <%if params.goodsdata=='2'%>checked="checked"<%/if%> > 选择分组</label>
             <%/if%>
         </div>
@@ -2267,22 +2300,22 @@
             <div class="item" data-id="<%itemid%>" style="cursor: move">
                 <div class="item-form">
                     <%if child.type=='yushou'%>
-                        <span style="color: <%style.salecolor%>;"><label class="label label-default">预售</label> 预计发货时间：购买后<span class="text-danger" style="color: <%style.salecolorhigh%>;"> 7 </span>天发货</span>
+                        <span style="color: <%style.textcolor%>;"><label class="label label-default">预售</label> 预计发货时间：购买后<span class="text-danger" style="color: <%style.textcolorhigh%>;"> 7 </span>天发货</span>
                     <%/if%>
                     <%if child.type=='erci'%>
-                    <span style="color: <%style.salecolor%>;">此商品二次购买 可享受<span class="text-danger" style="color: <%style.salecolorhigh%>;"> 5 </span>折优惠</span>
+                    <span style="color: <%style.textcolor%>;">此商品二次购买 可享受<span class="text-danger" style="color: <%style.textcolorhigh%>;"> 5 </span>折优惠</span>
                     <%/if%>
                     <%if child.type=='huiyuan'%>
-                    <span style="color: <%style.salecolor%>;">您的会员等级是<span class="text-danger" style="color: <%style.salecolorhigh%>;"> VIP </span>可享受￥10的价格</span>
+                    <span style="color: <%style.textcolor%>;">您的会员等级是<span class="text-danger" style="color: <%style.textcolorhigh%>;"> VIP </span>可享受￥10的价格</span>
                     <%/if%>
                     <%if child.type=='youhui'%>
-                    <span style="color: <%style.salecolor%>;">优惠 全场满<span class="text-danger" style="color: <%style.salecolorhigh%>;"> ￥100 </span>包邮</span>
+                    <span style="color: <%style.textcolor%>;">优惠 全场满<span class="text-danger" style="color: <%style.textcolorhigh%>;"> ￥100 </span>包邮</span>
                     <%/if%>
                     <%if child.type=='jifen'%>
-                    <span style="color: <%style.salecolor%>;">积分 购买赠送<span class="text-danger" style="color: <%style.salecolorhigh%>;"> 20 </span>积分</span>
+                    <span style="color: <%style.textcolor%>;">积分 购买赠送<span class="text-danger" style="color: <%style.textcolorhigh%>;"> 20 </span>积分</span>
                     <%/if%>
                     <%if child.type=='bupeisong'%>
-                    <span style="color: <%style.salecolor%>;">不配送区域: 天津辖区 天津辖县 (拖动排序)</span>
+                    <span style="color: <%style.textcolor%>;">不配送区域: 天津辖区 天津辖县 (拖动排序)</span>
                     <%/if%>
                     <%if child.type=='biaoqian'%>
                     <span>
@@ -2291,6 +2324,15 @@
                         <span class="label label-danger" style="border-radius: 5px;">保修</span>
                         <span class="label label-danger" style="border-radius: 5px;">发票</span>
                     </span>
+                    <%/if%>
+                    <%if child.type=='coupon'%>
+                        <span style="color: <%style.textcolor%>;">领取可用优惠券</span>
+                    <%/if%>
+                    <%if child.type=='zengpin'%>
+                        <span style="color: <%style.textcolor%>;">赠品: 赠品名称</span>
+                    <%/if%>
+                    <%if child.type=='fullback'%>
+                        <span style="color: <%style.textcolorhigh%>;">该商品享受 <b>￥1.00~￥1.00</b> 的全返</span>
                     <%/if%>
                 </div>
             </div>
@@ -4057,12 +4099,22 @@
         </div>
     </div>
     <div class="form-group">
-        <div class="col-sm-2 control-label">透明度</div>
+        <div class="col-sm-2 control-label">背景透明度</div>
         <div class="col-sm-10">
             <div class="form-group">
                 <div class="slider col-sm-8 " data-value="<%style.opacity%>" data-min="0" data-max="10" data-decimal="10"></div>
                 <div class="col-sm-4 control-labe count"><span><%style.opacity%></span>(最大是1)</div>
                 <input class="diy-bind input" data-bind-child="style" data-bind="opacity" value="<%style.opacity%>" type="hidden" />
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">搜索框透明度</div>
+        <div class="col-sm-10">
+            <div class="form-group">
+                <div class="slider col-sm-8 " data-value="<%style.opacityinput%>" data-min="0" data-max="10" data-decimal="10"></div>
+                <div class="col-sm-4 control-labe count"><span><%style.opacityinput%></span>(最大是1)</div>
+                <input class="diy-bind input" data-bind-child="style" data-bind="opacityinput" value="<%style.opacityinput%>" type="hidden" />
             </div>
         </div>
     </div>
@@ -4522,3 +4574,74 @@
     </div>
 </script>
 
+<script type="text/html" id="tpl_edit_tabbar">
+
+    <div class="alert alert-info">提示：当访问页面链接等于选项卡中的链接时高亮, 选项卡个数超过三个自动滚动</div>
+
+    <div class="form-group">
+        <div class="col-sm-2 control-label">背景颜色</div>
+        <div class="col-sm-4">
+            <div class="input-group input-group-sm">
+                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="background" value="<%style.background%>" type="color">
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ffffff').trigger('propertychange')">重置</span>
+            </div>
+        </div>
+        <div class="col-sm-2 control-label">文字颜色</div>
+        <div class="col-sm-4">
+            <div class="input-group input-group-sm">
+                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="color" value="<%style.color%>" type="color">
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#666666').trigger('propertychange')">重置</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-sm-2 control-label">激活背景颜色</div>
+        <div class="col-sm-4">
+            <div class="input-group input-group-sm">
+                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="activebackground" value="<%style.activebackground%>" type="color">
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ffffff').trigger('propertychange')">重置</span>
+            </div>
+        </div>
+        <div class="col-sm-2 control-label">激活文字颜色</div>
+        <div class="col-sm-4">
+            <div class="input-group input-group-sm">
+                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="activecolor" value="<%style.activecolor%>" type="color">
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ef4f4f').trigger('propertychange')">重置</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-sm-2 control-label">超出滚动数</div>
+        <div class="col-sm-10">
+            <label class="radio-inline"><input type="radio" name="scrollnum" value="3" class="diy-bind" data-bind-child="style" data-bind="scrollnum" <%if style.scrollnum==3||!style.scrollnum%>checked="checked"<%/if%> > 超出3个滚动</label>
+            <label class="radio-inline"><input type="radio" name="scrollnum" value="4" class="diy-bind" data-bind-child="style" data-bind="scrollnum" <%if style.scrollnum==4%>checked="checked"<%/if%>> 超出4个滚动</label>
+        </div>
+    </div>
+
+    <div class="line"></div>
+
+    <div class="form-items indent" data-min="1" data-max="8">
+        <div class="inner" id="form-items">
+            <%each data as child itemid %>
+            <div class="item" data-id="<%itemid%>">
+                <span class="btn-del" title="删除"></span>
+                <div class="item-image square drag-btn square" style="height: 70px; line-height: 70px;">拖动排序</div>
+                <div class="item-form">
+                    <div class="input-group" style="margin-bottom:0px; ">
+                        <span class="input-group-addon">选项卡文字</span>
+                        <input type="text" class="form-control input-sm diy-bind" data-bind-parent="data" data-bind-child="<%itemid%>" data-bind="text" placeholder="请输入选项卡文字最大10字" value="<%child.text%>" maxlength="10" />
+                    </div>
+                    <div class="input-group" style="margin-top:10px; margin-bottom:0px; ">
+                        <input type="text" class="form-control input-sm diy-bind" data-bind-parent="data" data-bind-child="<%itemid%>" data-bind="linkurl" id="curl-<%itemid%>" placeholder="请选择链接或输入链接地址" value="<%child.linkurl%>" />
+                        <span class="input-group-addon btn btn-default" data-toggle="selectUrl" data-input="#curl-<%itemid%>">选择链接</span>
+                    </div>
+                </div>
+            </div>
+            <%/each%>
+        </div>
+        <div class="btn btn-w-m btn-block btn-default btn-outline" id="addChild"><i class="fa fa-plus"></i> 添加一个</div>
+    </div>
+
+</script>

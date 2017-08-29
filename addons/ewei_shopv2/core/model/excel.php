@@ -1,5 +1,5 @@
 <?php
-if (!defined('IN_IA')) 
+if (!(defined('IN_IA'))) 
 {
 	exit('Access Denied');
 }
@@ -28,7 +28,7 @@ class Excel_EweiShopV2Model
 		foreach ($params['columns'] as $key => $column ) 
 		{
 			$sheet->setCellValue($this->column($key, $rownum), $column['title']);
-			if (!empty($column['width'])) 
+			if (!(empty($column['width']))) 
 			{
 				$sheet->getColumnDimension($this->column_str($key))->setWidth($column['width']);
 			}
@@ -48,12 +48,20 @@ class Excel_EweiShopV2Model
 		}
 		$excel->getActiveSheet()->setTitle($params['title']);
 		$filename = urlencode($params['title'] . '-' . date('Y-m-d H:i', time()));
+		ob_end_clean();
 		header('Content-Type: application/octet-stream');
-		header('Content-Disposition: attachment;filename="' . $filename . '.xls"');
+		header('Content-Disposition: attachment;filename="' . $filename . '.xlsx"');
 		header('Cache-Control: max-age=0');
-		$writer = PHPExcel_IOFactory::createWriter($excel, 'Excel5');
-		$writer->save('php://output');
+		$writer = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
+		$this->SaveViaTempFile($writer);
 		exit();
+	}
+	public function SaveViaTempFile($objWriter) 
+	{
+		$filePath = '' . rand(0, getrandmax()) . rand(0, getrandmax()) . '.tmp';
+		$objWriter->save($filePath);
+		readfile($filePath);
+		unlink($filePath);
 	}
 	public function temp($title, $columns = array()) 
 	{
@@ -69,7 +77,7 @@ class Excel_EweiShopV2Model
 		foreach ($columns as $key => $column ) 
 		{
 			$sheet->setCellValue($this->column($key, $rownum), $column['title']);
-			if (!empty($column['width'])) 
+			if (!(empty($column['width']))) 
 			{
 				$sheet->getColumnDimension($this->column_str($key))->setWidth($column['width']);
 			}
@@ -103,8 +111,8 @@ class Excel_EweiShopV2Model
 		require_once IA_ROOT . '/framework/library/phpexcel/PHPExcel.php';
 		require_once IA_ROOT . '/framework/library/phpexcel/PHPExcel/IOFactory.php';
 		require_once IA_ROOT . '/framework/library/phpexcel/PHPExcel/Reader/Excel5.php';
-		$path = IA_ROOT . '/addons/ewei_shop/data/tmp/';
-		if (!is_dir($path)) 
+		$path = IA_ROOT . '/addons/ewei_shopv2/data/tmp/';
+		if (!(is_dir($path))) 
 		{
 			load()->func('file');
 			mkdirs($path, '0777');
@@ -123,7 +131,7 @@ class Excel_EweiShopV2Model
 		$file = time() . $_W['uniacid'] . '.' . $ext;
 		$uploadfile = $path . $file;
 		$result = move_uploaded_file($tmpname, $uploadfile);
-		if (!$result) 
+		if (!($result)) 
 		{
 			message('上传Excel 文件失败, 请重新上传!', '', 'error');
 		}

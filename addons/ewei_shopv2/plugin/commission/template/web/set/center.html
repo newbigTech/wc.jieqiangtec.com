@@ -18,6 +18,11 @@
             <label class="radio-inline">
                 <input type="radio"  name="data[codeShare]" value="2" {if $data['codeShare'] ==2} checked="checked"{/if} /> 样式二
             </label>
+            {if com('goodscode')}
+            <label class="radio-inline">
+                <input type="radio"  name="data[codeShare]" value="3" {if $data['codeShare'] ==3} checked="checked"{/if} /> 样式三
+            </label>
+            {/if}
         </div>
         {else}
         {if empty($data['qrcodeshare'])}否{else}是{/if}

@@ -75,7 +75,7 @@
 
 				<td>
 					{ifp 'task.log'}
-					<a class='btn btn-default btn-sm' href="{php echo webUrl('task/log', array('id' => $row['id']))}"><i class='fa fa-qrcode'></i> 关注记录</a>
+					<a class='btn btn-default btn-sm' href="{php echo webUrl('task/log', array('id' => $row['id'],'type'=>$row['poster_type']))}"><i class='fa fa-qrcode'></i> 关注记录</a>
 					{/if}
 
 					{ifp 'task.edit|task.view'}

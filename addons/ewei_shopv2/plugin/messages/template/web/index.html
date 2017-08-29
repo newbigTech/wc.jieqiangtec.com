@@ -9,6 +9,11 @@
 </div>
 
 <form action="./index.php" method="get" class="form-horizontal" role="form">
+	<input type="hidden" name="c" value="site" />
+	<input type="hidden" name="a" value="entry" />
+	<input type="hidden" name="m" value="ewei_shopv2" />
+	<input type="hidden" name="do" value="web" />
+	<input type="hidden" name="r"  value="messages" />
 
 	<div class="page-toolbar row m-b-sm m-t-sm">
 		<div class="col-sm-6 pull-right">
@@ -29,9 +34,9 @@
 		<thead>
 			<tr>
 				<th>任务名称</th>
-				<th >发送条数/未发送数/成功数/失败数</th>
-				<th  >状态</th>
-				<th style='width:420px;'>操作</th>
+				<th>发送条数/未发送数/成功数/失败数</th>
+				<th>状态</th>
+				<th>操作</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -41,22 +46,31 @@
 				<td>{$row['num']}/{$row['nosend']}/{$row['sendsuccess']}/{$row['sendfail']}</td>
 				<td>{$row['statustext']}</td>
 
-				<td>
-					{ifp 'messages.run'}
-					<a class='btn btn-default btn-sm'  data-toggle="ajaxRemove"  href="{php echo webUrl('messages/build', array('id' => $row['id']))}"><i class='fa fa-plus-circle'></i> 生成发送列表</a>
-					{/if}
-					{ifp 'messages.run'}
-					<a class='btn btn-default btn-sm' href="{php echo webUrl('messages/run', array('id' => $row['id']))}"><i class='fa fa-qrcode'></i> 开始发送</a>
-					{/if}
-					{ifp 'messages.edit|messages.view'}
-					<a class='btn btn-default btn-sm' data-toggle="ajaxRemove" href="{php echo webUrl('messages/reset', array('id' => $row['id']))}"><i class='fa fa-refresh'></i> 重置发送</a>
-					{/if}
-					{ifp 'messages.edit|messages.view'}
-					<a class='btn btn-default btn-sm' href="{php echo webUrl('messages/edit', array( 'id' => $row['id']))}"><i class='fa fa-edit'></i> {ifp 'messages.edit'}编辑{else}查看{/if}</a>
-					{/if}
-					{ifp 'messages.delete'}
-					<a class='btn btn-default btn-sm' data-toggle="ajaxRemove"  href="{php echo webUrl('messages/delete', array('id' => $row['id']))}"  title='删除' data-confirm="确认删除此任务吗？"><i class='fa fa-trash'></i> 删除</a>
-					{/if}
+				<td  style="overflow:visible;">
+					<div class="btn-group btn-group-sm" >
+						<a class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false" href="javascript:;">操作 <span class="caret"></span></a>
+						<ul class="dropdown-menu dropdown-menu-left" role="menu" style='z-index: 9999'>
+
+							{ifp 'messages.run'}
+							<li><a  data-toggle="ajaxRemove"  href="{php echo webUrl('messages/build', array('id' => $row['id']))}"><i class='fa fa-plus-circle'></i> 生成发送列表</a></li>
+							{/if}
+							{ifp 'messages.run'}
+							<li><a  href="{php echo webUrl('messages/run', array('id' => $row['id']))}"><i class='fa fa-qrcode'></i> 开始发送</a></li>
+							{/if}
+							{ifp 'messages.edit|messages.view'}
+							<li><a  data-toggle="ajaxRemove" href="{php echo webUrl('messages/reset', array('id' => $row['id']))}"><i class='fa fa-refresh'></i> 重置发送</a></li>
+							{/if}
+							{ifp 'messages.edit|messages.view'}
+							<li><a  href="{php echo webUrl('messages/edit', array( 'id' => $row['id']))}"><i class='fa fa-edit'></i> {ifp 'messages.edit'}编辑{else}查看{/if}</a></li>
+							{/if}
+							{ifp 'messages.delete'}
+							<li><a  data-toggle="ajaxRemove"  href="{php echo webUrl('messages/delete', array('id' => $row['id']))}"  title='删除' data-confirm="确认删除此任务吗？"><i class='fa fa-trash'></i> 删除</a></li>
+							{/if}
+							{ifp 'messages.view'}
+							<li><a  href="{php echo webUrl('messages/showsign', array( 'id' => $row['id']))}">查看发送日志</a></li>
+							{/if}
+						</ul>
+					</div>
 				</td>
 			</tr>
 			{/loop}

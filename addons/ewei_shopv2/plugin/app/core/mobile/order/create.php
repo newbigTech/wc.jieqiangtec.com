@@ -622,7 +622,19 @@ class Create_EweiShopV2Page extends AppMobilePage
 			}
 			$token = md5(microtime());
 			$_SESSION['order_token'] = $token;
-			$createInfo = array('id' => $id, 'gdid' => intval($_GPC['gdid']), 'fromcart' => $fromcart, 'addressid' => (!(empty($address)) && !($isverify) && !($isvirtual) ? $address['id'] : 0), 'storeid' => (!(empty($carrier_list)) && !($isverify) && !($isvirtual) ? $carrier_list[0]['id'] : 0), 'couponcount' => $couponcount, 'isvirtual' => $isvirtual, 'isverify' => $isverify, 'goods' => $goodsdata, 'merchs' => $merchs, 'orderdiyformid' => $orderdiyformid, 'token' => $token, 'giftid' => $giftid, 'mustbind' => $mustbind);
+			if (!(empty($address)) && !($isverify) && !($isvirtual)) 
+			{
+			}
+			else 
+			{
+			}
+			if (!(empty($carrier_list)) && !($isverify) && !($isvirtual)) 
+			{
+			}
+			else 
+			{
+			}
+			$createInfo = array('id' => $id, 'gdid' => intval($_GPC['gdid']), 'fromcart' => $fromcart, 'addressid' => 0, 'storeid' => 0, 'couponcount' => $couponcount, 'isvirtual' => $isvirtual, 'isverify' => $isverify, 'goods' => $goodsdata, 'merchs' => $merchs, 'orderdiyformid' => $orderdiyformid, 'token' => $token, 'giftid' => $giftid, 'mustbind' => $mustbind);
 			$buyagain = $buyagainprice;
 		}
 		else 

@@ -1,62 +1,125 @@
 <?php
-
+/**
+ * [WeEngine System] Copyright (c) 2014 WE7.CC
+ * WeEngine is NOT a free software, it under the license terms, visited http://www.we7.cc/ for more details.
+ */
 defined('IN_IA') or exit('Access Denied');
-$dos = array('display', 'setting', 'shortcut', 'enable', 'form');
+
+load()->model('module');
+load()->model('account');
+load()->model('user');
+load()->model('cloud');
+load()->model('cache');
+load()->model('extension');
+
+$dos = array('display', 'setting', 'shortcut', 'enable', 'permissions', 'check_status');
 $do = !empty($_GPC['do']) ? $_GPC['do'] : 'display';
-if($do != 'setting') {
-	uni_user_permission_check('profile_module');
-}
+
 $modulelist = uni_modules(false);
-if(empty($modulelist)) {
-	message('没有可用功能.');
+if ($do == 'check_status') {
+	$modulename = $_GPC['module'];
+	if (!empty($modulename)) {
+		$module_status = module_status($modulename);
+		if (!empty($module_status)) {
+			isetcookie('module_status:' . $modulename, json_encode($module_status));
+		}
+		if ($module_status['ban']) {
+			iajax(1, '您的站点存在盗版模块, 请删除文件后联系客服');
+		}
+		if ($module_status['upgrade']['upgrade']) {
+			iajax(1, $module_status['upgrade']['name'] . '检测最新版为' . $module_status['upgrade']['version'] . '，请尽快更新');
+		}
+	}
+	iajax(0, '', '');
 }
+
 if($do == 'display') {
-	$_W['page']['title'] = '模块列表 - 公众号选项';
-	$setting = uni_setting($_W['uniacid'], array('shortcuts'));
-	$shortcuts = $setting['shortcuts'];
-	if(!empty($modulelist)) {
-		foreach($modulelist as $i => &$module) {
-			if (!empty($_W['setting']['permurls']['modules']) && !in_array($module['name'], $_W['setting']['permurls']['modules'])) {
-				unset($modulelist[$i]);
+	$_W['page']['title'] = '公众号 - 应用模块 - 更多应用';
+	$pageindex = max(1, intval($_GPC['page']));
+	$pagesize = 30;
+
+	if (!empty($modulelist)) {
+		foreach ($modulelist as $name => &$row) {
+			if ($name == 'we7_coupon') {
+				$row['issystem'] = 0;
+			}
+			if (!empty($row['issystem']) || $row['app_support'] != 2 || (!empty($_GPC['keyword']) && !strexists ($row['title'], $_GPC['keyword'])) || (!empty($_GPC['letter']) && $row['title_initial'] != $_GPC['letter'])) {
+				unset($modulelist[$name]);
 				continue;
 			}
-			$module['shortcut'] = !empty($shortcuts[$module['name']]);
-			$module['official'] = empty($module['issystem']) && (strexists($module['author'], 'WeEngine Team') || strexists($module['author'], '微信团队'));
-						if($module['issystem']) {
-				$path = '../framework/builtin/' . $module['name'];
-			} else {
-				$path = '../addons/' . $module['name'];
-			}
-			$preview = $path . '/preview-custom.jpg';
-			if(!file_exists($preview)) {
-				$preview = $path . '/preview.jpg';
-			}
-			$module['preview'] = $preview;
 		}
-		unset($module);
+		$modules = $modulelist;
 	}
-	template('profile/module');
-	exit;
-}
-
-if($do == 'setting') {
-	$name = $_GPC['m'];
-	$module = $modulelist[$name];
+	template ('profile/module');
+} elseif ($do == 'shortcut') {
+	$status = intval($_GPC['shortcut']);
+	$modulename = $_GPC['modulename'];
+	$module = module_fetch($modulename);
 	if(empty($module)) {
-		message('抱歉，你操作的模块不能被访问！');
+		itoast('抱歉，你操作的模块不能被访问！', '', '');
 	}
-	if(!uni_user_module_permission_check($name.'_settings', $name)) {
-		message('您没有权限进行该操作');
+	
+	$module_enabled = uni_account_module_shortcut_enabled($modulename, $_W['uniacid'], $status);
+	
+	if ($status) {
+		itoast('添加模块快捷操作成功！', referer(), 'success');
+	} else {
+		itoast('取消模块快捷操作成功！', referer(), 'success');
 	}
-	define('CRUMBS_NAV', 1);
-	$ptr_title = '参数设置';
-	$module_types = module_types();
+} elseif ($do == 'enable') {
+	$modulename = $_GPC['modulename'];
+	if(empty($modulelist[$modulename])) {
+		itoast('抱歉，你操作的模块不能被访问！', '', '');
+	}
+	pdo_update('uni_account_modules', array(
+		'enabled' => empty($_GPC['enabled']) ? STATUS_OFF : STATUS_ON,
+	), array(
+		'module' => $modulename,
+		'uniacid' => $_W['uniacid']
+	));
+	cache_build_module_info($modulename);
+	itoast('模块操作成功！', referer(), 'success');
+} elseif ($do == 'top') {
+	$modulename = $_GPC['modulename'];
+	$module = $modulelist[$modulename];
+	if(empty($module)) {
+		itoast('抱歉，你操作的模块不能被访问！', '', '');
+	}
+	$max_displayorder = (int)pdo_getcolumn('uni_account_modules', array('uniacid' => $_W['uniacid']), 'MAX(displayorder)');
+	
+	$module_profile = pdo_get('uni_account_modules', array('module' => $modulename, 'uniacid' => $_W['uniacid']));
+	if (!empty($module_profile)) {
+		pdo_update('uni_account_modules', array('displayorder' => ++$max_displayorder), array('id' => $module_profile['id']));
+	} else {
+		pdo_insert('uni_account_modules', array(
+			'displayorder' => ++$max_displayorder,
+			'module' => $modulename,
+			'uniacid' => $_W['uniacid'],
+			'enabled' => STATUS_ON,
+			'shortcut' => STATUS_OFF,
+		));
+	}
+	cache_build_account_modules($_W['uniacid']);
+	itoast('模块置顶成功', referer(), 'success');
+} elseif ($do == 'setting') {
+	$modulename = $_GPC['m'];
+	$module = $_W['current_module'] = $modulelist[$modulename];
+	
+	if(empty($module)) {
+		itoast('抱歉，你操作的模块不能被访问！', '', '');
+	}
+
+	if(!uni_user_module_permission_check($modulename.'_settings', $modulename)) {
+		itoast('您没有权限进行该操作', '', '');
+	}
+	
+		define('CRUMBS_NAV', 1);
 	
 	$config = $module['config'];
 	if (($module['settings'] == 2) && !is_file(IA_ROOT."/addons/{$module['name']}/developer.cer")) {
 		
 		if (empty($_W['setting']['site']['key']) || empty($_W['setting']['site']['token'])) {
-			message('站点未注册，请先注册站点。', url('cloud/profile'), 'info');
+			itoast('站点未注册，请先注册站点。', url('cloud/profile'), 'info');
 		}
 		
 		if (empty($config)) {
@@ -75,11 +138,11 @@ if($do == 'setting') {
 		$iframe = cloud_module_setting_prepare($module_simple, 'setting');
 		$result = ihttp_post($iframe, array('inherit_setting' => base64_encode(iserializer($config))));
 		if (is_error($result)) {
-			message($result['message']);
+			itoast($result['message'], '', '');
 		}
 		$result = json_decode($result['content'], true);
 		if (is_error($result)) {
-			message($result['message']);
+			itoast($result['message'], '', '');
 		}
 		
 		$module_simple = array_elements(array('name', 'type', 'title', 'version', 'settings'), $module);
@@ -92,48 +155,4 @@ if($do == 'setting') {
 	$obj = WeUtility::createModule($module['name']);
 	$obj->settingsDisplay($config);
 	exit();
-}
-
-if($do == 'shortcut') {
-	$name = $_GPC['m'];
-	$module = $modulelist[$name];
-	if(empty($module)) {
-		message('抱歉，你操作的模块不能被访问！');
-	}
-	$setting = uni_setting($_W['uniacid'], array('shortcuts'));
-	$shortcuts = $setting['shortcuts'];
-	if(!is_array($shortcuts)) {
-		$shortcuts = array();
-	}
-	if($_GPC['shortcut'] == '1') {
-		$shortcut = array();
-		$shortcut['name'] = $module['name'];
-		$shortcut['link'] = url("home/welcome/ext", array('m' => $module['name']));;
-		$shortcuts[$module['name']] = $shortcut;
-	} else {
-		unset($shortcuts[$module['name']]);
-	}
-	$record = array();
-	$record['shortcuts'] = iserializer($shortcuts);
-	if(pdo_update('uni_settings', $record, array('uniacid' => $_W['uniacid'])) !== false) {
-		cache_delete("unisetting:{$_W['uniacid']}");
-		message('模块操作成功！', referer(), 'success');
-	}
-	exit();
-}
-
-if($do == 'enable') {
-	$name = $_GPC['m'];
-	$module = $modulelist[$name];
-	if(empty($module)) {
-		message('抱歉，你操作的模块不能被访问！');
-	}
-	pdo_update('uni_account_modules', array(
-		'enabled' => empty($_GPC['enabled']) ? 0 : 1,
-	), array(
-		'module' => $name,
-		'uniacid' => $_W['uniacid']
-	));
-	cache_build_account_modules();
-	message('模块操作成功！', referer(), 'success');
 }

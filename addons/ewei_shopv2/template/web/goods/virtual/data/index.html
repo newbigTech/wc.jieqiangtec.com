@@ -76,7 +76,7 @@
                                     
                                             {php $datas = iunserializer($item['fields'])}
                                 {loop $type['fields'] $key $name}
-                                       <td> {$datas[$key]}</td>
+                                <td> {php echo is_string($datas[$key])?$datas[$key]:''}</td>
                                         {/loop}
                                   
                                 
@@ -88,7 +88,8 @@
                                 <td>
 									<div class='btn-group btn-group-sm'>
                                     {if empty($item['openid'])}
-				    {ifp 'goods.virtual.data.edit'}<a class='btn btn-default btn-sm' href="{php echo webUrl('goods/virtual/data/edit', array('id' => $item['id'],'typeid'=>$item['typeid']))}"><i class='fa fa-edit'></i> {ifp 'goods.virtual.data.edit'}编辑{else}查看{/if}</a>{/if}
+				    {ifp 'goods.virtual.data.edit'}
+                                        <a class='btn btn-default btn-sm' href="{php echo webUrl('goods/virtual/data/edit', array('id' => $item['id'],'typeid'=>$item['typeid']))}"><i class='fa fa-edit'></i> {ifp 'goods.virtual.data.edit'}编辑{else}查看{/if}</a>{/if}
                                         {ifp 'goods.virtual.data.delete'}<a class='btn btn-default  btn-sm' data-toggle='ajaxRemove'  href="{php echo webUrl('goods/virtual/data/delete', array('typeid'=>$item['typeid'],'id' => $item['id']))}" data-confirm="确认删除此条数据吗？"><i class='fa fa-trash'></i> 删除</a>{/if}
  				    {else}
 				    <a class='btn btn-default  btn-sm' data-toggle='popover' data-content="

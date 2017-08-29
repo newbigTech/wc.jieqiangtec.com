@@ -1,6 +1,11 @@
 {template '_header'}
 <div class="page-heading"> 
     <span class='pull-right'>
+        {if p('hotelreservation')}
+            {ifp 'hotelreservation.goods.add'}
+                <a class='btn btn-primary btn-sm' href="{php echo webUrl('hotelreservation/goods/add')}"><i class='fa fa-plus'></i> 添加民宿</a>
+            {/if}
+        {/if}
         {ifp 'goods.add'}
         <a class='btn btn-primary btn-sm' href="{php echo webUrl('goods/add')}"><i class='fa fa-plus'></i> 添加商品</a>
         {/if}
@@ -139,18 +144,21 @@
             </td>
 
             <td>
-                {if $item['hasoption']==1}
-                {ifp 'goods.edit'}
-                <span data-toggle='tooltip' title='多规格不支持快速修改'>{$item['total']}</span>
+                {if !empty($item['hoteldaystock'])}
+                    <span data-toggle='tooltip' title='民宿类商品显示每日库存'>{$item['hoteldaystock']}/日</span>
+                {else if $item['hasoption']==1}
+                    {ifp 'goods.edit'}
+                        <span data-toggle='tooltip' title='多规格不支持快速修改'>{$item['total']}</span>
+                    {else}
+                        {$item['total']}
+                    {/if}
                 {else}
-                {$item['total']}
+                    {ifp 'goods.edit'}
+                        <a href='javascript:;' data-toggle='ajaxEdit' data-href="{php echo webUrl('goods/change',array('type'=>'total','id'=>$item['id']))}" >{$item['total']}</a>
+                    {else}
+                        {$item['total']}
+                    {/if}
                 {/if}
-                {else}
-                {ifp 'goods.edit'}
-                <a href='javascript:;' data-toggle='ajaxEdit' data-href="{php echo webUrl('goods/change',array('type'=>'total','id'=>$item['id']))}" >{$item['total']}</a>							
-                {else}
-                {$item['total']}
-                {/if}{/if}
             </td>
             <td>{$item['salesreal']}</td>
 
@@ -186,10 +194,10 @@
                 </td>
                 {/if}
                 <td  style="overflow:visible;position:relative">
-
                         {ifp 'goods.edit|goods.view'}
-                        	<a  class='btn btn-default btn-sm' href="{php echo webUrl('goods/edit', array('id' => $item['id'],'goodsfrom'=>$goodsfrom,'page'=>$page))}" title="{ifp 'goods.edit'}编辑{else}查看{/if}"><i class='fa fa-edit'></i> </a>
+                        <a  class='btn btn-default btn-sm' href="{php echo webUrl('goods/edit', array('id' => $item['id'],'goodsfrom'=>$goodsfrom,'page'=>$page))}" title="{ifp 'goods.edit'}编辑{else}查看{/if}"><i class='fa fa-edit'></i> </a>
                         {/if}
+
                         {if $_GPC['goodsfrom']=='cycle'}
                         {ifp 'goods.restore'}
                         <a  class='btn btn-default btn-sm' data-toggle='ajaxRemove' href="{php echo webUrl('goods/restore', array('id' => $item['id']))}" data-confirm='确认要恢复?'><i class='fa fa-reply'></i> </a>

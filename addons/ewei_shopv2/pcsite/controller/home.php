@@ -1,5 +1,5 @@
 <?php
-if (!defined('ES_PATH')) 
+if (!(defined('ES_PATH'))) 
 {
 	exit('Access Denied');
 }
@@ -18,8 +18,18 @@ class HomeController extends Controller
 		{
 			exit('请先到【系统设置】->【网站】->【基础设置】 配置网站数据.');
 		}
-		$data = @json_decode($set['content'], true);
-		if (!is_array($data)) 
+		if (!(empty($set['content'])) && !(is_array($set['content']))) 
+		{
+			if (strexists($set['content'], '{"')) 
+			{
+				$data = json_decode($set['content'], true);
+			}
+			else 
+			{
+				$data = unserialize($set['content']);
+			}
+		}
+		if (!(is_array($data))) 
 		{
 			$data = array();
 		}
@@ -66,7 +76,7 @@ class HomeController extends Controller
 			exit(json_encode(array('status' => 'error', 'message' => '内容不能为空!', 'type' => 'content')));
 		}
 		$guestbook = pdo_fetch('SELECT * FROM' . tablename('ewei_shop_system_guestbook') . ' WHERE clientip=:clientip ORDER BY createtime DESC LIMIT 1', array(':clientip' => ES_CLIENT_IP));
-		if (!empty($guestbook) && (TIMESTAMP <= $guestbook['createtime'] + 60)) 
+		if (!(empty($guestbook)) && (TIMESTAMP <= $guestbook['createtime'] + 60)) 
 		{
 			exit(json_encode(array('status' => 'error', 'message' => '距离上次留言时间小于1分钟!')));
 		}
@@ -76,9 +86,11 @@ class HomeController extends Controller
 		if (pdo_insertid()) 
 		{
 			echo json_encode(array('status' => 'success', 'message' => '留言成功!'));
-			return NULL;
 		}
-		echo json_encode(array('status' => 'error', 'message' => '留言失败!'));
+		else 
+		{
+			echo json_encode(array('status' => 'error', 'message' => '留言失败!'));
+		}
 	}
 	protected function shutdown(array $data) 
 	{
@@ -86,10 +98,12 @@ class HomeController extends Controller
 		if (empty($url)) 
 		{
 			exit('网站已经关闭');
-			return NULL;
 		}
-		header('location: ' . $url);
-		exit();
+		else 
+		{
+			header('location: ' . $url);
+			exit();
+		}
 	}
 	protected function banner($status = 'all') 
 	{

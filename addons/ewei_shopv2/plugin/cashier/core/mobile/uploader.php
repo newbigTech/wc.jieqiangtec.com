@@ -50,10 +50,12 @@ class Uploader_EweiShopV2Page extends CashierMobilePage
 			$result['filename'] = $file['path'];
 			$result['url'] = trim($_W['attachurl'] . $result['filename']);
 			exit(json_encode($result));
-			return;
 		}
-		$result['message'] = '请选择要上传的图片！';
-		exit(json_encode($result));
+		else 
+		{
+			$result['message'] = '请选择要上传的图片！';
+			exit(json_encode($result));
+		}
 	}
 	public function remove() 
 	{

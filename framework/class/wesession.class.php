@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * [WeEngine System] Copyright (c) 2014 WE7.CC
+ * WeEngine is NOT a free software, it under the license terms, visited http://www.we7.cc/ for more details.
+ */
 defined('IN_IA') or exit('Access Denied');
 
 
@@ -13,7 +16,14 @@ class WeSession {
 
 	
 	public static function start($uniacid, $openid, $expire = 3600) {
-		if (empty($GLOBALS['_W']['config']['setting']['memcache']['session']) || empty($GLOBALS['_W']['config']['setting']['memcache']['server'])) {
+		$cache_setting = $GLOBALS['_W']['config']['setting'];
+		if ($cache_setting['cache'] == 'memcache' && extension_loaded('memcache') && !empty($cache_setting['memcache']['server'])) {
+			ini_set("session.save_handler", "memcache");
+			ini_set("session.save_path", "tcp://{$cache_setting['memcache']['server']}:{$cache_setting['memcache']['port']}");
+		} elseif ($cache_setting['cache'] == 'redis' && extension_loaded('redis') && !empty($cache_setting['redis']['server'])) {
+			ini_set("session.save_handler", "redis");
+			ini_set("session.save_path", "tcp://{$cache_setting['redis']['server']}:{$cache_setting['redis']['port']}");
+		} else {
 			WeSession::$uniacid = $uniacid;
 			WeSession::$openid = $openid;
 			WeSession::$expire = $expire;
@@ -26,8 +36,8 @@ class WeSession {
 				array(&$sess, 'destroy'),
 				array(&$sess, 'gc')
 			);
-			register_shutdown_function('session_write_close');
 		}
+		register_shutdown_function('session_write_close');
 		session_start();
 	}
 
@@ -60,8 +70,7 @@ class WeSession {
 		$row['openid'] = WeSession::$openid;
 		$row['data'] = $data;
 		$row['expiretime'] = TIMESTAMP + WeSession::$expire;
-
-		return pdo_insert('core_sessions', $row, true) == 1;
+		return pdo_insert('core_sessions', $row, true) >= 1;
 	}
 
 	

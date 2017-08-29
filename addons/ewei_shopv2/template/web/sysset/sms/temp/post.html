@@ -44,12 +44,21 @@
                     <label class="col-sm-2 control-label {ifp 'sysset.sms.temp.edit'}must{/if}">服务商</label>
                     <div class="col-sm-9 col-xs-12">
                         {ife 'sysset.sms.temp' $item}
-                        {if !empty($smsset['juhe']) || (!empty($item) && $item['type']=='juhe')}<label class="radio-inline"><input type="radio" class="sms-type" data-template="1" name="type" value="juhe" {if $item['type']=='juhe' || empty($item)}checked{/if} {if !empty($item['type'])}disabled{/if}> 聚合数据</label>{/if}
-                        {if !empty($smsset['dayu']) || (!empty($item) && $item['type']=='dayu')}<label class="radio-inline"><input type="radio" class="sms-type" data-template="1" name="type" value="dayu" {if $item['type']=='dayu'} checked{/if} {if !empty($item['type'])}disabled{/if}> 阿里大于</label>{/if}
-                        {if !empty($smsset['emay']) || (!empty($item) && $item['type']=='emay')}<label class="radio-inline"><input type="radio" class="sms-type" data-template="0" name="type" value="emay" {if $item['type']=='emay'} checked{/if} {if !empty($item['type'])}disabled{/if}> 亿美软通</label>{/if}
-                        <div class="help-block">注意：选择短信服务商请先至 <a href="{php echo webUrl('sysset/sms/set')}" target="_blank">短信接口设置</a> 页面设置好短信服务商的接口信息。(<span class="text-danger">保存后不可修改</span> )</div>
+                            {if !empty($smsset['juhe']) || (!empty($item) && $item['type']=='juhe')}
+                                <label class="radio-inline"><input type="radio" class="sms-type" data-template="1" name="type" value="juhe" {if $item['type']=='juhe' || empty($item)}checked{/if} {if !empty($item['type'])}disabled{/if}> 聚合数据</label>
+                            {/if}
+                            {if !empty($smsset['dayu']) || (!empty($item) && $item['type']=='dayu')}
+                                <label class="radio-inline"><input type="radio" class="sms-type" data-template="1" name="type" value="dayu" {if $item['type']=='dayu'} checked{/if} {if !empty($item['type'])}disabled{/if}> 阿里大于(老用户)</label>
+                            {/if}
+                            {if !empty($smsset['aliyun']) || (!empty($item) && $item['type']=='aliyun')}
+                                <label class="radio-inline"><input type="radio" class="sms-type" data-template="1" name="type" value="aliyun" {if $item['type']=='aliyun'} checked{/if} {if !empty($item['type'])}disabled{/if}> 阿里云短信</label>
+                            {/if}
+                            {if !empty($smsset['emay']) || (!empty($item) && $item['type']=='emay')}
+                                <label class="radio-inline"><input type="radio" class="sms-type" data-template="0" name="type" value="emay" {if $item['type']=='emay'} checked{/if} {if !empty($item['type'])}disabled{/if}> 亿美软通</label>
+                            {/if}
+                            <div class="help-block">注意：选择短信服务商请先至 <a href="{php echo webUrl('sysset/sms/set')}" target="_blank">短信接口设置</a> 页面设置好短信服务商的接口信息。(<span class="text-danger">保存后不可修改</span> )</div>
                         {else}
-                        <div class='form-control-static'>{if $item['type']=='juhe'}聚合数据{elseif $item['type']=='dayu'}阿里大于{elseif $item['type']=='emay'}亿美软通{/if}</div>
+                            <div class='form-control-static'>{if $item['type']=='juhe'}聚合数据{elseif $item['type']=='dayu'}阿里大于{elseif $item['type']=='emay'}亿美软通{/if}</div>
                         {/if}
                     </div>
                 </div>
@@ -66,12 +75,12 @@
                     </div> 
                 </div>
 
-                <div class="form-group sms-template-sign" style="{if $item['type']=='dayu' || $item['type']=='emay'}display:block;{else}display:none;{/if}">
+                <div class="form-group sms-template-sign" style="{if $item['type']=='dayu' || $item['type']=='aliyun' || $item['type']=='emay'}display:block;{else}display:none;{/if}">
                     <label class="col-sm-2 control-label {ifp 'sysset.sms.temp.edit'}must{/if}" >短信签名</label>
                     <div class="col-sm-9 col-xs-12">
                         {ife 'sysset.sms.temp' $item}
                         <input type="text" name="smssign" class="form-control" value="{$item['smssign']}" placeholder="" data-rule-required='true' />
-                        <div class="help-block">请填写短信签名(如果服务商是大于请填写审核成功的签名)</div>
+                        <div class="help-block">请填写短信签名(如果服务商是大于\阿里云短信请填写审核成功的签名)</div>
                         {else}
                         <div class='form-control-static'>{$item['smssign']}</div>
                         {/if}
@@ -358,7 +367,7 @@
                 $(".sms-template-1").hide();
                 $(".sms-template-0").show();
             }
-            if(val=='dayu' || val=='emay'){
+            if(val=='dayu' || val=='aliyun' || val=='emay'){
                 $(".sms-template-sign").show();
             }else{
                 $(".sms-template-sign").hide();
@@ -377,12 +386,12 @@
 
     var kw = 1;
     function addType() {
-        $(".btn-add-type").button("loading");
+        $(".btn-add-type").html("loading").addClass('disabled');
         $.ajax({
             url: "{php echo webUrl('sysset/sms/temp/tpl')}&kw="+kw,
             cache: false
         }).done(function (html) {
-            $(".btn-add-type").button("reset");
+            $(".btn-add-type").html('<i class="fa fa-plus" title=""></i> 增加一条数据值').removeClass('disabled');
             $("#datas").append(html);
         });
         kw++;

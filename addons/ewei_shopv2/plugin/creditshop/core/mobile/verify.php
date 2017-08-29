@@ -22,6 +22,16 @@ class Verify_EweiShopV2Page extends PluginMobileLoginPage
 		global $_GPC;
 		$openid = $_W['openid'];
 		$uniacid = $_W['uniacid'];
+		$merch_plugin = p('merch');
+		$merch_data = m('common')->getPluginset('merch');
+		if ($merch_plugin && $merch_data['is_openmerch']) 
+		{
+			$is_openmerch = 1;
+		}
+		else 
+		{
+			$is_openmerch = 0;
+		}
 		$logid = intval($_GPC['logid']);
 		$data = p('creditshop')->allow($logid);
 		if (is_error($data)) 

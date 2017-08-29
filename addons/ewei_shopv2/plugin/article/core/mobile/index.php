@@ -1,5 +1,5 @@
 <?php
-if (!defined('IN_IA')) 
+if (!(defined('IN_IA'))) 
 {
 	exit('Access Denied');
 }
@@ -11,7 +11,7 @@ class Index_EweiShopV2Page extends PluginMobilePage
 		global $_GPC;
 		$aid = intval($_GPC['aid']);
 		$openid = $_W['openid'];
-		if (!empty($openid)) 
+		if (!(empty($openid))) 
 		{
 			$followed = m('user')->followed($openid);
 		}
@@ -34,7 +34,7 @@ class Index_EweiShopV2Page extends PluginMobilePage
 			$mp = pdo_fetch('SELECT acid,uniacid,name FROM ' . tablename('account_wechats') . ' WHERE uniacid=:uniacid limit 1 ', array(':uniacid' => $_W['uniacid']));
 			$article['article_mp'] = $mp['name'];
 		}
-		if (!empty($article['article_visit'])) 
+		if (!(empty($article['article_visit']))) 
 		{
 			if (empty($_W['openid'])) 
 			{
@@ -43,22 +43,22 @@ class Index_EweiShopV2Page extends PluginMobilePage
 			}
 			$article['article_visit_tip'] = iunserializer($article['article_visit_tip']);
 			$article['article_visit_level'] = iunserializer($article['article_visit_level']);
-			$visit_text = ((!empty($article['article_visit_tip']['text']) ? $article['article_visit_tip']['text'] : '您没有权限访问!'));
-			$visit_link = ((!empty($article['article_visit_tip']['link']) ? $article['article_visit_tip']['link'] : mobileUrl()));
+			$visit_text = ((!(empty($article['article_visit_tip']['text'])) ? $article['article_visit_tip']['text'] : '您没有权限访问!'));
+			$visit_link = ((!(empty($article['article_visit_tip']['link'])) ? $article['article_visit_tip']['link'] : mobileUrl()));
 			$member = m('member')->getMember($_W['openid']);
 			$visit_level_member = ((is_array($article['article_visit_level']['member']) ? $article['article_visit_level']['member'] : array()));
 			$visit_level_commission = ((is_array($article['article_visit_level']['commission']) ? $article['article_visit_level']['commission'] : array()));
-			if (!in_array((!empty($member['level']) ? $member['level'] : 'default'), $visit_level_member) && (!in_array($member['agentlevel'], $visit_level_commission) || empty($member['isagent']))) 
+			if (!(in_array((!(empty($member['level'])) ? $member['level'] : 'default'), $visit_level_member)) && (!(in_array($member['agentlevel'], $visit_level_commission)) || empty($member['isagent']))) 
 			{
 				$this->message($visit_text, $visit_link);
 			}
 		}
-		if (!empty($article['article_areas'])) 
+		if (!(empty($article['article_areas']))) 
 		{
 			$article['areas'] = explode(',', $article['article_areas']);
 		}
 		$myid = m('member')->getMid();
-		if (!empty($openid) && is_weixin() && !empty($myid)) 
+		if (!(empty($openid)) && (is_weixin() || is_h5app()) && !(empty($myid))) 
 		{
 			$state = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_article_log') . ' WHERE openid=:openid and aid=:aid and uniacid=:uniacid limit 1 ', array(':openid' => $openid, ':aid' => $article['id'], ':uniacid' => $_W['uniacid']));
 			if (empty($state['id'])) 
@@ -85,14 +85,14 @@ class Index_EweiShopV2Page extends PluginMobilePage
 			if (p('commission')) 
 			{
 				$set = p('commission')->getSet();
-				if (!empty($set['level'])) 
+				if (!(empty($set['level']))) 
 				{
 					$member = m('member')->getMember($openid);
-					if (!empty($member) && ($member['status'] == 1) && ($member['isagent'] == 1)) 
+					if (!(empty($member)) && ($member['status'] == 1) && ($member['isagent'] == 1)) 
 					{
 						$_W['shopshare']['link'] = mobileUrl('article', array('aid' => $article['id'], 'shareid' => $myid, 'mid' => $member['id']), true);
 					}
-					else if (!empty($_GPC['mid'])) 
+					else if (!(empty($_GPC['mid']))) 
 					{
 						$_W['shopshare']['link'] = mobileUrl('article', array('aid' => $article['id'], 'shareid' => $myid, 'mid' => $_GPC['mid']), true);
 					}
@@ -119,8 +119,12 @@ class Index_EweiShopV2Page extends PluginMobilePage
 				$this->model->doShare($article['id'], $shareid, $myid);
 			}
 		}
+		else 
+		{
+			$_W['shopshare'] = array('title' => $article['article_title'], 'imgUrl' => tomedia($article['resp_img']), 'desc' => $article['resp_desc'], 'link' => mobileUrl('article', array('aid' => $article['id']), true));
+		}
 		$advs = json_decode($article['product_advs'], true);
-		if (!empty($advs) && ($article['product_advs_type'] == 2)) 
+		if (!(empty($advs)) && ($article['product_advs_type'] == 2)) 
 		{
 			$advnum = count($advs);
 			$advrand = rand(0, $advnum - 1);
@@ -128,7 +132,7 @@ class Index_EweiShopV2Page extends PluginMobilePage
 			$advs = array();
 			$advs[] = $adv;
 		}
-		if (!empty($advs)) 
+		if (!(empty($advs))) 
 		{
 			foreach ($advs as $i => $v ) 
 			{
@@ -170,7 +174,7 @@ class Index_EweiShopV2Page extends PluginMobilePage
 		global $_GPC;
 		$aid = intval($_GPC['aid']);
 		$openid = $_W['openid'];
-		if (!empty($aid) && !empty($openid)) 
+		if (!(empty($aid)) && !(empty($openid))) 
 		{
 			$state = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_article_log') . ' WHERE openid=:openid and aid=:aid and uniacid=:uniacid limit 1 ', array(':openid' => $_W['openid'], ':aid' => $aid, ':uniacid' => $_W['uniacid']));
 			if (empty($state['like'])) 
@@ -178,7 +182,7 @@ class Index_EweiShopV2Page extends PluginMobilePage
 				pdo_update('ewei_shop_article', 'article_likenum=article_likenum+1', array('id' => $aid));
 				pdo_update('ewei_shop_article_log', array('like' => $state['like'] + 1), array('id' => $state['id']));
 				show_json(0, array('status' => 1));
-				return NULL;
+				return;
 			}
 			pdo_update('ewei_shop_article', 'article_likenum=article_likenum-1', array('id' => $aid));
 			pdo_update('ewei_shop_article_log', array('like' => $state['like'] - 1), array('id' => $state['id']));

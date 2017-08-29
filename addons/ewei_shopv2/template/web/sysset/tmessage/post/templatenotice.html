@@ -12,7 +12,7 @@
         <div class="form-group">
             <label class="col-sm-2 control-label must" >模板消息ID</label>
             <div class="col-sm-9 col-xs-12">
-                {ife 'tmessage' $list}
+                {ifp 'sysset.tmessage'}
                 <input type="text"  id="tp_template_id" name="tp_template_id" class="form-control" value="{$list['template_id']}" placeholder="模版消息ID，例：P8MxRKmW7wdejmZl14-swiGmsJVrFJiWYM7zKSPXq4I" data-rule-required='true' />
                 {else}
                 <div class='form-control-static'>{$list['template_id']}</div>
@@ -22,7 +22,7 @@
         <div class="form-group">
             <label class="col-sm-2 control-label must" >头部标题</label>
 
-            {ife 'tmessage' $list}
+            {ifp 'sysset.tmessage'}
             <div class="col-sm-9 title" style='padding-right:0' >
 
                 <textarea name="tp_first" class="form-control" value="" data-rule-required='true' placeholder="{{first.DATA}}">{$list['first']}</textarea>
@@ -44,7 +44,7 @@
         {loop $data $list2}
         {template 'sysset/tmessage/tpl'}
         {/loop}
-        {ife 'tmessage' $list}
+        {ife 'sysset.tmessage' $list}
         <div id="type-items"></div>
         <div class="form-group">
             <label class="col-sm-2 control-label" ></label>
@@ -59,21 +59,21 @@
 
         <div class="form-group">
             <label class="col-sm-2 control-label" >尾部描述</label>
-            {ife 'tmessage' $list}
-            <div class="col-sm-9 title" style='padding-right:0' >
-                <textarea name="tp_remark" class="form-control" placeholder="{{remark.DATA}}" >{$list['remark']}</textarea>
-                <span class='help-block'>填充模板 {{remark.DATA}} 的值</span>
-            </div>
-            <div class="col-sm-1" style='padding-left:0' >
+            {ife 'sysset.tmessage' $list}
+                <div class="col-sm-9 title" style='padding-right:0' >
+                    <textarea name="tp_remark" class="form-control" placeholder="{{remark.DATA}}" >{$list['remark']}</textarea>
+                    <span class='help-block'>填充模板 {{remark.DATA}} 的值</span>
+                </div>
+                <div class="col-sm-1" style='padding-left:0' >
 
-                <input type="color" name="remarkcolor" value="{$list['remarkcolor']}" style="width:32px;height:32px;" />
+                    <input type="color" name="remarkcolor" value="{$list['remarkcolor']}" style="width:32px;height:32px;" />
 
-            </div>
+                </div>
 
             {else}
-            <div class="col-sm-3">
-                <div class='form-control-static'>{$list['remark']} 颜色: {$list['remarkcolor']}</div>
-            </div>
+                <div class="col-sm-3">
+                    <div class='form-control-static'>{$list['remark']} 颜色: {$list['remarkcolor']}</div>
+                </div>
             {/if}
 
         </div>
@@ -144,6 +144,9 @@
                         {/if}
                         {if cv('cashier')}
                         <option value="cashier">收银台类</option>
+                        {/if}
+                        {if cv('lottery')}
+                        <option value="lottery">游戏中心类</option>
                         {/if}
                     </select>
                 </div>
@@ -387,7 +390,7 @@
                 <div class="panel-body tm tm-cashier" style="display:none">
                     <a href='JavaScript:' class="btn btn-default btn-sm">联系人</a>
                     <a href='JavaScript:' class="btn btn-default btn-sm">联系电话</a>
-                    <a href='JavaScript:' class="btn btn-default btn-sm">申请金额</a>
+                    <a href='JavaScript:' class="btn btn-default btn-sm">申请时间</a>
                     <a href='JavaScript:' class="btn btn-default btn-sm">打款时间</a>
                     <a href='JavaScript:' class="btn btn-default btn-sm">申请金额</a>
                     <a href='JavaScript:' class="btn btn-default btn-sm">打款金额</a>
@@ -400,6 +403,11 @@
                     <a href='JavaScript:' class="btn btn-default btn-sm">付款时间</a>
                     <a href='JavaScript:' class="btn btn-default btn-sm">收银台名称</a>
 
+                </div>
+
+                <div class="panel-heading tm tm-lottery" style="display:none">获得抽奖通知</div>
+                <div class="panel-body tm tm-lottery" style="display:none">
+                    <a href='JavaScript:' class="btn btn-default btn-sm">活动名称</a>
                 </div>
 
                 <div class="panel-body">

@@ -125,7 +125,14 @@ class Pay_EweiShopV2Page extends PluginMobileLoginPage
 					if (!(is_error($wechat))) 
 					{
 						$wechat['success'] = true;
-						$wechat['weixin'] = true;
+						if (!(empty($wechat['code_url']))) 
+						{
+							$wechat['weixin_jie'] = true;
+						}
+						else 
+						{
+							$wechat['weixin'] = true;
+						}
 					}
 				}
 			}

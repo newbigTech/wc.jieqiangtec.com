@@ -107,8 +107,26 @@ define(['core', 'tpl'], function (core, tpl) {
         core.json('sign/dosign', {date: date}, function (ret) {
             var result = ret.result;
             setTimeout(function () {
+
                 if (ret.status) {
-                    FoxUI.alert(result.message);
+                    if(result.lottery.is_changes==1){
+                        var changes = result.lottery.lottery;
+                        $('#changescontent').attr('onclick', 'window.location.href="'+ core.getUrl("lottery/lottery_info",[],true) +'&id=' + changes.lottery_id + '"');
+                        taskget = new FoxUIModal({
+                            content: $('#changesmodel').html(),
+                            extraClass: 'picker-modal',
+                            maskClick: function () {
+                                taskget.close()
+                            }
+                        });
+                        taskget.container.find('.changes-btn-close').click(function () {
+                            taskget.close();
+                            event.stopPropagation();
+                        });
+                        taskget.show();
+                    }else{
+                        FoxUI.alert(result.message);
+                    }
                     _this.data('doing', 0);
                     if (!date) {
                         _this.text("今日" + modal.params.textsigned);

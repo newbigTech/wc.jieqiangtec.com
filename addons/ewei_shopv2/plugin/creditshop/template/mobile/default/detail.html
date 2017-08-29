@@ -84,7 +84,7 @@
             {if $goods['isverify']==1}
                 {if ($goods['usetime'] > 0 && $goods['isendtime']==0) || $goods['isendtime']==1}
                 <div class="fui-cell fui-cell-credit">
-                    <div class="fui-cell-text"><p>兑换有效期: 兑换之日起 至 {$goods['endtime_str']}</p></div>
+                    <div class="fui-cell-text"><p>使用有效期: {if $goods['isendtime']==1}截止至{$goods['endtime_str']}{else}兑换之日起 {$goods['usetime']} 天内{/if}</p></div>
                 </div>
                 {/if}
             {/if}
@@ -110,7 +110,7 @@
             <div class="fui-cell">
                 <div class="fui-cell-text flex">
                     <span class="price" style="text-align: left;">
-                        <span class="big">{$goods['credit']}</span>{$_W['shopset']['trade']['credittext']}
+                        <span class="big">{if $goods['mincredit']>0}{$goods['mincredit']}{else}{$goods['credit']}{/if}</span>{$_W['shopset']['trade']['credittext']}
                         {if $goods['money'] > 0}
                             + <span style="font-size: 0.8rem;font-weight: bold;padding-right: 0.1rem;">&yen;{$goods['money']}</span>
                         {/if}
@@ -171,7 +171,9 @@
 
         <div class="detail-block">
             <div class="block block-basic tab-basic" id="basic">
+                <div class="content-block content-images" style="height: auto;">
                 {if $goods['goodsdetail']}{php echo htmlspecialchars_decode($goods['goodsdetail'])}{else}暂无商品详情{/if}
+                </div>
             </div>
             {if $set['isreply']==1}
             <div class="block block-comment tab-basic" id="comment">

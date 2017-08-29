@@ -55,7 +55,7 @@
                                         <tr>
                                             <td style="width: 20%">排序</td>
                                             <td style="width: 30%">优惠券名称</td>
-                                            <td style="width:30%">参与兑换量</td>
+                                            <td style="width:30%"></td>
                                             <td>是否选择</td>
                                         </tr>
                                         </thead>
@@ -65,9 +65,6 @@
                                             <td>1</td>
                                             <td>{$value['couponname']}</td>
                                             <td>
-                                                <a href="javascript:;" data-toggle="ajaxEdit"
-                                                   data-href="{php echo webUrl('exchange/coupon/stock',array('goodsid'=>$value['id']));}"
-                                                   style="display: inline;">{$value['id']}</a>
                                             </td>
                                             <td>
                                                 <div class="onoffswitch">
@@ -134,6 +131,16 @@
                     <label for="code1" class="radio-inline"><input type="radio" name="code_type" class="code_type" value="1" id="code1" {if $setting['code_type']==1}checked{/if} {if !empty($id)}disabled="disabled"{/if}> 微信永久二维码</label>
                     <label for="code2" class="radio-inline"><input type="radio" name="code_type" class="code_type" value="2" id="code2" {if $setting['code_type']==2}checked{/if} {if !empty($id)}disabled="disabled"{/if}> 普通链接二维码</label>
                     <label for="code3" class="radio-inline"><input type="radio" name="code_type" class="code_type" value="3" id="code3" {if $setting['code_type']==3}checked{/if} {if !empty($id)}disabled="disabled"{/if}> 纯数字兑换码</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">一码多兑</label>
+                <div class="col-sm-9  col-xs-12">
+                    <div class="input-group">
+                        <span class="input-group-addon">本组的每个兑换码可以兑换</span>
+                        <input type="text" name="repeat" class="form-control" value="{$setting['repeat']}">
+                        <span class="input-group-addon">次（默认1次） 兑完指定次数后失效</span>
+                    </div>
                 </div>
             </div>
             <div class="form-group">

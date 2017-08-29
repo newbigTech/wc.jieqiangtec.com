@@ -1,5 +1,5 @@
 <?php
-if (!defined('IN_IA')) 
+if (!(defined('IN_IA'))) 
 {
 	exit('Access Denied');
 }
@@ -19,7 +19,7 @@ class Temp_EweiShopV2Page extends MerchWebPage
 		$psize = 20;
 		$condition = ' uniacid = :uniacid and type=:type and merchid=:merchid';
 		$params = array(':uniacid' => $_W['uniacid'], ':type' => $type, ':merchid' => $merchid);
-		if (!empty($_GPC['keyword'])) 
+		if (!(empty($_GPC['keyword']))) 
 		{
 			$_GPC['keyword'] = trim($_GPC['keyword']);
 			$condition .= ' AND expressname LIKE :expressname';
@@ -78,7 +78,7 @@ class Temp_EweiShopV2Page extends MerchWebPage
 		{
 			$type = 2;
 		}
-		if (!empty($id)) 
+		if (!(empty($id))) 
 		{
 			$item = pdo_fetch('select * from ' . tablename('ewei_shop_exhelper_express') . ' where id=:id and type=:type and uniacid=:uniacid and merchid=:merchid limit 1', array(':id' => $id, ':type' => $type, ':uniacid' => $_W['uniacid'], ':merchid' => $merchid));
 		}
@@ -94,10 +94,10 @@ class Temp_EweiShopV2Page extends MerchWebPage
 		$merchid = $_W['merchid'];
 		$type = intval($_GPC['type']);
 		$id = intval($_GPC['id']);
-		if (!empty($type) && !empty($id)) 
+		if (!(empty($type)) && !(empty($id))) 
 		{
 			$item = pdo_fetch('SELECT id,expressname,type FROM ' . tablename('ewei_shop_exhelper_express') . ' WHERE id=:id and type=:type AND uniacid=:uniacid and merchid=:merchid', array(':id' => $id, ':type' => $type, ':uniacid' => $_W['uniacid'], ':merchid' => $merchid));
-			if (!empty($item)) 
+			if (!(empty($item))) 
 			{
 				pdo_update('ewei_shop_exhelper_express', array('isdefault' => 0), array('type' => $type, 'uniacid' => $_W['uniacid'], 'merchid' => $merchid));
 				pdo_update('ewei_shop_exhelper_express', array('isdefault' => 1), array('id' => $id));

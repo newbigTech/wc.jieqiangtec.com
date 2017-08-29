@@ -1,7 +1,7 @@
 {template '_header'}
 <div class="page-heading"> <h2>会员详情</h2> </div>
 
-<form {if 'member.member.edit'}action="" method='post'{/if} class='form-horizontal form-validate'>
+<form {if 'member.list.edit'}action="" method='post'{/if} class='form-horizontal form-validate'>
  <input type="hidden" name="referer" value="{php echo referer()}" />
 	<div class="tabs-container">
 

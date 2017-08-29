@@ -10,9 +10,8 @@ class Index_EweiShopV2Page extends PluginWebPage
 		if (cv('cashier.user')) 
 		{
 			header('location: ' . webUrl('cashier/user'));
-			return;
 		}
-		if (cv('cashier.user')) 
+		else if (cv('cashier.user')) 
 		{
 			header('location: ' . webUrl('cashier/user'));
 		}

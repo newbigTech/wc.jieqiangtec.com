@@ -182,7 +182,7 @@ class Index_EweiShopV2Page extends PluginWebPage
 		global $_W;
 		global $_GPC;
 		$set = $this->model->getSet();
-		$url = mobileUrl('seckill', NULL, true);
+		$url = mobileUrl('sign', NULL, true);
 		$qrcode = m('qrcode')->createQrcode($url);
 		if ($_W['ispost']) 
 		{

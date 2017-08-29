@@ -46,7 +46,7 @@
                         <label class="col-sm-2 control-label">活动类型</label>
                         <div class="col-sm-9 col-xs-12">
                             <input type="hidden" name="activitytype" value="{$item['activity']}">
-                            {ife 'sale.gif' $item}
+                            {ife 'sale.gift' $item}
                             <label class="radio-inline">
                                 <input type="radio" name="activity" value="1" {if !empty($item['id'])}disabled{/if} {if empty($item['activity']) || $item['activity'] == 1}checked="true"{/if} onclick="$('#order').show();$('#product').hide();" />
                                 订单金额
@@ -70,7 +70,7 @@
                     <div class="form-group cgt cgt-0" id="order" {if $item['activity']==2}style="display:none;"{/if}>
                         <label class="col-sm-2 control-label must">订单金额</label>
                         <div class="col-sm-9 col-xs-12">
-                            {ife 'sale.package' $item}
+                            {ife 'sale.gift' $item}
                             <div class="input-group">
                                 <input type='text' class='form-control' name='orderprice' value="{$item['orderprice']}" data-rule-required="true"/>
                                 <span class="input-group-addon">元</span>
@@ -85,7 +85,7 @@
                     <div class="form-group" id="product" {if $item['activity']==1 || empty($item['activity'])}style="display:none;"{/if}>
                         <label class="col-sm-2 control-label">指定商品</label>
                         <div class="col-sm-9 col-xs-12">
-                            {ife 'sale.package' $item}
+                            {ife 'sale.gift' $item}
                             <?php echo tpl_selector('goodsid',
                         array('multi'=>1,
                             'type'=>'image',
@@ -121,7 +121,7 @@
                     <div class="form-group">
                         <label class="col-sm-2 control-label">选择赠品</label>
                         <div class="col-sm-9 col-xs-12">
-                            {ife 'goods' $item}
+                            {ife 'sale.gift' $item}
                             <?php echo tpl_selector('giftgoodsid',
                         array('multi'=>1,
                             'type'=>'image',

@@ -7,10 +7,18 @@ global $_W;
 global $_GPC;
 ignore_user_abort();
 set_time_limit(0);
-$sets = pdo_fetchall('select uniacid from ' . tablename('ewei_shop_sysset'));
-if (!(empty($_GPC['uniacid']))) 
+$uniacids = m('cache')->get('willcloseuniacid', 'global');
+if (empty($uniacids)) 
 {
-	$_W['uniacid'] = $_GPC['uniacid'];
+	return;
+}
+foreach ($uniacids as $uniacid ) 
+{
+	if (empty($uniacid)) 
+	{
+		continue;
+	}
+	$_W['uniacid'] = $uniacid;
 	$trade = m('common')->getSysset('trade', $_W['uniacid']);
 	$days = intval($trade['closeorder']);
 	$minute = intval($trade['willcloseorder']);
@@ -30,20 +38,8 @@ if (!(empty($_GPC['uniacid'])))
 		$onew = pdo_fetch('select id,status  from ' . tablename('ewei_shop_order') . ' where id=:id and status=0 and paytype<>3  and createtime + ' . $daytimes . '- ' . $minute . ' <=unix_timestamp()  limit 1', array(':id' => $o['id']));
 		if (!(empty($onew)) && ($onew['status'] == 0)) 
 		{
-			m('notice')->sendOrderWillCancelMessage($onew['id']);
+			m('notice')->sendOrderWillCancelMessage($onew['id'], $daytimes);
 		}
-	}
-}
-else 
-{
-	load()->func('communication');
-	foreach ($sets as $set ) 
-	{
-		if (empty($set['uniacid'])) 
-		{
-			continue;
-		}
-		$res = ihttp_request($_W['siteroot'] . 'willclose.php?uniacid=' . $set['uniacid']);
 	}
 }
 ?>

@@ -47,7 +47,7 @@ class Cover_EweiShopV2Page extends PluginWebPage
 			plog('creditshop.cover.edit', '修改积分商城入口设置');
 			show_json(1);
 		}
-		$url = mobileUrl('creditshop', NULL, true);
+		$url = mobileUrl('creditshop', array('merchid' => $_W['merchid']), true);
 		$qrcode = m('qrcode')->createQrcode($url);
 		include $this->template();
 	}

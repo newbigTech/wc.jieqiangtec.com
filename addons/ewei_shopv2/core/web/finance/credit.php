@@ -1,5 +1,5 @@
 <?php
-if (!defined('IN_IA')) 
+if (!(defined('IN_IA'))) 
 {
 	exit('Access Denied');
 }
@@ -13,7 +13,7 @@ class Credit_EweiShopV2Page extends WebPage
 		$psize = 20;
 		$condition = ' and log.uniacid=:uniacid and log.module=:module and m.uniacid=:uniacid  and log.credittype=:credittype';
 		$params = array(':uniacid' => $_W['uniacid'], ':module' => 'ewei_shopv2', ':credittype' => $type);
-		if (!empty($_GPC['keyword'])) 
+		if (!(empty($_GPC['keyword']))) 
 		{
 			$_GPC['keyword'] = trim($_GPC['keyword']);
 			$condition .= ' and (m.realname like :keyword or m.nickname like :keyword or m.mobile like :keyword or u.username like :keyword)';
@@ -24,7 +24,7 @@ class Credit_EweiShopV2Page extends WebPage
 			$starttime = strtotime('-1 month');
 			$endtime = time();
 		}
-		if (!empty($_GPC['time']['start']) && !empty($_GPC['time']['end'])) 
+		if (!(empty($_GPC['time']['start'])) && !(empty($_GPC['time']['end']))) 
 		{
 			$starttime = strtotime($_GPC['time']['start']);
 			$endtime = strtotime($_GPC['time']['end']);
@@ -32,15 +32,16 @@ class Credit_EweiShopV2Page extends WebPage
 			$params[':starttime'] = $starttime;
 			$params[':endtime'] = $endtime;
 		}
-		if (!empty($_GPC['level'])) 
+		if (!(empty($_GPC['level']))) 
 		{
 			$condition .= ' and m.level=' . intval($_GPC['level']);
 		}
-		if (!empty($_GPC['groupid'])) 
+		if (!(empty($_GPC['groupid']))) 
 		{
 			$condition .= ' and m.groupid=' . intval($_GPC['groupid']);
 		}
-		$sql = 'select log.*,m.id as mid, m.realname,m.avatar,m.nickname,m.avatar, m.mobile, m.weixin,u.username from ' . tablename('mc_credits_record') . ' log ' . ' left join ' . tablename('users') . ' u on log.operator<>0 and log.operator<>log.uid and  log.operator=u.uid' . ' left join ' . tablename('ewei_shop_member') . ' m on m.uid=log.uid' . ' left join ' . tablename('ewei_shop_member_group') . ' g on m.groupid=g.id' . ' left join ' . tablename('ewei_shop_member_level') . ' l on m.level =l.id' . ' where 1 ' . $condition . ' ORDER BY log.createtime DESC ';
+		$condition .= ' and log.uid<>0';
+		$sql = 'select log.*,m.id as mid, m.realname,m.avatar,m.nickname,m.avatar, m.mobile, m.weixin,u.username from ' . tablename('mc_credits_record') . ' log ' . ' left join ' . tablename('users') . ' u on  log.operator=u.uid and log.operator<>0 and log.operator<>log.uid' . ' left join ' . tablename('ewei_shop_member') . ' m on m.uid=log.uid' . ' left join ' . tablename('ewei_shop_member_group') . ' g on m.groupid=g.id' . ' left join ' . tablename('ewei_shop_member_level') . ' l on m.level =l.id' . ' where 1 ' . $condition . ' ORDER BY log.createtime DESC ';
 		if (empty($_GPC['export'])) 
 		{
 			$sql .= 'LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize;
@@ -59,8 +60,8 @@ class Credit_EweiShopV2Page extends WebPage
 			foreach ($list as &$row ) 
 			{
 				$row['createtime'] = date('Y-m-d H:i', $row['createtime']);
-				$row['groupname'] = (empty($row['groupname']) ? '无分组' : $row['groupname']);
-				$row['levelname'] = (empty($row['levelname']) ? '普通会员' : $row['levelname']);
+				$row['groupname'] = ((empty($row['groupname']) ? '无分组' : $row['groupname']));
+				$row['levelname'] = ((empty($row['levelname']) ? '普通会员' : $row['levelname']));
 				if ($row['credittype'] == 'credit1') 
 				{
 					$row['credittype'] = '积分';

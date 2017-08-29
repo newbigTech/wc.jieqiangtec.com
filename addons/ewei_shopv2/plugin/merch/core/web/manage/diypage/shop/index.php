@@ -34,6 +34,7 @@ class Index_EweiShopV2Page extends MerchWebPage
 			{
 				$plog .= $key . '=>' . $val . '; ';
 			}
+			plog('diypage.shop.page.save', $plog);
 			show_json(1);
 		}
 		include $this->template();
@@ -54,6 +55,7 @@ class Index_EweiShopV2Page extends MerchWebPage
 			{
 				$plog .= $key . '=>' . $val . '; ';
 			}
+			plog('diypage.shop.menu.save', $plog);
 			show_json(1);
 		}
 		include $this->template();
@@ -72,6 +74,7 @@ class Index_EweiShopV2Page extends MerchWebPage
 			{
 				$diypagedata['followbar'] = $data;
 				$this->model->updateSet(array('diypage' => $diypagedata));
+				plog('diypage.shop.followbar.main', '编辑自定义关注条');
 				show_json(1);
 			}
 			show_json(0, '数据错误，请刷新页面重试！');
@@ -91,6 +94,7 @@ class Index_EweiShopV2Page extends MerchWebPage
 			{
 				$diypagedata['layer'] = $data;
 				$this->model->updateSet(array('diypage' => $diypagedata));
+				plog('diypage.shop.layer.main', '编辑自定义悬浮按钮');
 				show_json(1);
 			}
 			show_json(0, '数据错误，请刷新页面重试！');
@@ -101,7 +105,7 @@ class Index_EweiShopV2Page extends MerchWebPage
 	{
 		global $_W;
 		global $_GPC;
-		$diypagedata = m('common')->getPluginset('diypage');
+		$diypagedata = $this->model->getSet('diypage');
 		$diygotop = $diypagedata['gotop'];
 		if ($_W['ispost']) 
 		{
@@ -111,6 +115,26 @@ class Index_EweiShopV2Page extends MerchWebPage
 				$diypagedata['gotop'] = $data;
 				$this->model->updateSet(array('diypage' => $diypagedata));
 				plog('diypage.shop.layer.main', '编辑自定义悬浮按钮');
+				show_json(1);
+			}
+			show_json(0, '数据错误，请刷新页面重试！');
+		}
+		include $this->template();
+	}
+	public function danmu() 
+	{
+		global $_W;
+		global $_GPC;
+		$diypagedata = $this->model->getSet('diypage');
+		$danmu = $diypagedata['danmu'];
+		if ($_W['ispost']) 
+		{
+			$data = $_GPC['data'];
+			if (!(empty($data))) 
+			{
+				$diypagedata['danmu'] = $data;
+				$this->model->updateSet(array('diypage' => $diypagedata));
+				plog('diypage.shop.danmu.main', '编辑自定义悬浮按钮');
 				show_json(1);
 			}
 			show_json(0, '数据错误，请刷新页面重试！');

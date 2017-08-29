@@ -1,10 +1,16 @@
 <?php
-
+/**
+ * [WeEngine System] Copyright (c) 2014 WE7.CC
+ * WeEngine is NOT a free software, it under the license terms, visited http://www.we7.cc/ for more details.
+ */
 defined('IN_IA') or exit('Access Denied');
 
 
 function ihttp_request($url, $post = '', $extra = array(), $timeout = 60) {
 	$urlset = parse_url($url);
+	if (empty($urlset['scheme']) || !in_array($urlset['scheme'], array('http', 'https'))) {
+		return error(1, '只能使用 http 及 https 协议');
+	}
 	if (empty($urlset['path'])) {
 		$urlset['path'] = '/';
 	}
@@ -12,24 +18,20 @@ function ihttp_request($url, $post = '', $extra = array(), $timeout = 60) {
 		$urlset['query'] = "?{$urlset['query']}";
 	}
 	if (empty($urlset['port'])) {
-		$urlset['port'] = $urlset['scheme'] == 'https' ? '443' : '80';
-	}
+			}
 	if (strexists($url, 'https://') && !extension_loaded('openssl')) {
 		if (!extension_loaded("openssl")) {
-			message('请开启您PHP环境的openssl');
+			itoast('请开启您PHP环境的openssl', '', '');
 		}
 	}
 	if (function_exists('curl_init') && function_exists('curl_exec')) {
 		$ch = curl_init();
-				if (ver_compare(phpversion(), '5.6') >= 0) {
-			curl_setopt($ch, CURLOPT_SAFE_UPLOAD, false);
-		}
 		if (!empty($extra['ip'])) {
 			$extra['Host'] = $urlset['host'];
 			$urlset['host'] = $extra['ip'];
 			unset($extra['ip']);
 		}
-		curl_setopt($ch, CURLOPT_URL, $urlset['scheme'] . '://' . $urlset['host'] . ($urlset['port'] == '80' ? '' : ':' . $urlset['port']) . $urlset['path'] . $urlset['query']);
+		curl_setopt($ch, CURLOPT_URL, $urlset['scheme'] . '://' . $urlset['host'] . ($urlset['port'] == '80' || empty($urlset['port']) ? '' : ':' . $urlset['port']) . $urlset['path'] . $urlset['query']);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		@curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 		curl_setopt($ch, CURLOPT_HEADER, 1);
@@ -37,10 +39,12 @@ function ihttp_request($url, $post = '', $extra = array(), $timeout = 60) {
 		if ($post) {
 			if (is_array($post)) {
 				$filepost = false;
-				foreach ($post as $name => $value) {
+								foreach ($post as $name => &$value) {
+					if (version_compare(phpversion(), '5.5') >= 0 && is_string($value) && substr($value, 0, 1) == '@') {
+						$post[$name] = new CURLFile(ltrim($value, '@'));
+					}
 					if ((is_string($value) && substr($value, 0, 1) == '@') || (class_exists('CURLFile') && $value instanceof CURLFile)) {
 						$filepost = true;
-						break;
 					}
 				}
 				if (!$filepost) {
@@ -157,7 +161,7 @@ function ihttp_response_parse($data, $chunked = false) {
 	$split1[1] = substr($data, $pos + 4, strlen($data));
 	
 	$split2 = explode("\r\n", $split1[0], 2);
-	preg_match('/^(\S+) (\S+) (\S+)$/', $split2[0], $matches);
+	preg_match('/^(\S+) (\S+) (.*)$/', $split2[0], $matches);
 	$rlt['code'] = $matches[2];
 	$rlt['status'] = $matches[3];
 	$rlt['responseline'] = $split2[0];
@@ -289,6 +293,26 @@ function ihttp_email($to, $subject, $body, $global = false) {
 		$mailer->From = $config['username'];
 		$mailer->FromName = $config['sender'];
 		$mailer->isHTML(true);
+	}
+	if ($body) {
+		if (is_array($body)) {
+			$body = '';
+			foreach($body as $value) {
+				if (substr($value, 0, 1) == '@') {
+					if(!is_file($file = ltrim($value, '@'))){
+						return error(1, $file . ' 附件不存在或非文件！');
+					}
+					$mailer->addAttachment($file);	
+				} else {
+					$body .= $value . '\n';
+				}
+			}
+		} else {
+			if (substr($body, 0, 1) == '@') {
+				$mailer->addAttachment(ltrim($body, '@'));	
+				$body = '';
+			}
+		}
 	}
 	if (!empty($mailer->signature)) {
 		$body .= htmlspecialchars_decode($mailer->signature);

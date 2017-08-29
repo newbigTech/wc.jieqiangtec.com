@@ -1,5 +1,5 @@
 <?php
-if (!defined('IN_IA')) 
+if (!(defined('IN_IA'))) 
 {
 	exit('Access Denied');
 }
@@ -9,13 +9,6 @@ class Favorite_EweiShopV2Page extends MobileLoginPage
 	{
 		global $_W;
 		global $_GPC;
-		$merch_plugin = p('merch');
-		$merch_data = m('common')->getPluginset('merch');
-		if ($merch_plugin && $merch_data['is_openmerch']) 
-		{
-			include $this->template('merch/member/favorite');
-			return NULL;
-		}
 		include $this->template();
 	}
 	public function get_list() 
@@ -35,17 +28,17 @@ class Favorite_EweiShopV2Page extends MobileLoginPage
 		$sql = 'SELECT COUNT(*) FROM ' . tablename('ewei_shop_member_favorite') . ' f where 1 ' . $condition;
 		$total = pdo_fetchcolumn($sql, $params);
 		$list = array();
-		if (!empty($total)) 
+		if (!(empty($total))) 
 		{
 			$sql = 'SELECT f.id,f.goodsid,g.title,g.thumb,g.marketprice,g.productprice,g.merchid FROM ' . tablename('ewei_shop_member_favorite') . ' f ' . ' left join ' . tablename('ewei_shop_goods') . ' g on f.goodsid = g.id ' . ' where 1 ' . $condition . ' ORDER BY `id` DESC LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize;
 			$list = pdo_fetchall($sql, $params);
 			$list = set_medias($list, 'thumb');
-			if (!empty($list) && $merch_plugin && $merch_data['is_openmerch']) 
+			if (!(empty($list)) && $merch_plugin && $merch_data['is_openmerch']) 
 			{
 				$merch_user = $merch_plugin->getListUser($list, 'merch_user');
 				foreach ($list as &$row ) 
 				{
-					$row['merchname'] = ($merch_user[$row['merchid']]['merchname'] ? $merch_user[$row['merchid']]['merchname'] : $_W['shopset']['shop']['name']);
+					$row['merchname'] = (($merch_user[$row['merchid']]['merchname'] ? $merch_user[$row['merchid']]['merchname'] : $_W['shopset']['shop']['name']));
 				}
 				unset($row);
 			}
@@ -66,7 +59,7 @@ class Favorite_EweiShopV2Page extends MobileLoginPage
 		$data = pdo_fetch('select id,deleted from ' . tablename('ewei_shop_member_favorite') . ' where uniacid=:uniacid and goodsid=:id and openid=:openid limit 1', array(':uniacid' => $_W['uniacid'], ':openid' => $_W['openid'], ':id' => $id));
 		if (empty($data)) 
 		{
-			if (!empty($isfavorite)) 
+			if (!(empty($isfavorite))) 
 			{
 				$data = array('uniacid' => $_W['uniacid'], 'goodsid' => $id, 'openid' => $_W['openid'], 'createtime' => time());
 				pdo_insert('ewei_shop_member_favorite', $data);
@@ -83,7 +76,7 @@ class Favorite_EweiShopV2Page extends MobileLoginPage
 		global $_W;
 		global $_GPC;
 		$ids = $_GPC['ids'];
-		if (empty($ids) || !is_array($ids)) 
+		if (empty($ids) || !(is_array($ids))) 
 		{
 			show_json(0, '参数错误');
 		}

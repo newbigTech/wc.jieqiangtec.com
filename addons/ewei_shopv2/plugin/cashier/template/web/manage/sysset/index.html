@@ -96,6 +96,48 @@
                 <div class="help-block">如果是服务商 , 这个填写服务商APIKEY . 如果不是则填写当前商户的APIKEY</div>
             </div>
         </div>
+
+            <div class="form-group cert">
+                <label class="col-sm-2 control-label"></label>
+                <div class="col-sm-8 col-xs-12">
+                    <input type="file" name="cert_file" class="form-control" />
+                    <span class="help-block">
+                    {if !empty($wechatpay['cert'])}
+                    <span class='label label-success'>已上传</span>
+                    {else}
+                    <span class='label label-danger'>未上传</span>
+                    {/if}
+                    下载证书 cert.zip 中的 apiclient_cert.pem 文件</span>
+                </div>
+            </div>
+            <div class="form-group cert">
+                <label class="col-sm-2 control-label"></label>
+                <div class="col-sm-8 col-xs-12">
+                    <input type="file" name="key_file" class="form-control" />
+                    <span class="help-block">
+                       {if !empty($wechatpay['key'])}
+                        <span class='label label-success'>已上传</span>
+                        {else}
+                        <span class='label label-danger'>未上传</span>
+                        {/if}
+                        下载证书 cert.zip 中的 apiclient_key.pem 文件
+                    </span>
+                </div>
+            </div>
+            <div class="form-group cert">
+                <label class="col-sm-2 control-label"></label>
+                <div class="col-sm-8 col-xs-12">
+                    <input type="file" name="root_file" class="form-control" />
+                    <span class="help-block">
+                      {if !empty($wechatpay['root'])}
+                        <span class='label label-success'>已上传</span>
+                        {else}
+                        <span class='label label-danger'>未上传</span>
+                        {/if}
+                        下载证书 cert.zip 中的 rootca.pem 文件
+                    </span>
+                </div>
+            </div>
         </div>
         <div class="form-group-title">支付宝支付</div>
         <div class="form-group">
@@ -200,6 +242,13 @@
             <label class="col-sm-2 control-label must">绑定管理员微信号</label>
             <div class="col-sm-8">
                 {php echo tpl_selector('manageopenid',array('key'=>'openid','text'=>'nickname', 'thumb'=>'avatar','multi'=>0,'placeholder'=>'昵称/姓名/手机号','buttontext'=>'选择通知人', 'items'=>$manageopenid,'url'=>cashierUrl('index/query') ))}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label must">绑定管理员微信号</label>
+            <div class="col-sm-8">
+                {php echo tpl_selector('management',array('key'=>'openid','text'=>'nickname', 'thumb'=>'avatar','multi'=>1,'placeholder'=>'昵称/姓名/手机号','buttontext'=>'选择手机端管理员', 'items'=>$management,'url'=>cashierUrl('index/query') ))}
             </div>
         </div>
 

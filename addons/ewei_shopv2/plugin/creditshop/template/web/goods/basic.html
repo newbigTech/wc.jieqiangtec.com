@@ -28,17 +28,17 @@
     </div>
 </div>
 
-<!--<div class="form-group cgt cgt-0" {if $item['goodstype']!=0}style="display:none"{/if}>
+<div class="form-group cgt cgt-0" {if $item['goodstype']!=0}style="display:none"{/if}>
     <label class="col-sm-2 control-label">设置商品</label>
     <div class="col-sm-9 col-xs-12">
         {ife 'creditshop.goods' $item}
-            <?php echo tpl_selector('goodsid', array('required'=>false, 'preview'=>false, 'url'=>webUrl('goods/query'), 'items'=>$goods, 'readonly'=>true, 'buttontext'=>'选择商品', 'placeholder'=>'请选择商品','callback'=>'select_goods'))?>
+            <?php echo tpl_selector('goodsid', array('required'=>false, 'preview'=>false,'url'=>webUrl('creditshop/goods/query'), 'items'=>$goods, 'readonly'=>true, 'buttontext'=>'选择商品', 'placeholder'=>'请选择商品','callback'=>'select_goods'))?>
         <div class="help-block">提示：您可选择商城商品或自行设置商品信息(此项非必选)</div>
         {else}
             <div class='form-control-static'>{$goods['title']}</div>
         {/if}
     </div>
-</div>-->
+</div>
 
 {if com('coupon')}
     <div class="form-group cgt cgt-1" {if $item['goodstype']!=1}style="display:none"{/if}>

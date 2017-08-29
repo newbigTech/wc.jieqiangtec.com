@@ -69,7 +69,7 @@
 		   {/if}
 
  
-	<div  class='row order-container'>
+	<div  class='row order-container' style="overflow: visible">
 		<div class="order-container-left">
 			<div class='panel-body' >
 				 <h4 class="m-t-none m-b">维权信息</h4>
@@ -104,7 +104,7 @@
                          {if !empty($refund['imgs'])}
                          <tr>
                              <td style='width:80px'>图片凭证：</td>
-                             <td>
+                             <td style="overflow: visible;">
                                  {loop $refund['imgs'] $k1 $v1}
                                  <a target='_blank' href='{php echo tomedia($v1)}'><img style='width:100px;;padding:1px;border:1px solid #ccc' src='{php echo tomedia($v1)}'></a>
                                  {php break;}
@@ -153,6 +153,12 @@
                 <tr>
                     <td  style='border:none;text-align:right;'>任务活动优惠：</td>
                     <td  style='border:none;text-align:right;;'>-￥{php echo number_format( $item['taskdiscountprice'],2)}</td>
+                </tr>
+                {/if}
+                {if $item['lotterydiscountprice']>0}
+                <tr>
+                    <td  style='border:none;text-align:right;'>游戏活动优惠：</td>
+                    <td  style='border:none;text-align:right;;'>-￥{php echo number_format( $item['lotterydiscountprice'],2)}</td>
                 </tr>
                 {/if}
                 {if $item['discountprice']>0}

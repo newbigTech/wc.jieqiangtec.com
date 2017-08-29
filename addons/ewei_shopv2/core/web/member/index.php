@@ -1,5 +1,5 @@
 <?php
-if (!defined('IN_IA')) 
+if (!(defined('IN_IA'))) 
 {
 	exit('Access Denied');
 }
@@ -8,6 +8,12 @@ class Index_EweiShopV2Page extends WebPage
 	public function main() 
 	{
 		global $_W;
+		$set = m('common')->getSysset('template');
+		if (!(empty($set['style_v3']))) 
+		{
+			header('location: ' . webUrl('member/list'));
+			exit();
+		}
 		include $this->template();
 	}
 	protected function selectMemberCreate($day = 0) 
@@ -36,9 +42,9 @@ class Index_EweiShopV2Page extends WebPage
 		$params = array();
 		$params[':uniacid'] = $_W['uniacid'];
 		$condition = ' and uniacid=:uniacid';
-		if (!empty($kwd)) 
+		if (!(empty($kwd))) 
 		{
-			$condition .= ' AND (`realname` LIKE :keyword or `nickname` LIKE :keyword or `mobile` LIKE :keyword)';
+			$condition .= ' AND (`realname` LIKE :keyword or `nickname` LIKE :keyword or `mobile` LIKE :keyword or `openid` LIKE :keyword)';
 			$params[':keyword'] = '%' . $kwd . '%';
 		}
 		$ds = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_member') . ' WHERE 1 ' . $condition . ' order by id asc', $params);
@@ -94,7 +100,7 @@ class Index_EweiShopV2Page extends WebPage
 		$levelname = array();
 		foreach ($levels as $l ) 
 		{
-			$levelname[] = $l['levelname'];
+			$levelname[$l['id']] = $l['levelname'];
 		}
 		$levelname[0] = '普通等级';
 		ksort($levelname);
@@ -117,7 +123,7 @@ class Index_EweiShopV2Page extends WebPage
 				$levels_array[0] += $val['level_num'];
 			}
 		}
-		if (!array_key_exists(0, $levels_array)) 
+		if (!(array_key_exists(0, $levels_array))) 
 		{
 			$levels_array[0] = 0;
 		}

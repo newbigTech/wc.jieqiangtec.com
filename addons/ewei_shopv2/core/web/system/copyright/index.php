@@ -1,6 +1,5 @@
 <?php
-
-if (!defined('IN_IA')) {
+if (!(defined('IN_IA'))) {
 	exit('Access Denied');
 }
 
@@ -12,7 +11,7 @@ class Index_EweiShopV2Page extends SystemPage
 		global $_GPC;
 		$wechatid = intval($_GPC['wechatid']);
 
-		if (!empty($wechatid) && ($wechatid != -1)) {
+		if (!(empty($wechatid)) && ($wechatid != -1)) {
 			$copyrights = pdo_fetch('select * from ' . tablename('ewei_shop_system_copyright') . ' where uniacid=' . $wechatid . ' and ismanage=0 limit 1');
 		}
 

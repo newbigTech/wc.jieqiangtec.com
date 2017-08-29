@@ -94,12 +94,12 @@
 <script language='javascript'>
     var kw = 1;
     function addType() {
-        $(".btn-add-type").button("loading");
+        $(".btn-add-type").html("loading").addClass('disabled');
         $.ajax({
             url: "{php echo webUrl('goods/virtual/temp/tpl')}&kw=" + kw,
             cache: false
         }).done(function (html) {
-            $(".btn-add-type").button("reset");
+            $(".btn-add-type").html('<i class="fa fa-plus" title=""></i> 增加一条键').removeClass('disabled');
             $("#type-items").append(html);
         });
         kw++;

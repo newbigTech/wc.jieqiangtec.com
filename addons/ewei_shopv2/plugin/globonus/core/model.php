@@ -1,12 +1,12 @@
 <?php
-if (!defined('IN_IA')) 
+if (!(defined('IN_IA'))) 
 {
 	exit('Access Denied');
 }
 define('TM_GLOBONUS_PAY', 'TM_GLOBONUS_PAY');
 define('TM_GLOBONUS_UPGRADE', 'TM_GLOBONUS_UPGRADE');
 define('TM_GLOBONUS_BECOME', 'TM_GLOBONUS_BECOME');
-if (!class_exists('GlobonusModel')) 
+if (!(class_exists('GlobonusModel'))) 
 {
 	class GlobonusModel extends PluginModel 
 	{
@@ -58,7 +58,7 @@ if (!class_exists('GlobonusModel'))
 			$templateid = $tm['templateid'];
 			$member = m('member')->getMember($openid);
 			$usernotice = unserialize($member['noticeset']);
-			if (!is_array($usernotice)) 
+			if (!(is_array($usernotice))) 
 			{
 				$usernotice = array();
 			}
@@ -73,7 +73,7 @@ if (!class_exists('GlobonusModel'))
 				$message = str_replace('[时间]', date('Y-m-d H:i:s', time()), $message);
 				$message = str_replace('[金额]', $data['money'], $message);
 				$message = str_replace('[打款方式]', $data['type'], $message);
-				$msg = array( 'keyword1' => array('value' => (!empty($tm['paytitle']) ? $tm['paytitle'] : '分红发放通知'), 'color' => '#73a68d'), 'keyword2' => array('value' => $message, 'color' => '#73a68d') );
+				$msg = array( 'keyword1' => array('value' => (!(empty($tm['paytitle'])) ? $tm['paytitle'] : '分红发放通知'), 'color' => '#73a68d'), 'keyword2' => array('value' => $message, 'color' => '#73a68d') );
 				return $this->sendNotice($openid, $tm, 'pay_advanced', $data, $member, $msg);
 			}
 			if (($message_type == TM_GLOBONUS_UPGRADE) && empty($usernotice['globonus_upgrade'])) 
@@ -89,7 +89,7 @@ if (!class_exists('GlobonusModel'))
 				$message = str_replace('[旧分红比例]', $data['oldlevel']['bonus'] . '%', $message);
 				$message = str_replace('[新等级]', $data['newlevel']['levelname'], $message);
 				$message = str_replace('[新分红比例]', $data['newlevel']['bonus'] . '%', $message);
-				$msg = array( 'keyword1' => array('value' => (!empty($tm['upgradetitle']) ? $tm['upgradetitle'] : '股东等级升级通知'), 'color' => '#73a68d'), 'keyword2' => array('value' => $message, 'color' => '#73a68d') );
+				$msg = array( 'keyword1' => array('value' => (!(empty($tm['upgradetitle'])) ? $tm['upgradetitle'] : '股东等级升级通知'), 'color' => '#73a68d'), 'keyword2' => array('value' => $message, 'color' => '#73a68d') );
 				return $this->sendNotice($openid, $tm, 'upgrade_advanced', $data, $member, $msg);
 			}
 			if (($message_type == TM_GLOBONUS_BECOME) && empty($usernotice['globonus_become'])) 
@@ -101,26 +101,26 @@ if (!class_exists('GlobonusModel'))
 				}
 				$message = str_replace('[昵称]', $data['nickname'], $message);
 				$message = str_replace('[时间]', date('Y-m-d H:i:s', $data['partnertime']), $message);
-				$msg = array( 'keyword1' => array('value' => (!empty($tm['becometitle']) ? $tm['becometitle'] : '成为股东通知'), 'color' => '#73a68d'), 'keyword2' => array('value' => $message, 'color' => '#73a68d') );
+				$msg = array( 'keyword1' => array('value' => (!(empty($tm['becometitle'])) ? $tm['becometitle'] : '成为股东通知'), 'color' => '#73a68d'), 'keyword2' => array('value' => $message, 'color' => '#73a68d') );
 				return $this->sendNotice($openid, $tm, 'become_advanced', $data, $member, $msg);
 			}
 		}
 		protected function sendNotice($touser, $tm, $tag, $datas, $member, $msg) 
 		{
 			global $_W;
-			if (!empty($tm['is_advanced']) && !empty($tm[$tag])) 
+			if (!(empty($tm['is_advanced'])) && !(empty($tm[$tag]))) 
 			{
 				$advanced_template = pdo_fetch('select * from ' . tablename('ewei_shop_member_message_template') . ' where id=:id and uniacid=:uniacid limit 1', array(':id' => $tm[$tag], ':uniacid' => $_W['uniacid']));
-				if (!empty($advanced_template)) 
+				if (!(empty($advanced_template))) 
 				{
-					$url = ((!empty($advanced_template['url']) ? $this->replaceTemplate($advanced_template['url'], $tag, $datas, $member) : ''));
+					$url = ((!(empty($advanced_template['url'])) ? $this->replaceTemplate($advanced_template['url'], $tag, $datas, $member) : ''));
 					$advanced_message = array( 'first' => array('value' => $this->replaceTemplate($advanced_template['first'], $tag, $datas, $member), 'color' => $advanced_template['firstcolor']), 'remark' => array('value' => $this->replaceTemplate($advanced_template['remark'], $tag, $datas, $member), 'color' => $advanced_template['remarkcolor']) );
 					$data = iunserializer($advanced_template['data']);
 					foreach ($data as $d ) 
 					{
 						$advanced_message[$d['keywords']] = array('value' => $this->replaceTemplate($d['value'], $tag, $datas, $member), 'color' => $d['color']);
 					}
-					if (!empty($advanced_template['template_id'])) 
+					if (!(empty($advanced_template['template_id']))) 
 					{
 						m('message')->sendTplNotice($touser, $advanced_template['template_id'], $advanced_message);
 					}
@@ -130,7 +130,7 @@ if (!class_exists('GlobonusModel'))
 					}
 				}
 			}
-			else if (!empty($tm['templateid'])) 
+			else if (!(empty($tm['templateid']))) 
 			{
 				m('message')->sendTplNotice($touser, $tm['templateid'], $msg);
 			}
@@ -142,18 +142,17 @@ if (!class_exists('GlobonusModel'))
 		}
 		protected function replaceTemplate($str, $tag, $data, $member) 
 		{
-			$arr = array('[昵称]' => $member['nickname'], '[时间]' => date('Y-m-d H:i:s', time()), '[金额]' => (!empty($data['bonus']) ? $data['bonus'] : ''), '[提现方式]' => (!empty($data['type']) ? $data['type'] : ''), '[旧等级]' => (!empty($data['oldlevel']['levelname']) ? $data['oldlevel']['levelname'] : ''), '[旧等级分红比例]' => (!empty($data['oldlevel']['bonus']) ? $data['oldlevel']['bonus'] . '%' : ''), '[新等级]' => (!empty($data['newlevel']['levelname']) ? $data['newlevel']['levelname'] : ''), '[新等级分红比例]' => (!empty($data['newlevel']['bonus']) ? $data['newlevel']['bonus'] . '%' : ''));
+			$arr = array('[昵称]' => $member['nickname'], '[时间]' => date('Y-m-d H:i:s', time()), '[金额]' => (!(empty($data['bonus'])) ? $data['bonus'] : ''), '[提现方式]' => (!(empty($data['type'])) ? $data['type'] : ''), '[旧等级]' => (!(empty($data['oldlevel']['levelname'])) ? $data['oldlevel']['levelname'] : ''), '[旧等级分红比例]' => (!(empty($data['oldlevel']['bonus'])) ? $data['oldlevel']['bonus'] . '%' : ''), '[新等级]' => (!(empty($data['newlevel']['levelname'])) ? $data['newlevel']['levelname'] : ''), '[新等级分红比例]' => (!(empty($data['newlevel']['bonus'])) ? $data['newlevel']['bonus'] . '%' : ''));
 			switch ($tag) 
 			{
-				case 'become_advanced': $arr['_obfuscate_W_aXtumXtF0'] = date('Y-m-d H:i:s', $data['partnertime']);
-				$arr['_obfuscate_W_aYteensF0'] = $data['nickname'];
-				case 'pay_advanced': $arr['_obfuscate_W_aXtumXtF0'] = date('Y-m-d H:i:s', $data['paytime']);
-				$arr['_obfuscate_W_aYteensF0'] = $data['nickname'];
-				break;
-				foreach ($arr as $key => $value ) 
-				{
-					$str = str_replace($key, $value, $str);
-				}
+				case 'become_advanced': $arr['[时间]'] = date('Y-m-d H:i:s', $data['partnertime']);
+				$arr['[昵称]'] = $data['nickname'];
+				case 'pay_advanced': $arr['[时间]'] = date('Y-m-d H:i:s', $data['paytime']);
+				$arr['[昵称]'] = $data['nickname'];
+			}
+			foreach ($arr as $key => $value ) 
+			{
+				$str = str_replace($key, $value, $str);
 			}
 			return $str;
 		}
@@ -187,14 +186,14 @@ if (!class_exists('GlobonusModel'))
 			$m = m('member')->getMember($openid);
 			if (empty($m)) 
 			{
-				return NULL;
+				return;
 			}
 			$leveltype = intval($set['leveltype']);
 			if (($leveltype == 4) || ($leveltype == 5)) 
 			{
-				if (!empty($m['partnernotupgrade'])) 
+				if (!(empty($m['partnernotupgrade']))) 
 				{
-					return NULL;
+					return;
 				}
 				$oldlevel = $this->getLevel($m['openid']);
 				if (empty($oldlevel['id'])) 
@@ -209,33 +208,33 @@ if (!class_exists('GlobonusModel'))
 					$newlevel = pdo_fetch('select * from ' . tablename('ewei_shop_globonus_level') . ' where uniacid=:uniacid  and ' . $ordermoney . ' >= ordermoney and ordermoney>0  order by ordermoney desc limit 1', array(':uniacid' => $_W['uniacid']));
 					if (empty($newlevel)) 
 					{
-						return NULL;
+						return;
 					}
-					if (!empty($oldlevel['id'])) 
+					if (!(empty($oldlevel['id']))) 
 					{
 						if ($oldlevel['id'] == $newlevel['id']) 
 						{
-							return NULL;
+							return;
 						}
 						if ($newlevel['ordermoney'] < $oldlevel['ordermoney']) 
 						{
-							return NULL;
+							return;
 							if ($leveltype == 5) 
 							{
 								$newlevel = pdo_fetch('select * from ' . tablename('ewei_shop_globonus_level') . ' where uniacid=:uniacid  and ' . $ordercount . ' >= ordercount and ordercount>0  order by ordercount desc limit 1', array(':uniacid' => $_W['uniacid']));
 								if (empty($newlevel)) 
 								{
-									return NULL;
+									return;
 								}
-								if (!empty($oldlevel['id'])) 
+								if (!(empty($oldlevel['id']))) 
 								{
 									if ($oldlevel['id'] == $newlevel['id']) 
 									{
-										return NULL;
+										return;
 									}
 									if ($newlevel['ordercount'] < $oldlevel['ordercount']) 
 									{
-										return NULL;
+										return;
 									}
 								}
 							}
@@ -245,39 +244,39 @@ if (!class_exists('GlobonusModel'))
 				else 
 				{
 					$newlevel = pdo_fetch('select * from ' . tablename('ewei_shop_globonus_level') . ' where uniacid=:uniacid  and ' . $ordercount . ' >= ordercount and ordercount>0  order by ordercount desc limit 1', array(':uniacid' => $_W['uniacid']));
-					return NULL;
-					return NULL;
-					return NULL;
+					return;
+					return;
+					return;
 				}
 				pdo_update('ewei_shop_member', array('partnerlevel' => $newlevel['id']), array('id' => $m['id']));
 				$this->sendMessage($m['openid'], array('nickname' => $m['nickname'], 'oldlevel' => $oldlevel, 'newlevel' => $newlevel), TM_GLOBONUS_UPGRADE);
-				return NULL;
+				return;
 			}
 			if ((0 <= $leveltype) && ($leveltype <= 3)) 
 			{
 				$agents = array();
-				if (!empty($set['selfbuy'])) 
+				if (!(empty($set['selfbuy']))) 
 				{
 					$agents[] = $m;
 				}
-				if (!empty($m['agentid'])) 
+				if (!(empty($m['agentid']))) 
 				{
 					$m1 = m('member')->getMember($m['agentid']);
-					if (!empty($m1)) 
+					if (!(empty($m1))) 
 					{
 						$agents[] = $m1;
-						if (!empty($m1['agentid']) && ($m1['isagent'] == 1) && ($m1['status'] == 1)) 
+						if (!(empty($m1['agentid'])) && ($m1['isagent'] == 1) && ($m1['status'] == 1)) 
 						{
 							$m2 = m('member')->getMember($m1['agentid']);
-							if (!empty($m2) && ($m2['isagent'] == 1) && ($m2['status'] == 1)) 
+							if (!(empty($m2)) && ($m2['isagent'] == 1) && ($m2['status'] == 1)) 
 							{
 								$agents[] = $m2;
 								if (empty($set['selfbuy'])) 
 								{
-									if (!empty($m2['agentid']) && ($m2['isagent'] == 1) && ($m2['status'] == 1)) 
+									if (!(empty($m2['agentid'])) && ($m2['isagent'] == 1) && ($m2['status'] == 1)) 
 									{
 										$m3 = m('member')->getMember($m2['agentid']);
-										if (!empty($m3) && ($m3['isagent'] == 1) && ($m3['status'] == 1)) 
+										if (!(empty($m3)) && ($m3['isagent'] == 1) && ($m3['status'] == 1)) 
 										{
 											$agents[] = $m3;
 										}
@@ -289,12 +288,12 @@ if (!class_exists('GlobonusModel'))
 				}
 				if (empty($agents)) 
 				{
-					return NULL;
+					return;
 				}
 				foreach ($agents as $agent ) 
 				{
 					$info = $this->getInfo($agent['id'], array('ordercount3', 'ordermoney3', 'order13money', 'order13'));
-					if (!empty($info['partnernotupgrade'])) 
+					if (!(empty($info['partnernotupgrade']))) 
 					{
 						continue;
 					}
@@ -311,7 +310,7 @@ if (!class_exists('GlobonusModel'))
 						{
 							continue;
 						}
-						if (!empty($oldlevel['id'])) 
+						if (!(empty($oldlevel['id']))) 
 						{
 							if ($oldlevel['id'] == $newlevel['id']) 
 							{
@@ -328,7 +327,7 @@ if (!class_exists('GlobonusModel'))
 									{
 										continue;
 									}
-									if (!empty($oldlevel['id'])) 
+									if (!(empty($oldlevel['id']))) 
 									{
 										if ($oldlevel['id'] == $newlevel['id']) 
 										{
@@ -345,7 +344,7 @@ if (!class_exists('GlobonusModel'))
 												{
 													continue;
 												}
-												if (!empty($oldlevel['id'])) 
+												if (!(empty($oldlevel['id']))) 
 												{
 													if ($oldlevel['id'] == $newlevel['id']) 
 													{
@@ -362,7 +361,7 @@ if (!class_exists('GlobonusModel'))
 															{
 																continue;
 															}
-															if (!empty($oldlevel['id'])) 
+															if (!(empty($oldlevel['id']))) 
 															{
 																if ($oldlevel['id'] == $newlevel['id']) 
 																{
@@ -446,27 +445,27 @@ if (!class_exists('GlobonusModel'))
 			$m = m('member')->getMember($openid);
 			if (empty($m)) 
 			{
-				return NULL;
+				return;
 			}
 			$leveltype = intval($set['leveltype']);
 			if (($leveltype < 6) || (9 < $leveltype)) 
 			{
-				return NULL;
+				return;
 			}
 			$info = $this->getInfo($m['id'], array());
 			if (($leveltype == 6) || ($leveltype == 8)) 
 			{
 				$agents = array($m);
-				if (!empty($m['agentid'])) 
+				if (!(empty($m['agentid']))) 
 				{
 					$m1 = m('member')->getMember($m['agentid']);
-					if (!empty($m1)) 
+					if (!(empty($m1))) 
 					{
 						$agents[] = $m1;
-						if (!empty($m1['agentid']) && ($m1['isagent'] == 1) && ($m1['status'] == 1)) 
+						if (!(empty($m1['agentid'])) && ($m1['isagent'] == 1) && ($m1['status'] == 1)) 
 						{
 							$m2 = m('member')->getMember($m1['agentid']);
-							if (!empty($m2) && ($m2['isagent'] == 1) && ($m2['status'] == 1)) 
+							if (!(empty($m2)) && ($m2['isagent'] == 1) && ($m2['status'] == 1)) 
 							{
 								$agents[] = $m2;
 							}
@@ -475,12 +474,12 @@ if (!class_exists('GlobonusModel'))
 				}
 				if (empty($agents)) 
 				{
-					return NULL;
+					return;
 				}
 				foreach ($agents as $agent ) 
 				{
 					$info = $this->getInfo($agent['id'], array());
-					if (!empty($info['agentnotupgrade'])) 
+					if (!(empty($info['agentnotupgrade']))) 
 					{
 						continue;
 					}
@@ -493,11 +492,11 @@ if (!class_exists('GlobonusModel'))
 					{
 						$downs1 = pdo_fetchall('select id from ' . tablename('ewei_shop_member') . ' where agentid=:agentid and uniacid=:uniacid ', array(':agentid' => $m['id'], ':uniacid' => $_W['uniacid']), 'id');
 						$downcount += count($downs1);
-						if (!empty($downs1)) 
+						if (!(empty($downs1))) 
 						{
 							$downs2 = pdo_fetchall('select id from ' . tablename('ewei_shop_member') . ' where agentid in( ' . implode(',', array_keys($downs1)) . ') and uniacid=:uniacid', array(':uniacid' => $_W['uniacid']), 'id');
 							$downcount += count($downs2);
-							if (!empty($downs2)) 
+							if (!(empty($downs2))) 
 							{
 								$downs3 = pdo_fetchall('select id from ' . tablename('ewei_shop_member') . ' where agentid in( ' . implode(',', array_keys($downs2)) . ') and uniacid=:uniacid', array(':uniacid' => $_W['uniacid']), 'id');
 								$downcount += count($downs3);
@@ -518,7 +517,7 @@ if (!class_exists('GlobonusModel'))
 					{
 						continue;
 					}
-					if (!empty($oldlevel['id'])) 
+					if (!(empty($oldlevel['id']))) 
 					{
 						if ($newlevel['downcount'] < $oldlevel['downcount']) 
 						{
@@ -528,11 +527,11 @@ if (!class_exists('GlobonusModel'))
 					pdo_update('ewei_shop_member', array('partnerlevel' => $newlevel['id']), array('id' => $agent['id']));
 					$this->sendMessage($agent['openid'], array('nickname' => $agent['nickname'], 'oldlevel' => $oldlevel, 'newlevel' => $newlevel), TM_GLOBONUS_UPGRADE);
 				}
-				return NULL;
+				return;
 			}
-			if (!empty($m['parnternotupgrade'])) 
+			if (!(empty($m['parnternotupgrade']))) 
 			{
-				return NULL;
+				return;
 			}
 			$oldlevel = $this->getLevel($m['openid']);
 			if (empty($oldlevel['id'])) 
@@ -551,17 +550,17 @@ if (!class_exists('GlobonusModel'))
 			}
 			if (empty($newlevel)) 
 			{
-				return NULL;
+				return;
 			}
 			if ($newlevel['id'] == $oldlevel['id']) 
 			{
-				return NULL;
+				return;
 			}
-			if (!empty($oldlevel['id'])) 
+			if (!(empty($oldlevel['id']))) 
 			{
 				if ($newlevel['downcount'] < $oldlevel['downcount']) 
 				{
-					return NULL;
+					return;
 				}
 			}
 			pdo_update('ewei_shop_member', array('partnerlevel' => $newlevel['id']), array('id' => $m['id']));
@@ -582,16 +581,16 @@ if (!class_exists('GlobonusModel'))
 			$m = m('member')->getMember($openid);
 			if (empty($m)) 
 			{
-				return NULL;
+				return;
 			}
 			$leveltype = intval($set['leveltype']);
 			if ($leveltype != 10) 
 			{
-				return NULL;
+				return;
 			}
-			if (!empty($m['partnernotupgrade'])) 
+			if (!(empty($m['partnernotupgrade']))) 
 			{
-				return NULL;
+				return;
 			}
 			$oldlevel = $this->getLevel($m['openid']);
 			if (empty($oldlevel['id'])) 
@@ -603,17 +602,17 @@ if (!class_exists('GlobonusModel'))
 			$newlevel = pdo_fetch('select * from ' . tablename('ewei_shop_globonus_level') . ' where uniacid=:uniacid  and ' . $commissionmoney . ' >= commissionmoney and commissionmoney>0  order by commissionmoney desc limit 1', array(':uniacid' => $_W['uniacid']));
 			if (empty($newlevel)) 
 			{
-				return NULL;
+				return;
 			}
 			if ($oldlevel['id'] == $newlevel['id']) 
 			{
-				return NULL;
+				return;
 			}
-			if (!empty($oldlevel['id'])) 
+			if (!(empty($oldlevel['id']))) 
 			{
 				if ($newlevel['commissionmoney'] < $oldlevel['commissionmoney']) 
 				{
-					return NULL;
+					return;
 				}
 			}
 			pdo_update('ewei_shop_member', array('partnerlevel' => $newlevel['id']), array('id' => $m['id']));
@@ -634,16 +633,16 @@ if (!class_exists('GlobonusModel'))
 			$m = m('member')->getMember($openid);
 			if (empty($m)) 
 			{
-				return NULL;
+				return;
 			}
 			$leveltype = intval($set['leveltype']);
 			if ($leveltype != 11) 
 			{
-				return NULL;
+				return;
 			}
-			if (!empty($m['agentnotupgrade'])) 
+			if (!(empty($m['agentnotupgrade']))) 
 			{
-				return NULL;
+				return;
 			}
 			$oldlevel = $this->getLevel($m['openid']);
 			if (empty($oldlevel['id'])) 
@@ -654,17 +653,17 @@ if (!class_exists('GlobonusModel'))
 			$newlevel = pdo_fetch('select * from ' . tablename('ewei_shop_globonus_level') . ' where uniacid=:uniacid  and ' . $bonusmoney['ok'] . ' >= bonusmoney and bonusmoney>0  order by bonusmoney desc limit 1', array(':uniacid' => $_W['uniacid']));
 			if (empty($newlevel)) 
 			{
-				return NULL;
+				return;
 			}
 			if ($oldlevel['id'] == $newlevel['id']) 
 			{
-				return NULL;
+				return;
 			}
-			if (!empty($oldlevel['id'])) 
+			if (!(empty($oldlevel['id']))) 
 			{
 				if ($newlevel['bonusmoney'] < $oldlevel['bonusmoney']) 
 				{
-					return NULL;
+					return;
 				}
 			}
 			pdo_update('ewei_shop_member', array('partnerlevel' => $newlevel['id']), array('id' => $m['id']));
@@ -709,7 +708,7 @@ if (!class_exists('GlobonusModel'))
 				$endtime = strtotime($year . '-' . $month . '-' . $days . ' 23:59:59');
 			}
 			$bill = pdo_fetch('select * from ' . tablename('ewei_shop_globonus_bill') . ' where uniacid=:uniacid and `year`=:year and `month`=:month and `week`=:week limit 1', array(':uniacid' => $_W['uniacid'], ':year' => $year, ':month' => $month, ':week' => $week));
-			if (!empty($bill) && empty($openid)) 
+			if (!(empty($bill)) && empty($openid)) 
 			{
 				return array('ordermoney' => round($bill['ordermoney'], 2), 'ordercount' => $bill['ordercount'], 'bonusmoney' => round($bill['bonusmoney'], 2), 'bonusordermoney' => round($bill['bonusordermoney'], 2), 'bonusrate' => round($bill['bonusrate'], 2), 'bonusmoney_send' => round($bill['bonusmoney_send'], 2), 'partnercount' => $bill['partnercount'], 'starttime' => $starttime, 'endtime' => $endtime, 'billid' => $bill['id'], 'old' => true);
 			}
@@ -717,21 +716,21 @@ if (!class_exists('GlobonusModel'))
 			$bonusordermoney = 0;
 			$bonusmoney = 0;
 			$pcondition = '';
-			if (!empty($openid)) 
+			if (!(empty($openid))) 
 			{
 				$member = m('member')->getMember($openid);
 				$pcondition = 'AND finishtime>' . $member['partnertime'];
 			}
 			$orders = pdo_fetchall('select id,openid,price from ' . tablename('ewei_shop_order') . ' where uniacid=' . $_W['uniacid'] . ' and status=3 and isglobonus=0 and finishtime + ' . $settletimes . '>= ' . $starttime . ' and  finishtime + ' . $settletimes . '<=' . $endtime . ' ' . $pcondition, array(), 'id');
 			$pcondition = '';
-			if (!empty($openid)) 
+			if (!(empty($openid))) 
 			{
 				$pcondition = ' and m.openid=\'' . $openid . '\'';
 			}
 			$partners = pdo_fetchall('select m.id,m.openid,m.partnerlevel,l.bonus from ' . tablename('ewei_shop_member') . ' m ' . '  left join ' . tablename('ewei_shop_globonus_level') . ' l on l.id = m.partnerlevel ' . '  where m.uniacid=:uniacid and  m.ispartner=1 and m.partnerstatus=1 ' . $pcondition, array(':uniacid' => $_W['uniacid']));
 			foreach ($partners as &$p ) 
 			{
-				if (empty($p['partnerlevel'])) 
+				if (empty($p['partnerlevel']) || ($p['bonus'] == NULL)) 
 				{
 					$p['bonus'] = floatval($set['bonus']);
 				}
@@ -751,12 +750,11 @@ if (!class_exists('GlobonusModel'))
 						}
 					}
 					$price = ($o['price'] * $set['bonusrate']) / 100;
-					!isset($p['bonusmoney']) && $p['bonusmoney'] = 0;
-					$p['bonusmoney'] += round(($price * $p['bonus']) / 100, 2);
+					!(isset($p['bonusmoney'])) && ($p['bonusmoney'] = 0);
+					$p['bonusmoney'] += floatval(($price * $p['bonus']) / 100);
 				}
 				unset($p);
 			}
-			$bonusmoney = 0;
 			foreach ($partners as &$p ) 
 			{
 				$bonusmoney_send = 0;
@@ -776,6 +774,18 @@ if (!class_exists('GlobonusModel'))
 				$bonusmoney += $bonusmoney_send;
 			}
 			unset($p);
+			if ($bonusordermoney < $bonusmoney) 
+			{
+				$rat = $bonusordermoney / $bonusmoney;
+				$bonusmoney = 0;
+				foreach ($partners as &$p ) 
+				{
+					$p['chargemoney'] = round($p['chargemoney'] * $rat, 2);
+					$p['bonusmoney_send'] = round($p['bonusmoney_send'] * $rat, 2);
+					$bonusmoney += $p['bonusmoney_send'];
+				}
+				unset($p);
+			}
 			return array('orders' => $orders, 'partners' => $partners, 'ordermoney' => round($ordermoney, 2), 'bonusordermoney' => round($bonusordermoney, 2), 'bonusrate' => round($set['bonusrate'], 2), 'ordercount' => count($orders), 'bonusmoney' => round($bonusmoney, 2), 'partnercount' => count($partners), 'starttime' => $starttime, 'endtime' => $endtime, 'old' => false);
 		}
 		public function getTotals() 

@@ -1,355 +1,335 @@
+{php define('MUI', true);}
 {template 'common/header'}
-<style>
-	body{background:#d2e6e9; padding-bottom:63px; font-family:Helvetica, Arial, sans-serif;}
-	a{color:#666666;}a:hover{color:#3ebacc;}
-	.profile-box{padding:10px 0; background:transparent url('resource/images/home-bg.jpg') no-repeat; background-size:100% 100%;}
-	.form-header{clear:both;height:20px;line-height:15px;margin-left:15px; margin-top:20px;border-left:5px solid #000000;padding:5px;font-weight:bold;postion:relative;}
-	.nav-tabs>li.active>a, .nav-tabs>li.active>a:hover, .nav-tabs>li.active>a:focus{color: #3ebacc;}
-	.btn.btn-primary{background: #56c6d6; color: #FFF; border: 0;}
-	@media screen and (max-width: 767px) {.tpl-calendar div,.tpl-district-container div{margin-bottom:10px;} .empty{display:none;}}
-	.btn-group-top-box{padding:10px 0; border-bottom:1px solid #a5d7de;}
-	.btn-group-top{margin:0 auto; overflow:hidden; width:200px; display:block;}
-	.btn-group-top .btn{width:100px; -webkit-box-shadow:none; box-shadow:none; border-color:#5ac5d4; color:#5ac5d4; background:#d1e5e9;}
-	.btn-group-top .btn:hover{color:#FFF; background:#addbe1;}
-	.btn-group-top .btn.active{color:#FFF; background:#5ac5d4;}
-</style>
-<script>
-	require(['bootstrap'], function($){
-		$(function(){
-			$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-				if($(e.target).attr('href') == '#tab2') {
-					$('#tab2').addClass('fadeInRight');
-					$('.more').addClass('active');
-					$('.basic').removeClass('active');
-				} else {
-					$('#tab1').addClass('fadeInLeft');
-					$('.more').removeClass('active');
-					$('.basic').addClass('active');
-				}
-			});
-		});
-	});
-</script>
-{template 'common/toolbar'}
-<div class="profile">
-	<div class="tabbable">
-		<div class="btn-group-top-box">
-			<div class="btn-group btn-group-top">
-				<a href="#tab1" data-toggle="tab" class="btn btn-default basic active">基本资料</a>
-				<a href="#tab2" data-toggle="tab" class="btn btn-default more">更多资料</a>
-			</div>
+<form class="tab-content clearfix js-ajax-form {if $_W['container'] !== 'wechat'}profile-form{/if}" action="{url 'mc/profile/editprofile'}" method="post" enctype="multipart/form-data">
+<div class="mui-content {if $do == 'index'}mc-profile{/if}">
+{if $do == 'index'}
+	{if !empty($mcFields['avatar'])}
+	{php echo tpl_app_form_field_avatar('avatar', $profile['avatar']);}
+	{/if}
+	<div class="mui-input-group mui-mt15">
+		{if !empty($mcFields['nickname'])}
+		<div class="mui-input-row">
+			<label>{$mcFields['nickname']['title']}</label>
+			{php echo tpl_app_fans_form('nickname', $profile['nickname'], $mcFields['nickname']['title']);}
 		</div>
-		<div class="profile-box">
-		<form class="tab-content clearfix" action="{url 'mc/profile'}" method="post" enctype="multipart/form-data">
-		<input type="hidden" name="from_user" value="{$_W['fans']['from_user']}" />
-		<div class="tab-pane active animated" id="tab1">
-			{if !empty($mcFields['avatar'])}
-			<div class="form-group">
-				<label class="col-xs-12 col-sm-12 control-label">{$mcFields['avator']['title']}</label>
-				<div class="col-sm-12 col-xs-12">
-					{php echo tpl_fans_form('avatar', $profile['avatar']);}
-				</div>
-			</div>
-			{/if}
-			{if !empty($mcFields['nickname'])}
-			<div class="form-group">
-				<label class="col-xs-12 col-sm-12 control-label">{$mcFields['nickname']['title']}</label>
-				<div class="col-sm-12 col-xs-12">
-					{php echo tpl_fans_form('nickname',$profile['nickname'] );}
-				</div>
-			</div>
-			{/if}
-			{if !empty($mcFields['realname'])}
-			<div class="form-group">
-				<label class="col-xs-12 col-sm-12 control-label">{$mcFields['realname']['title']}</label>
-				<div class="col-sm-12 col-xs-12">
-					{php echo tpl_fans_form('realname',$profile['realname'] );}
-				</div>
-			</div>
-			{/if}
-			{if !empty($mcFields['gender'])}
-			<div class="form-group">
-				<label class="col-xs-12 col-sm-12 control-label">{$mcFields['gender']['title']}</label>
-				<div class="col-sm-12 col-xs-12">
-					{php echo tpl_fans_form('gender',$profile['gender']);}
-				</div>
-			</div>
-			{/if}
-			{if !empty($mcFields['birthyear'])}
-			<div class="form-group">
-				<label class="col-xs-12 col-sm-12 control-label">{$mcFields['birthyear']['title']}</label>
-				<div class="col-sm-12 col-xs-12">
-					{php echo tpl_fans_form('birth',array('year' => $profile['birthyear'],'month' => $profile['birthmonth'],'day' => $profile['birthday']));}
-				</div>
-			</div>
-			{/if}
-			{if !empty($mcFields['resideprovince'])}
-			<div class="form-group">
-				<label class="col-xs-12 col-sm-12 control-label">{$mcFields['resideprovince']['title']}</label>
-				<div class="col-sm-12 col-xs-12">
-					{php echo tpl_fans_form('reside',array('province' => $profile['resideprovince'],'city' => $profile['residecity'],'district' => $profile['residedist']));}
-				</div>
-			</div>
-			{/if}
-			{if !empty($mcFields['address'])}
-			<div class="form-group">
-				<label class="col-xs-12 col-sm-12 control-label">{$mcFields['address']['title']}</label>
-				<div class="col-sm-12 col-xs-12">
-					{php echo tpl_fans_form('address',$profile['address']);}
-				</div>
-			</div>
-			{/if}
-			<div class="form-group">
-				<label class="col-xs-12 col-sm-12 control-label">{$mcFields['mobile']['title']}</label>
-				<div class="col-sm-12 col-xs-12">
-					{if $profile['mobile']}
-					<input type="text" disabled value="{$profile['mobile']}" class="form-control">
-					{else}
-					{php echo tpl_fans_form('mobile',$profile['mobile']);}
-					{/if}
-				</div>
-			</div>
-			{if !empty($mcFields['qq'])}
-			<div class="form-group">
-				<label class="col-xs-12 col-sm-12 control-label">{$mcFields['qq']['title']}</label>
-				<div class="col-sm-12 col-xs-12">
-					{php echo tpl_fans_form('qq',$profile['qq']);}
-				</div>
-			</div>
-			{/if}
-			{if !empty($mcFields['email'])}
-			<div class="form-group">
-				<label class="col-xs-12 col-sm-12 control-label">{$mcFields['email']['title']}</label>
-				<div class="col-sm-12 col-xs-12">
-					{if $profile['email']}
-					<input type="text" disabled value="{$profile['email']}" class="form-control">
-					{else}
-					{php echo tpl_fans_form('email', $profile['email']);}
-					{/if}
-				</div>
-			</div>
-			{/if}
+		{/if}
+		{if !empty($mcFields['realname'])}
+		<div class="mui-input-row">
+			<label>{$mcFields['realname']['title']}</label>
+			{php echo tpl_app_fans_form('realname', $profile['realname'], $mcFields['realname']['title']);}
 		</div>
+		{/if}
+		{if !empty($mcFields['gender'])}
+		<div class="mui-input-row">
+			<label>{$mcFields['gender']['title']}</label>
+			{php echo tpl_app_fans_form('gender', $profile['gender'], $mcFields['gender']['title']);}	
+		</div>
+		{/if}
+		{if !empty($mcFields['birthyear'])}
+		<div class="mui-input-row">
+			<label>{$mcFields['birthyear']['title']}</label>
+			{php echo tpl_app_fans_form('birth', array('year' => $profile['birthyear'], 'month' => $profile['birthmonth'], 'day' => $profile['birthday']), $mcFields['birthyear']['title']);}
+		</div>
+		{/if}
+		{if !empty($mcFields['resideprovince'])}
+		<div class="mui-input-row">
+			<label>{$mcFields['resideprovince']['title']}</label>
+			{php echo tpl_app_fans_form('reside', array('province' => $profile['resideprovince'], 'city' => $profile['residecity'], 'district' => $profile['residedist']), $mcFields['resideprovince']['title']);}
+		</div>
+		{/if}
+	</div>
+	<ul class="mui-table-view mui-table-view-chevron">
+		{if empty($personal_info_hide)}
+		<li class="mui-table-view-cell">
+			<a href="{php echo url('mc/profile/personal_info') . 'wxref=mp.weixin.qq.com#wechat_redirect'}" class="mui-navigate-right">个人信息</a>
+		</li>
+		{/if}
+		{if empty($contact_method_hide)}
+		<li class="mui-table-view-cell">
+			<a href="{php echo url('mc/profile/contact_method') . 'wxref=mp.weixin.qq.com#wechat_redirect'}" class="mui-navigate-right">联系方式</a>
+		</li>
+		{/if}
+		{if empty($education_info_hide)}
+		<li class="mui-table-view-cell">
+			<a href="{php echo url('mc/profile/education_info') . 'wxref=mp.weixin.qq.com#wechat_redirect'}" class="mui-navigate-right">教育信息</a>
+		</li>
+		{/if}
+		{if empty($jobedit_hide)}
+		<li class="mui-table-view-cell">
+			<a href="{php echo url('mc/profile/jobedit') . 'wxref=mp.weixin.qq.com#wechat_redirect'}" class="mui-navigate-right">工作信息</a>
+		</li>
+		{/if}
+	</ul>
+{/if}
 
-		<div class="tab-pane animated" id="tab2">
-		{if !empty($mcFields['telephone'])}
-		<h5 class="form-header">联系方式</h5>
-		<div class="form-group">
-			<label class="col-xs-12 col-sm-12 control-label">{$mcFields['telephone']['title']}</label>
-			<div class="col-sm-12 col-xs-12">
-				{php echo tpl_fans_form('telephone',$profile['telephone']);}
-			</div>
-		</div>
-		{/if}
-		{if !empty($mcFields['msn'])}
-		<div class="form-group">
-			<label class="col-xs-12 col-sm-12 control-label">{$mcFields['msn']['title']}</label>
-			<div class="col-sm-12 col-xs-12">
-				{php echo tpl_fans_form('msn',$profile['msn']);}
-			</div>
-		</div>
-		{/if}
-		{if !empty($mcFields['taobao'])}
-		<div class="form-group">
-			<label class="col-xs-12 col-sm-12 control-label">{$mcFields['taobao']['title']}</label>
-			<div class="col-sm-12 col-xs-12">
-				{php echo tpl_fans_form('taobao',$profile['taobao']);}
-			</div>
-		</div>
-		{/if}
-		{if !empty($mcFields['alipay'])}
-		<div class="form-group">
-			<label class="col-xs-12 col-sm-12 control-label">{$mcFields['alipay']['title']}</label>
-			<div class="col-sm-12 col-xs-12">
-				{php echo tpl_fans_form('alipay',$profile['alipay']);}
-			</div>
-		</div>
-		{/if}
-		{if !empty($mcFields['studentid'])}
-		<h5 class="form-header empty" style="border:none;"></h5>
-		<h5 class="form-header">教育情况</h5>
-		<div class="form-group">
-			<label class="col-xs-12 col-sm-12 control-label">{$mcFields['studentid']['title']}</label>
-			<div class="col-sm-12 col-xs-12">
-				{php echo tpl_fans_form('studentid',$profile['studentid']);}
-			</div>
-		</div>
-		{/if}
-		{if !empty($mcFields['grade'])}
-		<div class="form-group">
-			<label class="col-xs-12 col-sm-12 control-label">{$mcFields['grade']['title']}</label>
-			<div class="col-sm-12 col-xs-12">
-				{php echo tpl_fans_form('grade',$profile['grade']);}
-			</div>
-		</div>
-		{/if}
-		{if !empty($mcFields['graduateschool'])}
-		<div class="form-group">
-			<label class="col-xs-12 col-sm-12 control-label">{$mcFields['graduateschool']['title']}</label>
-			<div class="col-sm-12 col-xs-12">
-				{php echo tpl_fans_form('graduateschool',$profile['graduateschool']);}
-			</div>
-		</div>
-		{/if}
-		{if !empty($mcFields['education'])}
-		<div class="form-group">
-			<label class="col-xs-12 col-sm-12 control-label">{$mcFields['education']['title']}</label>
-			<div class="col-sm-12 col-xs-12">
-				{php echo tpl_fans_form('education',$profile['education']);}
-			</div>
-		</div>
-		{/if}
-		{if !empty($mcFields['company'])}
-		<h5 class="form-header empty" style="border:none;"></h5>
-		<h5 class="form-header">工作情况</h5>
-		<div class="form-group">
-			<label class="col-xs-12 col-sm-12 control-label">{$mcFields['company']['title']}</label>
-			<div class="col-sm-12 col-xs-12">
-				{php echo tpl_fans_form('company',$profile['company']);}
-			</div>
-		</div>
-		{/if}
-		{if !empty($mcFields['occupation'])}
-		<div class="form-group">
-			<label class="col-xs-12 col-sm-12 control-label">{$mcFields['occupation']['title']}</label>
-			<div class="col-sm-12 col-xs-12">
-				{php echo tpl_fans_form('occupation',$profile['occupation']);}
-			</div>
-		</div>
-		{/if}
-		{if !empty($mcFields['position'])}
-		<div class="form-group">
-			<label class="col-xs-12 col-sm-12 control-label">{$mcFields['position']['title']}</label>
-			<div class="col-sm-12 col-xs-12">
-				{php echo tpl_fans_form('position',$profile['position']);}
-			</div>
-		</div>
-		{/if}
-		{if !empty($mcFields['revenue'])}
-		<div class="form-group">
-			<label class="col-xs-12 col-sm-12 control-label">{$mcFields['revenue']['title']}</label>
-			<div class="col-sm-12 col-xs-12">
-				{php echo tpl_fans_form('revenue',$profile['revenue']);}
-			</div>
-		</div>
-		{/if}
-		{if !empty($mcFields['constellation'])}
-		<h5 class="form-header empty" style="border:none;"></h5>
-		<h5 class="form-header">个人情况</h5>
-		<div class="form-group">
-			<label class="col-xs-12 col-sm-12 control-label">{$mcFields['constellation']['title']}</label>
-			<div class="col-sm-12 col-xs-12">
-				{php echo tpl_fans_form('constellation',$profile['constellation']);}
-			</div>
-		</div>
-		{/if}
-		{if !empty($mcFields['zodiac'])}
-		<div class="form-group">
-			<label class="col-xs-12 col-sm-12 control-label">{$mcFields['zodiac']['title']}</label>
-			<div class="col-sm-12 col-xs-12">
-				{php echo tpl_fans_form('zodiac',$profile['zodiac']);}
-			</div>
-		</div>
-		{/if}
-		{if !empty($mcFields['nationality'])}
-		<div class="form-group">
-			<label class="col-xs-12 col-sm-12 control-label">{$mcFields['nationality']['title']}</label>
-			<div class="col-sm-12 col-xs-12">
-				{php echo tpl_fans_form('nationality',$profile['nationality']);}
-			</div>
+{if $do == 'personal_info'}
+	<div class="mui-content-padded mui-text-muted">请完善您的个人信息</div>
+	<div class="mui-input-group mui-mt15">
+		{if !empty($mcFields['idcard'])}
+		<div class="mui-input-row">
+			<label>{$mcFields['idcard']['title']}</label>
+			{php echo tpl_app_fans_form('idcard', $profile['idcard'], $mcFields['idcard']['title']);}
 		</div>
 		{/if}
 		{if !empty($mcFields['height'])}
-		<div class="form-group">
-			<label class="col-xs-12 col-sm-12 control-label">{$mcFields['height']['title']}</label>
-			<div class="col-sm-12 col-xs-12">
-				{php echo tpl_fans_form('height',$profile['height']);}
-			</div>
+		<div class="mui-input-row">
+			<label>{$mcFields['height']['title']}</label>
+			{php echo tpl_app_fans_form('height', $profile['height'], $mcFields['height']['title']);}
 		</div>
 		{/if}
 		{if !empty($mcFields['weight'])}
-		<div class="form-group">
-			<label class="col-xs-12 col-sm-12 control-label">{$mcFields['weight']['title']}</label>
-			<div class="col-sm-12 col-xs-12">
-				{php echo tpl_fans_form('weight',$profile['weight']);}
-			</div>
+		<div class="mui-input-row">
+			<label>{$mcFields['weight']['title']}</label>
+			{php echo tpl_app_fans_form('weight', $profile['weight'], $mcFields['weight']['title']);}
 		</div>
 		{/if}
 		{if !empty($mcFields['bloodtype'])}
-		<div class="form-group">
-			<label class="col-xs-12 col-sm-12 control-label">{$mcFields['bloodtype']['title']}</label>
-			<div class="col-sm-12 col-xs-12">
-				{php echo tpl_fans_form('bloodtype',$profile['bloodtype']);}
-			</div>
+		<div class="mui-input-row">
+			<label>{$mcFields['bloodtype']['title']}</label>
+			{php echo tpl_app_fans_form('bloodtype', $profile['bloodtype'], $mcFields['bloodtype']['title']);}
 		</div>
 		{/if}
-		{if !empty($mcFields['idcard'])}
-		<div class="form-group">
-			<label class="col-xs-12 col-sm-12 control-label">{$mcFields['idcard']['title']}</label>
-			<div class="col-sm-12 col-xs-12">
-				{php echo tpl_fans_form('idcard',$profile['idcard']);}
-			</div>
+		{if !empty($mcFields['zodiac'])}
+		<div class="mui-input-row">
+			<label>{$mcFields['zodiac']['title']}</label>
+			{php echo tpl_app_fans_form('zodiac', $profile['zodiac'], $mcFields['zodiac']['title']);}
 		</div>
 		{/if}
-		{if !empty($mcFields['zipcode'])}
-		<div class="form-group">
-			<label class="col-xs-12 col-sm-12 control-label">{$mcFields['zipcode']['title']}</label>
-			<div class="col-sm-12 col-xs-12">
-				{php echo tpl_fans_form('zipcode',$profile['zipcode']);}
-			</div>
+		{if !empty($mcFields['constellation'])}
+		<div class="mui-input-row">
+			<label>{$mcFields['constellation']['title']}</label>
+			{php echo tpl_app_fans_form('constellation', $profile['constellation'], $mcFields['constellation']['title']);}
 		</div>
 		{/if}
 		{if !empty($mcFields['site'])}
-		<div class="form-group">
-			<label class="col-xs-12 col-sm-12 control-label">{$mcFields['site']['title']}</label>
-			<div class="col-sm-12 col-xs-12">
-				{php echo tpl_fans_form('site',$profile['site']);}
-			</div>
+		<div class="mui-input-row">
+			<label>{$mcFields['site']['title']}</label>
+			{php echo tpl_app_fans_form('site', $profile['site'], $mcFields['site']['title']);}
 		</div>
 		{/if}
 		{if !empty($mcFields['affectivestatus'])}
-		<div class="form-group">
-			<label class="col-xs-12 col-sm-12 control-label">{$mcFields['affectivestatus']['title']}</label>
-			<div class="col-sm-12 col-xs-12">
-				{php echo tpl_fans_form('affectivestatus',$profile['affectivestatus']);}
-			</div>
+		<div class="mui-input-row">
+			<label>{$mcFields['affectivestatus']['title']}</label>
+			{php echo tpl_app_fans_form('affectivestatus', $profile['affectivestatus'], $mcFields['affectivestatus']['title']);}
 		</div>
 		{/if}
 		{if !empty($mcFields['lookingfor'])}
-		<div class="form-group">
-			<label class="col-xs-12 col-sm-12 control-label">{$mcFields['lookingfor']['title']}</label>
-			<div class="col-sm-12 col-xs-12">
-				{php echo tpl_fans_form('lookingfor',$profile['lookingfor']);}
-			</div>
+		<div class="mui-input-row">
+			<label>{$mcFields['lookingfor']['title']}</label>
+			{php echo tpl_app_fans_form('lookingfor', $profile['lookingfor'], $mcFields['lookingfor']['title']);}
 		</div>
 		{/if}
 		{if !empty($mcFields['bio'])}
-		<div class="form-group">
-			<label class="col-xs-12 col-sm-12 control-label">{$mcFields['bio']['title']}</label>
-			<div class="col-sm-12 col-xs-12">
-				{php echo tpl_fans_form('bio',$profile['bio']);}
-			</div>
+		<div class="mui-input-row">
+			<label>{$mcFields['bio']['title']}</label>
+			{php echo tpl_app_fans_form('bio', $profile['bio'], $mcFields['bio']['title']);}
 		</div>
 		{/if}
 		{if !empty($mcFields['interest'])}
-		<div class="form-group">
-			<label class="col-xs-12 col-sm-12 control-label">{$mcFields['interest']['title']}</label>
-			<div class="col-sm-12 col-xs-12">
-				{php echo tpl_fans_form('interest',$profile['interest']);}
-			</div>
+		<div class="mui-input-row">
+			<label>{$mcFields['interest']['title']}</label>
+			{php echo tpl_app_fans_form('interest', $profile['interest'], $mcFields['interest']['title']);}
 		</div>
 		{/if}
+	</div>
+{/if}
+{if $do == 'contact_method'}
+	<div class="mui-content-padded mui-text-muted">请完善您的联系方式</div>
+	<div class="mui-input-group mui-mt15">
+		{if !empty($mcFields['telephone'])}
+		<div class="mui-input-row">
+			<label>{$mcFields['telephone']['title']}</label>
+			{php echo tpl_app_fans_form('telephone', $profile['telephone'], $mcFields['telephone']['title']);}
 		</div>
-		<div class="form-group">
-			<label class="col-xs-12 col-sm-12 control-label"></label>
-			<div class="col-sm-12 col-xs-12" style="text-align:center">
-				<button type="submit" class="btn btn-primary btn-block" name="submit" value="提交">提交</button>
-				<input type="hidden" name="token" value="{$_W['token']}" />
-			</div>
+		{/if}
+		{if !empty($mcFields['qq'])}
+		<div class="mui-input-row">
+			<label>{$mcFields['qq']['title']}</label>
+			{php echo tpl_app_fans_form('qq', $profile['qq'], $mcFields['qq']['title']);}
 		</div>
-		</form>
+		{/if}
+		{if !empty($mcFields['msn'])}
+		<div class="mui-input-row">
+			<label>{$mcFields['msn']['title']}</label>
+			{php echo tpl_app_fans_form('msn', $profile['msn'], $mcFields['msn']['title']);}
 		</div>
+		{/if}
+		{if !empty($mcFields['taobao'])}
+		<div class="mui-input-row">
+			<label>{$mcFields['taobao']['title']}</label>
+			{php echo tpl_app_fans_form('taobao', $profile['taobao'], $mcFields['taobao']['title']);}
+		</div>
+		{/if}
+		{if !empty($mcFields['alipay'])}
+		<div class="mui-input-row">
+			<label>{$mcFields['alipay']['title']}</label>
+			{php echo tpl_app_fans_form('alipay', $profile['alipay'], $mcFields['alipay']['title']);}
+		</div>
+		{/if}
+	</div>
+{/if}
+{if $do == 'education_info'}
+	<div class="mui-content-padded mui-text-muted">请完善您的教育信息</div>
+	<div class="mui-input-group mui-mt15">
+		{if !empty($mcFields['education'])}
+		<div class="mui-input-row">
+			<label>{$mcFields['education']['title']}</label>
+			{php echo tpl_app_fans_form('education', $profile['education'],$mcFields['education']['title']);}
+		</div>
+		{/if}
+		{if !empty($mcFields['graduateschool'])}
+		<div class="mui-input-row">
+			<label>{$mcFields['graduateschool']['title']}</label>
+			{php echo tpl_app_fans_form('graduateschool', $profile['graduateschool'], $mcFields['graduateschool']['title']);}
+		</div>
+		{/if}
+		{if !empty($mcFields['studentid'])}
+		<div class="mui-input-row">
+			<label>{$mcFields['studentid']['title']}</label>
+			{php echo tpl_app_fans_form('studentid', $profile['studentid'], $mcFields['studentid']['title']);}
+		</div>
+		{/if}
+	</div>
+{/if}
+
+{if $do == 'jobedit'}
+	<div class="mui-content-padded mui-text-muted">请完善您的工作信息</div>
+	<div class="mui-input-group mui-mt15">
+		{if !empty($mcFields['company'])}
+		<div class="mui-input-row">
+			<label>{$mcFields['company']['title']}</label>
+			{php echo tpl_app_fans_form('company', $profile['company'], $mcFields['company']['title']);}
+		</div>
+		{/if}
+		{if !empty($mcFields['occupation'])}
+		<div class="mui-input-row">
+			<label>{$mcFields['occupation']['title']}</label>
+			{php echo tpl_app_fans_form('occupation', $profile['occupation'], $mcFields['occupation']['title']);}
+		</div>
+		{/if}
+		{if !empty($mcFields['position'])}
+		<div class="mui-input-row">
+			<label>{$mcFields['position']['title']}</label>
+			{php echo tpl_app_fans_form('position', $profile['position'], $mcFields['position']['title']);}
+		</div>
+		{/if}
+		{if !empty($mcFields['revenue'])}
+		<div class="mui-input-row">
+			<label>{$mcFields['revenue']['title']}</label>
+			{php echo tpl_app_fans_form('revenue', $profile['revenue'], $mcFields['revenue']['title']);}
+		</div>
+		{/if}
+	</div>
+{/if}
+	<div class="mui-content-padded">
+		<button class="mui-btn mui-btn-success mui-btn-block" type="submit" name="submit" value="提交">保存</button>
+		<input type="hidden" name="token" value="{$_W['token']}" />
 	</div>
 </div>
-{template 'mc/footer'}
+</form>
+{if $do == 'address' && empty($_GPC['addid'])}
+<div class="mui-content mc-address-list">
+	<ul class="mui-table-view">
+		{if empty($addresses)}
+		<li class="mui-table-view-cell mui-text-center">
+			暂无收货地址,请点击新增收货地址.
+		</li>
+		{/if}
+		{loop $addresses $address}
+		<li class="mui-table-view-cell mui-table-view-chevron">
+			<div class="mui-slider-right mui-disabled">
+				{if !$address['isdefault']}
+				<a class="mui-btn mui-btn-yellow" href="{php echo url('mc/profile/address', array('op' => 'default', 'id' => $address['id'], address => $address['province'].$address['city'].$address['district'].$address['address']))}">设为默认</a>
+				{/if}
+				<a class="mui-btn mui-btn-red" href="{php echo url('mc/profile/address', array('op' => 'delete', 'id' => $address['id']))}">删除</a>
+			</div>
+			<a data-href="{php echo url('mc/profile/addressadd', array('addid' => $address['id']));}" class="mui-slider-handle mui-navigate-right js-slider-handle">
+				<div>
+					{$address['username']}<span class="tel mui-ml15">{$address['mobile']}</span>
+					<div class="mui-ellipsis mui-text-muted mui-mt5">{$address['province']} {$address['city']} {$address['district']} {$address['address']}</div>
+					{if $address['isdefault'] > 0}
+					<span class="default-marker">默认</span>
+					{/if}
+				</div>
+			</a>
+		</li>
+		{/loop}
+		<li class="mui-table-view-cell">
+			<a href="{php echo url('mc/profile/addressadd', array('uid' => $address['openid']));}" class="mui-text-success mui-text-center mui-bg-white">
+				<span class="fa fa-plus-circle mui-mr10"></span>新增收货地址
+			</a>
+		</li>
+	</ul>
+</div>
+<script type="text/javascript">
+{if ($_W['account']['level'] == ACCOUNT_SUBSCRIPTION_VERIFY || $_W['account']['level'] == ACCOUNT_SERVICE_VERIFY) && empty($address)}
+wx.ready(function () {
+	wx.openAddress({
+		success:function(result){
+			username = result.userName;
+			mobile = result.telNumber;
+			zipcode = result.postalCode;
+			province = result.provinceName;
+			city = result.cityName;
+			district = result.countryName;
+			address = result.detailInfo;
+			address_data = {'username':username, 'mobile':mobile, 'zipcode':zipcode, 'province':province, 'city':city,  'district':district, 'address': address};
+			$.post('{php echo url("mc/profile/addressadd")}', {address : address_data}, function(data) {
+				data = $.parseJSON(data);
+				if (data.type == 'success') {
+					alert(data.message)
+				};
+				location.reload();
+			});
+		}
+	});
+});
+{/if}
+	$(document).on('tap', '.js-slider-handle', function(event){
+		var href = $(this).data('href');
+		var has = $(this).prev().hasClass('mui-selected');
+		if (has) {
+			$(this).prev().removeClass('mui-selected');
+			$(this).parent().removeClass('mui-selected');
+			$(this).removeAttr('style');
+		} else {
+			location.href = href;
+		}
+	});
+</script>
+{/if}
+{if $do == 'addressadd'}
+<form class="tab-content clearfix js-ajax-form {if $_W['container'] !== 'wechat'}profile-form{/if}" action="{url 'mc/profile/addressadd'}" method="post" enctype="multipart/form-data" id="addressform">
+<div class="mui-content">
+	<div class="mui-content-padded mui-text-muted">请您填写收货地址</div>
+	<div class="mui-input-group mui-mt15">
+		<div class="mui-input-row">
+			<label>姓名</label>
+			<input type="text" value="{$address['username']}" name="address[username]" placeholder="收货人姓名"/>
+		</div>
+		<div class="mui-input-row">
+			<label>手机号码</label>
+			<input type="text" value="{$address['mobile']}" name="address[mobile]" placeholder="手机号"/>
+		</div>
+		<div class="mui-input-row">
+			<label>邮政编码</label>
+			<input type="text" name="address[zipcode]" value="{$address['zipcode']}" placeholder="邮政编码"/>
+		</div>
+		<div class="mui-input-row">
+			<label>选择地区</label>
+			{php echo tpl_app_form_field_district('address',array('province' => $address['province'],'city' => $address['city'],'district' => $address['district']));}
+		</div>
+		<div class="mui-input-row">
+			<label>详细地址</label>
+			<input type="text" name="address[address]" class="form-control" value="{$address['address']}" placeholder="详细地址"/>
+		</div>
+	</div>
+	<div class="mui-content-padded">
+		<button class="mui-btn mui-btn-success mui-btn-block" type="submit" value="提交" name="submit">保存</button>
+		<input type="hidden" name="addid" value="{$address['id']}">
+		<input type="hidden" name="token" value="{$_W['token']}" />
+	</div>
+</div>
+</form>
+{/if}
 {template 'common/footer'}

@@ -208,7 +208,7 @@ define(['jquery', 'foxui', 'tpl'], function ($, FoxUI, tpl) {
         var ua = navigator.userAgent.toLowerCase();
         var isWX = ua.match(/MicroMessenger/i) == "micromessenger";
         return isWX;
-    }
+    };
 
     window.core = core;
     return core

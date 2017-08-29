@@ -1,6 +1,5 @@
 <?php
-
-if (!defined('IN_IA')) {
+if (!(defined('IN_IA'))) {
 	exit('Access Denied');
 }
 
@@ -22,7 +21,7 @@ class Order_EweiShopV2Page extends MerchWebPage
 		}
 
 
-		if (!empty($_GPC['datetime']['start']) && !empty($_GPC['datetime']['end'])) {
+		if (!(empty($_GPC['datetime']['start'])) && !(empty($_GPC['datetime']['end']))) {
 			$starttime = strtotime($_GPC['datetime']['start']);
 			$endtime = strtotime($_GPC['datetime']['end']);
 			$condition .= ' AND o.createtime >= :starttime AND o.createtime <= :endtime ';
@@ -34,7 +33,7 @@ class Order_EweiShopV2Page extends MerchWebPage
 		$searchfield = strtolower(trim($_GPC['searchfield']));
 		$_GPC['keyword'] = trim($_GPC['keyword']);
 
-		if (!empty($searchfield) && !empty($_GPC['keyword'])) {
+		if (!(empty($searchfield)) && !(empty($_GPC['keyword']))) {
 			if ($searchfield == 'ordersn') {
 				$condition .= ' and o.ordersn like :keyword';
 			}
@@ -67,8 +66,9 @@ class Order_EweiShopV2Page extends MerchWebPage
 		}
 
 		unset($row);
-		$totalcount = $total = pdo_fetchcolumn('select count(o.id) from ' . tablename('ewei_shop_order') . ' o ' . ' left join ' . tablename('ewei_shop_member') . ' m on o.openid = m.openid ' . ' left join ' . tablename('ewei_shop_member_address') . ' a on a.id = o.addressid ' . ' where 1 ' . $condition, $params);
-		$totalcount = $total = count($total);
+		$condition = rtrim($condition, 'group by o.id');
+		$count = pdo_fetch('select count(o.id) as count from ' . tablename('ewei_shop_order') . ' o ' . ' left join ' . tablename('ewei_shop_member') . ' m on o.openid = m.openid ' . ' left join ' . tablename('ewei_shop_member_address') . ' a on a.id = o.addressid ' . ' where 1 ' . $condition, $params);
+		$totalcount = $total = $count['count'];
 		$pager = pagination($total, $pindex, $psize);
 
 		if ($_GPC['export'] == 1) {

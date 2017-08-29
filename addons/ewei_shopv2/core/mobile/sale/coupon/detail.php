@@ -24,51 +24,51 @@ class Detail_EweiShopV2Page extends MobilePage
 		{
 			if (0 < $coupon['enough']) 
 			{
-				$title2 = '满' . (double) $coupon['enough'] . '元';
+				$title2 = '满' . (double) $coupon['enough'] . '元可用';
 			}
 			else 
 			{
-				$title2 = '购物任意金额';
+				$title2 = '无金额门槛';
 			}
 		}
 		else if ($coupon['coupontype'] == '1') 
 		{
 			if (0 < $coupon['enough']) 
 			{
-				$title2 = '充值满' . (double) $coupon['enough'] . '元';
+				$title2 = '充值满' . (double) $coupon['enough'] . '元可用';
 			}
 			else 
 			{
-				$title2 = '充值任意金额';
+				$title2 = '无金额门槛';
 			}
 		}
 		if ($coupon['coupontype'] == '2') 
 		{
 			if (0 < $coupon['enough']) 
 			{
-				$title2 = '满' . (double) $coupon['enough'] . '元';
+				$title2 = '满' . (double) $coupon['enough'] . '元可用';
 			}
 			else 
 			{
-				$title2 = '购物任意金额';
+				$title2 = '无金额门槛';
 			}
 		}
 		if ($coupon['backtype'] == 0) 
 		{
 			if ($coupon['enough'] == '0') 
 			{
-				$coupon['color'] = 'org ';
+				$coupon['color'] = 'orange';
 			}
 			else 
 			{
 				$coupon['color'] = 'blue';
 			}
-			$title3 = '减' . (double) $coupon['deduct'] . '元';
+			$title3 = '<span class="subtitle nopadding">￥</span>' . (double) $coupon['deduct'];
 		}
 		if ($coupon['backtype'] == 1) 
 		{
 			$coupon['color'] = 'red ';
-			$title3 = '打' . (double) $coupon['discount'] . '折 ';
+			$title3 = (double) $coupon['discount'] . '折 ';
 		}
 		if ($coupon['backtype'] == 2) 
 		{
@@ -82,15 +82,15 @@ class Detail_EweiShopV2Page extends MobilePage
 			}
 			if (!(empty($coupon['backmoney'])) && (0 < $coupon['backmoney'])) 
 			{
-				$title3 = $title3 . '送' . $coupon['backmoney'] . '元余额 ';
+				$backmoneytext = $coupon['backmoney'] . '元余额 ';
 			}
 			if (!(empty($coupon['backcredit'])) && (0 < $coupon['backcredit'])) 
 			{
-				$title3 = $title3 . '送' . $coupon['backcredit'] . '积分 ';
+				$backcredittext = $coupon['backcredit'] . '积分 ';
 			}
 			if (!(empty($coupon['backredpack'])) && (0 < $coupon['backredpack'])) 
 			{
-				$title3 = $title3 . '送' . $coupon['backredpack'] . '元红包';
+				$backredpacktext = $coupon['backredpack'] . '元红包';
 			}
 		}
 		$coupon['title2'] = $title2;
@@ -218,6 +218,17 @@ class Detail_EweiShopV2Page extends MobilePage
 			$shopset = m('common')->getSysset();
 			$payinfo = array('wechat' => (!(empty($sec['app_wechat']['merchname'])) && !(empty($shopset['pay']['app_wechat'])) && !(empty($sec['app_wechat']['appid'])) && !(empty($sec['app_wechat']['appsecret'])) && !(empty($sec['app_wechat']['merchid'])) && !(empty($sec['app_wechat']['apikey'])) ? true : false), 'alipay' => false, 'mcname' => $sec['app_wechat']['merchname'], 'logno' => NULL, 'money' => NULL, 'attach' => $_W['uniacid'] . ':4', 'type' => 4);
 		}
+		list(, $payment) = m('common')->public_build();
+		if (!(empty($payment['is_new']))) 
+		{
+			if (($payment['type'] == 2) || ($payment['type'] == 3)) 
+			{
+				if (!(empty($payment['sub_appsecret']))) 
+				{
+					m('member')->wxuser($payment['sub_appid'], $payment['sub_appsecret']);
+				}
+			}
+		}
 		include $this->template();
 	}
 	public function pay($a = array(), $b = array()) 
@@ -330,7 +341,14 @@ class Detail_EweiShopV2Page extends MobilePage
 					if (!(is_error($wechat))) 
 					{
 						$wechat['success'] = true;
-						$wechat['weixin'] = true;
+						if (!(empty($wechat['code_url']))) 
+						{
+							$wechat['weixin_jie'] = true;
+						}
+						else 
+						{
+							$wechat['weixin'] = true;
+						}
 					}
 				}
 				if ((isset($set['pay']) && ($set['pay']['weixin_jie'] == 1) && !($wechat['success'])) || ($jie === 1)) 

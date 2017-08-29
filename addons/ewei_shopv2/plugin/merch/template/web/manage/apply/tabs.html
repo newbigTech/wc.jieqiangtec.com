@@ -16,11 +16,11 @@
 <div class='menu-header'>提现申请</div>
 <ul class="mc-list">
 
-    {ifp 'merch.apply.list.status1'}<li {if $_W['routes']=='apply.list.status1'}class="active"{/if}><a href="{php echo merchUrl('apply/list/status1')}">待审核申请 <span class="text-primary"  id="status1">-</span></a></li>{/if}
-    {ifp 'merch.apply.list.status2'}<li {if $_W['routes']=='apply.list.status2'}class="active"{/if}><a href="{php echo merchUrl('apply/list/status2')}">待结算申请 <span class="text-primary"  id="status2">-</span></a></li>{/if}
-    {ifp 'merch.apply.list.status3'}<li {if $_W['routes']=='apply.list.status3'}class="active"{/if}><a href="{php echo merchUrl('apply/list/status3')}">已结算申请 <span class="text-success"  id="status3">-</span></a></li>{/if}
-    {ifp 'merch.apply.list.status_1'}<li {if $_W['routes']=='apply.list.status_1'}class="active"{/if}><a href="{php echo merchUrl('apply/list/status_1')}">已无效申请 <span class="text-success"  id="status_1">-</span></a></li>{/if}
-    {ifp 'merch.apply.list.add'}<li {if $_W['routes']=='apply.list.add'}class="active"{/if}><a href="{php echo merchUrl('apply/list/add')}">申请提现</a></li>{/if}
+    {ifp 'apply.list.status1'}<li {if $_W['routes']=='apply.list.status1'}class="active"{/if}><a href="{php echo merchUrl('apply/list/status1')}">待审核申请 <span class="text-primary"  id="status1">-</span></a></li>{/if}
+    {ifp 'apply.list.status2'}<li {if $_W['routes']=='apply.list.status2'}class="active"{/if}><a href="{php echo merchUrl('apply/list/status2')}">待结算申请 <span class="text-primary"  id="status2">-</span></a></li>{/if}
+    {ifp 'apply.list.status3'}<li {if $_W['routes']=='apply.list.status3'}class="active"{/if}><a href="{php echo merchUrl('apply/list/status3')}">已结算申请 <span class="text-success"  id="status3">-</span></a></li>{/if}
+    {ifp 'apply.list.status_1'}<li {if $_W['routes']=='apply.list.status_1'}class="active"{/if}><a href="{php echo merchUrl('apply/list/status_1')}">已无效申请 <span class="text-success"  id="status_1">-</span></a></li>{/if}
+    {ifp 'apply.list.post'}<li {if $_W['routes']=='apply.list.post'}class="active"{/if}><a href="{php echo merchUrl('apply/list/add')}">申请提现</a></li>{/if}
 
 </ul>
 

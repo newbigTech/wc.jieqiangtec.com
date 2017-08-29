@@ -68,7 +68,7 @@
                 <th>问题名称</th>
                 <th style="width: 50px; text-align: center;">推荐</th>
                 <th style="width: 50px; text-align: center;">状态</th>
-                <th style="width: 150px;">操作</th>
+                <th style="width: 220px;">操作</th>
             </tr>
         </thead>
         <tbody id="sort">
@@ -115,6 +115,14 @@
                         {ifp 'qa.question.delete'} 
                         	<a data-toggle='ajaxRemove' href="{php echo webUrl('qa/question/delete', array('id' => $row['id']))}"class="btn btn-default btn-sm" data-confirm="确认删除此分类?" title="删除"><i class="fa fa-trash"></i> 删除</a>
                         {/if}
+
+                        <a class="btn btn-default btn-sm js-clip" title="复制链接" data-href="{php echo mobileUrl('qa/detail', array('id'=>$row['id']), true)}">
+                            <i class="fa fa-link"></i>
+                        </a>
+
+                        <a href="javascript:void(0);" class="btn btn-default btn-sm" data-toggle="popover" data-trigger="hover" data-html="true" data-content="<img src='{$row['qrcode']}' width='130' alt='链接二维码'>" data-placement="auto right">
+                            <i class="glyphicon glyphicon-qrcode"></i>
+                        </a>
                     </td>
                 </tr>
                 {/loop} 

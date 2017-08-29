@@ -31,6 +31,10 @@
     display: none;
 }
 
+.hide {
+    display: none;
+}
+
 .page-shop-notice-detail .fui-content .fui-article .content {
     text-indent: 0;
 }
@@ -43,4 +47,10 @@
 }
 .fui-according-content .content-block img {
     max-width: 100%;
+}
+
+.fui-according:before {
+    left: 0.5rem;
+    width: auto;
+    right: 0.5rem;
 }

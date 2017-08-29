@@ -75,10 +75,10 @@
         {ifp 'creditshop.cover'}
             <li {if $_W['action']=='cover'}class="active"{/if}><a href="{php echo webUrl('creditshop/cover')}">入口设置</a></li>
         {/if}
-        {ifp 'creditshop.notice'}
+        {ifp 'creditshop.notice' && $_W['merchid']==0}
             <li  {if $_W['action']=='notice'}class="active"{/if}><a href="{php echo webUrl('creditshop/notice')}">通知设置</a></li>
         {/if}
-        {ifp 'creditshop.set'}
+        {ifp 'creditshop.set' && $_W['merchid']==0}
             <li {if $_W['action']=='set'}class="active"{/if}><a href="{php echo webUrl('creditshop/set')}">基础设置</a></li>
         {/if}
     </ul>

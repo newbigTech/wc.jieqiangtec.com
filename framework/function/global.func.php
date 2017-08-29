@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * [WeEngine System] Copyright (c) 2014 WE7.CC
+ * WeEngine is NOT a free software, it under the license terms, visited http://www.we7.cc/ for more details.
+ */
 defined('IN_IA') or exit('Access Denied');
 
 
@@ -123,7 +126,7 @@ function checksubmit($var = 'submit', $allowget = false) {
 		}
 	} else {
 		if(empty($_W['isajax']) && empty($_SESSION['token'][$_GPC['token']])) {
-			message('抱歉，表单已经失效请您重新进入提交数据', referer(), 'error');
+			exit("<script type=\"text/javascript\">history.go(-1);</script>");
 		} else {
 			unset($_SESSION['token'][$_GPC['token']]);
 		}
@@ -170,6 +173,24 @@ function array_elements($keys, $src, $default = FALSE) {
 }
 
 
+function iarray_sort($array, $keys, $type='asc'){
+	$keysvalue = $new_array = array();
+	foreach ($array as $k => $v){
+		$keysvalue[$k] = $v[$keys];
+	}
+	if($type == 'asc'){
+		asort($keysvalue);
+	}else{
+		arsort($keysvalue);
+	}
+	reset($keysvalue);
+	foreach ($keysvalue as $k => $v){
+		$new_array[$k] = $array[$k];
+	}
+	return $new_array;
+}
+
+
 function range_limit($num, $downline, $upline, $returnNear = true) {
 	$num = intval($num);
 	$downline = intval($downline);
@@ -189,11 +210,14 @@ function ijson_encode($value, $options = 0) {
 		return false;
 	}
 	if (version_compare(PHP_VERSION, '5.4.0', '<') && $options == JSON_UNESCAPED_UNICODE) {
-		$json_str = preg_replace("#\\\u([0-9a-f]{4})#ie", "iconv('UCS-2', 'UTF-8', pack('H4', '\\1'))", json_encode($value));
+		$str = json_encode($value);
+		$json_str = preg_replace_callback("#\\\u([0-9a-f]{4})#i", function($matchs){
+			return iconv('UCS-2BE', 'UTF-8', pack('H4', $matchs[1]));
+			}, $str);
 	} else {
 		$json_str = json_encode($value, $options);
 	}
-	return addcslashes($json_str, "\\\'\"");
+	return addslashes($json_str);
 }
 
 
@@ -211,7 +235,9 @@ function iunserializer($value) {
 	}
 	$result = unserialize($value);
 	if ($result === false) {
-		$temp = preg_replace('!s:(\d+):"(.*?)";!se', "'s:'.strlen('$2').':\"$2\";'", $value);
+		$temp = preg_replace_callback('!s:(\d+):"(.*?)";!s', function ($matchs){
+			return 's:'.strlen($matchs[2]).':"'.$matchs[2].'";';
+		}, $value);
 		return unserialize($temp);
 	}
 	return $result;
@@ -331,7 +357,7 @@ function murl($segment, $params = array(), $noredirect = true, $addhost = false)
 }
 
 
-function pagination($total, $pageIndex, $pageSize = 15, $url = '', $context = array('before' => 5, 'after' => 4, 'ajaxcallback' => '')) {
+function pagination($total, $pageIndex, $pageSize = 15, $url = '', $context = array('before' => 5, 'after' => 4, 'ajaxcallback' => '', 'callbackfuncname' => '')) {
 	global $_W;
 	$pdata = array(
 		'tcount' => 0,
@@ -346,7 +372,11 @@ function pagination($total, $pageIndex, $pageSize = 15, $url = '', $context = ar
 	if ($context['ajaxcallback']) {
 		$context['isajax'] = true;
 	}
-
+	
+	if ($context['callbackfuncname']) {
+		$callbackfunc = $context['callbackfuncname'];
+	}
+	
 	$pdata['tcount'] = $total;
 	$pdata['tpage'] = (empty($pageSize) || $pageSize < 0) ? 1 : ceil($total / $pageSize);
 	if ($pdata['tpage'] <= 1) {
@@ -362,13 +392,13 @@ function pagination($total, $pageIndex, $pageSize = 15, $url = '', $context = ar
 	$pdata['lindex'] = $pdata['tpage'];
 
 	if ($context['isajax']) {
-		if (!$url) {
+		if (empty($url)) {
 			$url = $_W['script_name'] . '?' . http_build_query($_GET);
 		}
-		$pdata['faa'] = 'href="javascript:;" page="' . $pdata['findex'] . '" '. ($callbackfunc ? 'onclick="'.$callbackfunc.'(\'' . $_W['script_name'] . $url . '\', \'' . $pdata['findex'] . '\', this);return false;"' : '');
-		$pdata['paa'] = 'href="javascript:;" page="' . $pdata['pindex'] . '" '. ($callbackfunc ? 'onclick="'.$callbackfunc.'(\'' . $_W['script_name'] . $url . '\', \'' . $pdata['pindex'] . '\', this);return false;"' : '');
-		$pdata['naa'] = 'href="javascript:;" page="' . $pdata['nindex'] . '" '. ($callbackfunc ? 'onclick="'.$callbackfunc.'(\'' . $_W['script_name'] . $url . '\', \'' . $pdata['nindex'] . '\', this);return false;"' : '');
-		$pdata['laa'] = 'href="javascript:;" page="' . $pdata['lindex'] . '" '. ($callbackfunc ? 'onclick="'.$callbackfunc.'(\'' . $_W['script_name'] . $url . '\', \'' . $pdata['lindex'] . '\', this);return false;"' : '');
+		$pdata['faa'] = 'href="javascript:;" page="' . $pdata['findex'] . '" '. ($callbackfunc ? 'onclick="'.$callbackfunc.'(\'' . $url . '\', \'' . $pdata['findex'] . '\', this);return false;"' : '');
+		$pdata['paa'] = 'href="javascript:;" page="' . $pdata['pindex'] . '" '. ($callbackfunc ? 'onclick="'.$callbackfunc.'(\'' . $url . '\', \'' . $pdata['pindex'] . '\', this);return false;"' : '');
+		$pdata['naa'] = 'href="javascript:;" page="' . $pdata['nindex'] . '" '. ($callbackfunc ? 'onclick="'.$callbackfunc.'(\'' . $url . '\', \'' . $pdata['nindex'] . '\', this);return false;"' : '');
+		$pdata['laa'] = 'href="javascript:;" page="' . $pdata['lindex'] . '" '. ($callbackfunc ? 'onclick="'.$callbackfunc.'(\'' . $url . '\', \'' . $pdata['lindex'] . '\', this);return false;"' : '');
 	} else {
 		if ($url) {
 			$pdata['faa'] = 'href="?' . str_replace('*', $pdata['findex'], $url) . '"';
@@ -409,7 +439,7 @@ function pagination($total, $pageIndex, $pageSize = 15, $url = '', $context = ar
 		}
 		for ($i = $range['start']; $i <= $range['end']; $i++) {
 			if ($context['isajax']) {
-				$aa = 'href="javascript:;" page="' . $i . '" '. ($callbackfunc ? 'onclick="'.$callbackfunc.'(\'' . $_W['script_name'] . $url . '\', \'' . $i . '\', this);return false;"' : '');
+				$aa = 'href="javascript:;" page="' . $i . '" '. ($callbackfunc ? 'onclick="'.$callbackfunc.'(\'' . $url . '\', \'' . $i . '\', this);return false;"' : '');
 			} else {
 				if ($url) {
 					$aa = 'href="?' . str_replace('*', $i, $url) . '"';
@@ -436,6 +466,9 @@ function tomedia($src, $local_path = false){
 	if (empty($src)) {
 		return '';
 	}
+	if (strexists($src, "c=utility&a=wxcode&do=image&attach=")) {
+		return $src;
+	}
 	if (strexists($src, 'addons/')) {
 		return $_W['siteroot'] . substr($src, strpos($src, 'addons/'));
 	}
@@ -445,9 +478,10 @@ function tomedia($src, $local_path = false){
 	}
 	$t = strtolower($src);
 	if (strexists($t, 'https://mmbiz.qlogo.cn') || strexists($t, 'http://mmbiz.qpic.cn')) {
-		return url('utility/wxcode/image', array('attach' => $src));
+		$url = url('utility/wxcode/image', array('attach' => $src));
+		return $_W['siteroot'] . 'web' . ltrim($url, '.');
 	}
-	if (strexists($t, 'http://') || strexists($t, 'https://')) {
+	if ((substr($t, 0, 7) == 'http://') || (substr($t, 0, 8) == 'https://') || (substr($t, 0, 2) == '//')) {
 		return $src;
 	}
 	if ($local_path || empty($_W['setting']['remote']['type']) || file_exists(IA_ROOT . '/' . $_W['config']['upload']['attachdir'] . '/' . $src)) {
@@ -744,6 +778,22 @@ function sizecount($size) {
 }
 
 
+function bytecount($str) {
+	if (strtolower($str[strlen($str) -1]) == 'b') {
+		$str = substr($str, 0, -1);
+	}
+	if(strtolower($str[strlen($str) -1]) == 'k') {
+		return floatval($str) * 1024;
+	}
+	if(strtolower($str[strlen($str) -1]) == 'm') {
+		return floatval($str) * 1048576;
+	}
+	if(strtolower($str[strlen($str) -1]) == 'g') {
+		return floatval($str) * 1073741824;
+	}
+}
+
+
 function array2xml($arr, $level = 1) {
 	$s = $level == 1 ? "<xml>" : '';
 	foreach ($arr as $tagname => $value) {
@@ -827,18 +877,17 @@ function utf8_bytes($cp) {
 
 function media2local($media_id, $all = false){
 	global $_W;
-	if (empty($media_id)) {
-		return '';
-	}
-	$data = pdo_fetch('SELECT * FROM ' . tablename('wechat_attachment') . ' WHERE uniacid = :uniacid AND media_id = :id', array(':uniacid' => $_W['uniacid'], ':id' => $media_id));
-	if (!empty($data)) {
+	load()->model('material');
+	$data = material_get($media_id);
+	if (!is_error($data)) {
 		$data['attachment'] = tomedia($data['attachment'], true);
 		if (!$all) {
 			return $data['attachment'];
 		}
 		return $data;
+	} else {
+		return '';
 	}
-	return '';
 }
 
 function aes_decode($message, $encodingaeskey = '', $appid = '') {
@@ -950,4 +999,91 @@ function strip_gpc($values, $type = 'g') {
 		}
 	}
 	return $values;
+}
+
+
+function parse_path($path) {
+	$danger_char = array('../', '{php', '<?php', '<%', '<?');
+	foreach ($danger_char as $char) {
+		if (strexists($path, $char)) {
+			return false;
+		}
+	}
+	return $path;
+}
+
+
+function dir_size($dir) {
+	$size = 0;
+	if(is_dir($dir)) {
+		$handle = opendir($dir);
+		while (false !== ($entry = readdir($handle))) {
+			if($entry != '.' && $entry != '..') {
+				if(is_dir("{$dir}/{$entry}")) {
+					$size += dir_size("{$dir}/{$entry}");
+				} else {
+					$size += filesize("{$dir}/{$entry}");
+				}
+			}
+		}
+		closedir($handle);
+	}
+	return $size;
+}
+
+
+function get_first_pinyin($str) {
+	static $pinyin;
+	$first_char = '';
+	$str = trim($str);
+	if(empty($str)) {
+		return $first_char;
+	}
+	if (empty($pinyin)) {
+		include_once IA_ROOT . '/framework/library/pinyin/pinyin.php';
+		$pinyin = new Pinyin_Pinyin();
+	}
+	$first_char = $pinyin->get_first_char($str);
+	return $first_char;
+}
+
+
+function strip_emoji($nickname) {
+	$clean_text = "";
+		$regexEmoticons = '/[\x{1F600}-\x{1F64F}]/u';
+	$clean_text = preg_replace($regexEmoticons, '', $nickname);
+		$regexSymbols = '/[\x{1F300}-\x{1F5FF}]/u';
+	$clean_text = preg_replace($regexSymbols, '', $clean_text);
+		$regexTransport = '/[\x{1F680}-\x{1F6FF}]/u';
+	$clean_text = preg_replace($regexTransport, '', $clean_text);
+		$regexMisc = '/[\x{2600}-\x{26FF}]/u';
+	$clean_text = preg_replace($regexMisc, '', $clean_text);
+		$regexDingbats = '/[\x{2700}-\x{27BF}]/u';
+	$clean_text = preg_replace($regexDingbats, '', $clean_text);
+	
+	$clean_text = str_replace("'",'',$clean_text);
+	$clean_text = str_replace('"','',$clean_text);
+	$clean_text = str_replace('“','',$clean_text);
+	$clean_text = str_replace('゛','',$clean_text);
+	$search = array(" ","　","\n","\r","\t");
+	$replace = array("","","","","");
+	return str_replace($search, $replace, $clean_text);
+}
+
+
+function emoji_unicode_decode($string) {
+	preg_match_all('/\[U\+(\\w{4,})\]/i', $string, $match);
+	if(!empty($match[1])) {
+		foreach ($match[1] as $emojiUSB) {
+			$string = str_ireplace("[U+{$emojiUSB}]", utf8_bytes(hexdec($emojiUSB)), $string);
+		}
+	}
+	return $string;
+}
+
+function emoji_unicode_encode($string) {
+	$ranges = array(
+		'\\\\ud83c[\\\\udf00-\\\\udfff]', 		'\\\\ud83d[\\\\udc00-\\\\ude4f]', 		'\\\\ud83d[\\\\ude80-\\\\udeff]'  	);
+	preg_match_all('/' . implode('|', $ranges) . '/i', $string, $match);
+	print_r($match);exit;
 }

@@ -43,11 +43,10 @@
 			<div class="fui-list-inner">
 				<div class="row">
 				      <div class="row-text">
-					 
-					  <%if user.nickname%><%user.nickname%><%else%>未获取<%/if%>
-					   <%if user.isagent==1 && user.status==1%>
+					  <%if user.isagent==1 && user.status==1%>
 					  <i class="icon icon-favor text-danger"></i>
 					  <%/if%>
+					  <%if user.nickname%><%user.nickname%><%else%>未获取<%/if%>
 				      
 				      </div>
 				</div>

@@ -6,7 +6,7 @@
     <h2>申请提现
     </h2>
 </div>
-<form {ife 'merch.apply.list.post' $item}action="" method="post"{/if} class="form-horizontal form-validate" enctype="multipart/form-data">
+<form {ifp 'apply.list.post'}action="" method="post"{/if} class="form-horizontal form-validate" enctype="multipart/form-data">
 
 <div class="row">
     <div class="col-sm-6">
@@ -128,7 +128,7 @@
 
         <div class="col-sm-9 col-xs-12">
             {if $item['realprice'] > 0}
-            {ife 'merch.apply.list.add' $item}
+            {ifp 'apply.list.post'}
             <input type="submit" value="提交申请" class="btn btn-primary"  />
             {/if}
             {/if}
@@ -174,7 +174,8 @@
             }
         });
 
-        $('form').submit(function(){
+        $(":input[type=submit]").on('click',function (e) {
+            e.preventDefault();
             var html = '';
             var applytype = $('#applytype').find("option:selected").val();
             var typename = $('#applytype').find("option:selected").html();
@@ -239,13 +240,9 @@
             } else {
                 var confirm_msg = '确认要' + html;
             }
-
-            $('form').attr('stop',1);
             tip.confirm(confirm_msg, function () {
-                $('form').removeAttr('stop');
                 $('form').submit();
             });
-
         });
     })
 

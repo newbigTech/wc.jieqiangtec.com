@@ -10,7 +10,6 @@ class Agent_EweiShopV2Page extends PluginWebPage
 		global $_W;
 		global $_GPC;
 		$aagentlevels = $this->model->getLevels(true, true);
-		$level = $this->set['level'];
 		$pindex = max(1, intval($_GPC['page']));
 		$psize = 20;
 		$params = array();
@@ -61,7 +60,7 @@ class Agent_EweiShopV2Page extends PluginWebPage
 		{
 			$condition .= ' and dm.aagentstatus=' . intval($_GPC['aagentstatus']);
 		}
-		$sql = 'select dm.*,dm.nickname,dm.avatar,l.levelname,p.nickname as parentname,p.avatar as parentavatar from ' . tablename('ewei_shop_member') . ' dm ' . ' left join ' . tablename('ewei_shop_member') . ' p on p.id = dm.agentid ' . ' left join ' . tablename('ewei_shop_abonus_level') . ' l on l.id = dm.level' . ' where dm.uniacid = ' . $_W['uniacid'] . ' and dm.isaagent =1  ' . $condition . ' ORDER BY dm.aagenttime desc';
+		$sql = 'select dm.*,dm.nickname,dm.avatar,l.levelname,p.nickname as parentname,p.avatar as parentavatar from ' . tablename('ewei_shop_member') . ' dm ' . ' left join ' . tablename('ewei_shop_member') . ' p on p.id = dm.agentid ' . ' left join ' . tablename('ewei_shop_abonus_level') . ' l on l.id = dm.aagentlevel' . ' where dm.uniacid = ' . $_W['uniacid'] . ' and dm.isaagent =1  ' . $condition . ' ORDER BY dm.aagenttime desc';
 		if (empty($_GPC['export'])) 
 		{
 			$sql .= ' limit ' . (($pindex - 1) * $psize) . ',' . $psize;

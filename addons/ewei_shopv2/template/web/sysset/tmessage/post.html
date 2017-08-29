@@ -8,7 +8,7 @@
 </div>
 <ul class="nav nav-arrow-next nav-tabs" id="settingTab">
     <li class="active"><a href="#tab_base">基础设置</a></li>
-    <li ><a href="#tab_customnotice">客户消息设置</a></li>
+    <li ><a href="#tab_customnotice">客服消息设置</a></li>
     <li ><a href="#tab_setting">模板消息设置</a></li>
 </ul>
 
@@ -75,25 +75,54 @@
     })
 
     $('form').submit(function(){
-        if($('.key_item').length<=0){
-            tip.msgbox.err('请添加一条键!');
+
+        if($('#title').val()=='')
+        {
+            $('#settingTab a[href=#tab_base]').tab('show');
+            tip.msgbox.err('请填写模板名称!');
             $('form').attr('stop',1);
             return false;
         }
 
-        var checkkw = true;
-        $(":input[name='tp_kw[]']").each(function(){
-            if ( $.trim( $(this).val() ) ==''){
-                checkkw = false;
-                tip.msgbox.err('请输入键名!');
-                $(this).focus();
+
+        var messagetype = $('.messagetype:checked').val();
+
+        if(messagetype==0||messagetype==2)
+        {
+            if($('#send_desc').val()=='')
+            {
+                $('#settingTab a[href=#tab_base]').tab('show');
+                tip.msgbox.err('请填写客服消息!');
                 $('form').attr('stop',1);
                 return false;
             }
-        });
-        if( !checkkw){
-            return false;
         }
+
+        if(messagetype==0||messagetype==1)
+        {
+            if($('.key_item').length<=0){
+                tip.msgbox.err('请添加一条键!');
+                $('#settingTab a[href=#tab_setting]').tab('show');
+                $('form').attr('stop',1);
+                return false;
+            }
+
+            var checkkw = true;
+            $(":input[name='tp_kw[]']").each(function(){
+                if ( $.trim( $(this).val() ) ==''){
+                    checkkw = false;
+                    tip.msgbox.err('请输入键名!');
+                    $(this).focus();
+                    $('form').attr('stop',1);
+                    return false;
+                }
+            });
+            if( !checkkw){
+                return false;
+            }
+        }
+
+
         $('form').removeAttr('stop');
         return true;
     });

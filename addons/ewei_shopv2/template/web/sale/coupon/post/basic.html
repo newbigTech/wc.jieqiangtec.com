@@ -57,12 +57,13 @@
 	<div class="col-sm-9 col-xs-12">
 		{ife 'sale.coupon' $item}
 		<input type="text" name="enough" class="form-control" value="{$item['enough']}"  />
-		<span class='help-block' >{if empty($type)}消费{else}充值{/if}满多少可用, 空或0 不限制</span>
+		<span class='help-block' >{if empty($type)|| $type==2}消费{else}充值{/if}满多少可用, 空或0 不限制</span>
 		{else}
 		<div class='form-control-static'>{if $item['enough']>0}满 {$item['enough']} 可用 {else}不限制{/if}</div>
 		{/if}
 	</div>
 </div>
+
 
 {ife 'sale.coupon' $item}
 

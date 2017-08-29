@@ -1,10 +1,12 @@
 {if $goods['canbuy']}
-<div class="fui-cell-group fui-cell-click" style="margin-top: {$diyitem['style']['margintop']}px; margin-bottom: {$diyitem['style']['marginbottom']}px; background: {$diyitem['style']['background']}">
-    <div class="fui-cell">
-        <div class="fui-cell-text option-selector" style="color: {$diyitem['style']['textcolor']}">请选择{if empty($spec_titles)}数量{else}{$spec_titles}等{/if}</div>
-        <div class="fui-cell-remark"></div>
-    </div>
-</div>
+    {if $goods['type']!=4}
+        <div class="fui-cell-group fui-cell-click" style="margin-top: {$diyitem['style']['margintop']}px; margin-bottom: {$diyitem['style']['marginbottom']}px; background: {$diyitem['style']['background']}">
+            <div class="fui-cell">
+                <div class="fui-cell-text option-selector" style="color: {$diyitem['style']['textcolor']}">请选择{if empty($spec_titles)}数量{else}{$spec_titles}等{/if}</div>
+                <div class="fui-cell-remark"></div>
+            </div>
+        </div>
+    {/if}
 {else}
 <div class="fui-cell-group fui-cell-click">
     <div class="fui-cell">

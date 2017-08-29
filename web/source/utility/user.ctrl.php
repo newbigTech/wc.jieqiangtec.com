@@ -1,13 +1,14 @@
 <?php
-
+/**
+ * [WeEngine System] Copyright (c) 2014 WE7.CC
+ * WeEngine is NOT a free software, it under the license terms, visited http://www.we7.cc/ for more details.
+ */
 defined('IN_IA') or exit('Access Denied');
 
-$do = !empty($_GPC['do']) ? $_GPC['do'] : exit('Access Denied');
 $dos = array('browser');
 $do = in_array($do, $dos) ? $do: 'browser';
 
 if ($do == 'browser') {
-	
 	$mode = empty($_GPC['mode']) ? 'visible' : $_GPC['mode'];
 	$mode = in_array($mode, array('invisible','visible')) ? $mode : 'visible';
 	

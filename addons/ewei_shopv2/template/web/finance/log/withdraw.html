@@ -106,10 +106,10 @@
             <br>
             {ifp 'member.member.view'}
             <a  href="{php echo webUrl('member/list/detail',array('id' => $row['mid']));}" target='_blank'>
-                <img src='{$row['avatar']}' style='width:30px;height:30px;padding1px;border:1px solid #ccc' /> {$row['nickname']}
+                <img src='{php echo tomedia($row['avatar'])}' style='width:30px;height:30px;padding1px;border:1px solid #ccc' /> {$row['nickname']}
             </a>
             {else}
-            <img src='{$row['avatar']}' style='width:30px;height:30px;padding1px;border:1px solid #ccc' /> {$row['nickname']}
+            <img src='{php echo tomedia($row['avatar'])}' style='width:30px;height:30px;padding1px;border:1px solid #ccc' /> {$row['nickname']}
             {/if}
             <br>
             {$row['realname']}/{$row['mobile']}
@@ -158,7 +158,7 @@
         </td>
 
         <td  style="overflow:visible;">
-            {if $row['status']<1}
+            {if $row['status']<1 && $row['status']!=-1 }
             <div class="btn-group btn-group-sm" >
                 <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false" href="javascript:;">操作 <span class="caret"></span></a>
                 <ul class="dropdown-menu dropdown-menu-left" role="menu" style='z-index: 9999'>

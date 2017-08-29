@@ -4,7 +4,6 @@
     {loop $diyitem['data'] $saledata}
 
         {if $saledata['type']=='yushou'}
-
             {if $goods['ispresell']==1 && ( $goods['preselltimeend'] > time() ||  $goods['preselltimeend'] == 0)}
             <div class='fui-cell-group fui-cell-click  fui-sale-group' style='margin-top:0'>
                 <div class="fui-list">
@@ -22,9 +21,7 @@
                 </div>
             </div>
             {/if}
-
         {elseif $saledata['type']=='erci'}
-
             {if floatval($goods['buyagain'])>0 && empty($seckillinfo)}
             <div class="fui-cell-group  fui-sale-group" style="margin-top:0; background: {$diyitem['style']['background']};">
                 <div class="fui-cell">
@@ -36,9 +33,7 @@
                 </div>
             </div>
             {/if}
-
         {elseif $saledata['type']=='huiyuan' && empty($seckillinfo)}
-
             {if empty($goods['isdiscount']) || (!empty($goods['isdiscount']) &&$goods['isdiscount_time']<time())}
                 {if !empty($memberprice) && $memberprice!=$goods['minprice'] && !empty($level)}
                 <div class="fui-cell-group  fui-sale-group" style="margin-top:0; background: {$diyitem['style']['background']};">
@@ -48,9 +43,7 @@
                 </div>
                 {/if}
             {/if}
-
         {elseif $saledata['type']=='jifen'}
-
             {if (!empty($goods['deduct']) && $goods['deduct'] != '0.00')  || !empty($goods['credit'])}
             <div class='fui-cell-group  fui-sale-group' style='margin-top:0; background: {$diyitem['style']['background']};'>
                 <div class='fui-cell'>
@@ -58,13 +51,11 @@
                 </div>
             </div>
             {/if}
-
         {elseif $saledata['type']=='bupeisong'}
-
             {if $has_city}
             <div class='fui-cell-group fui-cell-click  fui-sale-group' style='margin-top:0; background: {$diyitem['style']['background']};' id="city-picker">
                 <div class='fui-cell'>
-                    <div class='fui-cell-text' style="color: {$diyitem['style']['textcolor']};">不配送区域:
+                    <div class='fui-cell-text' style="color: {$diyitem['style']['textcolor']};">{if empty($onlysent)}不{else}只{/if}配送区域:
                         {loop $citys $item}
                         {$item}
                         {/loop}
@@ -73,9 +64,7 @@
                 </div>
             </div>
             {/if}
-
         {elseif $saledata['type']=='youhui' && empty($seckillinfo)}
-
             {if $hasSales}
             <div class='fui-cell-group fui-cell-click  fui-sale-group' style='margin-top:0; background: {$diyitem['style']['background']};' id="sale-picker">
                 <div class='fui-cell'>
@@ -95,9 +84,7 @@
                 </div>
             </div>
             {/if}
-
         {elseif $saledata['type']=='biaoqian'}
-
             {if $hasServices || $labelname}
             <div class="fui-cell-group fui-option-group" style="margin-top:0;">
                 <div class="goods-label-demo">
@@ -122,7 +109,64 @@
                 </div>
             </div>
             {/if}
-
+        {elseif $saledata['type']=='coupon'}
+            {if com('coupon')&&$coupons}
+                <div class="fui-cell-group fui-sale-group" style="margin-top:0; background: {$diyitem['style']['background']};">
+                    <div class="fui-cell">
+                        <div class="fui-cell-text coupon-selector" style="color: {$diyitem['style']['textcolor']};">领取可用优惠券</div>
+                        <div class="fui-cell-remark"></div>
+                    </div>
+                </div>
+            {/if}
+        {elseif $saledata['type']=='zengpin'}
+            {if $gifts && $goods['total'] > 0}
+            <div class='fui-cell-group fui-sale-group' style="margin-top:0; background: {$diyitem['style']['background']};">
+                <div class='fui-cell'>
+                    {if count($gifts)>1}
+                    <div class='fui-cell-text fui-cell-giftclick'>
+                        赠品: <label id="gifttitle">请选择赠品</label>
+                        <input type="hidden" name="giftid" id="giftid" value="">
+                    </div>
+                    {else}
+                    {loop $gifts $item}
+                    <div class='fui-cell-text' onclick="javascript:window.location.href='{php echo mobileUrl('goods/gift',array('id'=>$item['id']))}'">
+                        赠品:{$gifttitle}<input type="hidden" name="giftid" id="giftid" value="{$item['id']}">
+                    </div>
+                    {/loop}
+                    {/if}
+                    <div class='fui-cell-remark'></div>
+                </div>
+            </div>
+            {/if}
+        {elseif $saledata['type']=='fullback'}
+            {if !empty($fullbackgoods) && $isfullback}
+                <div class="fui-cell-group  fui-sale-group" style="margin-top:0; background: {$diyitem['style']['background']};" id="fullback-picker">
+                    <div class="fui-cell">
+                        <div class="fui-cell-text" style="white-space: normal; color: {$diyitem['style']['textcolor']};">
+                            该商品享受
+                            {if $fullbackgoods['type']>0}
+                            <span class="text-danger" style="font-weight: bold;">
+                                {if $goods['hasoption'] > 0}
+                                    {$fullbackgoods['minallfullbackallratio']}% ~ {$fullbackgoods['maxallfullbackallratio']}%
+                                {else}
+                                    {$fullbackgoods['minallfullbackallratio']}%
+                                {/if}
+                            </span>
+                                    {else}
+                                    <span class="text-danger" style="font-weight: bold;">
+                                {if $goods['hasoption'] > 0}
+                                        &yen;{$fullbackgoods['minallfullbackallprice']} ~ &yen;{$fullbackgoods['maxallfullbackallprice']}
+                                {else}
+                                        &yen;{$fullbackgoods['minallfullbackallprice']}
+                                {/if}
+                            </span>
+                            {/if}
+                            的全返
+                        </div>
+                        <div class='fui-cell-remark'></div>
+                    </div>
+                </div>
+            {/if}
         {/if}
 
     {/loop}

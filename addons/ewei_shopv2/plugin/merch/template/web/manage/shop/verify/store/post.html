@@ -77,7 +77,7 @@
                     <label class="col-sm-2 control-label">门店位置</label>
                     <div class="col-sm-9 col-xs-12">
                                {ife 'shop.verify.store' $item}
-                        {php echo tpl_form_field_coordinate('map',array('lng'=>$item['lng'],'lat'=>$item['lat']))}
+                        {php echo tpl_form_field_position('map',array('lng'=>$item['lng'],'lat'=>$item['lat']))}
                                {else}
                         <div class='form-control-static'>lng={$item['lng']},lat={$item['lat']}</div>
                         {/if}

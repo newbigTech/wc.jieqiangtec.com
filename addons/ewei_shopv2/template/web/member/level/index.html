@@ -56,11 +56,12 @@
             <th style="width:25px;"><input type='checkbox' /></th>
             <th style="width:60px;">等级</th>
             <th>等级名称</th>
+            <th style="width:60px;">会员数</th>
             <th style="width:80px;">折扣</th>
 
             <th>升级条件</th>
             <th style="width:80px;">状态</th>
-            <th>操作</th>
+            <th style="width:260px;">操作</th>
         </tr>
         </thead>
         <tbody>
@@ -83,6 +84,7 @@
         </td>
 
         <td>{$row['levelname']}</td>
+        <td>{$row['membercount']}</td>
         <td>{$row['discount']}</td>
         <td>
             {if $row['id']=='default'}
@@ -121,6 +123,10 @@
 
         </td>
         <td>
+
+            {ifp 'member.list'}
+            <a class='btn btn-default  btn-sm' href="{php echo webUrl('member/list', array('level' => $row['id']))}"><i class='fa fa-users'></i> 等级会员</a>
+            {/if}
 
             {ifp 'member.level.view|member.level.edit'}<a href="{php echo webUrl('member/level/edit', array('id' => $row['id']))}" class="btn btn-default btn-sm"
                 ><i class='fa fa-edit'></i> {ifp 'member.level.edit'}修改{else}查看{/if}</a>{/if}

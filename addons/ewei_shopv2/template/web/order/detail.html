@@ -21,7 +21,10 @@
         <div class="ui-step-meta">{if 1<=$item['status']}{php echo date('Y-m-d',$item['paytime'])}<br/>{php echo date('H:i:s',$item['paytime'])}{/if}</div>
         </li>
         <li {if 2<=$item['status'] || ($item['status']==1 && $item['sendtype'] > 0)}class="ui-step-done"{/if}>
-        <div class="ui-step-title">{if $item['isverify'] == 1}
+        <div class="ui-step-title">
+            {if $isonlyverifygoods}
+            核销时间
+            {else if $item['isverify'] == 1}
             确认使用
             {elseif !empty($item['addressid'])}
             商家发货
@@ -31,7 +34,13 @@
             确认取货
             {/if}</div>
         <div class="ui-step-number" >3</div>
-        <div class="ui-step-meta" >{if 2<=$item['status'] || ($item['status']==1 && $item['sendtype'] > 0)}{php echo date('Y-m-d',$item['sendtime'])}<br/>{php echo date('H:i:s',$item['sendtime'])}{/if}</div>
+        <div class="ui-step-meta" >
+            {if $isonlyverifygoods}
+                {if 3<=$item['status']}{php echo date('Y-m-d',$item['finishtime'])}<br/>{php echo date('H:i:s',$item['finishtime'])}{/if}
+            {else}
+                {if 2<=$item['status'] || ($item['status']==1 && $item['sendtype'] > 0)}{php echo date('Y-m-d',$item['sendtime'])}<br/>{php echo date('H:i:s',$item['sendtime'])}{/if}
+            {/if}
+        </div>
         </li>
         <li {if 3<=$item['status']}class="ui-step-done"{/if}>
         <div class="ui-step-title">订单完成</div>
@@ -73,6 +82,12 @@
                 <tr>
                     <td  style='border:none;text-align:right;'>任务活动优惠：</td>
                     <td  style='border:none;text-align:right;;'>-￥{php echo number_format( $item['taskdiscountprice'],2)}</td>
+                </tr>
+                {/if}
+                {if $item['lotterydiscountprice']>0}
+                <tr>
+                    <td  style='border:none;text-align:right;'>游戏活动优惠：</td>
+                    <td  style='border:none;text-align:right;;'>-￥{php echo number_format( $item['lotterydiscountprice'],2)}</td>
                 </tr>
                 {/if}
                 {if $item['discountprice']>0}
@@ -267,10 +282,12 @@
                         <tr>
                             <td style='width:80px'>配送方式：</td>
                             <td>
-                                {if $item['isverify'] == 1}
+                                {if $isonlyverifygoods}
+                                    会员卡商品
+                                {elseif $item['isverify'] == 1}
                                     线下核销
                                 {elseif !empty($item['addressid'])}
-                                    快递
+                                    快递{if !empty($dispatch['dispatchname'])}({$dispatch['dispatchname']}){/if}
                                 {elseif !empty($item['isvirtualsend']) || !empty($item['virtual'])}
                                     自动发货{if !empty($item['isvirtualsend'])}(虚拟物品){else}(虚拟卡密){/if}
                                 {elseif $item['dispatchtype']}
@@ -282,6 +299,13 @@
                         </tr>
 
                         {if $item['isverify']==1}
+                            {if !empty($item['verifyendtime'])}
+                            <tr>
+                                <td style='width:80px'>使用期限：</td>
+                                <td>{php echo date('Y-m-d H:i:s', $item['verifyendtime'])}</td>
+                            </tr>
+                            {/if}
+
                             <tr>
                                 <td style='width:80px'>核销方式：</td>
                                 <td>{if $item['verifytype']==0}
@@ -296,7 +320,7 @@
                                 </td>
                             </tr>
 
-                            {if $item['verifytype']==0}
+                            {if $item['verifytype']==0 && $item['status']>=1}
                                 <tr>
                                     <td style='width:80px'>消费码：</td>
                                     <td>{$item['verifycode']}</td>
@@ -394,38 +418,41 @@
 
                         {/if}
 
-                        {if !empty($item['addressid'])}
-                        <tr>
-                            <td style='width:80px'>收货人：</td>
-                            <td style='word-break: break-all;white-space: normal'>
-                                {$user['address']}, {$user['realname']}, {$user['mobile']} <a class='js-clip' data-url="{$user['address']}, {$user['realname']}, {$user['mobile']}">[复制]</a></td>
-                        </tr>
 
-                        {elseif $item['isverify']==1 || !empty($item['virtual']) ||!empty($item['isvirtual'])}
-                            {if $item['status']>=2 && !empty($item['virtual']) }
+                        {if !$isonlyverifygoods}
+                            {if !empty($item['addressid'])}
+                            <tr>
+                                <td style='width:80px'>收货人：</td>
+                                <td style='word-break: break-all;white-space: normal'>
+                                    {$user['address']}, {$user['realname']}, {$user['mobile']} <a class='js-clip' data-url="{$user['address']}, {$user['realname']}, {$user['mobile']}">[复制]</a></td>
+                            </tr>
+
+                            {elseif $item['isverify']==1 || !empty($item['virtual']) ||!empty($item['isvirtual'])}
+                                {if $item['status']>=2 && !empty($item['virtual']) }
+                                    <tr>
+                                        <td style='width:80px'>发货信息：</td>
+                                        <td style='word-break: break-all;white-space: normal'>{php echo str_replace("\n","<br/>", $item['virtual_str'])}</td>
+                                    </tr>
+                                {/if}
+
                                 <tr>
-                                    <td style='width:80px'>发货信息：</td>
-                                    <td style='word-break: break-all;white-space: normal'>{php echo str_replace("\n","<br/>", $item['virtual_str'])}</td>
+                                    <td style='width:80px'>联系人：</td>
+                                    <td style='word-break: break-all;white-space: normal'>{$user['carrier_realname']}, {$user['carrier_mobile']}</td>
+                                </tr>
+                            {else}
+                                <tr>
+                                    <td style='width:80px'>自提码：</td>
+                                    <td>{$item['verifycode']}</td>
+                                </tr>
+                                <tr>
+                                    <td style='width:80px'>自提人：</td>
+                                    <td style='word-break: break-all;white-space: normal'>{$user['carrier_realname']} {$user['carrier_mobile']} </td>
+                                </tr>
+                                <tr>
+                                    <td style='width:80px'>自提点：</td>
+                                    <td style='word-break: break-all;white-space: normal'>{$user['address']},  {$user['realname']}, {$user['mobile']}</td>
                                 </tr>
                             {/if}
-
-                            <tr>
-                                <td style='width:80px'>联系人：</td>
-                                <td style='word-break: break-all;white-space: normal'>{$user['carrier_realname']}, {$user['carrier_mobile']}</td>
-                            </tr>
-                        {else}
-                            <tr>
-                                <td style='width:80px'>自提码：</td>
-                                <td>{$item['verifycode']}</td>
-                            </tr>
-                            <tr>
-                                <td style='width:80px'>自提人：</td>
-                                <td style='word-break: break-all;white-space: normal'>{$user['carrier_realname']} {$user['carrier_mobile']} </td>
-                            </tr>
-                            <tr>
-                                <td style='width:80px'>自提点：</td>
-                                <td style='word-break: break-all;white-space: normal'>{$user['address']},  {$user['realname']}, {$user['mobile']}</td>
-                            </tr>
                         {/if}
 
                         {if !empty($item['remark'])}
@@ -508,8 +535,13 @@
                             <span class="text-default">已关闭</span>
                             {/if}
                         </h3>
+                        {if $item['status'] == -1 && (!empty($item['closereason']) || !empty($item['remarkclose']))}
+                        <div class="form-control-static">关闭原因:{if !empty($item['closereason'])}{php echo $item['closereason']}{else}{php echo $item['remarkclose']}{/if}</div>
+                        {/if}
                     </div>
                 </div>
+
+
 
                 <div class="form-group">
                     <label class="col-sm-3 control-label"></label>
@@ -653,7 +685,7 @@
                                                                                                                                                                     data-content="<table style='width:100%;'>
 
                 <tr>
-                    <td  style='border:none;text-align:right;' colspan='2'><img src='{$value['avatar']}' style='width:100px;height:100px;padding:1px;border:1px solid #ccc' /></td>
+                    <td  style='border:none;text-align:right;' colspan='2'><img src='{php echo tomedia($value['avatar'])}' style='width:100px;height:100px;padding:1px;border:1px solid #ccc' /></td>
                 </tr>
                 <tr>
                     <td  style='border:none;text-align:right;'>ID：</td>

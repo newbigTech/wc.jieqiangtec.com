@@ -157,7 +157,7 @@
             {$row['payno']} <br/>
             {ifp 'member.list.view'}
             <a href="{php echo webUrl('member/list/detail',array('id' => $row['mid']));}" target='_blank'>
-                <img src='{$row['avatar']}' style='width:30px;height:30px;padding1px;border:1px solid #ccc' />
+                <img src='{php echo tomedia($row['avatar'])}' style='width:30px;height:30px;padding1px;border:1px solid #ccc' />
                 {$row['nickname']}
             </a>
             {else}

@@ -1,14 +1,27 @@
 <?php 
-
+/**
+ * [WeEngine System] Copyright (c) 2014 WE7.CC
+ * WeEngine is NOT a free software, it under the license terms, visited http://www.we7.cc/ for more details.
+ */
 defined('IN_IA') or exit('Access Denied');
-$modulename = $_GPC['modulename'];
-$callname = $_GPC['callname'];
-$uniacid = $_GPC['uniacid'];
-$_W['uniacid'] = $_GPC['uniacid'];
+
+load()->model('module');
+
+$modulename = trim($_GPC['modulename']);
+$callname = trim($_GPC['callname']);
+$uniacid = intval($_GPC['uniacid']);
+$_W['uniacid'] = intval($_GPC['uniacid']);
 $args = $_GPC['args'];
+$module_info = module_fetch($modulename);
+if (empty($module_info)) {
+	iajax(0, array());
+}
 $site = WeUtility::createModuleSite($modulename);
 if (empty($site)) {
-	message(array(), '', 'ajax');
+	iajax(0, array());
+}
+if (!method_exists($site, $callname)) {
+	iajax(0, array());
 }
 $ret = @$site->$callname($args);
-message($ret, '', 'ajax');
+iajax(0, $ret);

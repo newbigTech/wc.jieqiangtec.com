@@ -11,7 +11,7 @@
 	</div>
     <div class='fui-content navbar'>
 	<div class="headinfo">
-	    <div class="userinfo">
+	    <div class="userinfo" style="height: auto;">
 		<div class='fui-list'>
 		    <div class='fui-list-media'><img src="{$member['avatar']}" /></div>
 		    <div class='fui-list-info'>
@@ -24,7 +24,10 @@
 			    总店
 			    {else}
 			    {$up['nickname']}
-			    {/if}</div>
+			    {/if}
+				<br>
+				{php echo $this->set['texts']['icode']}:{$member['id']}
+			</div>
 		    </div>
 		</div>
 		{if empty($this->set['closemyshop'])}

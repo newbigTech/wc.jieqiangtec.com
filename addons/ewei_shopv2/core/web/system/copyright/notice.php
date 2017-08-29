@@ -1,6 +1,5 @@
 <?php
-
-if (!defined('IN_IA')) {
+if (!(defined('IN_IA'))) {
 	exit('Access Denied');
 }
 
@@ -20,7 +19,7 @@ class Notice_EweiShopV2Page extends SystemPage
 		}
 
 
-		if (!empty($_GPC['keyword'])) {
+		if (!(empty($_GPC['keyword']))) {
 			$_GPC['keyword'] = trim($_GPC['keyword']);
 			$condition .= ' and title like :keyword';
 			$params[':keyword'] = '%' . $_GPC['keyword'] . '%';
@@ -54,7 +53,7 @@ class Notice_EweiShopV2Page extends SystemPage
 			empty($_GPC['content']) && show_json(0, array('message' => '公告内容不能为空', 'url' => referer()));
 			$data = array('title' => trim($_GPC['title']), 'author' => trim($_GPC['author']), 'content' => trim($_GPC['content']), 'displayorder' => intval($_GPC['displayorder']), 'status' => trim($_GPC['status']));
 
-			if (!empty($id)) {
+			if (!(empty($id))) {
 				pdo_update('ewei_shop_system_copyright_notice', $data, array('id' => $id));
 				plog('system.site.article.edit', '修改公告 ID: ' . $id);
 			}
@@ -102,7 +101,7 @@ class Notice_EweiShopV2Page extends SystemPage
 		$displayorder = intval($_GPC['value']);
 		$item = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_system_copyright_notice') . ' WHERE id in( ' . $id . ' )');
 
-		if (!empty($item)) {
+		if (!(empty($item))) {
 			pdo_update('ewei_shop_system_copyright_notice', array('displayorder' => $displayorder), array('id' => $id));
 			plog('system.site.article.delete', '修改公告排序 ID: ' . $item['id'] . ' 标题: ' . $item['title'] . ' 排序: ' . $displayorder . ' ');
 		}

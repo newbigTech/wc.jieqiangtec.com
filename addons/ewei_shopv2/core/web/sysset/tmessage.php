@@ -101,7 +101,7 @@ class Tmessage_EweiShopV2Page extends WebPage
 		$items = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_member_message_template') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
 		foreach ($items as $item ) 
 		{
-			pdo_delete('ewei_shop_member_message_template', array('id' => $id, 'uniacid' => $_W['uniacid']));
+			pdo_delete('ewei_shop_member_message_template', array('id' => $item['id'], 'uniacid' => $_W['uniacid']));
 			plog('sysset.tmessage.delete', '删除群发模板 ID: ' . $item['id'] . ' 标题: ' . $item['title'] . ' ');
 		}
 		show_json(1, array('url' => referer()));

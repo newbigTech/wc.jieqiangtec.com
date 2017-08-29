@@ -49,17 +49,17 @@
                             <td></td>
                             {if $set['level']>=1 && !empty($cm1) }
                             <td>
-                                <a href="{php echo webUrl('member/list/detail',array('id'=>$cm1['id']))}" target='_blank'><img src="{$cm1['avatar']}" style='width:30px;height:30px;padding:1px;border:1px solid #ccc' /> {$cm1['nickname']}</a>
+                                <a href="{php echo webUrl('member/list/detail',array('id'=>$cm1['id']))}" target='_blank'><img src="{php echo tomedia($cm1['avatar'])}" style='width:30px;height:30px;padding:1px;border:1px solid #ccc' /> {$cm1['nickname']}</a>
                             </td>
                             {/if}
                             {if $set['level']>=2  && !empty($cm2)}
                             <td style='width:100px;'>
-                                <a href="{php echo webUrl('member/list/detail',array('id'=>$cm2['id']))}" target='_blank'><img src="{$cm2['avatar']}" style='width:30px;height:30px;padding:1px;border:1px solid #ccc' /> {$cm2['nickname']}</a>
+                                <a href="{php echo webUrl('member/list/detail',array('id'=>$cm2['id']))}" target='_blank'><img src="{php echo tomedia($cm2['avatar'])}" style='width:30px;height:30px;padding:1px;border:1px solid #ccc' /> {$cm2['nickname']}</a>
                             </td>
                             {/if}
                             {if $set['level']>=3  && !empty($cm3)}
                             <td style='width:100px;'>
-                                <a  href="{php echo webUrl('member/list/detail',array('id'=>$cm2['id']))}" target='_blank'><img src="{$cm3['avatar']}" style='width:30px;height:30px;padding:1px;border:1px solid #ccc' /> {$cm3['nickname']}</a>
+                                <a  href="{php echo webUrl('member/list/detail',array('id'=>$cm2['id']))}" target='_blank'><img src="{php echo tomedia($cm3['avatar'])}" style='width:30px;height:30px;padding:1px;border:1px solid #ccc' /> {$cm3['nickname']}</a>
                             </td>
                             {/if}
                         </tr>

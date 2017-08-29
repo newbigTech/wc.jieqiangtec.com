@@ -58,10 +58,10 @@
                 <tbody>
                     {loop $list $row}
                     <tr>
-                        <td><img src='{$row['avatar']}' style='width:30px;height:30px;padding1px;border:1px solid #ccc' /> {$row['nickname']}
+                        <td><img src='{php echo tomedia($row['avatar'])}' style='width:30px;height:30px;padding1px;border:1px solid #ccc' /> {$row['nickname']}
                         ({$row['realname']}/{$row['mobile']})
                         </td>
-                        <td><img src='{$row['avatar1']}' style='width:30px;height:30px;padding1px;border:1px solid #ccc' /> {$row['nickname1']}
+                        <td><img src='{php echo tomedia($row['avatar1'])}' style='width:30px;height:30px;padding1px;border:1px solid #ccc' /> {$row['nickname1']}
                         ({$row['realname1']}/{$row['mobile1']})</td>
                         <td>{php echo date('Y-m-d H:i',$row['scantime'])}</td>
                     </tr>

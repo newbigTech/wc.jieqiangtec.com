@@ -32,6 +32,7 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 		$json = json_encode($json_arr);
 		$this->model->setShare($set);
 		$texts = array('sign' => $set['textsign'], 'signed' => $set['textsigned'], 'signold' => $set['textsignold'], 'credit' => $set['textcredit'], 'color' => $set['maincolor']);
+		$p = $this->model->getSet();
 		include $this->template();
 	}
 	public function getCalendar() 
@@ -63,7 +64,7 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 			show_json(0, $set['textcredit'] . $set['textsign'] . '未开启!');
 		}
 		$date = trim($_GPC['date']);
-		$date = (($date == 'null' ? '' : $date));
+		(($date == 'null' ? '' : $date));
 		$signinfo = $this->model->getSign($date);
 		if (!(empty($date))) 
 		{
@@ -144,6 +145,19 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 		$member = m('member')->getMember($_W['openid']);
 		$result = array('message' => $set['textsign'] . '成功!' . $message, 'signorder' => $signinfo['orderday'], 'signsum' => $signinfo['sum'], 'addcredit' => $credit, 'credit' => intval($member['credit1']));
 		$this->model->updateSign($signinfo);
+		if (p('lottery')) 
+		{
+			$res = p('lottery')->getLottery($member['openid'], 2, array('day' => $signinfo['orderday']));
+			if ($res) 
+			{
+				p('lottery')->getLotteryList($member['openid'], array('lottery_id' => $res));
+			}
+			$result['lottery'] = p('lottery')->check_isreward();
+		}
+		else 
+		{
+			$result['lottery']['is_changes'] = 0;
+		}
 		show_json(1, $result);
 	}
 	public function doreward() 

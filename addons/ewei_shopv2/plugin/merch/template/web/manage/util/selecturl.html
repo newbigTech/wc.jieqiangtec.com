@@ -42,6 +42,9 @@
 				{if p('diypage')}
 					<li class=""><a href="#sut_diypage">{php echo m('plugin')->getName('diypage')}</a></li>
 				{/if}
+				{if p('quick')}
+					<li class=""><a href="#sut_quick">{php echo m('plugin')->getName('quick')}</a></li>
+				{/if}
 			</ul>
 			<div class="tab-content ">
 				
@@ -149,12 +152,27 @@
 					{if !empty($diypage['list'])}
 						{loop $diypage['list'] $item}
 							<div class="line">
-								<nav title="选择" class="btn btn-default btn-sm" data-href="{php echo mobileUrl('diypage',array('id'=>$item['id']))}">选择</nav>
+								<nav title="选择" class="btn btn-default btn-sm" data-href="{php echo mobileUrl('diypage',array('id'=>$item['id'], 'merchid'=>intval($_W['merchid'])))}">选择</nav>
 								<div class="text"><span class="label label-{$allpagetype[$item['type']]['class']} label-sm">{$allpagetype[$item['type']]['name']}</span> {$item['name']}</div>
 							</div>
 						{/loop}
 					{else}
 						<div class="tip">抱歉！未查询到DIY页面。</div>
+					{/if}
+				</div>
+			{/if}
+
+			{if p('quick')}
+				<div class="tab-pane" id="sut_quick">
+					{if !empty($quickList)}
+						{loop $quickList $item}
+							<div class="line">
+								<nav title="选择" class="btn btn-default btn-sm" data-href="{php echo mobileUrl('quick',array('id'=>$item['id'], 'merchid'=>intval($_W['merchid'])))}">选择</nav>
+								<div class="text">{$item['title']}</div>
+							</div>
+						{/loop}
+					{else}
+						<div class="tip">抱歉！未查询到快速购买页面。</div>
 					{/if}
 				</div>
 			{/if}

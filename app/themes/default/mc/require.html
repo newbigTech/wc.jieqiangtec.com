@@ -1,325 +1,231 @@
+{php define('MUI', true);}
 {template 'common/header'}
-{template 'mc/header'}
-<style>
-.btn.btn-primary{background:#56c6d6; color:#FFF; border:0;}
-.nav-tabs{border-bottom:1px solid #56c6d6;}
-.nav-tabs>li.active>a, .nav-tabs>li.active>a:hover, .nav-tabs>li.active>a:focus{border:1px solid #56c6d6; border-bottom-color:transparent;}
-</style>
-<div class="profile clearfix">
-	<div class="tabbable">
-		<ul class="nav nav-tabs">
-			<li class="active"><a href="javascript:;">完善资料</a></li>
-			<li><a href="{php echo url('mc/profile', array('name' => 'fans', 'uniacid' => $_W['uniacid']))}#qq.com#wechat_redirect">完整资料</a></li>
-		</ul>
+<div class="mui-content mc-profile activity-exchange">
+		<div class="mui-table nav">
+			<a href="javascript:;" class="mui-table-cell mui-active">
+				完善资料
+			</a>
+			<a href="{php echo url('mc/profile', array('name' => 'fans', 'uniacid' => $_W['uniacid']))}" class="mui-table-cell">
+				个人信息
+			</a>
+		</div>
 		<form action="" method="post" enctype="multipart/form-data">
-		<div class="tab-content" style="margin-top:10px;">
-			<div class="tab-pane active">
-				<div style="padding:0 10px;">
-					<div class="alert alert-warning" style="padding:10px">
+				<div class="form-group">
+				<div style="padding:0 10px;" class="mui-mt15">
+					<div class="alert-warning" style="padding:10px">
 						<p><span><i class="fa fa-info-circle"></i>&nbsp;&nbsp;</span>当前系统须完善以下资料才能继续操作 {if !empty($pre)}- {$pre}{/if}</p>
 					</div>
-				</div>
-				<table class="form-table">
+				</div></div>
+				<div class="mui-input-group mui-mt15">
 					{if isset($profile['avatar'])}
-						<div class="form-group">
-							<label class="col-xs-12 col-sm-12 control-label">{$system_fields['avatar']['title']}</label>
-							<div class="col-sm-12 col-xs-12">
-								{php echo tpl_fans_form('avatar',$profile['avatar'] );}
-							</div>
-						</div>
+						{php echo tpl_app_form_field_avatar('avatar', $profile['avatar']);}
 					{/if}
 					{if isset($profile['nickname'])}
-						<div class="form-group">
-							<label class="col-xs-12 col-sm-12 control-label">{$system_fields['nickname']['title']}</label>
-							<div class="col-sm-12 col-xs-12">
-								{php echo tpl_fans_form('nickname',$profile['nickname'] );}
-							</div>
+						<div class="mui-input-row">
+							<label>{$system_fields['nickname']['title']}</label>
+							{php echo tpl_app_fans_form('nickname', $profile['nickname'], $system_fields['nickname']['title']);}
 						</div>
 					{/if}
 					{if isset($profile['realname'])}
-						<div class="form-group">
-							<label class="col-xs-12 col-sm-12 control-label">{$system_fields['realname']['title']}</label>
-							<div class="col-sm-12 col-xs-12">
-								{php echo tpl_fans_form('realname',$profile['realname'] );}
-							</div>
+						<div class="mui-input-row">
+							<label>{$system_fields['realname']['title']}</label>
+							{php echo tpl_app_fans_form('realname', $profile['realname'], $system_fields['realname']['title']);}
 						</div>
 					{/if}
 					{if isset($profile['gender'])}
-						<div class="form-group">
-							<label class="col-xs-12 col-sm-12 control-label">{$system_fields['gender']['title']}</label>
-							<div class="col-sm-12 col-xs-12">
-								{php echo tpl_fans_form('gender',$profile['gender']);}
-							</div>
+						<div class="mui-input-row">
+							<label>{$system_fields['gender']['title']}</label>
+							{php echo tpl_app_fans_form('gender', $profile['gender'], $system_fields['gender']['title']);}	
 						</div>
 					{/if}
 					{if isset($profile['birthyear'])}
-						<div class="form-group">
-							<label class="col-xs-12 col-sm-12 control-label">{$system_fields['birthyear']['title']}</label>
-							<div class="col-sm-12 col-xs-12">
-								{php echo tpl_fans_form('birth',array('year' => $profile['birthyear'],'month' => $profile['birthmonth'],'day' => $profile['birthday']));}
-							</div>
+						<div class="mui-input-row">
+							<label>{$system_fields['birthyear']['title']}</label>
+								{php echo tpl_app_fans_form('birth', array('year' => $profile['birthyear'], 'month' => $profile['birthmonth'], 'day' => $profile['birthday']), $system_fields['birthyear']['title']);}
 						</div>
 					{/if}
 					{if isset($profile['resideprovince'])}
-						<div class="form-group">
-							<label class="col-xs-12 col-sm-12 control-label">{$system_fields['resideprovince']['title']}</label>
-							<div class="col-sm-12 col-xs-12">
-								{php echo tpl_fans_form('reside',array('province' => $profile['resideprovince'],'city' => $profile['residecity'],'district' => $profile['residedist']));}
-							</div>
+						<div class="mui-input-row">
+							<label>{$system_fields['resideprovince']['title']}</label>
+								{php echo tpl_app_fans_form('reside', array('province' => $profile['resideprovince'], 'city' => $profile['residecity'], 'district' => $profile['residedist']), $system_fields['resideprovince']['title']);}
 						</div>
 					{/if}
 					{if isset($profile['address'])}
-						<div class="form-group">
-							<label class="col-xs-12 col-sm-12 control-label">{$system_fields['address']['title']}</label>
-							<div class="col-sm-12 col-xs-12">
-								{php echo tpl_fans_form('address',$profile['address']);}
-							</div>
+						<div class="mui-input-row">
+							<label>{$system_fields['address']['title']}</label>
+								{php echo tpl_app_fans_form('address',$profile['address'], $system_fields['address']['title']);}
 						</div>
 					{/if}
 					{if isset($profile['mobile'])}
-						<div class="form-group">
-							<label class="col-xs-12 col-sm-12 control-label">{$system_fields['mobile']['title']}</label>
-							<div class="col-sm-12 col-xs-12">
-								{if $profile['mobile']} 
-									<input type="text" readonly name="mobile" value="{$profile['mobile']}" class="form-control">
-								{else}
-									{php echo tpl_fans_form('mobile',$profile['mobile']);}
-								{/if}
-							</div>
+						<div class="mui-input-row">
+							<label>{$system_fields['mobile']['title']}</label>
+									{if !empty($profile['mobile'])}
+									<input type="text" readonly name="mobile" value="{$profile['mobile']}">
+									{else}
+									{php echo tpl_app_fans_form('mobile',$profile['mobile'], $system_fields['mobile']['title']);}
+									{/if}
 						</div>
 					{/if}
 					{if isset($profile['qq'])}
-						<div class="form-group">
-							<label class="col-xs-12 col-sm-12 control-label">{$system_fields['qq']['title']}</label>
-							<div class="col-sm-12 col-xs-12">
-								{php echo tpl_fans_form('qq',$profile['qq']);}
-							</div>
+						<div class="mui-input-row">
+							<label>{$system_fields['qq']['title']}</label>
+								{php echo tpl_app_fans_form('qq', $profile['qq'], $system_fields['qq']['title']);}
 						</div>
 					{/if}
 					{if isset($profile['email'])}
-						<div class="form-group">
-							<label class="col-xs-12 col-sm-12 control-label">{$system_fields['email']['title']}</label>
-							<div class="col-sm-12 col-xs-12">
-								{if $profile['email']} 
-									<input type="text" readonly name="email" value="{$profile['email']}" class="form-control">
+						<div class="mui-input-row">
+							<label>{$system_fields['email']['title']}</label>
+								{if !empty($profile['email'])} 
+									<input type="text" readonly name="email" value="{$profile['email']}">
 								{else}
-									{php echo tpl_fans_form('email',$profile['email']);}
+									{php echo tpl_app_fans_form('email',$profile['email'], $system_fields['email']['title']);}
 								{/if}
-							</div>
 						</div>
 					{/if}
 					{if isset($profile['telephone'])}
-						<div class="form-group">
-							<label class="col-xs-12 col-sm-12 control-label">{$system_fields['telephone']['title']}</label>
-							<div class="col-sm-12 col-xs-12">
-								{php echo tpl_fans_form('telephone',$profile['telephone']);}
-							</div>
+						<div class="mui-input-row">
+							<label>{$system_fields['telephone']['title']}</label>
+								{php echo tpl_app_fans_form('telephone', $profile['telephone'], $system_fields['telephone']['title']);}
 						</div>
 					{/if}
 					{if isset($profile['msn'])}
-						<div class="form-group">
-							<label class="col-xs-12 col-sm-12 control-label">{$system_fields['msn']['title']}</label>
-							<div class="col-sm-12 col-xs-12">
-								{php echo tpl_fans_form('msn',$profile['msn']);}
-							</div>
+						<div class="mui-input-row">
+							<label>{$system_fields['msn']['title']}</label>
+								{php echo tpl_app_fans_form('msn', $profile['msn'], $system_fields['msn']['title']);}
 						</div>
 					{/if}
 					{if isset($profile['taobao'])}
-						<div class="form-group">
-							<label class="col-xs-12 col-sm-12 control-label">{$system_fields['taobao']['title']}</label>
-							<div class="col-sm-12 col-xs-12">
-								{php echo tpl_fans_form('taobao',$profile['taobao']);}
-							</div>
+						<div class="mui-input-row">
+							<label>{$system_fields['taobao']['title']}</label>
+								{php echo tpl_app_fans_form('taobao', $profile['taobao'], $system_fields['taobao']['title']);}
 						</div>
 					{/if}
 					{if isset($profile['alipay'])}
-						<div class="form-group">
-							<label class="col-xs-12 col-sm-12 control-label">{$system_fields['alipay']['title']}</label>
-							<div class="col-sm-12 col-xs-12">
-								{php echo tpl_fans_form('alipay',$profile['alipay']);}
-							</div>
+						<div class="mui-input-row">
+							<label>{$system_fields['alipay']['title']}</label>
+								{php echo tpl_app_fans_form('alipay', $profile['alipay'], $system_fields['alipay']['title']);}
 						</div>
 					{/if}
 					{if isset($profile['studentid'])}
-						<div class="form-group">
-							<label class="col-xs-12 col-sm-12 control-label">{$system_fields['studentid']['title']}</label>
-							<div class="col-sm-12 col-xs-12">
-								{php echo tpl_fans_form('studentid',$profile['studentid']);}
-							</div>
-						</div>
-					{/if}
-					{if isset($profile['grade'])}
-						<div class="form-group">
-							<label class="col-xs-12 col-sm-12 control-label">{$system_fields['grade']['title']}</label>
-							<div class="col-sm-12 col-xs-12">
-								{php echo tpl_fans_form('grade',$profile['grade']);}
-							</div>
+						<div class="mui-input-row">
+							<label>{$system_fields['studentid']['title']}</label>
+								{php echo tpl_app_fans_form('studentid', $profile['studentid'], $system_fields['studentid']['title']);}
 						</div>
 					{/if}
 					{if isset($profile['graduateschool'])}
-						<div class="form-group">
-							<label class="col-xs-12 col-sm-12 control-label">{$system_fields['graduateschool']['title']}</label>
-							<div class="col-sm-12 col-xs-12">
-								{php echo tpl_fans_form('graduateschool',$profile['graduateschool']);}
-							</div>
+						<div class="mui-input-row">
+							<label>{$system_fields['graduateschool']['title']}</label>
+								{php echo tpl_app_fans_form('graduateschool', $profile['graduateschool'], $system_fields['graduateschool']['title']);}
 						</div>
 					{/if}
 					{if isset($profile['education'])}
-						<div class="form-group">
-							<label class="col-xs-12 col-sm-12 control-label">{$system_fields['education']['title']}</label>
-							<div class="col-sm-12 col-xs-12">
-								{php echo tpl_fans_form('education',$profile['education']);}
-							</div>
+						<div class="mui-input-row">
+							<label>{$system_fields['education']['title']}</label>
+								{php echo tpl_app_fans_form('education', $profile['education'],$system_fields['education']['title']);}
 						</div>
 					{/if}
 					{if isset($profile['company'])}
-						<div class="form-group">
-							<label class="col-xs-12 col-sm-12 control-label">{$system_fields['company']['title']}</label>
-							<div class="col-sm-12 col-xs-12">
-								{php echo tpl_fans_form('company',$profile['company']);}
-							</div>
+						<div class="mui-input-row">
+							<label>{$system_fields['company']['title']}</label>
+								{php echo tpl_app_fans_form('company', $profile['company'], $system_fields['company']['title']);}
 						</div>
 					{/if}
 					{if isset($profile['occupation'])}
-						<div class="form-group">
-							<label class="col-xs-12 col-sm-12 control-label">{$system_fields['occupation']['title']}</label>
-							<div class="col-sm-12 col-xs-12">
-								{php echo tpl_fans_form('occupation',$profile['occupation']);}
-							</div>
+						<div class="mui-input-row">
+							<label>{$system_fields['occupation']['title']}</label>
+								{php echo tpl_app_fans_form('occupation', $profile['occupation'], $system_fields['occupation']['title']);}
 						</div>
 					{/if}
 					{if isset($profile['position'])}
-						<div class="form-group">
-							<label class="col-xs-12 col-sm-12 control-label">{$system_fields['position']['title']}</label>
-							<div class="col-sm-12 col-xs-12">
-								{php echo tpl_fans_form('position',$profile['position']);}
-							</div>
+						<div class="mui-input-row">
+							<label>{$system_fields['position']['title']}</label>
+								{php echo tpl_app_fans_form('position', $profile['position'], $system_fields['position']['title']);}
 						</div>
 					{/if}
 					{if isset($profile['revenue'])}
-						<div class="form-group">
-							<label class="col-xs-12 col-sm-12 control-label">{$system_fields['revenue']['title']}</label>
-							<div class="col-sm-12 col-xs-12">
-								{php echo tpl_fans_form('revenue',$profile['revenue']);}
-							</div>
+						<div class="mui-input-row">
+							<label>{$system_fields['revenue']['title']}</label>
+								{php echo tpl_app_fans_form('revenue', $profile['revenue'], $system_fields['revenue']['title']);}
 						</div>
 					{/if}
 					{if isset($profile['constellation'])}
-						<div class="form-group">
-							<label class="col-xs-12 col-sm-12 control-label">{$system_fields['constellation']['title']}</label>
-							<div class="col-sm-12 col-xs-12">
-								{php echo tpl_fans_form('constellation',$profile['constellation']);}
-							</div>
+						<div class="mui-input-row">
+							<label>{$system_fields['constellation']['title']}</label>
+								{php echo tpl_app_fans_form('constellation', $profile['constellation'], $system_fields['constellation']['title']);}
 						</div>
 					{/if}
 					{if isset($profile['zodiac'])}
-						<div class="form-group">
-							<label class="col-xs-12 col-sm-12 control-label">{$system_fields['zodiac']['title']}</label>
-							<div class="col-sm-12 col-xs-12">
-								{php echo tpl_fans_form('zodiac',$profile['zodiac']);}
-							</div>
-						</div>
-					{/if}
-					{if isset($profile['nationality'])}
-						<div class="form-group">
-							<label class="col-xs-12 col-sm-12 control-label">{$system_fields['nationality']['title']}</label>
-							<div class="col-sm-12 col-xs-12">
-								{php echo tpl_fans_form('nationality',$profile['nationality']);}
-							</div>
+						<div class="mui-input-row">
+							<label>{$system_fields['zodiac']['title']}</label>
+								{php echo tpl_app_fans_form('zodiac', $profile['zodiac'], $system_fields['zodiac']['title']);}
 						</div>
 					{/if}
 					{if isset($profile['height'])}
-						<div class="form-group">
-							<label class="col-xs-12 col-sm-12 control-label">{$system_fields['height']['title']}</label>
-							<div class="col-sm-12 col-xs-12">
-								{php echo tpl_fans_form('height',$profile['height']);}
-							</div>
+						<div class="mui-input-row">
+							<label>{$system_fields['height']['title']}</label>
+								{php echo tpl_app_fans_form('height', $profile['height'], $system_fields['height']['title']);}
 						</div>
 					{/if}
 					{if isset($profile['weight'])}
-						<div class="form-group">
-							<label class="col-xs-12 col-sm-12 control-label">{$system_fields['weight']['title']}</label>
-							<div class="col-sm-12 col-xs-12">
-								{php echo tpl_fans_form('weight',$profile['weight']);}
-							</div>
+						<div class="mui-input-row">
+							<label>{$system_fields['weight']['title']}</label>
+								{php echo tpl_app_fans_form('weight', $profile['weight'], $system_fields['weight']['title']);}
 						</div>
 					{/if}
 					{if isset($profile['bloodtype'])}
-						<div class="form-group">
-							<label class="col-xs-12 col-sm-12 control-label">{$system_fields['bloodtype']['title']}</label>
-							<div class="col-sm-12 col-xs-12">
-								{php echo tpl_fans_form('bloodtype',$profile['bloodtype']);}
-							</div>
+						<div class="mui-input-row">
+							<label>{$system_fields['bloodtype']['title']}</label>
+								{php echo tpl_app_fans_form('bloodtype', $profile['bloodtype'], $system_fields['bloodtype']['title']);}
 						</div>
 					{/if}
 					{if isset($profile['idcard'])}
-						<div class="form-group">
-							<label class="col-xs-12 col-sm-12 control-label">{$system_fields['idcard']['title']}</label>
-							<div class="col-sm-12 col-xs-12">
-								{php echo tpl_fans_form('idcard',$profile['idcard']);}
-							</div>
+						<div class="mui-input-row">
+							<label>{$system_fields['idcard']['title']}</label>
+								{php echo tpl_app_fans_form('idcard', $profile['idcard'], $system_fields['idcard']['title']);}
 						</div>
 					{/if}
 					{if isset($profile['zipcode'])}
-						<div class="form-group">
-							<label class="col-xs-12 col-sm-12 control-label">{$system_fields['zipcode']['title']}</label>
-							<div class="col-sm-12 col-xs-12">
-								{php echo tpl_fans_form('zipcode',$profile['zipcode']);}
-							</div>
+						<div class="mui-input-row">
+							<label>{$system_fields['zipcode']['title']}</label>
+								{php echo tpl_app_fans_form('zipcode',$profile['zipcode'], $system_fields['zipcode']['title']);}
 						</div>
 					{/if}
 					{if isset($profile['site'])}
-						<div class="form-group">
-							<label class="col-xs-12 col-sm-12 control-label">{$system_fields['site']['title']}</label>
-							<div class="col-sm-12 col-xs-12">
-								{php echo tpl_fans_form('site',$profile['site']);}
-							</div>
+						<div class="mui-input-row">
+							<label>{$system_fields['site']['title']}</label>
+								{php echo tpl_app_fans_form('site', $profile['site'], $system_fields['site']['title']);}
 						</div>
 					{/if}
 					{if isset($profile['affectivestatus'])}
-						<div class="form-group">
-							<label class="col-xs-12 col-sm-12 control-label">{$system_fields['affectivestatus']['title']}</label>
-							<div class="col-sm-12 col-xs-12">
-								{php echo tpl_fans_form('affectivestatus',$profile['affectivestatus']);}
-							</div>
+						<div class="mui-input-row">
+							<label>{$system_fields['affectivestatus']['title']}</label>
+								{php echo tpl_app_fans_form('affectivestatus', $profile['affectivestatus'], $system_fields['affectivestatus']['title']);}
 						</div>
 					{/if}
 					{if isset($profile['lookingfor'])}
-						<div class="form-group">
-							<label class="col-xs-12 col-sm-12 control-label">{$system_fields['lookingfor']['title']}</label>
-							<div class="col-sm-12 col-xs-12">
-								{php echo tpl_fans_form('lookingfor',$profile['lookingfor']);}
-							</div>
+						<div class="mui-input-row">
+							<label>{$system_fields['lookingfor']['title']}</label>
+								{php echo tpl_app_fans_form('lookingfor', $profile['lookingfor'], $system_fields['lookingfor']['title']);}
 						</div>
 					{/if}
 					{if isset($profile['bio'])}
-						<div class="form-group">
-							<label class="col-xs-12 col-sm-12 control-label">{$system_fields['bio']['title']}</label>
-							<div class="col-sm-12 col-xs-12">
-								{php echo tpl_fans_form('bio',$profile['bio']);}
-							</div>
+						<div class="mui-input-row">
+							<label>{$system_fields['bio']['title']}</label>
+								{php echo tpl_app_fans_form('bio', $profile['bio'], $system_fields['bio']['title']);}
 						</div>
 					{/if}
 					{if isset($profile['interest'])}
-						<div class="form-group">
-							<label class="col-xs-12 col-sm-12 control-label">{$system_fields['interest']['title']}</label>
-							<div class="col-sm-12 col-xs-12">
-								{php echo tpl_fans_form('interest',$profile['interest']);}
-							</div>
+						<div class="mui-input-row">
+							<label>{$system_fields['interest']['title']}</label>
+								{php echo tpl_app_fans_form('interest', $profile['interest'], $system_fields['interest']['title']);}
 						</div>
 					{/if}
-				</table>
-			</div>
-			<div class="form-group">
-				<label class="col-xs-12 col-sm-12 control-label"></label>
-				<div class="col-sm-12 col-xs-12" style="text-align:center">
-					<button type="submit" class="btn btn-primary btn-block" name="submit" value="提交">提交</button>
-					<input type="hidden" name="token" value="{$_W['token']}" />
 				</div>
+			<div class="mui-content-padded">
+				<button type="submit" class="mui-btn mui-btn-success mui-btn-block" name="submit" value="提交">提交</button>
+				<input type="hidden" name="token" value="{$_W['token']}" />
 			</div>
-		</div>
 	</form>
-	</div>
 </div>
 
 <script>
@@ -560,5 +466,4 @@
 	});
 </script>
 
-{template 'mc/footer'}
 {template 'common/footer'}

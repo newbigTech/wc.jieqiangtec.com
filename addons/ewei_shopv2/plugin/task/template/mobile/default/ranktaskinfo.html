@@ -7,7 +7,11 @@
 
     <div class="fui-content">
         <div class="detail-head">
+            {if !empty($taskinfo['poster_banner']) }
+            <img src="{$taskinfo['poster_banner']}" />
+            {else}
             <img src="../addons/ewei_shopv2/plugin/task/static/images/detail-head.jpg" />
+            {/if}
         </div>
 
         <div class="detail-list-title"><i class="icon icon-form"></i> {$taskinfo['title']}</div>
@@ -79,7 +83,7 @@
     </div>
 
     <div class="fui-footer task-detail-btns">
-        <div class="btn full gettask" data-value="{$taskinfo['keyword']}">立即领取</div>
+        <div class="btn full gettask" data-value="{$taskinfo['keyword']}" data-title="{$taskinfo['title']}">立即领取</div>
         <div class="btn" onclick="history.back(-1);">我再看看</div>
     </div>
 

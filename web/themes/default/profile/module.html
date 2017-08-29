@@ -1,65 +1,56 @@
 {template 'common/header'}
-	<div class="module">
-			<ul class="thumbnails">
-			{loop $modulelist $row}
-			<li style="width:262px;" class="list-unstyled">
-				<div class="thumbnail">
-					<div class="module-pic">
-						<img src="{$row['preview']}" onerror="this.src='../web/resource/images/nopic.jpg'" {if !$row['enabled']}class="gray"{/if}>
-						<div class="module-detail">
-							<h5 class="module-title">{$row['title']}</h5>
-							<p class="module-brief">{$row['ability']}</p>
-							<p class="module-description">{if $row['isrulefields']}<a href="{php echo url('platform/reply/post', array('m' => $row['name']))}" class="text-info">添加规则</a>{/if}</p>
-						</div>
-						{if $row['official']}
-						<span class="official"><img src="resource/images/module/official.png"/></span>
-						{/if}
-					</div>
-					<div class="module-button">
-						{if $row['issystem']}
-							<a href="javascript:;" class="pull-right"><span>此模块为系统模块</span></a>
-						{else}
-						{if $row['enabled']}
-							<a id="enabled_{$row['mid']}_0" href="{php echo url('profile/module/enable', array('m' => $row['name'], 'enabled' => 0))}" onclick="return ajaxopen(this.href)" class="btn btn-primary module-button-switch">禁用</a>
-						{else}
-							<a id="enabled_{$row['mid']}_1" href="{php echo url('profile/module/enable', array('m' => $row['name'], 'enabled' => 1))}" onclick="return ajaxopen(this.href);" class="btn btn-danger module-button-switch">启用</a>
-						{/if}
-						{/if}
-						{if $row['enabled'] && !$row['issystem']}
-							{if $row['shortcut']}
-							<a href="{php echo url('profile/module/shortcut', array('m' => $row['name'], 'shortcut' => 0))}" onclick="return ajaxopen(this.href);" class="btn btn-danger">移出快捷操作</a>
-							{else}
-							<a href="{php echo url('profile/module/shortcut', array('m' => $row['name'], 'shortcut' => 1))}" onclick="return ajaxopen(this.href);" class="btn btn-default">加入快捷操作</a>
-							{/if}
-						{/if}
-					</div>
-				</div>
-			</li>
-			{/loop}
-		</ul>
-		<div>
-			{$pager}
+<div class="we7-page-search">
+	<form method="get" class="form-inline">
+		<input type="hidden" name="c" value="profile">
+		<input type="hidden" name="a" value="module">
+		<div class="input-group we7-margin-bottom col-sm-4">
+			<input class="form-control " name="keyword" value="{$_GPC['keyword']}" type="text" placeholder="名称" >
+			<span class="input-group-btn"><button class="btn btn-default"><i class="fa fa-search"></i></button></span>
 		</div>
+	</form>
+</div>
+<div class="js-module-display" ng-controller="ModuleMoreCtrl" ng-cloak>
+	<div we7-initial-searchbar we7-search-callback="searchModule(letter)"></div>
+	<div class="ext-apply-list clearfix">
+		{loop $modules $row}
+		<div class="ext-apply-item {if $row['shortcut']}apply-show{/if}" >
+			<img src="{$row['logo']}" class="apply-img {if !$row['enabled']}gray{/if}" />
+			<h2 class="apply-title">{$row['title']}</h2>
+			<span class="color-green">
+				{if $row['enabled']}
+					启用
+				{else}
+					禁用
+				{/if}
+			</span>
+			<div class="mask">
+
+				<a href="{url 'home/welcome/ext'  array('m' => $row['name'])}" class="entry">
+					进入应用 <i class="wi wi-angle-right"></i>
+				</a>
+				{if $row['shortcut']}
+				<a href="{php echo url('profile/module/shortcut', array('modulename' => $row['name'], 'shortcut' => STATUS_OFF))}" onclick="return ajaxopen(this.href);" class="cut-btn" title="移出菜单">
+					<i class="wi wi-remove"></i>
+				</a>
+				{else}
+				<a href="{php echo url('profile/module/shortcut', array('modulename' => $row['name'], 'shortcut' => STATUS_ON))}" onclick="return ajaxopen(this.href);" class="cut-btn" title="显示到菜单">
+					<i class="wi wi-eye"></i>
+				</a>
+				{/if}
+				<a href="{php echo url('profile/module/top', array('modulename' => $row['name']))}" class="stick">
+					<i class="wi wi-stick-sign" title="置顶"></i>
+				</a>
+
+			</div>
+		</div>
+		{/loop}
 	</div>
-	<script type="text/javascript">
-		function toggle_description(id) {
-			var container = $('#'+id).parent().parent().parent();
-			var status = $('#'+id).attr("status");
-			if(status == 1) {
-				$('#'+id).attr("status", "0")
-				container.find(".module_description").show();
-			} else {
-				$('#'+id).attr("status", "1")
-				container.find(".module_description").hide();
-			}
-		}
-		$('.module .thumbnails').delegate('li .module-button-switch', 'click', function(){ //控制模块开关
-			if($(this).hasClass('btn-primary')) { //禁用模块
-				$(this).removeClass('btn-primary').addClass('btn-danger').html('开启');
-			} else if($(this).hasClass('btn-danger')) { //开启模块
-				$(this).removeClass('btn-danger').addClass('btn-primary').html('禁用');
-			}
-			$(this).parent().parent().find('.module-pic img').toggleClass('gray');
-		});
-	</script>
+	<div class="text-right">{$pager}</div>
+</div>
+<script type="text/javascript">
+	angular.module('moduleApp').value('config', {
+		searchurl : '{php echo url('profile/module')}'
+	});
+	angular.bootstrap($('.js-module-display'), ['moduleApp']);
+</script>
 {template 'common/footer'}

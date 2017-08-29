@@ -1,5 +1,5 @@
 <?php
-if (!defined('IN_IA')) 
+if (!(defined('IN_IA'))) 
 {
 	exit('Access Denied');
 }
@@ -21,7 +21,8 @@ class Batch_EweiShopV2Page extends MerchWebPage
 		$printset = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_exhelper_sys') . ' WHERE uniacid=:uniacid and merchid=:merchid limit 1', array(':uniacid' => $_W['uniacid'], ':merchid' => $merchid));
 		$lodopUrl_ip = 'localhost';
 		$lodopUrl_port = ((empty($printset['port']) ? 8000 : $printset['port']));
-		$lodopUrl = 'http://' . $lodopUrl_ip . ':' . $lodopUrl_port . '/CLodopfuncs.js';
+		$https = (($_W['ishttps'] ? 'https://' : 'http://'));
+		$lodopUrl = $https . $lodopUrl_ip . ':' . $lodopUrl_port . '/CLodopfuncs.js';
 		load()->func('tpl');
 		include $this->template();
 	}
@@ -82,7 +83,7 @@ class Batch_EweiShopV2Page extends MerchWebPage
 				$endtime = time();
 			}
 			$searchtime = trim($_GPC['searchtime']);
-			if (!empty($searchtime) && !empty($_GPC['starttime']) && !empty($_GPC['endtime']) && in_array($searchtime, array('create', 'pay', 'send', 'finish'))) 
+			if (!(empty($searchtime)) && !(empty($_GPC['starttime'])) && !(empty($_GPC['endtime'])) && in_array($searchtime, array('create', 'pay', 'send', 'finish'))) 
 			{
 				$starttime = strtotime($_GPC['starttime']);
 				$endtime = strtotime($_GPC['endtime']);
@@ -101,9 +102,8 @@ class Batch_EweiShopV2Page extends MerchWebPage
 				$condition .= ' AND o.printstate2=' . $printstate2 . ' ';
 			}
 			$sqlcondition = '';
-			if (!empty($_GPC['searchfield']) && !empty($_GPC['keyword'])) 
+			if (!(empty($_GPC['searchfield'])) && !(empty($_GPC['keyword']))) 
 			{
-				$paras[':keyword'] = trim($_GPC['keyword']);
 				$searchfield = trim(strtolower($_GPC['searchfield']));
 				$keyword = trim($_GPC['keyword']);
 				if ($searchfield == 'ordersn') 
@@ -125,10 +125,12 @@ class Batch_EweiShopV2Page extends MerchWebPage
 				else if ($searchfield == 'goodstitle') 
 				{
 					$sqlcondition = ' inner join ( select distinct og.orderid from ' . tablename('ewei_shop_order_goods') . ' og left join ' . tablename('ewei_shop_goods') . ' g on g.id=og.goodsid where og.uniacid = \'' . $uniacid . '\' and og.merchid = \'' . $merchid . '\' and (locate(:keyword,g.title)>0)) gs on gs.orderid=o.id';
+					$paras[':keyword'] = trim($_GPC['keyword']);
 				}
 				else if ($searchfield == 'goodssn') 
 				{
 					$sqlcondition = ' inner join ( select distinct og.orderid from ' . tablename('ewei_shop_order_goods') . ' og left join ' . tablename('ewei_shop_goods') . ' g on g.id=og.goodsid where og.uniacid = \'' . $uniacid . '\' and og.merchid = \'' . $merchid . '\' and (locate(:keyword,g.goodssn)>0)) gs on gs.orderid=o.id';
+					$paras[':keyword'] = trim($_GPC['keyword']);
 				}
 			}
 			$sql = 'select o.* ,a.realname ,m.nickname, d.dispatchname,m.nickname,r.status as refundstatus from ' . tablename('ewei_shop_order') . ' o' . ' left join ' . tablename('ewei_shop_order_refund') . ' r on r.orderid=o.id and ifnull(r.status,-1)<>-1' . ' left join ' . tablename('ewei_shop_member') . ' m on m.openid=o.openid and m.uniacid = o.uniacid ' . ' left join ' . tablename('ewei_shop_member_address') . ' a on o.addressid = a.id ' . ' left join ' . tablename('ewei_shop_dispatch') . ' d on d.id = o.dispatchid ' . $sqlcondition . ' where ' . $condition . ' ' . $statuscondition . '  ORDER BY o.createtime DESC,o.status DESC  ';
@@ -143,7 +145,7 @@ class Batch_EweiShopV2Page extends MerchWebPage
 				$order_goods = pdo_fetchall('select g.id,g.title,g.shorttitle,g.thumb,g.unit,g.goodssn,og.optionid,og.goodssn as option_goodssn, g.productsn, g.weight, og.productsn as option_productsn, og.total,og.price,og.optionname as optiontitle, og.realprice,og.printstate,og.printstate2,og.id as ordergoodid from ' . tablename('ewei_shop_order_goods') . ' og ' . ' left join ' . tablename('ewei_shop_goods') . ' g on g.id=og.goodsid ' . ' where og.uniacid=:uniacid and og.orderid=:orderid ', array(':uniacid' => $_W['uniacid'], ':orderid' => $order['id']));
 				foreach ($order_goods as $ii => $order_good ) 
 				{
-					if (!empty($order_good['optionid'])) 
+					if (!(empty($order_good['optionid']))) 
 					{
 						$option = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_goods_option') . ' WHERE id=:id and uniacid=:uniacid limit 1', array(':id' => $order_good['optionid'], ':uniacid' => $_W['uniacid']));
 						$order_goods[$ii]['weight'] = $option['weight'];
@@ -157,7 +159,7 @@ class Batch_EweiShopV2Page extends MerchWebPage
 				$orders[$i]['goods'] = $order_goods;
 				$orders[$i]['paytype'] = $paytype[$p]['name'];
 				$orders[$i]['css'] = $paytype[$p]['css'];
-				$orders[$i]['dispatchname'] = (empty($order['addressid']) ? '自提' : $order['dispatchname']);
+				$orders[$i]['dispatchname'] = ((empty($order['addressid']) ? '自提' : $order['dispatchname']));
 				if (empty($orders[$i]['dispatchname'])) 
 				{
 					$orders[$i]['dispatchname'] = '快递';
@@ -166,7 +168,7 @@ class Batch_EweiShopV2Page extends MerchWebPage
 				{
 					$orders[i]['dispatchname'] = '线下核销';
 				}
-				else if (!empty($order['virtual'])) 
+				else if (!(empty($order['virtual']))) 
 				{
 					$orders[$i]['dispatchname'] = '虚拟物品(卡密)<br/>自动发货';
 				}
@@ -174,7 +176,7 @@ class Batch_EweiShopV2Page extends MerchWebPage
 				$orders[$i]['statusvalue'] = $s;
 				$orders[$i]['statuscss'] = $orderstatus[$s]['css'];
 				$orders[$i]['statusname'] = $orderstatus[$s]['name'];
-				if (!empty($order['address_send'])) 
+				if (!(empty($order['address_send']))) 
 				{
 					$orders[$i]['address'] = iunserializer($order['address_send']);
 				}
@@ -331,7 +333,7 @@ class Batch_EweiShopV2Page extends MerchWebPage
 				exit();
 			}
 			$printTemp = pdo_fetch('SELECT id,type,expressname,express,expresscom FROM ' . tablename('ewei_shop_exhelper_express') . ' WHERE id=:id and type=:type and uniacid=:uniacid and merchid=:merchid limit 1', array(':id' => $temp_express, ':type' => 1, ':uniacid' => $_W['uniacid'], ':merchid' => $merchid));
-			if (empty($printTemp) || !is_array($printTemp)) 
+			if (empty($printTemp) || !(is_array($printTemp))) 
 			{
 				exit();
 			}
@@ -348,7 +350,7 @@ class Batch_EweiShopV2Page extends MerchWebPage
 			$orderstatus = array( -1 => array('css' => 'default', 'name' => '已关闭'), 0 => array('css' => 'danger', 'name' => '待付款'), 1 => array('css' => 'info', 'name' => '待发货'), 2 => array('css' => 'warning', 'name' => '待收货'), 3 => array('css' => 'success', 'name' => '已完成') );
 			foreach ($orders as $i => $order ) 
 			{
-				if (!empty($order['address_send'])) 
+				if (!(empty($order['address_send']))) 
 				{
 					$orders[$i]['address_address'] = iunserializer($order['address_send']);
 				}
@@ -404,10 +406,10 @@ class Batch_EweiShopV2Page extends MerchWebPage
 			if (($orderinfo['status'] == 1) || (($orderinfo['status'] == 0) && ($orderinfo['paytype'] == 3))) 
 			{
 				pdo_update('ewei_shop_order', array('express' => trim($express), 'expresssn' => trim($expresssn), 'expresscom' => trim($expresscom), 'sendtime' => time(), 'status' => 2), array('id' => $orderid));
-				if (!empty($orderinfo['refundid'])) 
+				if (!(empty($orderinfo['refundid']))) 
 				{
 					$refund = pdo_fetch('select * from ' . tablename('ewei_shop_order_refund') . ' where id=:id limit 1', array(':id' => $orderinfo['refundid'], 'merchid' => $merchid));
-					if (!empty($refund)) 
+					if (!(empty($refund))) 
 					{
 						pdo_update('ewei_shop_order_refund', array('status' => -1), array('id' => $orderinfo['refundid']));
 						pdo_update('ewei_shop_order', array('refundid' => 0), array('id' => $orderinfo['id']));

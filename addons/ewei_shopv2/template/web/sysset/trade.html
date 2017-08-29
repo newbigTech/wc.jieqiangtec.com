@@ -35,6 +35,7 @@
         </div>
     </div>
 
+
     <div class='form-group-title'>自动关闭未付款订单</div>
 
     <div class="form-group">
@@ -75,6 +76,25 @@
         </div>
     </div>
 
+    <div class='form-group-title'>库存预警推送通知</div>
+
+    <div class="form-group">
+        <label class="col-sm-2 control-label">库存少于</label>
+        <div class="col-sm-9 col-xs-12">
+            {ifp 'sysset.trade.edit'}
+            <div class="input-group">
+                <input type="text" name="data[stockwarn]" class="form-control" value="{$data['stockwarn']}" />
+                <div class="input-group-addon">件</div>
+            </div>
+            <span class='help-block'>库存低于多少件后,每当减少库存时会为卖家推送一次库存警报,默认为5件</span>
+            {else}
+            <input type="hidden" name="data[stockwarn]" value="{$data['stockwarn']}"/>
+            <div class='form-control-static'>
+                {if empty($data['stockwarn'])}5{else}{$data['stockwarn']}{/if} 天
+            </div>
+            {/if}
+        </div>
+    </div>
     <div class='form-group-title'>自动收货</div>
 
 
@@ -425,6 +445,7 @@
             <div id="areas" class="form-control-static">{$data[nodispatchareas]}</div>
             <a href="javascript:;" class="btn btn-default" onclick="selectAreas()">选择地区</a>
             <input type="hidden" id='selectedareas' name="data[nodispatchareas]" value="{$data[nodispatchareas]}" />
+            <input type="hidden" id='selectedareas_code' name="data[nodispatchareas_code]" value="{$data[nodispatchareas_code]}" />
             {else}
             <div class='form-control-static'>{$data[nodispatchareas]}</div>
             {/if}
@@ -445,6 +466,10 @@
 
 </form>
 
+{if empty($new_area)}
 {template 'shop/selectareas'}
+{else}
+{template 'shop/selectareasNew'}
+{/if}
 
 {template '_footer'}     

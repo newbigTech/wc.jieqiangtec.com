@@ -1,7 +1,7 @@
 <?php
 /**
  * [WeEngine System] Copyright (c) 2014 WE7.CC
- * WeEngine is NOT a free software, it under the license terms, visited http://www.zheyitianshi.com/ for more details.
+ * WeEngine is NOT a free software, it under the license terms, visited http://www.we7.cc/ for more details.
  */
 defined('IN_IA') or exit('Access Denied');
 
@@ -48,6 +48,10 @@ function message($msg, $redirect = '', $type = '') {
 	exit();
 }
 
+function itoast($msg, $redirect = '', $type = '') {
+	return message($msg, $redirect, $type);
+}
+
 
 function checkauth() {
 	global $_W, $engine;
@@ -57,6 +61,12 @@ function checkauth() {
 	}
 	if(!empty($_W['openid'])) {
 		$fan = mc_fansinfo($_W['openid'], $_W['acid'], $_W['uniacid']);
+				if (empty($fan) && $_W['account']['level'] == ACCOUNT_SERVICE_VERIFY) {
+			$fan = mc_oauth_userinfo();
+			if (!empty($fan['openid'])) {
+				$fan = mc_fansinfo($fan['openid']);
+			}
+		}
 		if(_mc_login(array('uid' => intval($fan['uid'])))) {
 			return true;
 		}
@@ -142,7 +152,7 @@ function register_jssdk($debug = false){
 	
 	$script = <<<EOF
 
-<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
 <script type="text/javascript">
 	window.sysinfo = window.sysinfo || $sysinfo || {};
 	
@@ -194,4 +204,12 @@ function register_jssdk($debug = false){
 </script>
 EOF;
 	echo $script;
+}
+
+function tourl($url) {
+	$reg = '/^tel:(\d+)$/';
+	if (preg_match($reg, $url)) {
+		return $url;
+	}
+	return $url . '&wxref=mp.weixin.qq.com#wechat_redirect';
 }

@@ -1,8 +1,9 @@
 <?php
-if (!(defined('IN_IA'))) 
-{
+if (!(defined('IN_IA'))) {
 	exit('Access Denied');
 }
+
+
 define('EWEI_SHOPV2_DEBUG', false);
 !(defined('EWEI_SHOPV2_PATH')) && define('EWEI_SHOPV2_PATH', IA_ROOT . '/addons/ewei_shopv2/');
 !(defined('EWEI_SHOPV2_CORE')) && define('EWEI_SHOPV2_CORE', EWEI_SHOPV2_PATH . 'core/');
@@ -20,4 +21,5 @@ define('EWEI_SHOPV2_DEBUG', false);
 !(defined('EWEI_SHOPV2_STATIC')) && define('EWEI_SHOPV2_STATIC', EWEI_SHOPV2_URL . 'static/');
 !(defined('EWEI_SHOPV2_PREFIX')) && define('EWEI_SHOPV2_PREFIX', 'ewei_shop_');
 define('EWEI_SHOPV2_PLACEHOLDER', '../addons/ewei_shopv2/static/images/placeholder.png');
+
 ?>

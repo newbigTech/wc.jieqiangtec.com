@@ -27,15 +27,15 @@
             <div class="file-box" style='width:150px;cursor: pointer' onclick="location.href='{php echo webUrl('sysset/account/choose',array('uniacid' => $uni['uniacid']))}'" title="点击切换">
                 <div class="file">
 
-                        {loop $uni['details'] $account}
-                        <span class="corner"></span>
-                        <div class="icon" style="height: 120px; margin-bottom:10px;">
-                            <img src="{php echo tomedia('headimg_'.$account['acid'].'.jpg');}?time={php echo time()}" class="image" width="100" height="100"  onerror="this.src='resource/images/gw-wx.gif'" />
-                        </div>
-                        <div class="file-name" style="white-space:nowrap;overflow:hidden;text-overflow: ellipsis;">
-                            {$account['name']}
-                        </div>
-                        {/loop}
+                    {loop $uni['details'] $account}
+                    <span class="corner"></span>
+                    <div class="icon" style="height: 120px; margin-bottom:10px;">
+                        <img data-src="{$account['thumb']}" class="image" width="100" height="100" src="resource/images/gw-wx.gif" />
+                    </div>
+                    <div class="file-name" style="white-space:nowrap;overflow:hidden;text-overflow: ellipsis;">
+                        {$account['name']}
+                    </div>
+                    {/loop}
 
                 </div>
             </div>
@@ -44,8 +44,28 @@
             没有公众号，<a href="/web/index.php?c=account&a=display">新建公众号</a>
             {/if}
         </div>
+
     </div>
+    {$pager}
 </div>
- 
+
+<script type="text/javascript">
+    $(function(){
+        var image = $('.image');
+        if(image.length>0){
+            image.each(function(){
+                var _this = $(this);
+                var imgSrc = _this.data('src');
+                if(imgSrc){
+                    var img = new Image();
+                    img.src = imgSrc;
+                    img.onload = function(){
+                        _this.attr('src', imgSrc);
+                    }
+                }
+            });
+        }
+    })
+</script>
 
 {template '_footer'}

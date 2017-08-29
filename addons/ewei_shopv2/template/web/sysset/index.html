@@ -140,25 +140,7 @@
                         {/if}
                     </div>
             </div>
-			
-			<div class="form-group">
-		        <label class="col-sm-2 control-label">显示订单弹幕</label>
-		        <div class="col-sm-9 col-xs-12">
-		            {ifp 'sysset.shop.edit'}
-		            <label class="radio-inline">
-		                <input type="radio" name="data[order_flag]" value='1' {if $data['order_flag']==1}checked{/if} /> 开启
-		            </label>
-		            <label class="radio-inline">
-		                <input type="radio" name="data[order_flag]" value='0' {if $data['order_flag']==0}checked{/if} /> 关闭
-		            </label>
-		
-		            {else}
-		
-		            <div class='form-control-static'>{if $data['order_flag']==0}关闭{else}开启{/if}</div>
-		            {/if}
-		        </div>
-		    </div>
-			
+
             <div class="form-group">
                 <label class="col-sm-2 control-label">开启导航条</label>
                 <div class="col-sm-9 col-xs-12">
@@ -173,25 +155,6 @@
                     <div class="help-block"> 如果开启此选项，导航内容请到导航条中编辑</div>
                 </div>
             </div>
-			
-			<div class="form-group">
-		        <label class="col-sm-2 control-label">左侧快捷进入</label>
-		        <div class="col-sm-9 col-xs-12">
-		            {ifp 'sysset.shop.edit'}
-		            <label class="radio-inline">
-		                <input type="radio" name="data[yingyong_flag]" value='1' {if $data['yingyong_flag']==1}checked{/if} /> 关闭
-		            </label>
-		            <label class="radio-inline">
-		                <input type="radio" name="data[yingyong_flag]" value='0' {if $data['yingyong_flag']==0}checked{/if} /> 开启
-		            </label>
-		
-		            {else}
-		
-		            <div class='form-control-static'>{if $data['yingyong_flag']==0}关闭{else}开启{/if}</div>
-		            {/if}
-		        </div>
-		    </div>
-			
 				 
   
 	 

@@ -1,20 +1,25 @@
 <?php
 /**
  * [WeEngine System] Copyright (c) 2014 WE7.CC
- * WeEngine is NOT a free software, it under the license terms, visited http://www.zheyitianshi.com/ for more details.
+ * WeEngine is NOT a free software, it under the license terms, visited http://www.we7.cc/ for more details.
  */
+defined('IN_IA') or exit('Access Denied');
+
+load()->model('module');
+
+if (empty($action)) {
+	$action = 'site';
+}
 
 $eid = intval($_GPC['eid']);
 if(!empty($eid)) {
-	$sql = 'SELECT * FROM ' . tablename('modules_bindings') . ' WHERE `eid`=:eid';
-	$entry = pdo_fetch($sql, array(':eid' => $eid));
-	$_GPC['m'] = $entry['module'];
+	$entry = module_entry($eid);
 } else {
 	$entry = array(
 		'module' => $_GPC['m'],
 		'do' => $_GPC['do'],
 		'state' => $_GPC['state'],
-		'direct' => 0
+		'direct' => 0,
 	);
 }
 $moduels = uni_modules();
@@ -26,12 +31,9 @@ if(empty($entry) || empty($entry['do'])) {
 }
 $_GPC['__entry'] = $entry['title'];
 $_GPC['__state'] = $entry['state'];
+$_GPC['state'] = $entry['state'];
+$_GPC['m'] = $entry['module'];
+$_GPC['do'] = $entry['do'];
 
+$_W['current_module'] = $moduels[$entry['module']];
 define('IN_MODULE', $entry['module']);
-$_W['current_module'] = $entry['module'];
-$site = WeUtility::createModuleSite($entry['module']);
-if(!is_error($site)) {
-	$method = 'doMobile' . ucfirst($entry['do']);
-	exit($site->$method());
-}
-exit();

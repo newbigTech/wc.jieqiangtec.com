@@ -423,7 +423,7 @@ class Orders_EweiShopV2Page extends PluginMobileLoginPage
 			}
 			else 
 			{
-				$address = pdo_fetch('select id,realname,mobile,address,province,city,area from ' . tablename('ewei_shop_member_address') . "\n\t\t\t\t" . 'where openid=:openid and deleted=0 and isdefault=1  and uniacid=:uniacid limit 1', array(':uniacid' => $uniacid, ':openid' => $openid));
+				$address = pdo_fetch('select * from ' . tablename('ewei_shop_member_address') . "\n\t\t\t\t" . 'where openid=:openid and deleted=0 and isdefault=1  and uniacid=:uniacid limit 1', array(':uniacid' => $uniacid, ':openid' => $openid));
 			}
 			$creditdeduct = pdo_fetch('SELECT creditdeduct,groupsdeduct,credit,groupsmoney FROM' . tablename('ewei_shop_groups_set') . 'WHERE uniacid = :uniacid ', array(':uniacid' => $uniacid));
 			if (intval($creditdeduct['creditdeduct'])) 
@@ -497,7 +497,26 @@ class Orders_EweiShopV2Page extends PluginMobileLoginPage
 						throw new Exception('联系人或联系电话不能为空！');
 					}
 				}
-				$data = array('uniacid' => $_W['uniacid'], 'groupnum' => $groupnum, 'openid' => $openid, 'paytime' => '', 'orderno' => $ordersn, 'credit' => (intval($_GPC['isdeduct']) ? $_GPC['credit'] : 0), 'creditmoney' => (intval($_GPC['isdeduct']) ? $_GPC['creditmoney'] : 0), 'price' => $price, 'freight' => $goods['freight'], 'status' => 0, 'goodid' => $goodid, 'teamid' => $teamid, 'is_team' => $is_team, 'heads' => $heads, 'discount' => (!(empty($heads)) ? $goods['headsmoney'] : 0), 'addressid' => intval($_GPC['aid']), 'message' => trim($_GPC['message']), 'realname' => ($isverify ? trim($_GPC['realname']) : ''), 'mobile' => ($isverify ? trim($_GPC['mobile']) : ''), 'endtime' => $goods['endtime'], 'isverify' => intval($goods['isverify']), 'verifytype' => intval($goods['verifytype']), 'verifycode' => (!(empty($verifycode)) ? $verifycode : 0), 'verifynum' => (!(empty($verifynum)) ? $verifynum : 1), 'createtime' => TIMESTAMP);
+				if ((0 < intval($_GPC['aid'])) && !($isverify)) 
+				{
+					$order_address = pdo_fetch('select * from ' . tablename('ewei_shop_member_address') . ' where id=:id and openid=:openid and uniacid=:uniacid   limit 1', array(':uniacid' => $uniacid, ':openid' => $openid, ':id' => intval($_GPC['aid'])));
+					if (empty($order_address)) 
+					{
+						throw new Exception('未找到地址');
+						header('location: ' . mobileUrl('groups/address/post'));
+						exit();
+					}
+					else 
+					{
+						if (empty($order_address['province']) || empty($order_address['city'])) 
+						{
+							throw new Exception('地址请选择省市信息');
+							header('location: ' . mobileUrl('groups/address/post'));
+							exit();
+						}
+					}
+				}
+				$data = array('uniacid' => $_W['uniacid'], 'groupnum' => $groupnum, 'openid' => $openid, 'paytime' => '', 'orderno' => $ordersn, 'credit' => (intval($_GPC['isdeduct']) ? $_GPC['credit'] : 0), 'creditmoney' => (intval($_GPC['isdeduct']) ? $_GPC['creditmoney'] : 0), 'price' => $price, 'freight' => $goods['freight'], 'status' => 0, 'goodid' => $goodid, 'teamid' => $teamid, 'is_team' => $is_team, 'heads' => $heads, 'discount' => (!(empty($heads)) ? $goods['headsmoney'] : 0), 'addressid' => intval($_GPC['aid']), 'address' => iserializer($order_address), 'message' => trim($_GPC['message']), 'realname' => ($isverify ? trim($_GPC['realname']) : ''), 'mobile' => ($isverify ? trim($_GPC['mobile']) : ''), 'endtime' => $goods['endtime'], 'isverify' => intval($goods['isverify']), 'verifytype' => intval($goods['verifytype']), 'verifycode' => (!(empty($verifycode)) ? $verifycode : 0), 'verifynum' => (!(empty($verifynum)) ? $verifynum : 1), 'createtime' => TIMESTAMP);
 				$order_insert = pdo_insert('ewei_shop_groups_order', $data);
 				if (!($order_insert)) 
 				{

@@ -1,5 +1,5 @@
 <?php
-if (!defined('IN_IA')) 
+if (!(defined('IN_IA'))) 
 {
 	exit('Access Denied');
 }
@@ -18,6 +18,7 @@ class Changepwd_EweiShopV2Page extends MobileLoginPage
 		global $_W;
 		global $_GPC;
 		$member = $this->member;
+		$wapset = m('common')->getSysset('wap');
 		if (is_weixin() || empty($_GPC['__ewei_shopv2_member_session_' . $_W['uniacid']])) 
 		{
 			header('location: ' . mobileUrl());
@@ -29,7 +30,7 @@ class Changepwd_EweiShopV2Page extends MobileLoginPage
 			$pwd = trim($_GPC['pwd']);
 			@session_start();
 			$key = '__ewei_shopv2_member_verifycodesession_' . $_W['uniacid'] . '_' . $mobile;
-			if (!isset($_SESSION[$key]) || ($_SESSION[$key] !== $verifycode) || !isset($_SESSION['verifycodesendtime']) || (($_SESSION['verifycodesendtime'] + 600) < time())) 
+			if (!(isset($_SESSION[$key])) || ($_SESSION[$key] !== $verifycode) || !(isset($_SESSION['verifycodesendtime'])) || (($_SESSION['verifycodesendtime'] + 600) < time())) 
 			{
 				show_json(0, '验证码错误或已过期!');
 			}

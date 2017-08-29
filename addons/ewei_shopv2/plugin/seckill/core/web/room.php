@@ -1,9 +1,8 @@
 <?php
 if (!(defined('IN_IA'))) 
 {
-	exlt('Access Denied');
+	exit('Access Denied');
 }
-
 require EWEI_SHOPV2_PLUGIN . 'seckill/core/seckill_page_web.php';
 class Room_EweiShopV2Page extends SeckillWebPage 
 {
@@ -189,7 +188,7 @@ class Room_EweiShopV2Page extends SeckillWebPage
 		{
 			foreach ($times as &$t ) 
 			{
-				$sql = 'select tg.id,tg.goodsid, tg.price as packageprice, tg.maxbuy,tg.totalmaxbuy, g.title,g.thumb,g.hasoption,tg.commission1,tg.commission2,tg.commission3,tg.total from ' . tablename('ewei_shop_seckill_task_goods') . ' tg  ' . "\n" . '                  left join ' . tablename('ewei_shop_goods') . ' g on tg.goodsid = g.id ' . "\n" . '                  where tg.taskid=:taskid and tg.roomid=:roomid and  tg.timeid=:timeid and tg.uniacid=:uniacid  group by tg.goodsid order by tg.displayorder asc ';
+				$sql = 'select tg.id,tg.goodsid, tg.price as packageprice, tg.maxbuy,tg.totalmaxbuy, g.title,g.thumb,g.hasoption,tg.commission1,tg.commission2,tg.commission3,tg.total from ' . tablename('ewei_shop_seckill_task_goods') . ' tg  ' . "\r\n" . '                  left join ' . tablename('ewei_shop_goods') . ' g on tg.goodsid = g.id ' . "\r\n" . '                  where tg.taskid=:taskid and tg.roomid=:roomid and  tg.timeid=:timeid and tg.uniacid=:uniacid  group by tg.goodsid order by tg.displayorder asc ';
 				$goods = pdo_fetchall($sql, array(':taskid' => $item['taskid'], ':roomid' => $roomid, ':timeid' => $t['id'], ':uniacid' => $_W['uniacid']), 'time');
 				foreach ($goods as &$g ) 
 				{
@@ -292,7 +291,7 @@ class Room_EweiShopV2Page extends SeckillWebPage
 			$condition .= ' AND (`title` LIKE :keywords OR `keywords` LIKE :keywords)';
 			$params[':keywords'] = '%' . $kwd . '%';
 		}
-		$ds = pdo_fetchall('SELECT id,title,thumb,bargain,marketprice,total,goodssn,productsn,`type`,isdiscount,istime,isverify,share_title,share_icon,description,hasoption,nocommission,groupstype' . "\n" . '            FROM ' . tablename('ewei_shop_goods') . "\n" . '            WHERE 1 ' . $condition . ' ORDER BY displayorder DESC,id DESC LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize, $params);
+		$ds = pdo_fetchall('SELECT id,title,thumb,bargain,marketprice,total,goodssn,productsn,`type`,isdiscount,istime,isverify,share_title,share_icon,description,hasoption,nocommission,groupstype' . "\r\n" . '            FROM ' . tablename('ewei_shop_goods') . "\r\n" . '            WHERE 1 ' . $condition . ' ORDER BY displayorder DESC,id DESC LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize, $params);
 		$total = pdo_fetchcolumn('SELECT COUNT(1) FROM ' . tablename('ewei_shop_goods') . ' WHERE 1 ' . $condition . ' ', $params);
 		$pager = pagination($total, $pindex, $psize, '', array('before' => 5, 'after' => 4, 'ajaxcallback' => 'select_page', 'callbackfuncname' => 'select_page'));
 		$ds = set_medias($ds, array('thumb'));
@@ -317,7 +316,7 @@ class Room_EweiShopV2Page extends SeckillWebPage
 		$goods = pdo_fetch('select id,title,marketprice,hasoption,nocommission from ' . tablename('ewei_shop_goods') . ' where uniacid = :uniacid and id = :goodsid ', $params);
 		if (!(empty($pid))) 
 		{
-			$packgoods = pdo_fetch('select id,title,packageprice,commission1,commission2,commission3,`option`,goodsid from ' . tablename('ewei_shop_package_goods') . "\n" . '                        where pid = ' . $pid . ' and uniacid = :uniacid and goodsid = :goodsid ', $params);
+			$packgoods = pdo_fetch('select id,title,packageprice,commission1,commission2,commission3,`option`,goodsid from ' . tablename('ewei_shop_package_goods') . "\r\n" . '                        where pid = ' . $pid . ' and uniacid = :uniacid and goodsid = :goodsid ', $params);
 		}
 		else 
 		{
@@ -327,8 +326,8 @@ class Room_EweiShopV2Page extends SeckillWebPage
 		{
 			$hasoption = 1;
 			$option = array();
-			$option = pdo_fetchall('SELECT id,title,marketprice,specs,displayorder FROM ' . tablename('ewei_shop_goods_option') . "\n" . '            WHERE uniacid = :uniacid and goodsid = :goodsid  ORDER BY displayorder DESC,id DESC ', $params);
-			$package_option = pdo_fetchall('SELECT id,uniacid,goodsid,optionid,pid,title,marketprice,packageprice,commission1,commission2,commission3 FROM ' . tablename('ewei_shop_package_goods_option') . "\n" . '            WHERE uniacid = :uniacid and goodsid = :goodsid  and pid = ' . $pid . ' ', $params);
+			$option = pdo_fetchall('SELECT id,title,marketprice,specs,displayorder FROM ' . tablename('ewei_shop_goods_option') . "\r\n" . '            WHERE uniacid = :uniacid and goodsid = :goodsid  ORDER BY displayorder DESC,id DESC ', $params);
+			$package_option = pdo_fetchall('SELECT id,uniacid,goodsid,optionid,pid,title,marketprice,packageprice,commission1,commission2,commission3 FROM ' . tablename('ewei_shop_package_goods_option') . "\r\n" . '            WHERE uniacid = :uniacid and goodsid = :goodsid  and pid = ' . $pid . ' ', $params);
 			foreach ($option as $key => $value ) 
 			{
 				foreach ($package_option as $k => $val ) 
@@ -361,9 +360,8 @@ class Room_EweiShopV2Page extends SeckillWebPage
 		$uniacid = intval($_W['uniacid']);
 		$options = ((is_array($_GPC['option']) ? implode(',', array_filter($_GPC['option'])) : 0));
 		$options = intval($options);
-		$option = pdo_fetch('SELECT id,title FROM ' . tablename('ewei_shop_goods_option') . "\n" . '            WHERE uniacid = ' . $uniacid . ' and id = ' . $options . '  ORDER BY displayorder DESC,id DESC LIMIT 1');
+		$option = pdo_fetch('SELECT id,title FROM ' . tablename('ewei_shop_goods_option') . "\r\n" . '            WHERE uniacid = ' . $uniacid . ' and id = ' . $options . '  ORDER BY displayorder DESC,id DESC LIMIT 1');
 		show_json(1, $option);
 	}
 }
-	
 ?>

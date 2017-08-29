@@ -162,7 +162,7 @@ class Index_EweiShopV2Page extends PluginWebPage
 		{
 			$id = ((is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0));
 		}
-		$items = pdo_fetchall('SELECT id,article_title FROM ' . tablename('ewei_shop_article') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,article_title,article_keyword2 FROM ' . tablename('ewei_shop_article') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
 		foreach ($items as $item ) 
 		{
 			pdo_delete('ewei_shop_article', array('id' => $item['id']));

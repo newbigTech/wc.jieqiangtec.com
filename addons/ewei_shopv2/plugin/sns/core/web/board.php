@@ -63,6 +63,8 @@ class Board_EweiShopV2Page extends PluginWebPage
 			$item['postlevels'] = explode(',', $item['postlevels']);
 			$item['showagentlevels'] = explode(',', $item['showagentlevels']);
 			$item['postagentlevels'] = explode(',', $item['postagentlevels']);
+			$item['showgroups'] = explode(',', $item['showgroups']);
+			$item['postgroups'] = explode(',', $item['postgroups']);
 			$item['showsnslevels'] = explode(',', $item['showsnslevels']);
 			$item['postsnslevels'] = explode(',', $item['postsnslevels']);
 			$item['showpartnerlevels'] = explode(',', $item['showpartnerlevels']);

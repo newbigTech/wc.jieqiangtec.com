@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * [WeEngine System] Copyright (c) 2014 WE7.CC
+ * WeEngine is NOT a free software, it under the license terms, visited http://www.we7.cc/ for more details.
+ */
 defined('IN_IA') or exit('Access Denied');
 
 
@@ -25,7 +28,6 @@ function setting_save($data = '', $key = '') {
 	return $return;
 }
 
-
 function setting_load($key = '') {
 	global $_W;
 	$cachekey = "setting";
@@ -43,7 +45,11 @@ function setting_load($key = '') {
 		$_W['setting'] = array();
 	}
 	$_W['setting'] = array_merge($_W['setting'], $settings);
-	return $settings;
+	if (!empty($key)) {
+		return array($key => $settings[$key]);
+	} else {
+		return $settings;
+	}
 }
 
 function setting_upgrade_version($family, $version, $release) {
@@ -51,7 +57,8 @@ function setting_upgrade_version($family, $version, $release) {
 	$verdat = <<<VER
 <?php
 /**
- weichengtech
+ * [WeEngine System] Copyright (c) 2014 WE7.CC
+ * WeEngine is NOT a free software, it under the license terms, visited http://www.we7.cc/ for more details.
  */
 defined('IN_IA') or exit('Access Denied');
 

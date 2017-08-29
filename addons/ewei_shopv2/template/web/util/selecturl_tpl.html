@@ -5,7 +5,7 @@
 		{loop $list $item}
 			<div class="line good">
 				<div class="image"><img src="{php echo tomedia($item['thumb'])}"/></div>
-				<nav title="选择" class="btn btn-default btn-sm" data-href="{php echo mobileUrl('goods/detail', array('id'=>$item['id']), $full)}">选择</nav>
+				<nav title="选择" class="btn btn-default btn-sm" data-href="{if $platform=='wxapp'}/pages/goods/detail/index?id={$item['id']}{else}{php echo mobileUrl('goods/detail', array('id'=>$item['id']), $full)}{/if}">选择</nav>
 				<div class="text">
 					<p class="name">{$item['title']}</p>
 					<p class="price">最低价: {$item['minprice']} 原价: {$item['productprice']}元 现价: {$item['marketprice']}元</p>

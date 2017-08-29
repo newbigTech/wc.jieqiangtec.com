@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * [WeEngine System] Copyright (c) 2014 WE7.CC
+ * WeEngine is NOT a free software, it under the license terms, visited http://www.we7.cc/ for more details.
+ */
 defined('IN_IA') or exit('Access Denied');
 $dos = array( 'detail', 'list');
 $do = in_array($do, $dos) ? $do : 'list';
@@ -9,7 +12,7 @@ if($do == 'detail') {
 	$id = intval($_GPC['id']);
 	$news = article_news_info($id);
 	if(is_error($news)) {
-		message('新闻不存在或已删除', referer(), 'error');
+		itoast('新闻不存在或已删除', referer(), 'error');
 	}
 	$_W['page']['title'] = $news['title'] . '-新闻列表';
 }

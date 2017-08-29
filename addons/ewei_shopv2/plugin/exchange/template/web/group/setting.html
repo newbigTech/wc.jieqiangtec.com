@@ -167,6 +167,7 @@
                     <label class="col-sm-2 control-label">最大兑换件数</label>
                     <div class="col-sm-9 col-xs-12">
                         <input type="text" name="max" class="form-control" {if $id>0}value="{$setting['max']}"{else}value="1"{/if}>
+                        <span style="color: red;">*注意 最大兑换数为0或空代表所有你选定的商品和规格可以全部按0元兑换</span>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-2 control-label">订单运费设置</label>
@@ -183,8 +184,6 @@
                 </div>
             </div>
         </div>
-
-
 
             <div class="well" id="balance-group" style="width: 90%;margin-left: 5%;{if $setting['balance_type']==0}display: none;{/if}">
                 <h3 style="margin-left: 15px">余额兑换</h3>
@@ -223,14 +222,15 @@
                         <label for="red1" class="radio-inline"><input type="radio" name="redtype" class="type" value="1" id="red1" onclick="$('#red_rand').hide();$('#red').show();" {if $setting['red_type']!=2}checked{/if}> 指定红包兑换</label>&nbsp;&nbsp;&nbsp;&nbsp;
                         <label for="red2" class="radio-inline"><input type="radio" name="redtype" class="type" value="2" id="red2" onclick="$('#red_rand').show();$('#red').hide();" {if $setting['red_type']==2}checked{/if}> 随机红包兑换</label>
                     </div>
+
                 </div>
-                <div class="form-group" id="red" {if $setting['score_type']==2}style="display: none"{/if}>
+                <div class="form-group" id="red" {if $setting['red_type']==2}style="display: none"{/if}>
                     <label class="col-sm-2 control-label">红包面值</label>
                     <div class="col-sm-9 col-xs-12">
                         <input type="input" class="form-control" name="red" value="{$setting['red']}">
                     </div>
                 </div>
-                <div class="form-group" id="red_rand" {if $setting['score_type']!=2}style="display: none"{/if}>
+                <div class="form-group" id="red_rand" {if $setting['red_type']!=2}style="display: none"{/if}>
                     <label class="col-sm-2 control-label">红包面值</label>
                     <div class="col-sm-9 col-xs-12">
                         <div class="input-group">
@@ -243,6 +243,44 @@
                         </div>
                     </div>
                 </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">红包自定义</label>
+        <div class="col-sm-9  col-xs-12">
+            <div class="input-group">
+                <span class="input-group-addon">发送红包的人或事件</span>
+                <input type="text" name="sendname" class="form-control" value="{$setting['sendname']}">
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label"></label>
+        <div class="col-sm-9  col-xs-12">
+            <div class="input-group">
+                <span class="input-group-addon">红包祝福语</span>
+                <input type="text" name="wishing" class="form-control" value="{$setting['wishing']}" required placeholder="必填">
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label"></label>
+        <div class="col-sm-9  col-xs-12">
+            <div class="input-group">
+                <span class="input-group-addon">参与活动的名称</span>
+                <input type="text" name="actname" class="form-control" value="{$setting['actname']}">
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label"></label>
+        <div class="col-sm-9  col-xs-12">
+            <div class="input-group">
+                <span class="input-group-addon">备注信息</span>
+                <input type="text" name="remark" class="form-control" value="{$setting['remark']}" required placeholder="必填">
+            </div>
+            <br>
+            <span style="color: red">* 空白不填则使用默认红包模板</span>
+        </div>
+    </div>
             </div>
             <div class="well" id="score-group" style="width: 90%;margin-left: 5%;{if $setting['score_type']==0}display: none;{/if}">
                 <h3 style="margin-left: 15px">积分兑换</h3>
@@ -316,7 +354,7 @@
                                         <tr>
                                             <td style="width: 20%">排序</td>
                                             <td style="width: 30%">优惠券名称</td>
-                                            <td style="width:30%">参与兑换量</td>
+                                            <td style="width:30%"></td>
                                             <td>是否选择</td>
                                         </tr>
                                         </thead>
@@ -326,9 +364,6 @@
                                             <td>1</td>
                                             <td>{$value['couponname']}</td>
                                             <td>
-                                                <a href="javascript:;" data-toggle="ajaxEdit"
-                                                   data-href="{php echo webUrl('exchange/coupon/stock',array('goodsid'=>$value['id']));}"
-                                                   style="display: inline;">{$value['id']}</a>
                                             </td>
                                             <td>
                                                 <div class="onoffswitch">
@@ -382,8 +417,6 @@
 
 </form>
 </div>
-
-
 <div class="tab-pane fade" id="message">
     <form action="{if $setting['code_type'] != 3}{php echo webUrl('exchange/goods/setting',array('id'=>$id),1);}{else}{php echo webUrl('exchange/goods/addreply',array('id'=>$id),1);}{/if}" method="post" class="form-horizontal form-validate" novalidate="novalidate" id="setform">
         <div class="form-group">

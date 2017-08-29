@@ -30,6 +30,7 @@
         <table class="table">
             <thead class="navbar-inner">
                 <tr>
+                    <th style='width:100px;'>图标</th>
                    <th style='width:100px;'>标识</th>
                    <th style='width:80px;'>开关</th> 
                    <th style='width:200px;' >组件名称</th>
@@ -39,7 +40,20 @@
                 {loop $list $row}
 		  
                 <tr>
-                   
+
+                    <td>
+                        <input type='hidden'  name="thumb[{$row['id']}]" value="{$row['thumb']}" />
+                        <img onclick="selectImage(this)" onerror="this.src='{EWEI_SHOPV2_LOCAL}static/images/nopic100.jpg'"
+                             src="{if empty($row['thumb'])}{EWEI_SHOPV2_LOCAL}static/images/nopic100.jpg{else}{php echo tomedia($row['thumb'])}{/if}"
+                             {if !empty($row['thumb'])}
+                        data-toggle='popover'
+                        data-html ='true'
+                        data-placement='top'
+                        data-trigger ='hover'
+                        data-content="<img src='{php echo tomedia($row['thumb'])}' style='width:30px;height:30px;' />"
+                        {/if}
+                        style="width:40px;height:40px">
+                    </td>
                     <td>{$row['identity']}</td>
                     <td>
 						 {if $row['identity']=='system'}
@@ -75,7 +89,27 @@
             $(this).css('height','35px');
         })
     });
- 
+    function selectImage(obj){
+        util.image('',function(val){
+
+            $(obj).attr('src',val.url).popover({
+                trigger: 'hover',
+                html: true,
+                container: $(document.body),
+                content: "<img src='" + val.url  + "' style='width:40px;height:40px;' />",
+                placement: 'top'
+            });
+
+            var group  =$(obj).parent();
+
+            group.find(':hidden').val(val.url), group.find('i').show().unbind('click').click(function(){
+                $(obj).attr('src',"{EWEI_SHOPV2_LOCAL}static/images/nopic100.jpg");
+                group.find(':hidden').val('');
+                group.find('i').hide();
+                $(obj).popover('destroy');
+            });
+        });
+    }
         
     
 </script>

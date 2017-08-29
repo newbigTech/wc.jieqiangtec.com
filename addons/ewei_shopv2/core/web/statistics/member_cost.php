@@ -1,5 +1,5 @@
 <?php
-
+//weichengtech
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -22,7 +22,6 @@ class Member_cost_EweiShopV2Page extends WebPage
 			$condition .= ' AND o.createtime >=' . $starttime . ' AND o.createtime <= ' . $endtime . ' ';
 		}
 
-
 		$condition1 = ' and m.uniacid=:uniacid';
 		$params1 = array(':uniacid' => $_W['uniacid']);
 
@@ -32,21 +31,26 @@ class Member_cost_EweiShopV2Page extends WebPage
 			$params1[':keyword'] = '%' . $_GPC['keyword'] . '%';
 		}
 
-
-		$orderby = ((empty($_GPC['orderby']) ? 'ordermoney' : 'ordercount'));
+		$orderby = (empty($_GPC['orderby']) ? 'ordermoney' : 'ordercount');
 		$sql = 'SELECT m.realname, m.mobile,m.avatar,m.nickname,m.openid,l.levelname,' . '(select ifnull( count(o.id) ,0) from  ' . tablename('ewei_shop_order') . ' o where o.openid=m.openid and o.status>=1 ' . $condition . ')  as ordercount,' . '(select ifnull(sum(o.price),0) from  ' . tablename('ewei_shop_order') . ' o where o.openid=m.openid  and o.status>=1 ' . $condition . ')  as ordermoney' . ' from ' . tablename('ewei_shop_member') . ' m  ' . ' left join ' . tablename('ewei_shop_member_level') . ' l on l.id = m.level' . ' where 1 ' . $condition1 . ' order by ' . $orderby . ' desc';
 
 		if (empty($_GPC['export'])) {
 			$sql .= ' LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize;
 		}
 
-
 		$list = pdo_fetchall($sql, $params1);
 		$total = pdo_fetchcolumn('select  count(1) from ' . tablename('ewei_shop_member') . ' m ' . ' where 1 ' . $condition1 . ' ', $params1);
-		$pager = pagination($total, $pindex, $psize);
+		$pager = pagination2($total, $pindex, $psize);
 
 		if ($_GPC['export'] == 1) {
 			ca('statistics.member_cost.export');
+
+			foreach ($list as &$var) {
+				$var['realname'] = str_replace('=', '', $var['realname']);
+				$var['nickname'] = str_replace('=', '', $var['nickname']);
+			}
+
+			unset($var);
 			m('excel')->export($list, array(
 	'title'   => '会员消费排行报告-' . date('Y-m-d-H-i', time()),
 	'columns' => array(
@@ -61,11 +65,9 @@ class Member_cost_EweiShopV2Page extends WebPage
 			plog('statistics.member_cost.export', '导出会员消费排行');
 		}
 
-
 		load()->func('tpl');
 		include $this->template('statistics/member_cost');
 	}
 }
-
 
 ?>

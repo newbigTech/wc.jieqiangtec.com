@@ -1,5 +1,5 @@
 <?php
-if (!defined('IN_IA')) 
+if (!(defined('IN_IA'))) 
 {
 	exit('Access Denied');
 }
@@ -28,7 +28,7 @@ class Page_EweiShopV2Page extends MobilePage
 		}
 		$member = m('member')->getMember($saler['openid']);
 		$store = false;
-		if (!empty($saler['storeid'])) 
+		if (!(empty($saler['storeid']))) 
 		{
 			if (0 < $merchid) 
 			{
@@ -79,7 +79,7 @@ class Page_EweiShopV2Page extends MobilePage
 			unset($v);
 			pdo_update('ewei_shop_order', array('verifyinfo' => iserializer($verifyinfo)), array('id' => $orderid));
 		}
-		show_json(1, array('orderid' => $orderid));
+		show_json(1, array('orderid' => $orderid, 'istrade' => intval($order['istrade'])));
 	}
 	public function complete() 
 	{

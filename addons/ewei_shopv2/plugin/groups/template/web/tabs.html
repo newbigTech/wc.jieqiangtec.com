@@ -98,7 +98,7 @@ $exhelper = 0;
     {if p('exhelper') && !empty($exhelper)}
     {ifp 'exhelper'}<li {if $_W['action']=='exhelper'}class="active"{/if}><a href="{php echo webUrl('groups/exhelper')}">快递打印</a></li>{/if}
     {/if}
-    {ifp 'groups.batchsend'}
+    {ifp 'order.batchsend'}
     <li {if $_W['action']=='batchsend'}class="active"{/if}>
         <a href="{php echo webUrl('groups/batchsend')}">批量发货</a>
     </li>

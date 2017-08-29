@@ -9,29 +9,62 @@ class Goods_EweiShopV2Page extends PluginWebPage
 	{
 		global $_W;
 		global $_GPC;
+		$merch_plugin = p('merch');
+		$merch_data = m('common')->getPluginset('merch');
+		if ($merch_plugin && $merch_data['is_openmerch']) 
+		{
+			$is_openmerch = 1;
+		}
+		else 
+		{
+			$is_openmerch = 0;
+		}
 		$pindex = max(1, intval($_GPC['page']));
-		$psize = 20;
-		$condition = ' uniacid = :uniacid AND deleted = :deleted';
-		$params = array(':uniacid' => $_W['uniacid'], ':deleted' => '0');
+		$psize = 15;
+		$condition = ' uniacid = :uniacid ';
+		$tab = ((!(empty($_GPC['tab'])) ? trim($_GPC['tab']) : 'sell'));
+		if (empty($tab) || ($tab == 'sell')) 
+		{
+			$condition .= ' and status = 1 and total > 0 and deleted = 0 ';
+		}
+		else if ($tab == 'sellout') 
+		{
+			$condition .= ' and status = 1 and total = 0 and deleted = 0 ';
+		}
+		else if ($tab == 'warehouse') 
+		{
+			$condition .= ' and status = 0 and deleted = 0 ';
+		}
+		else if ($tab == 'recycle') 
+		{
+			$condition .= ' and deleted = 1 ';
+		}
+		$params = array(':uniacid' => $_W['uniacid']);
 		if (!(empty($_GPC['keyword']))) 
 		{
 			$_GPC['keyword'] = trim($_GPC['keyword']);
 			$condition .= ' AND title LIKE :title';
 			$params[':title'] = '%' . trim($_GPC['keyword']) . '%';
 		}
-		if ($_GPC['status'] != '') 
-		{
-			$condition .= ' AND status = :status';
-			$params[':status'] = intval($_GPC['status']);
-		}
 		if ($_GPC['cate'] != '') 
 		{
 			$condition .= ' AND cate = :cate';
 			$params[':cate'] = intval($_GPC['cate']);
 		}
-		$sql = 'SELECT * FROM ' . tablename('ewei_shop_creditshop_goods') . ' where  1 and ' . $condition . ' ORDER BY displayorder DESC,id DESC LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize;
+		$sql = 'SELECT * FROM ' . tablename('ewei_shop_creditshop_goods') . ' where  1 and ' . $condition . ' ORDER BY displayorder DESC LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize;
 		$list = pdo_fetchall($sql, $params);
 		$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_shop_creditshop_goods') . ' where 1 and ' . $condition, $params);
+		if ($merch_plugin) 
+		{
+			$merch_user = $merch_plugin->getListUser($list, 'merch_user');
+			if (!(empty($list)) && !(empty($merch_user))) 
+			{
+				foreach ($list as &$row ) 
+				{
+					$row['merchname'] = (($merch_user[$row['merchid']]['merchname'] ? $merch_user[$row['merchid']]['merchname'] : $_W['shopset']['shop']['name']));
+				}
+			}
+		}
 		$pager = pagination($total, $pindex, $psize);
 		$category = pdo_fetchall('select id,name,thumb from ' . tablename('ewei_shop_creditshop_category') . ' where uniacid=:uniacid order by displayorder desc', array(':uniacid' => $_W['uniacid']), 'id');
 		include $this->template();
@@ -49,8 +82,8 @@ class Goods_EweiShopV2Page extends PluginWebPage
 		global $_W;
 		global $_GPC;
 		$id = intval($_GPC['id']);
-		$merchid = 0;
 		$item = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_creditshop_goods') . ' WHERE id =:id and uniacid=:uniacid limit 1', array(':uniacid' => $_W['uniacid'], ':id' => $id));
+		$merchid = intval($_W['merchid']);
 		if (!(empty($item))) 
 		{
 			$url = mobileUrl('creditshop/detail', array('id' => $item['id']), true);
@@ -82,7 +115,6 @@ class Goods_EweiShopV2Page extends PluginWebPage
 			$saler = m('member')->getMember($item['noticeopenid']);
 		}
 		$endtime = ((empty($item['endtime']) ? date('Y-m-d H:i', time()) : date('Y-m-d H:i', $item['endtime'])));
-		$levels = m('member')->getLevels();
 		$groups = m('member')->getGroups();
 		$category = pdo_fetchall('select id,name,thumb from ' . tablename('ewei_shop_creditshop_category') . ' where uniacid=:uniacid order by displayorder desc', array(':uniacid' => $_W['uniacid']));
 		if (empty($item['goodstype']) || ($item['goodstype'] == 0)) 
@@ -569,6 +601,40 @@ class Goods_EweiShopV2Page extends PluginWebPage
 		}
 		show_json(1, array('url' => referer()));
 	}
+	public function deleted() 
+	{
+		global $_W;
+		global $_GPC;
+		$id = intval($_GPC['id']);
+		if (empty($id)) 
+		{
+			$id = ((is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0));
+		}
+		$items = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_creditshop_goods') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
+		foreach ($items as $item ) 
+		{
+			pdo_delete('ewei_shop_creditshop_goods', array('id' => $item['id']));
+			plog('creditshop.goods.deleted', '从回收站彻底删除商品<br/>ID: ' . $item['id'] . '<br/>商品名称: ' . $item['title']);
+		}
+		show_json(1, array('url' => referer()));
+	}
+	public function recycle() 
+	{
+		global $_W;
+		global $_GPC;
+		$id = intval($_GPC['id']);
+		if (empty($id)) 
+		{
+			$id = ((is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0));
+		}
+		$items = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_creditshop_goods') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
+		foreach ($items as $item ) 
+		{
+			pdo_update('ewei_shop_creditshop_goods', array('status' => 0, 'deleted' => 0), array('id' => $item['id']));
+			plog('creditshop.goods.edit', '从回收站恢复商品<br/>ID: ' . $item['id'] . '<br/>商品名称: ' . $item['title']);
+		}
+		show_json(1, array('url' => referer()));
+	}
 	public function property() 
 	{
 		global $_W;
@@ -605,6 +671,53 @@ class Goods_EweiShopV2Page extends PluginWebPage
 		show_json(1);
 	}
 	public function query() 
+	{
+		global $_W;
+		global $_GPC;
+		$kwd = trim($_GPC['keyword']);
+		$type = intval($_GPC['type']);
+		$params = array();
+		$params[':uniacid'] = $_W['uniacid'];
+		$condition = ' and status=1 and deleted=0 and uniacid=:uniacid and type = 1 and groupstype = 0 ' . "\n" . '                    and isdiscount = 0 and istime = 0 and bargain = 0 and ispresell = 0 ';
+		if (!(empty($kwd))) 
+		{
+			$condition .= ' AND (`title` LIKE :keywords OR `keywords` LIKE :keywords)';
+			$params[':keywords'] = '%' . $kwd . '%';
+		}
+		if (empty($type)) 
+		{
+			$condition .= ' AND `type` != 10 ';
+		}
+		else 
+		{
+			$condition .= ' AND `type` = :type ';
+			$params[':type'] = $type;
+		}
+		$list = array();
+		$list = pdo_fetchall('SELECT id,title,thumb,marketprice,productprice,share_title,share_icon,description,minprice,costprice,total,content,hasoption' . "\n" . '              FROM ' . tablename('ewei_shop_goods') . ' WHERE 1 ' . $condition . ' order by createtime desc', $params);
+		$list = set_medias($list, array('thumb', 'share_icon'));
+		foreach ($list as $key => $value ) 
+		{
+			if (intval($value['hasoption']) == 1) 
+			{
+				$allspecs = pdo_fetchall('select * from ' . tablename('ewei_shop_goods_spec') . ' where goodsid=:id order by displayorder asc', array(':id' => $value['id']));
+				foreach ($allspecs as &$s ) 
+				{
+					$s['items'] = pdo_fetchall('select a.id,a.specid,a.title,a.thumb,a.show,a.displayorder,a.valueId,a.virtual,b.title as title2 from ' . tablename('ewei_shop_goods_spec_item') . ' a left join ' . tablename('ewei_shop_virtual_type') . ' b on b.id=a.virtual  where a.specid=:specid order by a.displayorder asc', array(':specid' => $s['id']));
+				}
+				unset($s);
+				$options = pdo_fetchall('select * from ' . tablename('ewei_shop_goods_option') . ' where goodsid=:id order by id asc', array(':id' => $value['id']));
+			}
+			$list[$key]['allspecs'] = $allspecs;
+			$list[$key]['options'] = $options;
+		}
+		if ($_GPC['suggest']) 
+		{
+			exit(json_encode(array('value' => $list)));
+		}
+		include $this->template();
+	}
+	public function querygoods() 
 	{
 		global $_W;
 		global $_GPC;

@@ -211,11 +211,15 @@ class Sendcoupon_EweiShopV2Page extends ComWebPage
 		m('common')->updatePluginset(array('coupon' => $data));
 		$time = time();
 		$i = 1;
-		$log = array('uniacid' => $_W['uniacid'], 'merchid' => $coupon['merchid'], 'openid' => $m['openid'], 'logno' => m('common')->createNO('coupon_log', 'logno', 'CC'), 'couponid' => $couponid, 'status' => 1, 'paystatus' => -1, 'creditstatus' => -1, 'createtime' => $time, 'getfrom' => 0);
+		foreach ($openids as $openid ) 
+		{
+		$log = array('uniacid' => $_W['uniacid'], 'merchid' => $coupon['merchid'], 'openid' => $openid, 'logno' => m('common')->createNO('coupon_log', 'logno', 'CC'), 'couponid' => $couponid, 'status' => 1, 'paystatus' => -1, 'creditstatus' => -1, 'createtime' => $time, 'getfrom' => 0);
 		pdo_insert('ewei_shop_coupon_log', $log);
 		$logid = pdo_insertid();
-		$data = array('uniacid' => $_W['uniacid'], 'merchid' => $coupon['merchid'], 'openid' => $m['openid'], 'couponid' => $couponid, 'gettype' => 0, 'gettime' => $time, 'senduid' => $_W['uid']);
+		$data = array('uniacid' => $_W['uniacid'], 'merchid' => $coupon['merchid'], 'openid' => $openid, 'couponid' => $couponid, 'gettype' => 0, 'gettime' => $time, 'senduid' => $_W['uid']);
 		pdo_insert('ewei_shop_coupon_data', $data);
+		
+		}
 		++$i;
 		show_json(1, array('openids' => $openids));
 	}
@@ -230,9 +234,8 @@ class Sendcoupon_EweiShopV2Page extends ComWebPage
 		if (empty($messagetype)) 
 		{
 			exit(json_encode(array('result' => 0)));
-			return;
 		}
-		if ($messagetype == 1) 
+		else if ($messagetype == 1) 
 		{
 			if (empty($data['sendtemplateid'])) 
 			{
@@ -255,9 +258,8 @@ class Sendcoupon_EweiShopV2Page extends ComWebPage
 				exit(json_encode(array('result' => 0, 'message' => $result['message'], 'openid' => $openid)));
 			}
 			exit(json_encode(array('result' => 1)));
-			return;
 		}
-		if ($messagetype == 2) 
+		else if ($messagetype == 2) 
 		{
 			if (empty($openid)) 
 			{
@@ -273,9 +275,11 @@ class Sendcoupon_EweiShopV2Page extends ComWebPage
 				exit(json_encode(array('result' => 0, 'message' => $resp['message'], 'openid' => $openid)));
 			}
 			exit(json_encode(array('result' => 1)));
-			return;
 		}
-		exit(json_encode(array('result' => 0)));
+		else 
+		{
+			exit(json_encode(array('result' => 0)));
+		}
 	}
 	public function sendNews($openid, $title, $desc, $url, $picurl, $account = NULL) 
 	{

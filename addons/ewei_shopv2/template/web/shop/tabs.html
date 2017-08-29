@@ -26,14 +26,3 @@
     {ifp 'shop.refundaddress'}<li {if $_W['action'] == 'shop.refundaddress'} class="active" {/if}><a href="{php echo webUrl('shop/refundaddress')}">退货地址管理</a></li>{/if}
 </ul>
  {/if}
-{if com('verify')}
-{ifp 'shop.verify.store|shop.verify.saler|shop.verify.set'}
- <ul>
-<div class='menu-header'>O2O</div>
-<ul>
-    {ifp 'shop.verify.store'}<li {if $_W['action'] == 'shop.verify.store'} class="active" {/if}><a href="{php echo webUrl('shop/verify/store')}">门店管理</a></li>{/if}
-    {ifp 'shop.verify.saler'}<li {if $_W['action'] == 'shop.verify.saler'} class="active" {/if}><a href="{php echo webUrl('shop/verify/saler')}">店员管理</a></li>{/if}
-    {ifp 'shop.verify.set'}<li {if $_W['action'] == 'shop.verify.set'} class="active" {/if}><a href="{php echo webUrl('shop/verify/set')}">关键词设置</a></li>{/if}
-</ul>
-{/if}
-{/if}

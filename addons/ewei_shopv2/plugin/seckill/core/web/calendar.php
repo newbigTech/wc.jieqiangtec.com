@@ -122,6 +122,10 @@ class Calendar_EweiShopV2Page extends SeckillWebPage
 		global $_GPC;
 		$year = trim($_GPC['year']);
 		$month = trim($_GPC['month']);
+		if ($month < 10) 
+		{
+			$month = '0' . $month;
+		}
 		$redis_prefix = $this->model->get_prefix();
 		redis()->delete($redis_prefix . 'calendar_' . $year . '_' . $month);
 		show_json(1);
@@ -133,6 +137,10 @@ class Calendar_EweiShopV2Page extends SeckillWebPage
 		$taskid = intval($_GPC['taskid']);
 		$year = trim($_GPC['year']);
 		$month = trim($_GPC['month']);
+		if ($month < 10) 
+		{
+			$month = '0' . $month;
+		}
 		$days = $_GPC['days'];
 		if (empty($taskid) || empty($year) || empty($month)) 
 		{
@@ -143,7 +151,6 @@ class Calendar_EweiShopV2Page extends SeckillWebPage
 			show_json(0, '参数错误');
 		}
 		$task = pdo_fetch('select id ,title from ' . tablename('ewei_shop_seckill_task') . ' where uniacid=:uniacid and id=:id limit 1', array(':uniacid' => $_W['uniacid'], ':id' => $taskid));
-		logging_run($task);
 		if (empty($task)) 
 		{
 			show_json(0, '任务未找到');
@@ -162,7 +169,7 @@ class Calendar_EweiShopV2Page extends SeckillWebPage
 			{
 				$i = '0' . $i;
 			}
-			$date = date($year . '-0' . $month . '-' . $i);
+			$date = date($year . '-' . $month . '-' . $i);
 			$week = date('w', strtotime($date));
 			if ($week == 0) 
 			{
@@ -176,7 +183,7 @@ class Calendar_EweiShopV2Page extends SeckillWebPage
 			++$i;
 		}
 		$redis_prefix = $this->model->get_prefix();
-		redis()->hMset($redis_prefix . 'calendar_' . $year . '_0' . $month, $arr);
+		redis()->hMset($redis_prefix . 'calendar_' . $year . '_' . $month, $arr);
 		show_json(1, array('taskid' => $task['id'], 'title' => $task['title'], 'dates' => implode(',', $dates)));
 	}
 	public function batch_delete() 
@@ -185,6 +192,10 @@ class Calendar_EweiShopV2Page extends SeckillWebPage
 		global $_GPC;
 		$year = trim($_GPC['year']);
 		$month = trim($_GPC['month']);
+		if ($month < 10) 
+		{
+			$month = '0' . $month;
+		}
 		$days = $_GPC['days'];
 		if (empty($year) || empty($month)) 
 		{

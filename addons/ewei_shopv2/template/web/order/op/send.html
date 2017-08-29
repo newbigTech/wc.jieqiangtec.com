@@ -67,7 +67,7 @@
 									<label class="fui-goods-list checkbox-inline row">
 										<span class="col-sm-1">
 											{if $g['sendtype']==0}
-											<input type="checkbox" name="sendgoodsid[]" style="margin-top:5px;" value="{$g['id']}" {if !empty($item['quality'])}checked="true"{/if}   />
+											<input type="checkbox" name="ordergoodsid[]" style="margin-top:5px;" value="{$g['id']}" {if !empty($item['quality'])}checked="true"{/if}   />
 											{/if}
 											<img src="{php echo tomedia($g['thumb'])}" width="25" height="25" alt="">
 										</span>
@@ -104,7 +104,7 @@
 							<label class="fui-goods-list checkbox-inline row">
 								<span class="col-sm-1">
 									{if $g['sendtype']==0}
-									<input type="checkbox" name="sendgoodsid[]" style="margin-top:5px;" value="{$g['id']}" {if !empty($item['quality'])}checked="true"{/if}   />
+									<input type="checkbox" name="ordergoodsid[]" style="margin-top:5px;" value="{$g['id']}" {if !empty($item['quality'])}checked="true"{/if}   />
 									{/if}
 									<img src="{php echo tomedia($g['thumb'])}" width="25" height="25" alt="">
 								</span>
@@ -176,14 +176,14 @@
 </form>
 
 <script language="javascript">
-
-    $("select[name=express]").val("{$item['express']}");
+    $("select[name=express]").val("{if !empty($item['expresssn'])}{$item['express']}{else}{$item['dispatchkey']}{/if}");
 
     $("#express").change(function () {
         var obj = $(this);
         var sel = obj.find("option:selected").attr("data-name");
         $("#expresscom").val(sel);
     });
+
 	$("input[name=sendtype]").off("click").on("click",function(){
 		window.sendtype = $(this).val();
 		if(window.sendtype==1){
@@ -192,6 +192,8 @@
 			$(".sendpress").hide();
 		}
 	});
+
+    $("#express").change();
 
 </script>
 

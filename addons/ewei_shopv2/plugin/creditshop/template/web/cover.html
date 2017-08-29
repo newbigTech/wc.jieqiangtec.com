@@ -1,12 +1,12 @@
 {template '_header'}
-<div class='page-heading'><h2>积分商城心入口设置</h2></div>
+<div class='page-heading'><h2>{if $_W['merchid']>0}多商户{/if}积分商城心入口设置</h2></div>
 <form id="setform"  action="" method="post" class="form-horizontal form-validate" >
     <div class="form-group">
         <label class="col-sm-2 control-label">直接链接</label>
         <div class="col-sm-9 col-xs-12">
             <p class='form-control-static'>
-                <a href='javascript:;' class="js-clip" title="点击复制链接" data-url="{php echo mobileUrl('creditshop',null,true)}" >
-                    {php echo mobileUrl('creditshop',null,true)}
+                <a href='javascript:;' class="js-clip" title="点击复制链接" data-url="{php echo mobileUrl('creditshop',array('merchid'=>$_W['merchid']),true)}" >
+                    {php echo mobileUrl('creditshop',array('merchid'=>$_W['merchid']),true)}
                 </a>
                 <span style="cursor: pointer;" data-toggle="popover" data-trigger="hover" data-html="true"
                       data-content="<img src='{$qrcode}' width='130' alt='链接二维码'>" data-placement="auto right">
@@ -17,6 +17,7 @@
             </p>
         </div>
     </div>
+    {if $_W['merchid']==0}
     <div class="form-group">
         <label class="col-sm-2 control-label must">关键词</label>
         <div class="col-sm-9 col-xs-12">
@@ -27,6 +28,8 @@
              {/if}
         </div>
     </div>
+    {/if}
+    {if $_W['merchid']==0}
     <div class="form-group">
         <label class="col-sm-2 control-label">封面标题</label>
         <div class="col-sm-9 col-xs-12">
@@ -37,6 +40,8 @@
              {/if}
         </div>
     </div>
+    {/if}
+    {if $_W['merchid']==0}
     <div class="form-group">
         <label class="col-sm-2 control-label">封面图片</label>
         <div class="col-sm-9 col-xs-12">
@@ -51,6 +56,8 @@
              {/if}
         </div>
     </div>
+    {/if}
+    {if $_W['merchid']==0}
     <div class="form-group">
         <label class="col-sm-2 control-label">封面描述</label>
         <div class="col-sm-9 col-xs-12">
@@ -61,6 +68,8 @@
             {/if}
         </div>
     </div>
+    {/if}
+    {if $_W['merchid']==0}
     <div class="form-group">
         <label class="col-sm-2 control-label">关键词状态</label>
         <div class="col-sm-9">
@@ -76,6 +85,8 @@
             {/if}
         </div>
     </div>
+    {/if}
+    {if $_W['merchid']==0}
     <div class="form-group">
         <label class="col-sm-2 control-label"></label>
         <div class="col-sm-9">
@@ -84,5 +95,6 @@
             {/if}
         </div>
     </div>
+    {/if}
 </form>
 {template '_footer'}

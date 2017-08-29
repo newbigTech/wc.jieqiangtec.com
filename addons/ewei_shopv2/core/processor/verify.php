@@ -1,5 +1,5 @@
 <?php
-if (!defined('IN_IA')) 
+if (!(defined('IN_IA'))) 
 {
 	exit('Access Denied');
 }
@@ -9,6 +9,7 @@ class VerifyProcessor extends ComProcessor
 {
 	protected $sessionkey;
 	protected $errkey;
+	protected $codekey;
 	public function __construct() 
 	{
 		parent::__construct('verify');
@@ -29,14 +30,18 @@ class VerifyProcessor extends ComProcessor
 			$saler = pdo_fetch('select * from ' . tablename('ewei_shop_saler') . ' where openid=:openid and uniacid=:uniacid limit 1', array(':uniacid' => $_W['uniacid'], ':openid' => $openid));
 			if (empty($saler)) 
 			{
+				$saler = pdo_fetch('select * from ' . tablename('ewei_shop_merch_saler') . ' where openid=:openid and uniacid=:uniacid limit 1', array(':uniacid' => $_W['uniacid'], ':openid' => $openid));
+			}
+			if (empty($saler)) 
+			{
 				return $this->responseEmpty();
 			}
 			$verifyset = m('common')->getSysset('verify');
-			if (!empty($verifyset['type'])) 
+			if (!(empty($verifyset['type']))) 
 			{
 				return $obj->respText('<a href=\'' . mobileUrl('verify/page', NULL, true) . '\'>点击进入核销台</a>');
 			}
-			if (!$obj->inContext) 
+			if (!($obj->inContext)) 
 			{
 				unset($_SESSION[$this->sessionkey]);
 				unset($_SESSION[$this->codekey]);
@@ -124,7 +129,7 @@ class VerifyProcessor extends ComProcessor
 						{
 							return $obj->respText(' 请输入核销次数:');
 						}
-						$result = com('verify')->verify($session['orderid'], 0, $session[$this->codekey], $openid);
+						$result = com('verify')->verify($session['orderid'], 0, $_SESSION[$this->codekey], $openid);
 						if (is_error($result)) 
 						{
 							unset($_SESSION[$this->sessionkey]);

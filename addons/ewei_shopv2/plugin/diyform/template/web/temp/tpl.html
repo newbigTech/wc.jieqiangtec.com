@@ -15,7 +15,9 @@
     </td>
     <td>
         {ifp 'diyform.temp.edit|diyform.add'}
+        {if $data_type!=13}
         <input type="checkbox" name="tp_must[{php echo $kw}]" value="1" {if $v1['tp_must']==1}checked{/if} >
+        {/if}
         {else}
         {if $v1['tp_must']==1}是{else}否{/if}
         {/if}
@@ -117,6 +119,14 @@
             {$default_date_config[$v1['default_etime_type']]} &nbsp; {if !empty($v1['default_etime'])}{php echo $v1['default_etime']}{/if}
             {/if}
 
+        {else if $data_type==9}
+
+        级别&nbsp;
+        <select name="tp_area[{php echo $kw}]" class="form-control" style='width:120px;display: inline-block'>
+            <option value="0" {if empty($v1['tp_area'])}selected{/if}>省市</option>
+            <option value="1" {if $v1['tp_area']==1}selected{/if}>省市区</option>
+        </select>
+
         {else if $data_type==10}
             字段名2&nbsp;
             {ifp 'diyform.temp.edit|diyform.add'}
@@ -126,6 +136,14 @@
             {else}
             {php echo $v1['tp_name2']}
             {/if}
+        {else if $data_type==13}
+
+            {ifp 'diyform.temp.edit|diyform.add'}
+            <textarea class="form-control" name="tp_text[{php echo $kw}]" placeholder="提示内容" style="height: 120px;">{php echo $v1['tp_text']}</textarea>
+            {else}
+            {if !empty($v1['tp_text'])}{php echo $v1['placeholder']}{/if}
+            {/if}
+
         {/if}
     </td>
 

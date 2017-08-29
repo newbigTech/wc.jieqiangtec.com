@@ -75,7 +75,7 @@
 								<td>
 									<input type='checkbox'   value="{$row['id']}"/>
 							</td>
-                        <td><img src='{$row['avatar']}' style='width:30px;height:30px;padding1px;border:1px solid #ccc' /> {$row['nickname']}</td>
+                        <td><img src='{php echo tomedia($row['avatar'])}' style='width:30px;height:30px;padding1px;border:1px solid #ccc' /> {$row['nickname']}</td>
 						<td>{$row['salername']}</td>
                         <td>{if empty($row['salername'])}全店核销{else}{$row['storename']}{/if}</td>
 						

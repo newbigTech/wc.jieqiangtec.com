@@ -208,6 +208,7 @@ class Index_EweiShopV2Page extends MerchWebPage
 		global $_W;
 		global $_GPC;
 		$kwd = trim($_GPC['keyword']);
+		$diy = intval($_GPC['diy']);
 		$params = array();
 		$params[':uniacid'] = $_W['uniacid'];
 		$params[':merchid'] = $_W['merchid'];
@@ -226,6 +227,56 @@ class Index_EweiShopV2Page extends MerchWebPage
 			if ($d['last'] == -1) 
 			{
 				$d['last'] = '不限';
+			}
+			if ($diy) 
+			{
+				if ($d['coupontype'] == 0) 
+				{
+					if (0 < $d['enough']) 
+					{
+						$d['uselimit'] = '满' . (double) $d['enough'] . '元可用';
+					}
+					else 
+					{
+						$d['uselimit'] = '无门槛使用';
+					}
+				}
+				else if ($d['coupontype'] == 1) 
+				{
+					if (0 < $d['enough']) 
+					{
+						$d['uselimit'] = '充值满' . (double) $d['enough'] . '元可用';
+					}
+					else 
+					{
+						$d['uselimit'] = '充值任意金额';
+					}
+				}
+				if ($d['backtype'] == 0) 
+				{
+					$d['values'] = '￥' . (double) $d['deduct'];
+				}
+				else if ($d['backtype'] == 1) 
+				{
+					$d['values'] = (double) $d['discount'] . '折 ';
+				}
+				else if ($d['backtype'] == 2) 
+				{
+					$values = 0;
+					if (!(empty($d['backmoney'])) && (0 < $d['backmoney'])) 
+					{
+						$values = $values + $d['backmoney'];
+					}
+					if (!(empty($d['backcredit'])) && (0 < $d['backcredit'])) 
+					{
+						$values = $values + $d['backcredit'];
+					}
+					if (!(empty($d['backredpack'])) && (0 < $d['backredpack'])) 
+					{
+						$values = $values + $d['backredpack'];
+					}
+					$d['values'] = '￥' . $values;
+				}
 			}
 		}
 		unset($d);

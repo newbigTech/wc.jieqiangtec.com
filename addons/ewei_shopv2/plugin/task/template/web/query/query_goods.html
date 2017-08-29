@@ -13,7 +13,7 @@
         <tbody>
         {loop $list $row}
         <tr>
-            <td><img src='{php echo tomedia($row['thumb'])}' style='width:30px;height:30px;padding1px;border:1px solid #ccc' /> </td>
+            <td><img src='{php echo tomedia($row['thumb'])}' style='width:30px;height:30px;padding1px;border:1px solid #ccc' /></td>
             <td>{$row['title']}</td>
             <td id="marketprice_{$row['id']}">{$row['marketprice']}</td>
             <td id="total_{$row['id']}">{php echo intval($row['total'])}</td>

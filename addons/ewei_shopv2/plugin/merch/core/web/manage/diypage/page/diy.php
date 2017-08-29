@@ -19,6 +19,14 @@ class Diy_EweiShopV2Page extends MerchWebPage
 		$diypage_plugin = p('diypage');
 		$result = $diypage_plugin->getPageList('diy', $condition, intval($_GPC['page']));
 		extract($result);
+		if (!(empty($list))) 
+		{
+			foreach ($list as $key => &$value ) 
+			{
+				$url = mobileUrl('diypage', array('id' => $value['id'], 'merchid' => $_W['merchid']), true);
+				$value['qrcode'] = m('qrcode')->createQrcode($url);
+			}
+		}
 		include $this->template('diypage/page/list');
 	}
 	public function edit() 
@@ -45,6 +53,7 @@ class Diy_EweiShopV2Page extends MerchWebPage
 		$allpagetype = $diypage_plugin->getPageType();
 		$typename = $allpagetype[$type]['name'];
 		$diymenu = pdo_fetchall('select id, name from ' . tablename('ewei_shop_diypage_menu') . ' where merch=:merch and uniacid=:uniacid  order by id desc', array(':merch' => intval($_W['merchid']), ':uniacid' => $_W['uniacid']));
+		$diyadvs = pdo_fetchall('select id, `name` from ' . tablename('ewei_shop_diypage_plu') . ' where merch=:merch and `type`=1 and status=1 and uniacid=:uniacid  order by id desc', array(':merch' => intval($_W['merchid']), ':uniacid' => $_W['uniacid']));
 		$category = pdo_fetchall('SELECT id, name FROM ' . tablename('ewei_shop_diypage_template_category') . ' WHERE merch=:merch and uniacid=:uniacid order by id desc ', array(':merch' => intval($_W['merchid']), ':uniacid' => $_W['uniacid']));
 		$levels = array();
 		$levels['member'] = m('member')->getLevels(false);
@@ -77,7 +86,7 @@ class Diy_EweiShopV2Page extends MerchWebPage
 	{
 		global $_W;
 		global $_GPC;
-		$temp = array('type' => intval($_GPC['type']), 'cate' => intval($_GPC['cate']), 'name' => trim($_GPC['name']), 'preview' => trim($_GPC['preview']), 'data' => $_GPC['data']);
+		$temp = array('type' => intval($_GPC['type']), 'cate' => intval($_GPC['cate']), 'name' => trim($_GPC['name']), 'preview' => trim($_GPC['preview']), 'data' => $_GPC['data'], 'merch' => intval($_W['merchid']));
 		$diypage_plugin = p('diypage');
 		$diypage_plugin->saveTemp($temp);
 	}

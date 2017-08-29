@@ -1,5 +1,5 @@
 <?php
-if (!defined('IN_IA')) 
+if (!(defined('IN_IA'))) 
 {
 	exit('Access Denied');
 }
@@ -11,26 +11,38 @@ class Uploader_EweiShopV2Page extends MobilePage
 		global $_GPC;
 		load()->func('file');
 		$field = $_GPC['file'];
-		if (!empty($_FILES[$field]['name'])) 
+		if (!(empty($_FILES[$field]['name']))) 
 		{
 			if (is_array($_FILES[$field]['name'])) 
 			{
 				$files = array();
 				foreach ($_FILES[$field]['name'] as $key => $name ) 
 				{
+					if (strrchr($name, '.') === false) 
+					{
+						$name = $name . '.jpg';
+					}
 					$file = array('name' => $name, 'type' => $_FILES[$field]['type'][$key], 'tmp_name' => $_FILES[$field]['tmp_name'][$key], 'error' => $_FILES[$field]['error'][$key], 'size' => $_FILES[$field]['size'][$key]);
 					$files[] = $this->upload($file);
 				}
 				$ret = array('status' => 'success', 'files' => $files);
 				exit(json_encode($ret));
-				return NULL;
 			}
-			$result = $this->upload($_FILES[$field]);
-			exit(json_encode($result));
-			return NULL;
+			else 
+			{
+				if (strrchr($_FILES[$field]['name'], '.') === false) 
+				{
+					$_FILES[$field]['name'] = $_FILES[$field]['name'] . '.jpg';
+				}
+				$result = $this->upload($_FILES[$field]);
+				exit(json_encode($result));
+			}
 		}
-		$result['message'] = '请选择要上传的图片！';
-		exit(json_encode($result));
+		else 
+		{
+			$result['message'] = '请选择要上传的图片！';
+			exit(json_encode($result));
+		}
 	}
 	protected function upload($uploadfile) 
 	{
@@ -44,7 +56,7 @@ class Uploader_EweiShopV2Page extends MobilePage
 		}
 		load()->func('file');
 		$path = '/images/ewei_shop/' . $_W['uniacid'];
-		if (!is_dir(ATTACHMENT_ROOT . $path)) 
+		if (!(is_dir(ATTACHMENT_ROOT . $path))) 
 		{
 			mkdirs(ATTACHMENT_ROOT . $path);
 		}

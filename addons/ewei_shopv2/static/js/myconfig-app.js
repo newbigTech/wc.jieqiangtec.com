@@ -9,9 +9,12 @@ require.config({
         'foxui':'../dist/foxui/js/foxui.min',
         'foxui.picker':'../dist/foxui/js/foxui.picker.min',
         'foxui.citydata':'../dist/foxui/js/foxui.citydata.min',
+        'foxui.citydatanew':'../dist/foxui/js/foxui.citydatanew.min',
+        'foxui.street':'../dist/foxui/js/foxui.street.min',
         'jquery.qrcode':'../dist/jquery/jquery.qrcode.min',
         'ydb':'../dist/Ydb/YdbOnline',
-        'swiper':'../dist/swiper/swiper.min'
+        'swiper':'../dist/swiper/swiper.min',
+        'jquery.fly': '../dist/jquery/jquery.fly'
     },
     shim: {
         'foxui':{
@@ -22,6 +25,9 @@ require.config({
             deps: ['foxui','foxui.citydata']
         },
 		'jquery.gcjs': {
+	                 deps:['jquery']
+		},
+		'jquery.fly': {
 	                 deps:['jquery']
 		}
     },

@@ -1,7 +1,7 @@
-{template '_header'}
+ {template '_header'}
 
 
-<div class="page-heading"> <h2>{$applytitle}提现申请 总数：{$total}</h2> </div>
+<div class="page-heading"> <h2>{$applytitle}提现申请 总数：{$total} {if $status == 3}发送总额 : {$realmoney_total}{/if}</h2> </div>
 
 
 <form action="./index.php" method="get" class="form-horizontal  table-search" role="form" id="form1">
@@ -96,10 +96,10 @@
         <td>{$row['applyno']}<br>
             {ifp 'member.list.view'}
             <a  href="{php echo webUrl('member/list/detail',array('id' => $row['mid']));}" target='_blank'>
-                <img src='{$row['avatar']}' style='width:30px;height:30px;padding1px;border:1px solid #ccc' /> {$row['nickname']}
+                <img src='{php echo tomedia($row['avatar'])}' style='width:30px;height:30px;padding1px;border:1px solid #ccc' /> {$row['nickname']}
             </a>
             {else}
-            <img src='{$row['avatar']}' style='width:30px;height:30px;padding1px;border:1px solid #ccc' /> {$row['nickname']}
+            <img src='{php echo tomedia($row['avatar'])}' style='width:30px;height:30px;padding1px;border:1px solid #ccc' /> {$row['nickname']}
             {/if}
             <br/>
             {$row['realname']}/{$row['mobile']}
@@ -124,11 +124,11 @@
                          {if $status==-1}<br/>无效时间: <br/>{php echo date('Y-m-d',$row['invalidtime'])}<br/>{php echo date('H:i',$row['invalidtime'])}{/if}
                          
                             " data-html="true" data-trigger="hover">{/if}
-            {if $status>=1}
+            {if $status==1}
             {php echo date('Y-m-d',$row['applytime'])}<br/>{php echo date('H:i',$row['applytime'])}
-            {elseif $status>=2}
-            {php echo date('Y-m-d',$row['checktime'])}<br/>{php echo date('H:i',$row['applytime'])}
-            {elseif $status>=3}
+            {elseif $status==2}
+            {php echo date('Y-m-d',$row['checktime'])}<br/>{php echo date('H:i',$row['checktime'])}
+            {elseif $status==3}
             {php echo date('Y-m-d',$row['paytime'])}<br/>{php echo date('H:i',$row['paytime'])}
             {elseif $status==-1}
             {php echo date('Y-m-d',$row['invalidtime'])}<br/>{php echo date('H:i',$row['invalidtime'])}

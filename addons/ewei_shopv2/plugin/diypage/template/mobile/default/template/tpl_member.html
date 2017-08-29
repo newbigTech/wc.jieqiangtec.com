@@ -11,8 +11,10 @@
             {/if}
         </div>
         <div class="child userinfo" style="color: {$diyitem['style']['textcolor']};">
-            <div class="face {$diyitem['style']['headstyle']}"><img src="{$diyitem['info']['avatar']}"></div>
-            <div class="name">{$diyitem['info']['nickname']}</div>
+            <a href="{php echo mobileUrl('member/info/face')}" data-nocache="true" style="color: {$diyitem['style']['textcolor']};">
+                <div class="face {$diyitem['style']['headstyle']}"><img src="{$diyitem['info']['avatar']}"></div>
+                <div class="name">{$diyitem['info']['nickname']}</div>
+            </a>
             {if !empty($diyitem['params']['levellink'])}
                 <a class="level" href="{$diyitem['params']['levellink']}">[{$diyitem['info']['levelname']}] <i class="icon icon-question1" style="font-size: 0.6rem;"></i></a>
             {else}

@@ -250,12 +250,13 @@
     color:#555;
 }
 
-.weiKeyNum {
+#weiKeyBoard td.weiKeyNum {
     width: 25%;
     height: 50px;
     text-align: center;
 }
-.weiKeyNum1 {
+#weiKeyBoard td.weiKeyNum1 {
     width: 25%;
     text-align: center;
+    border: none;
 }

@@ -184,7 +184,10 @@
             <label class="col-sm-2 control-label">最大兑换件数</label>
             <div class="col-sm-9 col-xs-12">
                 <input type="text" name="max" class="form-control" {if $id>0}value="{$setting['max']}"{else}value="1"{/if}>
+                <br>
+                <span style="color: red;">*注意 最大兑换数为0或空代表所有你选定的商品和规格可以全部按0元兑换</span>
             </div>
+
         </div>
 
     </div>

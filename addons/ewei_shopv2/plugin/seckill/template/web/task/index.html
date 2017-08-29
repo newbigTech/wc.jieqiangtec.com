@@ -95,7 +95,7 @@
             <td style="text-align:left;">
                 {ifp 'seckill.task.view|seckill.task.edit'}
                 <a href="{php echo webUrl('seckill/task/edit', array('id' => $row['id']))}" class="btn btn-default btn-sm">
-                    <i class='fa fa-edit'></i> {ifp 'seckill.task.edit'}修改{else}查看{/if}
+                    <i class='fa fa-edit'></i> {ifp 'seckill.task.edit'}编辑{else}查看{/if}
                 </a>
                 {/if}
                 {ifp 'seckill.room'}
@@ -105,7 +105,7 @@
                 {/if}
                 {ifp 'seckill.goods'}
                 <a href="{php echo webUrl('seckill/goods', array('taskid' => $row['id']))}" class="btn btn-default btn-sm">
-                    <i class='fa fa-cog'></i> 商品
+                    <i class='fa fa-cog'></i> 商品统计
                 </a>
                 {/if}
                 {ifp 'seckill.task.delete'}

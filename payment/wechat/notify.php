@@ -1,7 +1,7 @@
 <?php
 /**
  * [WeEngine System] Copyright (c) 2014 WE7.CC
- * WeEngine is NOT a free software, it under the license terms, visited http://www.zheyitianshi.com/ for more details.
+ * WeEngine is NOT a free software, it under the license terms, visited http://www.we7.cc/ for more details.
  */
 define('IN_MOBILE', true);
 require '../../framework/bootstrap.inc.php';
@@ -31,12 +31,15 @@ if (!empty($input) && empty($_GET['out_trade_no'])) {
 	$isxml = false;
 	$get = $_GET;
 }
-
+load()->web('common');
+load()->classs('coupon');
 $_W['uniacid'] = $_W['weid'] = intval($get['attach']);
+$_W['uniaccount'] = $_W['account'] = uni_fetch($_W['uniacid']);
+$_W['acid'] = $_W['uniaccount']['acid'];
 $setting = uni_setting($_W['uniacid'], array('payment'));
 if(is_array($setting['payment'])) {
 	$wechat = $setting['payment']['wechat'];
-	WeUtility::logging('pay-wechat', var_export($get, true));
+	WeUtility::logging('pay', var_export($get, true));
 	if(!empty($wechat)) {
 		ksort($get);
 		$string1 = '';
@@ -46,37 +49,42 @@ if(is_array($setting['payment'])) {
 			}
 		}
 
-		$wechat['signkey'] = ($wechat['version'] == 1) ? $wechat['key'] : $wechat['signkey'];
+		if (intval($wechat['switch']) == 3) {
+			$facilitator_setting = uni_setting($wechat['service'], array('payment'));
+			$wechat['signkey'] = $facilitator_setting['payment']['wechat_facilitator']['signkey'];
+		} else {
+			$wechat['signkey'] = ($wechat['version'] == 1) ? $wechat['key'] : $wechat['signkey'];
+		}
 		$sign = strtoupper(md5($string1 . "key={$wechat['signkey']}"));
 		if($sign == $get['sign']) {
 			$sql = 'SELECT * FROM ' . tablename('core_paylog') . ' WHERE `uniontid`=:uniontid';
 			$params = array();
 			$params[':uniontid'] = $get['out_trade_no'];
 			$log = pdo_fetch($sql, $params);
-			if(!empty($log) && $log['status'] == '0' && (($get['total_fee'] / 100) == $log['card_fee'])) {
+						if(!empty($log) && $log['status'] == '0' && (($get['total_fee'] / 100) == $log['card_fee'])) {
 				$log['tag'] = iunserializer($log['tag']);
 				$log['tag']['transaction_id'] = $get['transaction_id'];
 				$log['uid'] = $log['tag']['uid'];
-				$log['transaction_id'] = $get['transaction_id'];
 				$record = array();
 				$record['status'] = '1';
 				$record['tag'] = iserializer($log['tag']);
 				pdo_update('core_paylog', $record, array('plid' => $log['plid']));
-				if($log['is_usecard'] == 1 && $log['card_type'] == 1 &&  !empty($log['encrypt_code']) && $log['acid']) {
-					load()->classs('coupon');
-					$acc = new coupon($log['acid']);
-					$codearr['encrypt_code'] = $log['encrypt_code'];
-					$codearr['module'] = $log['module'];
-					$codearr['card_id'] = $log['card_id'];
-					$acc->PayConsumeCode($codearr);
+				if ($log['is_usecard'] == 1 && !empty($log['encrypt_code'])) {
+					$coupon_info = pdo_get('coupon', array('id' => $log['card_id']), array('id'));
+					$coupon_record = pdo_get('coupon_record', array('code' => $log['encrypt_code'], 'status' => '1'));
+					load()->model('activity');
+				 	$status = activity_coupon_use($coupon_info['id'], $coupon_record['id'], $log['module']);
 				}
 
-				if($log['is_usecard'] == 1 && $log['card_type'] == 2) {
-					$log['card_id'] = intval($log['card_id']);
-					pdo_update('activity_coupon_record', array('status' => '2', 'usetime' => time(), 'usemodule' => $log['module']), array('uniacid' => $_W['uniacid'], 'recid' => $log['card_id'], 'status' => '1'));
+				$module = module_fetch($log['module']);
+				if (empty($module)) {
+					exit('success');
 				}
-
-				$site = WeUtility::createModuleSite($log['module']);
+				if ($module['app_support'] == MODULE_SUPPORT_ACCOUNT) {
+					$site = WeUtility::createModuleSite($log['module']);
+				} elseif ($module['wxapp_support'] == MODULE_SUPPORT_WXAPP) {
+					$site = WeUtility::createModuleWxapp($log['module']);
+				}
 				if(!is_error($site)) {
 					$method = 'payResult';
 					if (method_exists($site, $method)) {

@@ -1,5 +1,5 @@
 <?php
-if (!defined('IN_IA')) 
+if (!(defined('IN_IA'))) 
 {
 	exit('Access Denied');
 }
@@ -15,7 +15,7 @@ class Reg_EweiShopV2Page extends PluginWebPage
 		$params = array(':uniacid' => $_W['uniacid']);
 		$condition = '';
 		$keyword = trim($_GPC['keyword']);
-		if (!empty($keyword)) 
+		if (!(empty($keyword))) 
 		{
 			$condition .= ' and ( merchname like :keyword or realname like :keyword or mobile like :keyword)';
 			$params[':keyword'] = '%' . $keyword . '%';
@@ -37,8 +37,8 @@ class Reg_EweiShopV2Page extends PluginWebPage
 			plog('merch.user.export', '导出商户申请数据');
 			foreach ($list as &$row ) 
 			{
-				$row['applytime'] = (empty($row['applytime']) ? '-' : date('Y-m-d H:i', $row['applytime']));
-				$row['statusstr'] = (empty($row['status']) ? '待审核' : (($row['status'] == 1 ? '已入驻' : '驳回')));
+				$row['applytime'] = ((empty($row['applytime']) ? '-' : date('Y-m-d H:i', $row['applytime'])));
+				$row['statusstr'] = ((empty($row['status']) ? '待审核' : (($row['status'] == 1 ? '已入驻' : '驳回'))));
 			}
 			unset($row);
 			m('excel')->export($list, array( 'title' => '商户数据-' . date('Y-m-d-H-i', time()), 'columns' => array( array('title' => 'ID', 'field' => 'id', 'width' => 12), array('title' => '商户名', 'field' => 'merchname', 'width' => 24), array('title' => '主营项目', 'field' => 'salecate', 'width' => 12), array('title' => '商家简介', 'field' => 'desc', 'width' => 24), array('title' => '联系人', 'field' => 'realname', 'width' => 12), array('title' => '手机号', 'field' => 'moible', 'width' => 12), array('title' => '申请时间', 'field' => 'applytime', 'width' => 12), array('title' => '状态', 'field' => 'statusstr', 'width' => 12) ) ));
@@ -51,6 +51,8 @@ class Reg_EweiShopV2Page extends PluginWebPage
 	{
 		global $_W;
 		global $_GPC;
+		$area_set = m('util')->get_area_config_set();
+		$new_area = intval($area_set['new_area']);
 		$id = intval($_GPC['id']);
 		$item = pdo_fetch('select * from ' . tablename('ewei_shop_merch_reg') . ' where id=:id and uniacid=:uniacid limit 1', array(':id' => $id, ':uniacid' => $_W['uniacid']));
 		if (empty($item)) 
@@ -66,7 +68,7 @@ class Reg_EweiShopV2Page extends PluginWebPage
 		$diyform_plugin = p('diyform');
 		if ($diyform_plugin) 
 		{
-			if (!empty($item['diyformdata'])) 
+			if (!(empty($item['diyformdata']))) 
 			{
 				$diyform_flag = 1;
 				$fields = iunserializer($item['diyformfields']);

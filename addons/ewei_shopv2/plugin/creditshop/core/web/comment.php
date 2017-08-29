@@ -56,11 +56,11 @@ class Comment_EweiShopV2Page extends PluginWebPage
 			$replystatus = intval($_GPC['replystatus']);
 			if ($replystatus == 1) 
 			{
-				$condition .= ' AND c.checked=0 AND virtual=0 ';
+				$condition .= ' AND c.checked=0 AND c.virtual=0 ';
 			}
 			else if ($replystatus == 2) 
 			{
-				$condition .= ' AND (c.append_content<>\'\' OR c.append_images<>\'\') AND c.append_checked=0 AND  virtual=0 ';
+				$condition .= ' AND (c.append_content<>\'\' OR c.append_images<>\'\') AND c.append_checked=0 AND  c.virtual=0 ';
 			}
 			else if ($replystatus == 3) 
 			{
@@ -73,9 +73,9 @@ class Comment_EweiShopV2Page extends PluginWebPage
 		}
 		if (!(empty($checked))) 
 		{
-			$condition .= ' AND (c.checked=0 OR ( (c.append_content<>\'\' OR c.append_images<>\'\') AND c.append_checked=0 )) AND virtual=0 ';
+			$condition .= ' AND (c.checked=0 OR ( (c.append_content<>\'\' OR c.append_images<>\'\') AND c.append_checked=0 )) AND c.virtual=0 ';
 		}
-		$list = pdo_fetchall('SELECT  c.*,g.title,g.thumb FROM ' . tablename('ewei_shop_creditshop_comment') . ' c  ' . ' left join ' . tablename('ewei_shop_creditshop_goods') . ' g on c.goodsid = g.id  ' . ' WHERE 1 ' . $condition . ' ORDER BY `time` desc LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize, $params);
+		$list = pdo_fetchall('SELECT  c.*,g.title,g.thumb FROM ' . tablename('ewei_shop_creditshop_comment') . ' c  ' . ' left join ' . tablename('ewei_shop_creditshop_goods') . ' g on c.goodsid = g.id  ' . ' WHERE 1 ' . $condition . ' ORDER BY c.time desc LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize, $params);
 		$total = pdo_fetchcolumn('SELECT count(*) FROM ' . tablename('ewei_shop_creditshop_comment') . ' c  ' . ' left join ' . tablename('ewei_shop_creditshop_goods') . ' g on c.goodsid = g.id  ' . ' WHERE 1 ' . $condition . ' ', $params);
 		$pager = pagination($total, $pindex, $psize);
 		include $this->template('creditshop/comment/index');

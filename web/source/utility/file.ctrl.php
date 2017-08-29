@@ -1,20 +1,24 @@
 <?php
-
+/**
+ * [WeEngine System] Copyright (c) 2014 WE7.CC
+ * WeEngine is NOT a free software, it under the license terms, visited http://www.we7.cc/ for more details.
+ */
 defined('IN_IA') or exit('Access Denied');
 error_reporting(0);
 global $_W;
 load()->func('file');
+load()->func('communication');
 if (!in_array($do, array('upload', 'fetch', 'browser', 'delete', 'local'))) {
 	exit('Access Denied');
 }
 $result = array(
 	'error' => 1,
 	'message' => '',
-	'data' => ''
+	'data' => '' 
 );
 
-$type = $_COOKIE['__fileupload_type'];;
-$type = in_array($type, array('image','audio')) ? $type : 'image';
+$type = $_COOKIE['__fileupload_type'];
+$type = in_array($type, array('image','audio','video')) ? $type : 'image';
 $option = array();
 $option = array_elements(array('uploadtype', 'global', 'dest_dir'), $_POST);
 $option['width'] = intval($option['width']);
@@ -40,25 +44,24 @@ $uniacid = intval($_W['uniacid']);
 
 if (!empty($option['global'])) {
 	$setting['folder'] = "{$type}s/global/";
-	if (!empty($dest_dir)) {
-		$setting['folder'] .= '/'.$dest_dir.'/';
+	if (! empty($dest_dir)) {
+		$setting['folder'] .= '/' . $dest_dir . '/';
 	}
 } else {
 	$setting['folder'] = "{$type}s/{$uniacid}";
-	if(empty($dest_dir)){
-		$setting['folder'] .= '/'.date('Y/m/');
+	if (empty($dest_dir)) {
+		$setting['folder'] .= '/' . date('Y/m/');
 	} else {
-		$setting['folder'] .= '/'.$dest_dir.'/';
+		$setting['folder'] .= '/' . $dest_dir . '/';
 	}
 }
 
 
 if ($do == 'fetch') {
 	$url = trim($_GPC['url']);
-	load()->func('communication');
 	$resp = ihttp_get($url);
 	if (is_error($resp)) {
-		$result['message'] = '提取文件失败, 错误信息: '.$resp['message'];
+		$result['message'] = '提取文件失败, 错误信息: ' . $resp['message'];
 		die(json_encode($result));
 	}
 	if (intval($resp['code']) != 200) {
@@ -67,7 +70,7 @@ if ($do == 'fetch') {
 	}
 	$ext = '';
 	if ($type == 'image') {
-		switch ($resp['headers']['Content-Type']){
+		switch ($resp['headers']['Content-Type']) {
 			case 'application/x-jpg':
 			case 'image/jpeg':
 				$ext = 'jpg';
@@ -89,11 +92,11 @@ if ($do == 'fetch') {
 	}
 	
 	if (intval($resp['headers']['Content-Length']) > $setting['limit'] * 1024) {
-		$result['message'] = '上传的媒体文件过大('.sizecount($size).' > '.sizecount($setting['limit'] * 1024);
+		$result['message'] = '上传的媒体文件过大(' . sizecount($size) . ' > ' . sizecount($setting['limit'] * 1024);
 		die(json_encode($result));
 	}
 	$originname = pathinfo($url, PATHINFO_BASENAME);
-	$filename = file_random_name(ATTACHMENT_ROOT .'/'. $setting['folder'], $ext);
+	$filename = file_random_name(ATTACHMENT_ROOT . '/' . $setting['folder'], $ext);
 	$pathname = $setting['folder'] . $filename;
 	$fullname = ATTACHMENT_ROOT . '/' . $pathname;
 	if (file_put_contents($fullname, $resp['content']) == false) {
@@ -116,7 +119,7 @@ if ($do == 'upload') {
 	$ext = strtolower($ext);
 	$size = intval($_FILES['file']['size']);
 	$originname = $_FILES['file']['name'];
-	$filename = file_random_name(ATTACHMENT_ROOT .'/'. $setting['folder'], $ext);
+	$filename = file_random_name(ATTACHMENT_ROOT . '/' . $setting['folder'], $ext);
 	$file = file_upload($_FILES['file'], $type, $setting['folder'] . $filename);
 	if (is_error($file)) {
 		$result['message'] = $file['message'];
@@ -127,12 +130,12 @@ if ($do == 'upload') {
 }
 
 if ($do == 'fetch' || $do == 'upload') {
-		if($type == 'image'){
-		$thumb = empty($setting['thumb']) ? 0 : 1; 		$width = intval($setting['width']); 
-		if(isset($option['thumb'])){
+		if ($type == 'image') {
+		$thumb = empty($setting['thumb']) ? 0 : 1; 		$width = intval($setting['width']); 		
+		if (isset($option['thumb'])) {
 			$thumb = empty($option['thumb']) ? 0 : 1;
 		}
-		if (isset($option['width']) && !empty($option['width'])) {
+		if (isset($option['width']) && ! empty($option['width'])) {
 			$width = intval($option['width']);
 		}
 		if ($thumb == 1 && $width > 0) {
@@ -144,11 +147,11 @@ if ($do == 'fetch' || $do == 'upload') {
 			} else {
 				$filename = pathinfo($thumbnail, PATHINFO_BASENAME);
 				$pathname = $thumbnail;
-				$fullname = ATTACHMENT_ROOT .'/'.$pathname;
+				$fullname = ATTACHMENT_ROOT . '/' . $pathname;
 			}
 		}
 	}
-
+	
 	$info = array(
 		'name' => $originname,
 		'ext' => $ext,
@@ -182,8 +185,8 @@ if ($do == 'fetch' || $do == 'upload') {
 		'uid' => $_W['uid'],
 		'filename' => $originname,
 		'attachment' => $pathname,
-		'type' => $type == 'image' ? 1 : 2,
-		'createtime' => TIMESTAMP,
+		'type' => $type == 'image' ? 1 : ($type == 'audio'||$type == 'voice' ? 2 : 3),
+		'createtime' => TIMESTAMP 
 	));
 	die(json_encode($info));
 }
@@ -191,19 +194,18 @@ if ($do == 'fetch' || $do == 'upload') {
 if ($do == 'delete') {
 	$id = intval($_GPC['id']);
 	$media = pdo_get('core_attachment', array('uniacid' => $_W['uniacid'], 'id' => $id));
-	if(empty($media)) {
+	if (empty($media)) {
 		exit('文件不存在或已经删除');
 	}
-	if(empty($_W['isfounder']) && $_W['role'] != 'manager') {
+	if (empty($_W['isfounder']) && $_W['role'] != ACCOUNT_MANAGE_NAME_MANAGER) {
 		exit('您没有权限删除该文件');
 	}
-	load()->func('file');
 	if (!empty($_W['setting']['remote']['type'])) {
 		$status = file_remote_delete($media['attachment']);
 	} else {
 		$status = file_delete($media['attachment']);
 	}
-	if(is_error($status)) {
+	if (is_error($status)) {
 		exit($status['message']);
 	}
 	pdo_delete('core_attachment', array('uniacid' => $uniacid, 'id' => $id));
@@ -211,22 +213,26 @@ if ($do == 'delete') {
 }
 
 if ($do == 'local') {
-	$types = array('image', 'audio');
+	$types = array('image', 'audio', 'video');
 	$type = in_array($_GPC['type'], $types) ? $_GPC['type'] : 'image';
-	$typeindex = array('image' => 1, 'audio' => 2);
+	$typeindex = array('image' => 1, 'audio' => 2, 'video' => 3);
 	$condition = ' WHERE uniacid = :uniacid AND type = :type';
 	$params = array(':uniacid' => $_W['uniacid'], ':type' => $typeindex[$type]);
+	if($dest_dir){
+		$condition .= " AND `attachment` LIKE :attachment";	
+		$params[':attachment'] = "%{$dest_dir}%";
+	}
 	$year = intval($_GPC['year']);
 	$month = intval($_GPC['month']);
-	if($year > 0 || $month > 0) {
-		if($month > 0 && !$year) {
+	if ($year > 0 || $month > 0) {
+		if ($month > 0 && ! $year) {
 			$year = date('Y');
 			$starttime = strtotime("{$year}-{$month}-01");
 			$endtime = strtotime("+1 month", $starttime);
-		} elseif($year > 0 && !$month) {
+		} elseif ($year > 0 && ! $month) {
 			$starttime = strtotime("{$year}-01-01");
 			$endtime = strtotime("+1 year", $starttime);
-		} elseif($year > 0 && $month > 0) {
+		} elseif ($year > 0 && $month > 0) {
 			$year = date('Y');
 			$starttime = strtotime("{$year}-{$month}-01");
 			$endtime = strtotime("+1 month", $starttime);
@@ -235,21 +241,28 @@ if ($do == 'local') {
 		$params[':starttime'] = $starttime;
 		$params[':endtime'] = $endtime;
 	}
-
+	
 	$page = intval($_GPC['page']);
 	$page = max(1, $page);
-	$size = $_GPC['pagesize'] ? intval($_GPC['pagesize']) : 32;
-
+	$size = $_GPC['pagesize'] ? intval($_GPC['pagesize']) : 10;
+	
 	$remote = $_W['setting']['remote'];
-
-	$sql = 'SELECT * FROM '.tablename('core_attachment')." {$condition} ORDER BY id DESC LIMIT ".(($page-1)*$size).','.$size;
+	
+	$sql = 'SELECT * FROM ' . tablename('core_attachment') . " {$condition} ORDER BY id DESC LIMIT " . (($page - 1) * $size) . ',' . $size;
 	$list = pdo_fetchall($sql, $params, 'id');
-
+	
 	foreach ($list as &$item) {
 		$item['url'] = tomedia($item['attachment']);
 		$item['createtime'] = date('Y-m-d', $item['createtime']);
 		unset($item['uid']);
 	}
-	$total = pdo_fetchcolumn('SELECT count(*) FROM '.tablename('core_attachment') ." {$condition}", $params);
-	message(array('page'=> pagination($total, $page, $size, '', array('before' => '2', 'after' => '2', 'ajaxcallback'=>'null')), 'items' => $list), '', 'ajax');
+	$total = pdo_fetchcolumn('SELECT count(*) FROM ' . tablename('core_attachment') . " {$condition}", $params);
+	iajax(0, array(
+		'page' => pagination($total, $page, $size, '', array(
+			'before' => '2',
+			'after' => '2',
+			'ajaxcallback' => 'null' 
+		)),
+		'items' => $list 
+	));
 }

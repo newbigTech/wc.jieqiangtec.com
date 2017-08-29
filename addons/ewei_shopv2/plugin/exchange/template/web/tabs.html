@@ -57,6 +57,7 @@
 <ul>
     {ifp 'exchange.history'}<li {if $_W['action']=='history'}class="active"{/if}><a href="{php echo webUrl('exchange.history');}">兑换记录</a></li>{/if}
     {ifp 'exchange.setting.download'}<li {if $_W['action']=='setting.download'}class="active"{/if}><a href="{php echo webUrl('exchange.setting.download');}">文件管理</a></li>{/if}
+    {ifp 'exchange.setting.other'}<li {if $_W['action']=='setting.other'}class="active"{/if}><a href="{php echo webUrl('exchange.setting.other');}">其他设置</a></li>{/if}
 </ul>
 <script type="text/javascript">
     $(document).ready(function () {

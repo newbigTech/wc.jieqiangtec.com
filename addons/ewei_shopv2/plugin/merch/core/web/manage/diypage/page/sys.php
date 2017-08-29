@@ -23,6 +23,14 @@ class Sys_EweiShopV2Page extends MerchWebPage
 		$diypage_plugin = p('diypage');
 		$result = $diypage_plugin->getPageList('sys', $condition, intval($_GPC['page']));
 		extract($result);
+		if (!(empty($list))) 
+		{
+			foreach ($list as $key => &$value ) 
+			{
+				$url = mobileUrl('diypage', array('id' => $value['id'], 'merchid' => $_W['merchid']), true);
+				$value['qrcode'] = m('qrcode')->createQrcode($url);
+			}
+		}
 		$diypagedata = m('common')->getPluginset('diypage');
 		$diypagedata = $diypagedata['page'];
 		include $this->template('diypage/page/list');
@@ -76,7 +84,7 @@ class Sys_EweiShopV2Page extends MerchWebPage
 	{
 		global $_W;
 		global $_GPC;
-		$temp = array('type' => intval($_GPC['type']), 'cate' => intval($_GPC['cate']), 'name' => trim($_GPC['name']), 'preview' => trim($_GPC['preview']), 'data' => $_GPC['data']);
+		$temp = array('type' => intval($_GPC['type']), 'cate' => intval($_GPC['cate']), 'name' => trim($_GPC['name']), 'preview' => trim($_GPC['preview']), 'data' => $_GPC['data'], 'merch' => intval($_W['merchid']));
 		$diypage_plugin = p('diypage');
 		$diypage_plugin->saveTemp($temp);
 	}

@@ -5,16 +5,29 @@
         {ifp 'task.edit'}
         <div class="input-group">
             <input type="text" name="title" class="form-control" value="{$item['title']}" data-rule-required="true" />
-            <input type="hidden" id="titleimg" name="titleicon" value="{if !empty($item['titleicon'])}{$item['titleicon']}{else}http://sky.foxdev.cn/addons/ewei_shopv2/plugin/task/static/images/taskicon.png{/if}">
-            <span class="input-group-addon" style="padding: 0px;"><img src="{if !empty($item['titleicon'])}{$item['titleicon']}{else}http://sky.foxdev.cn/addons/ewei_shopv2/plugin/task/static/images/taskicon.png{/if}" id="showimg" width="34px" height="34px"></span>
+            <input type="hidden" id="titleimg" name="titleicon" value="{if !empty($item['titleicon'])}{$item['titleicon']}{else}../addons/ewei_shopv2/plugin/task/static/images/taskicon.png{/if}">
+            <span class="input-group-addon" style="padding: 0px;"><img src="{if !empty($item['titleicon'])}{$item['titleicon']}{else}../addons/ewei_shopv2/plugin/task/static/images/taskicon.png{/if}" id="showimg" width="34px" height="34px"></span>
             <span class="input-group-addon btn" data-toggle="selectImg" data-input="#titleimg" data-img="#showimg" data-full="1">选择图标</span>
         </div>
         {else}
-        <div class='form-control-static'><img src="{if !empty($item['titleicon'])}{$item['titleicon']}{else}http://sky.foxdev.cn/addons/ewei_shopv2/plugin/task/static/images/taskicon.png{/if}"  width="34px" height="34px">{if !empty($item['title'])}{$item['title']}{else}暂无标题{/if}</div>
+        <div class='form-control-static'><img src="{if !empty($item['titleicon'])}{$item['titleicon']}{else}../addons/ewei_shopv2/plugin/task/static/images/taskicon.png{/if}"  width="34px" height="34px">{if !empty($item['title'])}{$item['title']}{else}暂无标题{/if}</div>
         {/if}
     </div>
 </div>
-
+<div class="form-group">
+    <label class="col-sm-2 control-label must">任务详情页广告图</label>
+    <div class="col-sm-9 col-xs-12">
+        {ifp 'task.edit'}
+        <div class="input-group">
+            <input type="text" id="poster_banner" class="form-control" name="poster_banner" value="{if !empty($item['poster_banner'])}{$item['poster_banner']}{else}../addons/ewei_shopv2/plugin/task/static/images/detail-head.jpg{/if}">
+            <span class="input-group-addon" style="padding: 0px;"><img src="{if !empty($item['poster_banner'])}{$item['poster_banner']}{else}../addons/ewei_shopv2/plugin/task/static/images/detail-head.jpg{/if}" id="showbanner" width="34px" height="34px"></span>
+            <span class="input-group-addon btn" data-toggle="selectImg" data-input="#poster_banner" data-img="#showbanner" data-full="1">选择图片</span>
+        </div>
+        {else}
+        <div class='form-control-static'><img src="{if !empty($item['poster_banner'])}{$item['poster_banner']}{else}../addons/ewei_shopv2/plugin/task/static/images/detail-head.jpg{/if}"  width="34px" height="34px"></div>
+        {/if}
+    </div>
+</div>
 
 <div class="form-group">
     <label class="col-sm-2 control-label must">关键词</label>

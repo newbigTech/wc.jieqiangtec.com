@@ -287,6 +287,10 @@ class Op_EweiShopV2Page extends MerchWebPage
 		{
 			com('coupon')->backConsumeCoupon($item['id']);
 		}
+		if (p('lineup')) 
+		{
+			p('lineup')->checkOrder($item);
+		}
 		if (p('commission')) 
 		{
 			p('commission')->checkOrderFinish($item['id']);
@@ -489,6 +493,9 @@ class Op_EweiShopV2Page extends MerchWebPage
 		global $_GPC;
 		$opdata = $this->opData();
 		extract($opdata);
+		$area_set = m('util')->get_area_config_set();
+		$new_area = intval($area_set['new_area']);
+		$address_street = intval($area_set['address_street']);
 		if (empty($item['addressid'])) 
 		{
 			$user = unserialize($item['carrier']);
@@ -501,7 +508,8 @@ class Op_EweiShopV2Page extends MerchWebPage
 				$user = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_member_address') . ' WHERE id = :id and uniacid=:uniacid', array(':id' => $item['addressid'], ':uniacid' => $_W['uniacid']));
 			}
 			$address_info = $user['address'];
-			$user['address'] = $user['province'] . ' ' . $user['city'] . ' ' . $user['area'] . ' ' . $user['address'];
+			$user_address = $user['address'];
+			$user['address'] = $user['province'] . ' ' . $user['city'] . ' ' . $user['area'] . ' ' . $user['street'] . ' ' . $user['address'];
 			$item['addressdata'] = $oldaddress = array('realname' => $user['realname'], 'mobile' => $user['mobile'], 'address' => $user['address']);
 		}
 		if ($_W['ispost']) 
@@ -511,6 +519,8 @@ class Op_EweiShopV2Page extends MerchWebPage
 			$province = $_GPC['province'];
 			$city = $_GPC['city'];
 			$area = $_GPC['area'];
+			$street = $_GPC['street'];
+			$changead = intval($_GPC['changead']);
 			$address = trim($_GPC['address']);
 			if (!(empty($id))) 
 			{
@@ -524,24 +534,39 @@ class Op_EweiShopV2Page extends MerchWebPage
 					$ret = '请填写收件人手机！';
 					show_json(0, $ret);
 				}
-				if ($province == '请选择省份') 
+				if ($changead) 
 				{
-					$ret = '请选择省份！';
-					show_json(0, $ret);
-				}
-				if (empty($address)) 
-				{
-					$ret = '请填写详细地址！';
-					show_json(0, $ret);
+					if ($province == '请选择省份') 
+					{
+						$ret = '请选择省份！';
+						show_json(0, $ret);
+					}
+					if (empty($address)) 
+					{
+						$ret = '请填写详细地址！';
+						show_json(0, $ret);
+					}
 				}
 				$item = pdo_fetch('SELECT id, ordersn, address FROM ' . tablename('ewei_shop_order') . ' WHERE id = :id and uniacid=:uniacid and merchid = :merchid', array(':id' => $id, ':uniacid' => $_W['uniacid'], ':merchid' => $_W['merchid']));
 				$address_array = iunserializer($item['address']);
 				$address_array['realname'] = $realname;
 				$address_array['mobile'] = $mobile;
-				$address_array['province'] = $province;
-				$address_array['city'] = $city;
-				$address_array['area'] = $area;
-				$address_array['address'] = $address;
+				if ($changead) 
+				{
+					$address_array['province'] = $province;
+					$address_array['city'] = $city;
+					$address_array['area'] = $area;
+					$address_array['street'] = $street;
+					$address_array['address'] = $address;
+				}
+				else 
+				{
+					$address_array['province'] = $user['province'];
+					$address_array['city'] = $user['city'];
+					$address_array['area'] = $user['area'];
+					$address_array['street'] = $user['street'];
+					$address_array['address'] = $user_address;
+				}
 				$address_array = iserializer($address_array);
 				pdo_update('ewei_shop_order', array('address' => $address_array), array('id' => $id, 'uniacid' => $_W['uniacid'], 'merchid' => $_W['merchid']));
 				plog('order.op.changeaddress', '修改收货地址 ID: ' . $item['id'] . ' 订单号: ' . $item['ordersn'] . ' <br>原地址: 收件人: ' . $oldaddress['realname'] . ' 手机号: ' . $oldaddress['mobile'] . ' 收件地址: ' . $oldaddress['address'] . '<br>新地址: 收件人: ' . $realname . ' 手机号: ' . $mobile . ' 收件地址: ' . $province . ' ' . $city . ' ' . $area . ' ' . $address);

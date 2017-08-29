@@ -75,6 +75,7 @@
             type: {$type},
             data: {if !empty($page['data'])}{php echo json_encode($page['data'])}{else}null{/if},
             diymenu: {php echo json_encode($diymenu)},
+            diyadvs: {php echo json_encode($diyadvs)},
             levels: {if !empty($levels)}{php echo json_encode($levels)}{else}null{/if},
             merch: {if $_W['plugin']=='merch' && !empty($_W['merchid'])}1{else}0{/if},
             plugins: {$hasplugins},

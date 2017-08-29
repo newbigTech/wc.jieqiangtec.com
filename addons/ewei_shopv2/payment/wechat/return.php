@@ -23,10 +23,11 @@ if (!(empty($ordersn)))
 	}
 	else if ($paytype == 2) 
 	{
+		$url = $_W['siteroot'] . '../../app/index.php?i=' . $uniacid . '&c=entry&m=ewei_shopv2&do=mobile&r=creditshop.detail.wechat_complete&logno=' . $ordersn;
 	}
 	else if ($paytype == 3) 
 	{
-		$url = $_W['siteroot'] . '../../app/index.php?i=' . $uniacid . '&c=entry&m=ewei_shopv2&do=mobile&r=creditshop.log&logno=' . $ordersn;
+		$url = $_W['siteroot'] . '../../app/index.php?i=' . $uniacid . '&c=entry&m=ewei_shopv2&do=mobile&r=creditshop.detail.wechat_complete&logno=' . $ordersn;
 	}
 	else if ($paytype == 4) 
 	{
@@ -35,6 +36,10 @@ if (!(empty($ordersn)))
 	else if ($paytype == 5) 
 	{
 		$url = $_W['siteroot'] . '../../app/index.php?i=' . $uniacid . '&c=entry&m=ewei_shopv2&do=mobile&r=groups.pay.complete&ordersn=' . $ordersn . '&type=wechat';
+	}
+	else if ($paytype == 6) 
+	{
+		$url = $_W['siteroot'] . '../../app/index.php?i=' . $uniacid . '&c=entry&m=ewei_shopv2&do=mobile&r=threen.register.complete&logno=' . $ordersn . '&type=wechat';
 	}
 }
 header('location: ' . $url);

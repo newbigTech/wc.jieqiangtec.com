@@ -1,9 +1,10 @@
 <?php
 /**
  * [WeEngine System] Copyright (c) 2014 WE7.CC
- * WeEngine is NOT a free software, it under the license terms, visited http://www.zheyitianshi.com/ for more details.
+ * WeEngine is NOT a free software, it under the license terms, visited http://www.we7.cc/ for more details.
  */
 define('IN_MOBILE', true);
+
 require '../framework/bootstrap.inc.php';
 load()->app('common');
 load()->app('template');
@@ -66,6 +67,10 @@ if(is_array($multi['site_info'])) {
 }
 unset($multi, $styleid, $style, $templateid, $template, $templates);
 
+if ($controller == 'wechat' && $action == 'card' && $do == 'use') {
+	header("location: index.php?i={$_W['uniacid']}&c=entry&m=paycenter&do=consume&encrypt_code={$_GPC['encrypt_code']}&card_id={$_GPC['card_id']}&openid={$_GPC['openid']}&source={$_GPC['source']}");
+	exit;
+}
 $controllers = array();
 $handle = opendir(IA_ROOT . '/app/source/');
 if(!empty($handle)) {

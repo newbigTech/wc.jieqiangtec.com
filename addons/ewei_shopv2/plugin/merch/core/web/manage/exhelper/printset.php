@@ -1,5 +1,5 @@
 <?php
-if (!defined('IN_IA')) 
+if (!(defined('IN_IA'))) 
 {
 	exit('Access Denied');
 }
@@ -16,7 +16,7 @@ class Printset_EweiShopV2Page extends MerchWebPage
 		{
 			$port = intval($_GPC['port']);
 			$ip = 'localhost';
-			if (!empty($port)) 
+			if (!(empty($port))) 
 			{
 				if (empty($sys)) 
 				{

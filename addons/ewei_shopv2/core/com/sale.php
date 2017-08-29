@@ -92,7 +92,7 @@ class Sale_EweiShopV2ComModel extends ComModel
 					$give = $r['give'];
 					if($log['money'] >= $enough){
 					break;
-				}
+				}	
 				}
 			}
 		}

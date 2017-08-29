@@ -23,7 +23,7 @@
 	                <button class="btn btn-default btn-sm" type="button" data-toggle='batch' data-href="{php echo webUrl('creditshop/adv/enabled',array('enabled'=>1))}"><i class='fa fa-circle'></i> 显示</button>
 	                <button class="btn btn-default btn-sm" type="button" data-toggle='batch'  data-href="{php echo webUrl('creditshop/adv/enabled',array('enabled'=>0))}"><i class='fa fa-circle-o'></i> 隐藏</button>
                 {/if}
-                {ifp 'creditshop.adv.delete'}	
+                {ifp 'creditshop.adv.delete'}
                 	<button class="btn btn-default btn-sm" type="button" data-toggle='batch-remove' data-confirm="确认要删除?" data-href="{php echo webUrl('creditshop/adv/delete')}"><i class='fa fa-trash'></i> 删除</button>
                 {/if}
             </div>
@@ -84,8 +84,8 @@
                           {ifp 'creditshop.adv.edit'}
 	                          data-toggle='ajaxSwitch' 
 	                          data-switch-value='{$row['enabled']}'
-	                          data-switch-value0='0|隐藏|label label-default|{php echo webUrl('creditshop/adv/enabled',array('enabled'=>1,'id'=>$row['id']))}'  
-	                          data-switch-value1='1|显示|label label-success|{php echo webUrl('creditshop/adv/enabled',array('enabled'=>0,'id'=>$row['id']))}'  
+	                          data-switch-value0='0|隐藏|label label-default|{php echo webUrl('creditshop/adv/enabled',array('enabled'=>1,'id'=>$row['id']))}'
+	                          data-switch-value1='1|显示|label label-success|{php echo webUrl('creditshop/adv/enabled',array('enabled'=>0,'id'=>$row['id']))}'
                           {/if}
                           >
                           {if $row['enabled']==1}显示{else}隐藏{/if}</span>

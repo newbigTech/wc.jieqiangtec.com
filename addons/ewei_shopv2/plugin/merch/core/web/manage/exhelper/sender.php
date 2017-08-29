@@ -1,5 +1,5 @@
 <?php
-if (!defined('IN_IA')) 
+if (!(defined('IN_IA'))) 
 {
 	exit('Access Denied');
 }
@@ -15,7 +15,7 @@ class Sender_EweiShopV2Page extends MerchWebPage
 		$psize = 20;
 		$condition = ' uniacid = :uniacid and merchid=:merchid';
 		$params = array(':uniacid' => $_W['uniacid'], ':merchid' => $merchid);
-		if (!empty($_GPC['keyword'])) 
+		if (!(empty($_GPC['keyword']))) 
 		{
 			$_GPC['keyword'] = trim($_GPC['keyword']);
 			$condition .= ' and ( sendername like :keyword or sendertel like :keyword or sendersign like :keyword or sendercode like :keyword or senderaddress like :keyword or sendercity like :keyword)';
@@ -33,14 +33,14 @@ class Sender_EweiShopV2Page extends MerchWebPage
 		global $_GPC;
 		$merchid = $_W['merchid'];
 		$id = intval($_GPC['id']);
-		if (!empty($id)) 
+		if (!(empty($id))) 
 		{
 			$item = pdo_fetch('select * from ' . tablename('ewei_shop_exhelper_senduser') . ' where id=:id and uniacid=:uniacid and merchid=:merchid limit 1 ', array(':id' => $id, ':uniacid' => $_W['uniacid'], ':merchid' => $merchid));
 		}
 		if ($_W['ispost']) 
 		{
 			$data = array('uniacid' => $_W['uniacid'], 'merchid' => $merchid, 'sendername' => trim($_GPC['sendername']), 'sendertel' => trim($_GPC['sendertel']), 'sendersign' => trim($_GPC['sendersign']), 'sendercode' => trim($_GPC['sendercode']), 'senderaddress' => trim($_GPC['senderaddress']), 'sendercity' => trim($_GPC['sendercity']), 'isdefault' => intval($_GPC['isdefault']));
-			if (!empty($id)) 
+			if (!(empty($id))) 
 			{
 				pdo_update('ewei_shop_exhelper_senduser', $data, array('id' => $id));
 				plog('merch.exhelper.sender.edit', '修改发件人模板 ID: ' . $id);
@@ -51,7 +51,7 @@ class Sender_EweiShopV2Page extends MerchWebPage
 				$id = pdo_insertid();
 				plog('merch.exhelper.sender.add', '添加发件人模板 ID: ' . $id);
 			}
-			if (!empty($data['isdefault'])) 
+			if (!(empty($data['isdefault']))) 
 			{
 				pdo_update('ewei_shop_exhelper_senduser', array('isdefault' => 0), array('uniacid' => $_W['uniacid'], 'merchid' => $merchid));
 				pdo_update('ewei_shop_exhelper_senduser', array('isdefault' => 1), array('id' => $id));
@@ -75,7 +75,7 @@ class Sender_EweiShopV2Page extends MerchWebPage
 		$merchid = $_W['merchid'];
 		$id = intval($_GPC['id']);
 		$item = pdo_fetch('SELECT id,sendername FROM ' . tablename('ewei_shop_exhelper_senduser') . ' WHERE id = \'' . $id . '\' AND uniacid=' . $_W['uniacid'] . ' AND merchid=' . $merchid);
-		if (!empty($item)) 
+		if (!(empty($item))) 
 		{
 			pdo_update('ewei_shop_exhelper_senduser', array('isdefault' => 0), array('uniacid' => $_W['uniacid'], 'merchid' => $merchid));
 			pdo_update('ewei_shop_exhelper_senduser', array('isdefault' => 1), array('id' => $id));

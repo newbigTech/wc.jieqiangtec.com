@@ -85,8 +85,8 @@
             <label class="col-sm-2 control-label">自动取消</label>
             <div class="col-sm-9 col-xs-12">
                 {ife 'seckill.task' $item}
-                <input type="text" name="closesec" class="form-control" value="{php echo $item['closesec']<=0?'900':$item['closesec']}"/>
-                <span class="help-block">抢购成功，不付款多少秒之后，自动取消资格，默认900秒(15分钟)</span>
+                <input type="text" name="closesec" class="form-control" value="{php echo $item['closesec']<=0?'120':$item['closesec']}"/>
+                <span class="help-block">抢购成功，不付款多少秒之后，自动取消资格，默认120秒(2分钟)</span>
                 {else}
                 <div class='form-control-static'>{php echo $item['closesec']<=0?'120':$item['closesec']}s</div>
                 {/if}

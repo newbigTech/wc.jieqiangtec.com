@@ -97,11 +97,9 @@
                 <option value="其他原因">其他原因</option>
             </select>
         </div>
-            {if is_mobile()}
         <%if order.paytype!=3%>
         <a class="btn btn-danger external" href="{php echo mobileUrl('order/pay')}&id=<%order.id%>" data-nocache="true" >支付订单</a>
         <%/if%>
-            {/if}
     <%/if%>
 
     <%if order.canverify&&order.status!=-1&&order.status!=0%>
@@ -150,5 +148,7 @@
         modal.init({fromDetail:false,status:"{$_GPC['status']}",merchid:{php echo intval($_GPC['merchid'])}});
     });</script>
 </div>
+
+
 {php $this->footerMenus()}
 {template '_footer'}

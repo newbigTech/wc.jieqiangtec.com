@@ -35,6 +35,32 @@ class Page extends WeModuleSite
 			m('cache')->set('closeorder', date('Y-m-d H:i:s', $current), 'global');
 			ihttp_request(EWEI_SHOPV2_TASK_URL . 'order/close.php', NULL, NULL, 1);
 		}
+		$lasttime = strtotime(m('cache')->getString('fullback_receive', 'global'));
+		$interval = intval(m('cache')->getString('fullback_receive_time', 'global'));
+		if (empty($interval)) 
+		{
+			$interval = 60;
+		}
+		$interval *= 60;
+		$current = time();
+		if (($lasttime + $interval) <= $current) 
+		{
+			m('cache')->set('fullback_receive', date('Y-m-d H:i:s', $current), 'global');
+			ihttp_request(EWEI_SHOPV2_TASK_URL . 'order/fullback.php', NULL, NULL, 1);
+		}
+		$lasttime = strtotime(m('cache')->getString('status_receive', 'global'));
+		$interval = intval(m('cache')->getString('status_receive_time', 'global'));
+		if (empty($interval)) 
+		{
+			$interval = 60;
+		}
+		$interval *= 60;
+		$current = time();
+		if (($lasttime + $interval) <= $current) 
+		{
+			m('cache')->set('status_receive', date('Y-m-d H:i:s', $current), 'global');
+			ihttp_request(EWEI_SHOPV2_TASK_URL . 'goods/status.php', NULL, NULL, 1);
+		}
 		if (com('coupon')) 
 		{
 			$lasttime = strtotime(m('cache')->getString('willcloseorder', 'global'));

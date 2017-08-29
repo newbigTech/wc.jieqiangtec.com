@@ -1,12 +1,11 @@
 <?php
-
-if (!defined('ES_PATH')) {
+if (!(defined('ES_PATH'))) 
+{
 	exit('Access Denied');
 }
-
-class CaseController extends Controller
+class CaseController extends Controller 
 {
-	public function index()
+	public function index() 
 	{
 		global $_W;
 		global $_GPC;
@@ -15,14 +14,12 @@ class CaseController extends Controller
 		$psize = 12;
 		$condition = ' and a.status = 1 ';
 		$params = array();
-
-		if (!empty($_GPC['cate'])) {
+		if (!(empty($_GPC['cate']))) 
+		{
 			$cateid = intval($_GPC['cate']);
 			$condition .= ' and a.cate = :cate';
 			$params[':cate'] = $cateid;
 		}
-
-
 		$articles = pdo_fetchall('SELECT a.* ,c.id as cid,c.name FROM ' . tablename('ewei_shop_system_case') . ' AS a' . "\n" . '                    LEFT JOIN ' . tablename('ewei_shop_system_casecategory') . ' AS c ON a.cate = c.id and c.status = 1' . "\n" . '                    WHERE 1 ' . $condition . '  ORDER BY a.displayorder DESC LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize, $params);
 		$total = pdo_fetchcolumn('SELECT count(1) FROM ' . tablename('ewei_shop_system_case') . ' WHERE status = 1 ', $params);
 		$category = pdo_fetchall('select id,name from ' . tablename('ewei_shop_system_casecategory') . ' where status = 1 order by displayorder asc ');
@@ -32,8 +29,7 @@ class CaseController extends Controller
 		$title = '案例展示';
 		include $this->template('case/index');
 	}
-
-	public function detail()
+	public function detail() 
 	{
 		global $_W;
 		global $_GPC;
@@ -44,6 +40,4 @@ class CaseController extends Controller
 		include $this->template('news/detail');
 	}
 }
-
-
 ?>

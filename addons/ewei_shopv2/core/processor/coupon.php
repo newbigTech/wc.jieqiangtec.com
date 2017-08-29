@@ -1,5 +1,5 @@
 <?php
-if (!defined('IN_IA')) 
+if (!(defined('IN_IA'))) 
 {
 	exit('Access Denied');
 }
@@ -93,10 +93,10 @@ class CouponProcessor extends ComProcessor
 			unset($_SESSION['ewei_shop_coupon_key']);
 			return $this->responseEmpty();
 		}
-		if (!$obj->inContext) 
+		if (!($obj->inContext)) 
 		{
 			$guessok = pdo_fetch('select id,times from ' . tablename('ewei_shop_coupon_guess') . ' where couponid=:couponid and openid=:openid and pwdkey=:pwdkey and ok=1 and uniacid=:uniacid limit 1 ', array(':couponid' => $coupon['id'], ':openid' => $openid, ':pwdkey' => $coupon['pwdkey2'], ':uniacid' => $_W['uniacid']));
-			if (!empty($guessok)) 
+			if (!(empty($guessok))) 
 			{
 				$guess = $this->getGuess($coupon, $openid);
 				$coupon = $this->replaceCoupon($coupon, $member, $guess['times'], $guess['lasttimes']);
@@ -137,15 +137,15 @@ class CouponProcessor extends ComProcessor
 		$time = time();
 		if ($ok) 
 		{
-			$log = array('uniacid' => $_W['uniacid'], 'openid' => $openid, 'logno' => m('common')->createNO('coupon_log', 'logno', 'CC'), 'couponid' => $coupon['id'], 'status' => 1, 'paystatus' => -1, 'creditstatus' => -1, 'createtime' => $time, 'getfrom' => 5);
+			$log = array('uniacid' => $_W['uniacid'], 'openid' => $openid, 'logno' => m('common')->createNO('coupon_log', 'logno', 'CC'), 'couponid' => $coupon['id'], 'status' => 1, 'paystatus' => -1, 'creditstatus' => -1, 'createtime' => $time, 'getfrom' => 13);
 			pdo_insert('ewei_shop_coupon_log', $log);
-			$data = array('uniacid' => $_W['uniacid'], 'openid' => $openid, 'couponid' => $coupon['id'], 'gettype' => 5, 'gettime' => $time);
+			$data = array('uniacid' => $_W['uniacid'], 'openid' => $openid, 'couponid' => $coupon['id'], 'gettype' => 13, 'gettime' => $time);
 			pdo_insert('ewei_shop_coupon_data', $data);
 			unset($_SESSION['ewei_shop_coupon_key']);
 			$obj->endContext();
 			$set = m('common')->getPluginset('coupon');
 			$c = $this->model->getCoupon($coupon['id']);
-			$this->model->sendMessage($c, 1, $member, $set['templateid']);
+			$this->model->sendMessage($c, 1, $member);
 			$guess = $this->getGuess($coupon, $openid);
 			$coupon = $this->replaceCoupon($coupon, $member, $guess['times'], $guess['lasttimes']);
 			return $obj->respText($coupon['pwdsuc']);

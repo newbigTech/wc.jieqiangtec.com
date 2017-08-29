@@ -104,7 +104,7 @@
 		<tr>
 			<td><a href="#">{$list['title']}</a></td>
 			<td><a href="#"></a></td>
-			<td><button class="btn btn-default select" onclick="clicklink('./index.php?i={$list['uniaicd']}&c=entry&id={$list['id']}&do=detail&m=news')">选取</button></td>
+			<td><button class="btn btn-default select" onclick="clicklink('./index.php?i={$_W['uniacid']}&c=entry&id={$list['id']}&do=detail&m=news')">选取</button></td>
 		</tr>
 		{/loop}
 		</tbody>
@@ -165,13 +165,13 @@
 			{loop $category $cate}
 				<tr>
 					<td colspan="2"><a href="#">{$cate['name']}</a></td>
-					<td class="text-right"><button class="btn btn-default select" onclick="clicklink('./index.php?c=site&a=site&cid={$cate['id']}&i={$cate['uniaicd']}')">选取</button></td>
+					<td class="text-right"><button class="btn btn-default select" onclick="clicklink('./index.php?c=site&a=site&cid={$cate['id']}&i={$cate['uniacid']}')">选取</button></td>
 				</tr>
 				{loop $cate['children'] $child}
 				<tr>
 					<td colspan="2" style="padding-left:50px;height:30px;line-height:30px;background-image:url('./resource/images/bg_repno.gif'); background-repeat:no-repeat; background-position: -245px -540px;"><a href="#">{$child['name']}</a></td>
 					<td class="text-right">
-						<button class="btn btn-default select" onclick="clicklink('./index.php?c=site&a=site&cid={$child['id']}&i={$child['uniaicd']}')">选取</button>
+						<button class="btn btn-default select" onclick="clicklink('./index.php?c=site&a=site&cid={$child['id']}&i={$child['uniacid']}')">选取</button>
 					</td>
 				</tr>
 				{/loop}
@@ -192,7 +192,7 @@
 		</div>
 	</div>
 </div>
-{else}
+{elseif $do == 'entry'}
 <style type="text/css">
 .link-browser ul li{width: 120px; }
 .list-group .list-group-item a{color:#428bca;}

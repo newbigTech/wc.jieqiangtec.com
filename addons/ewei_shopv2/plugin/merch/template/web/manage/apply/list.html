@@ -40,7 +40,7 @@
                 <input type="text" class="form-control input-sm"  name="keyword" value="{$_GPC['keyword']}" placeholder="请输入申请单号"/>
                 <span class="input-group-btn">
                     <button class="btn btn-sm btn-primary" type="submit"> 搜索</button>
-                    {ifp 'merch.apply.list.export'}
+                    {ifp 'apply.list.export'}
                     <button type="submit" name="export" value="1" class="btn btn-success btn-sm">导出</button>
                     {/if}
                 </span>
@@ -130,7 +130,7 @@
             {if $row['status']!=1}<i class="fa fa-question-circle"></i></a>{/if}
         </td>
         <td>
-            {ifp 'merch.apply.detail'}
+            {ifp 'apply.detail'}
             <a class='btn btn-default btn-sm' href="{php echo merchUrl('apply/detail',array('id' => $row['id'],'status'=>$row['status']))}">详情</a>
             {/if}
         </td>

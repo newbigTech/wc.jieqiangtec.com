@@ -127,7 +127,7 @@
                     htmlobj=$.ajax({url:"{php echo webUrl('exchange/goods/code_type',array('id'=>$id),1);}",async:false});
                     if (htmlobj.responseText == '3'){
                         var downloadname = md5+'.xls';
-                        var href = '../addons/ewei_shopv2/data/qrcode/{$_W["uniacid"]}/exchange/{$res["title"]}'+md5+'.xls';
+                        var href = '../addons/ewei_shopv2/data/qrcode/{$_W["uniacid"]}/exchange/'+md5+'.xls';
                         $("#down").html('<a class="btn btn-success btn-sm" download="'+downloadname+'" href="'+href+'">下载生成的兑换码</a>');
                         var delstr ='<a class="btn btn-danger" id="deltxt" value="'+md5+'" onclick="deltxt()">删除兑换码</a>';
                         $("#del").html(delstr);
@@ -149,7 +149,7 @@
         });
     });
     function create(num,date,loop,length,qianzhui,dir_pre,end) {
-        var base = "{php echo webUrl('exchange/goods/creat',array('id'=>$id,'ajax'=>1,'num'=>1),true);}";
+        var base = "{php echo webUrl('exchange/balance/creat',array('id'=>$id,'ajax'=>1,'num'=>1),true);}";
         var shuzi = 0;
         var daxie = 0;
         var xiaoxie = 0;

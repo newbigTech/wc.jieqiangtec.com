@@ -101,14 +101,16 @@
                 <input type="text" class="form-control" placeholder="用户名" name="username"  />
                 <input type="password" class="form-control m-b" placeholder="密码" name="pwd" />
                 <p class="help-block text-danger" id="tip" style="display:none;"></p>
-                <button type="button" id="btn-login" class="btn btn-primary btn-block">登录</button>
+                <button type="submit" id="btn-login" class="btn btn-primary btn-block">登录</button>
             </form>
         </div>
+		
     </div>
 </div>
 </div>
 <script language='javascript'>
-            $('#btn-login').click(function () {
+            $('form').submit(function (e) {
+                e.preventDefault();
                 if ($(":input[name=username]").isEmpty()) {
                     $('#tip').html('请输入用户名!').show();
                     $(":input[name=username]").focus();

@@ -46,6 +46,7 @@
 					 data-seckill-maxbuy = "<%g.seckillmaxbuy%>"
 					 data-seckill-selfcount = "<%g.seckillselfcount%>"
 					 data-seckill-price = "<%g.seckillprice%>"
+					 data-type = "<%g.type%>"
 				>
 					<div class="fui-list-media ">
 						<input type="checkbox" name="checkbox" class="fui-radio fui-radio-danger cartmode check-item"<%if g.selected==1%>checked<%/if%>/>
@@ -60,6 +61,12 @@
 					<div class="fui-list-inner">
 						<a href="{php echo mobileUrl('goods/detail')}&id=<%g.goodsid%>">
 							<div class="text">
+								<%if  g.type==4%>
+									<span class='fui-label fui-label-danger'>批发</span>
+								<%/if%>
+								<%if  g.discounttype>0&& g.isnodiscount ==0%>
+								<span class='fui-label fui-label-danger'>折扣</span>
+								<%/if%>
 								<%if g.seckillprice>0%>
 								<div class="fui fui-label fui-label-danger"><%g.seckilltag%></div>
 								<%/if%>
@@ -67,26 +74,35 @@
 							</div>
 							<%if g.optionid%>
 							<div class="text cart-option cartmode">
-								<div class="choose-option"><%g.optiontitle%></div>
+								<div <%if g.type!=4%>class="choose-option"<%/if%>><%g.optiontitle%></div>
 							</div>
 							<%/if%>
 						</a>
 						<%if g.optionid%>
 						<div class="text  cart-option  editmode">
-							<div class="choose-option" data-optionid="<%g.optionid%>"><%g.optiontitle%></div>
+							<div  <%if g.type!=4%>class="choose-option"<%/if%> data-optionid="<%g.optionid%>"><%g.optiontitle%></div>
 						</div>
 						<%/if%>
 
 					</div>
 					<div class='fui-list-angle'>
 						<span class="price">￥<span class='marketprice'><%g.marketprice%></span></span>
-						<div class="fui-number small "
-							 data-value="<%g.total%>"
-							 data-max="<%g.totalmaxbuy%>"
-							 data-min="<%g.minbuy%>"
-							 data-maxtoast="最多购买{max}<%g.unit%>"
-							 data-mintoast="{min}<%g.unit%>起售"
-						>
+						<%if g.type==4%>
+							<div class="fui-number small "
+								 data-value="<%g.total%>"
+								 data-max=""
+								 data-min="1"
+								 data-mintoast="<%g.minbuy%><%g.unit%>起批"
+							>
+						<%else%>
+							<div class="fui-number small "
+								 data-value="<%g.total%>"
+								 data-max="<%g.totalmaxbuy%>"
+								 data-min="<%g.minbuy%>"
+								 data-maxtoast="最多购买{max}<%g.unit%>"
+								 data-mintoast="{min}<%g.unit%>起售"
+							>
+						<%/if%>
 							<div class="minus">-</div>
 							<input class="num shownum" type="tel" name="" value="<%g.total%>"/>
 							<div class="plus ">+</div>

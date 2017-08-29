@@ -22,14 +22,24 @@ define(['core', 'tpl', 'biz/plugin/diyform'], function (core, tpl, diyform) {
                 FoxUI.toast.show('请填写联系人!');
                 return
             }
-            if (!$('#mobile').isMobile()) {
-                FoxUI.toast.show('请填写联系人手机!');
+            // if (!$('#mobile').isMobile()) {
+            //     FoxUI.toast.show('请填写联系人手机!');
+            //     return
+            // }
+            if ($('#uname').isEmpty()) {
+                FoxUI.toast.show('请填写帐号!');
+                return
+            }
+            if ($('#upass').isEmpty()) {
+                FoxUI.toast.show('请填写密码!');
                 return
             }
             var data = {
                 'realname': $('#realname').val(),
                 'mobile': $('#mobile').val(),
                 'merchname': $('#merchname').val(),
+                'uname': $('#uname').val(),
+                'upass': $('#upass').val(),
                 'salecate': $('#salecate').val(),
                 'desc': $('#desc').val(),
                 'mdata': {}

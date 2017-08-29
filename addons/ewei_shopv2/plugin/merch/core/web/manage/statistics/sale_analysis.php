@@ -1,20 +1,18 @@
 <?php
-
-if (!defined('IN_IA')) {
+if (!(defined('IN_IA'))) 
+{
 	exit('Access Denied');
 }
-
-
 require EWEI_SHOPV2_PLUGIN . 'merch/core/inc/page_merch.php';
-class Sale_analysis_EweiShopV2Page extends MerchWebPage
+class Sale_analysis_EweiShopV2Page extends MerchWebPage 
 {
-	public function main()
+	public function main() 
 	{
-function sale_analysis_count($sql)
-{
-	$c = pdo_fetchcolumn($sql);
-	return intval($c);
-}
+		function sale_analysis_count($sql) 
+		{
+			$c = pdo_fetchcolumn($sql);
+			return intval($c);
+		}
 		global $_W;
 		global $_GPC;
 		$member_count = sale_analysis_count('select count(*) from ' . tablename('ewei_shop_member') . ' where uniacid=' . $_W['uniacid'] . ' and  openid in ( SELECT distinct openid from ' . tablename('ewei_shop_order') . '   WHERE uniacid = \'' . $_W['uniacid'] . '\' and merchid=\'' . $_W['merchid'] . '\'  )');
@@ -25,6 +23,4 @@ function sale_analysis_count($sql)
 		include $this->template('statistics/sale_analysis');
 	}
 }
-
-
 ?>

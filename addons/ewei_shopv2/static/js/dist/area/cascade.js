@@ -7,31 +7,47 @@
 //首先需要初始化
 var xmlDoc;
 var TopnodeList;
+var CityList;
 var citys;
 var countyNodes;
 var nodeindex = 0;
 var childnodeindex = 0;
+var new_area = 0;
+var open_street = 0;
+
 //获取xml文件
-function cascdeInit(v1,v2,v3,v4) {
+function cascdeInit(na,os,v1,v2,v3,v4,v5) {
     id1= "sel-provance";
     id2= "sel-city";
     id3= "sel-area";
+    id4= "sel-street";
 
-    if (v4) {
-        id1 += v4;
-        id2 += v4;
-        id3 += v4;
+    new_area = na;
+    open_street = os;
+
+    if (v5) {
+        id1 += v5;
+        id2 += v5;
+        id3 += v5;
+        id4 += v5;
     }
-    //alert("-"+id1+"-");return false;
 
     //打开xlmdocm文档
-    xmlDoc = loadXmlFile('../addons/ewei_shopv2/static/js/dist/area/Area.xml?v=3');
+    if (new_area == 1) {
+        var xmlfile = '../addons/ewei_shopv2/static/js/dist/area/AreaNew.xml?v=4';
+    } else {
+        var xmlfile = '../addons/ewei_shopv2/static/js/dist/area/Area.xml?v=4';
+    }
+
+    xmlDoc = loadXmlFile(xmlfile);
     var dropElement1 = document.getElementById(id1);
     var dropElement2 = document.getElementById(id2);
     var dropElement3 = document.getElementById(id3);
+    var dropElement4 = document.getElementById(id4);
     RemoveDropDownList(dropElement1);
     RemoveDropDownList(dropElement2);
     RemoveDropDownList(dropElement3);
+    RemoveDropDownList(dropElement4);
     if (window.ActiveXObject) {
         TopnodeList = xmlDoc.selectSingleNode("address").childNodes;
     }
@@ -71,7 +87,7 @@ function cascdeInit(v1,v2,v3,v4) {
                 }
                 dropElement2.add(option);
             }
-			selectcounty(v3,v4);
+            selectcounty(v3,v4,v5);
         }
     }
 }
@@ -79,16 +95,18 @@ function cascdeInit(v1,v2,v3,v4) {
 /*
 //依据省设置城市，县
 */
-function selectCity(v4) {
+function selectCity(v5) {
 
     id1= "sel-provance";
     id2= "sel-city";
     id3= "sel-area";
+    id4= "sel-street";
 
-    if (v4) {
-        id1 += v4;
-        id2 += v4;
-        id3 += v4;
+    if (v5) {
+        id1 += v5;
+        id2 += v5;
+        id3 += v5;
+        id4 += v5;
     }
     var dropElement1 = document.getElementById(id1);
     var name = dropElement1.options[dropElement1.selectedIndex].value;     
@@ -99,6 +117,7 @@ function selectCity(v4) {
     RemoveDropDownList(city);
     var citynodes;
     var countycodes;
+
     if (window.ActiveXObject) {
         citynodes = xmlDoc.selectSingleNode('//address/province [@name="' + name + '"]').childNodes;
     } else {
@@ -133,39 +152,112 @@ function selectCity(v4) {
                 dropElement3.add(option);
             }
         }
+    selectcounty(0,0,v5);
     }
 }
 /*
 //设置县,区
 */
-function selectcounty(v3,v4) {
+function selectcounty(v3,v4,v5) {
     id1= "sel-provance";
     id2= "sel-city";
     id3= "sel-area";
+    id4= "sel-street";
 
-    if (v4) {
-        id1 += v4;
-        id2 += v4;
-        id3 += v4;
+    if (v5) {
+        id1 += v5;
+        id2 += v5;
+        id3 += v5;
+        id4 += v5;
     }
 
     var dropElement1 = document.getElementById(id1);
     var dropElement2 = document.getElementById(id2);
     var name = dropElement2.options[dropElement2.selectedIndex].value;
-    var city = document.getElementById(id3);
-    var countys = TopnodeList[dropElement1.selectedIndex].getElementsByTagName("city")[dropElement2.selectedIndex].getElementsByTagName("county")
-    RemoveDropDownList(city);
-    for (var i = 0; i < countys.length; i++) {
-        var countyNode = countys[i];
-        var option = document.createElement("option");
-        option.value = countyNode.getAttribute("name");
-        option.text = countyNode.getAttribute("name");
-        if(v3==option.value){
-        	option.selected=true;
+    var dropElement3 = document.getElementById(id3);
+    var countys = TopnodeList[dropElement1.selectedIndex].getElementsByTagName("city")[dropElement2.selectedIndex].getElementsByTagName("county");
+
+    if (new_area == 1 && open_street == 1) {
+        var city_code = TopnodeList[dropElement1.selectedIndex].getElementsByTagName("city")[dropElement2.selectedIndex].getAttribute("code");
+        if (city_code) {
+            var left = city_code.substring(0,2);
+            var xmlUrl = '../addons/ewei_shopv2/static/js/dist/area/list/'+left+'/'+city_code+'.xml';
+            xmlCityDoc = loadXmlFile(xmlUrl);
+
+            if (window.ActiveXObject) {
+                CityList = xmlCityDoc.selectSingleNode("address").childNodes.childNodes;
+            } else {
+                CityList = xmlCityDoc.childNodes[0].getElementsByTagName("county");
+            }
         }
-        city.add(option);
+    }
+
+    RemoveDropDownList(dropElement3);
+    if (countys.length > 0) {
+        for (var i = 0; i < countys.length; i++) {
+            var countyNode = countys[i];
+            var option = document.createElement("option");
+            option.value = countyNode.getAttribute("name");
+            option.text = countyNode.getAttribute("name");
+            if(v3==option.value){
+                option.selected=true;
+            }
+            dropElement3.add(option);
+        }
+        if (new_area == 1 && open_street == 1) {
+            selectstreet(v4,v5);
+        }
+    }
+
+}
+
+function selectstreet(v4,v5) {
+    id1= "sel-provance";
+    id2= "sel-city";
+    id3= "sel-area";
+    id4= "sel-street";
+
+    if (v5) {
+        id1 += v5;
+        id2 += v5;
+        id3 += v5;
+        id4 += v5;
+    }
+
+    var dropElement1 = document.getElementById(id1);
+    var dropElement2 = document.getElementById(id2);
+    var name = dropElement2.options[dropElement2.selectedIndex].value;
+    var dropElement3 = document.getElementById(id3);
+    var dropElement4 = document.getElementById(id4);
+
+    var area = dropElement3.options[dropElement3.selectedIndex].value;
+    var area_code = TopnodeList[dropElement1.selectedIndex].getElementsByTagName("city")[dropElement2.selectedIndex].getElementsByTagName("county")[dropElement3.selectedIndex].getAttribute("code");
+
+    RemoveDropDownList(dropElement4);
+
+    if(CityList && CityList.length>0) {
+        for (var i = 0; i < CityList.length; i++) {
+            var county = CityList[i];
+            var county_code = county.getAttribute("code");
+
+            if(county_code == area_code){
+                var streetlist = county.getElementsByTagName("street");
+                for (var m = 0; m < streetlist.length; m++) {
+                    var street = streetlist[m];
+                    var option = document.createElement("option");
+                    option.value = street.getAttribute("name");
+                    option.text = street.getAttribute("name");
+                    if (v4 == option.value) {
+                        option.selected = true;
+                        nodeindex = m;
+                    }
+                    dropElement4.add(option);
+                }
+            }
+        }
     }
 }
+
 function RemoveDropDownList(obj) {
     if (obj) {
         var len = obj.options.length;

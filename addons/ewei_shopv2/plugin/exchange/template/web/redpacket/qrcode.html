@@ -5,7 +5,7 @@
                     <center>
                         <div class="col-sm-12">
                             {if $type<2}<img src="{$qrcode_url}" alt="" width="420px" height="420px">
-                            {else}<img src="{php echo webUrl('exchange/goods/qr',array('key'=>$key));}" alt="" width="420px" height="420px">
+                            {else}<img src="{php echo webUrl('exchange/goods/qr',array('key'=>$key,'id'=>$id,'codetype'=>1));}" alt="" width="420px" height="420px">
                             {/if}
                         </div>
                     </center>

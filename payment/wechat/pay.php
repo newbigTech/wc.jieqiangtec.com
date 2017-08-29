@@ -1,21 +1,20 @@
 <?php
 /**
  * [WeEngine System] Copyright (c) 2014 WE7.CC
- * WeEngine is NOT a free software, it under the license terms, visited http://www.zheyitianshi.com/ for more details.
+ * WeEngine is NOT a free software, it under the license terms, visited http://www.we7.cc/ for more details.
  */
 define('IN_MOBILE', true);
 require '../../framework/bootstrap.inc.php';
 require '../../app/common/bootstrap.app.inc.php';
 load()->app('common');
 load()->app('template');
+load()->model('payment');
 
 $sl = $_GPC['ps'];
+$payopenid = $_GPC['payopenid'];
 $params = @json_decode(base64_decode($sl), true);
 if($_GPC['done'] == '1') {
-	$sql = 'SELECT * FROM ' . tablename('core_paylog') . ' WHERE `plid`=:plid';
-	$pars = array();
-	$pars[':plid'] = $params['tid'];
-	$log = pdo_fetch($sql, $pars);
+	$log = pdo_get('core_paylog', array('plid' => $params['tid']));
 	if(!empty($log) && !empty($log['status'])) {
 		if (!empty($log['tag'])) {
 			$tag = iunserializer($log['tag']);
@@ -46,8 +45,7 @@ if($_GPC['done'] == '1') {
 	}
 }
 
-$sql = 'SELECT * FROM ' . tablename('core_paylog') . ' WHERE `plid`=:plid';
-$log = pdo_fetch($sql, array(':plid' => $params['tid']));
+$log = pdo_get('core_paylog', array('plid' => $params['tid']));
 if(!empty($log) && $log['status'] != '0') {
 	exit('这个订单已经支付成功, 不需要重复支付.');
 }
@@ -55,10 +53,21 @@ $auth = sha1($sl . $log['uniacid'] . $_W['config']['setting']['authkey']);
 if($auth != $_GPC['auth']) {
 	exit('参数传输错误.');
 }
-load()->model('payment');
-$_W['uniacid'] = intval($log['uniacid']);
-$_W['openid'] = intval($log['openid']);
+
 $setting = uni_setting($_W['uniacid'], array('payment'));
+
+if (!empty($_GPC['code'])) {
+	$proxy_pay_account = payment_proxy_pay_account();
+	$oauth = $proxy_pay_account->getOauthInfo($_GPC['code']);
+	if (!empty($oauth['openid'])) {
+		$log['openid'] = $oauth['openid'];
+		pdo_update('core_paylog', array('openid' => $oauth['openid']), array('plid' => $log['plid']));
+	}
+}
+
+$_W['uniacid'] = $log['uniacid'];
+$_W['openid'] = $log['openid'];
+
 if(!is_array($setting['payment'])) {
 	exit('没有设定支付参数.');
 }
@@ -67,6 +76,7 @@ $sql = 'SELECT `key`,`secret` FROM ' . tablename('account_wechats') . ' WHERE `a
 $row = pdo_fetch($sql, array(':acid' => $wechat['account']));
 $wechat['appid'] = $row['key'];
 $wechat['secret'] = $row['secret'];
+$wechat['openid'] = $payopenid;
 $params = array(
 	'tid' => $log['tid'],
 	'fee' => $log['card_fee'],
@@ -74,7 +84,12 @@ $params = array(
 	'title' => urldecode($params['title']),
 	'uniontid' => $log['uniontid'],
 );
-$wOpt = wechat_build($params, $wechat);
+if (intval($wechat['switch']) == 3 || intval($wechat['switch']) == 2) {
+	$wOpt = wechat_proxy_build($params, $wechat);
+} else {
+	unset($wechat['sub_mch_id']);
+	$wOpt = wechat_build($params, $wechat);
+}
 if (is_error($wOpt)) {
 	if ($wOpt['message'] == 'invalid out_trade_no' || $wOpt['message'] == 'OUT_TRADE_NO_USED') {
 		$id = date('YmdH');
@@ -87,21 +102,21 @@ if (is_error($wOpt)) {
 }
 ?>
 <script type="text/javascript">
-document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
-	WeixinJSBridge.invoke('getBrandWCPayRequest', {
-		'appId' : '<?php echo $wOpt['appId'];?>',
-		'timeStamp': '<?php echo $wOpt['timeStamp'];?>',
-		'nonceStr' : '<?php echo $wOpt['nonceStr'];?>',
-		'package' : '<?php echo $wOpt['package'];?>',
-		'signType' : '<?php echo $wOpt['signType'];?>',
-		'paySign' : '<?php echo $wOpt['paySign'];?>'
-	}, function(res) {
-		if(res.err_msg == 'get_brand_wcpay_request:ok') {
-			location.search += '&done=1';
-		} else {
-			//alert('启动微信支付失败, 请检查你的支付参数. 详细错误为: ' + res.err_msg);
-			history.go(-1);
-		}
-	});
-}, false);
+	document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+		WeixinJSBridge.invoke('getBrandWCPayRequest', {
+			'appId' : '<?php echo $wOpt['appId'];?>',
+			'timeStamp': '<?php echo $wOpt['timeStamp'];?>',
+			'nonceStr' : '<?php echo $wOpt['nonceStr'];?>',
+			'package' : '<?php echo $wOpt['package'];?>',
+			'signType' : '<?php echo $wOpt['signType'];?>',
+			'paySign' : '<?php echo $wOpt['paySign'];?>'
+		}, function(res) {
+			if(res.err_msg == 'get_brand_wcpay_request:ok') {
+				location.search += '&done=1';
+			} else {
+//				alert('启动微信支付失败, 请检查你的支付参数. 详细错误为: ' + res.err_msg);
+				history.go(-1);
+			}
+		});
+	}, false);
 </script>

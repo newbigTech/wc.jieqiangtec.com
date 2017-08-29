@@ -22,7 +22,23 @@ class Comment_EweiShopV2Page extends PluginMobileLoginPage
 		$openid = $_W['openid'];
 		$goodsid = intval($_GPC['goodsid']);
 		$logid = intval($_GPC['logid']);
-		$log = pdo_fetch('select log.id,log.status,log.goodsid,g.goodstype,g.type,log.iscomment,log.optionid,g.thumb,o.title as optiontitle,g.title' . "\n" . '                ,g.credit,g.money' . "\n" . '                from ' . tablename('ewei_shop_creditshop_log') . ' as log' . "\n" . '                left join ' . tablename('ewei_shop_creditshop_goods') . ' as g on g.id = log.goodsid' . "\n" . '                left join ' . tablename('ewei_shop_creditshop_option') . ' o on o.id=log.optionid' . "\n" . '                where log.uniacid = ' . $uniacid . ' and log.goodsid = ' . $goodsid . ' and log.id = ' . $logid . ' ');
+		$merch_plugin = p('merch');
+		$merch_data = m('common')->getPluginset('merch');
+		if ($merch_plugin && $merch_data['is_openmerch']) 
+		{
+			$is_openmerch = 1;
+		}
+		else 
+		{
+			$is_openmerch = 0;
+		}
+		$merchid = intval($_GPC['merchid']);
+		$condition = ' log.uniacid = ' . $uniacid . ' ';
+		if (0 < $merchid) 
+		{
+			$condition .= ' and g.merchid = ' . $merchid . ' ';
+		}
+		$log = pdo_fetch('select log.id,log.status,log.goodsid,g.goodstype,g.type,log.iscomment,log.optionid,g.thumb,o.title as optiontitle,g.title' . "\n" . '                ,g.credit,g.money' . "\n" . '                from ' . tablename('ewei_shop_creditshop_log') . ' as log' . "\n" . '                left join ' . tablename('ewei_shop_creditshop_goods') . ' as g on g.id = log.goodsid' . "\n" . '                left join ' . tablename('ewei_shop_creditshop_option') . ' o on o.id=log.optionid' . "\n" . '                where ' . $condition . ' and log.goodsid = ' . $goodsid . ' and log.id = ' . $logid . ' ');
 		$log = set_medias($log, 'thumb');
 		if (($log['money'] - intval($log['money'])) == 0) 
 		{
@@ -74,7 +90,13 @@ class Comment_EweiShopV2Page extends PluginMobileLoginPage
 		$openid = $_W['openid'];
 		$uniacid = $_W['uniacid'];
 		$logid = intval($_GPC['logid']);
-		$log = pdo_fetch('select id,status,iscomment,logno from ' . tablename('ewei_shop_creditshop_log') . ' where id=:id and uniacid=:uniacid and openid=:openid limit 1', array(':id' => $logid, ':uniacid' => $uniacid, ':openid' => $openid));
+		$merchid = intval($_GPC['merchid']);
+		$condition = ' and uniacid=:uniacid ';
+		if (0 < $merchid) 
+		{
+			$condition .= ' and merchid = ' . $merchid . ' ';
+		}
+		$log = pdo_fetch('select id,status,iscomment,logno from ' . tablename('ewei_shop_creditshop_log') . ' where id=:id ' . $condition . ' and openid=:openid limit 1', array(':id' => $logid, ':uniacid' => $uniacid, ':openid' => $openid));
 		if (empty($log)) 
 		{
 			show_json(0, '兑换记录未找到');

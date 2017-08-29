@@ -16,7 +16,7 @@ class Rank_EweiShopV2Page extends PluginWebPage
 			{
 				foreach ($_GPC['id'] as $k => $v ) 
 				{
-					$temp = array('nickname' => trim($_GPC['nickname'][$k]), 'commission_total' => intval($_GPC['commission_total'][$k]), 'avatar' => trim($_GPC['avatar'][$k]));
+					$temp = array('nickname' => trim($_GPC['nickname'][$k]), 'commission_total' => floatval($_GPC['commission_total'][$k]), 'avatar' => trim($_GPC['avatar'][$k]));
 					array_push($content, $temp);
 				}
 			}

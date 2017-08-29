@@ -15,12 +15,42 @@ class Lists_EweiShopV2Page extends CreditshopMobilePage
 		$shop = m('common')->getSysset('shop');
 		$uniacid = $_W['uniacid'];
 		$cateid = intval($_GPC['cate']);
+		$merch_plugin = p('merch');
+		$merch_data = m('common')->getPluginset('merch');
+		if ($merch_plugin && $merch_data['is_openmerch']) 
+		{
+			$is_openmerch = 1;
+		}
+		else 
+		{
+			$is_openmerch = 0;
+		}
 		if (!(empty($cateid))) 
 		{
 			$cate = pdo_fetch('select id,name from ' . tablename('ewei_shop_creditshop_category') . ' where id=:id and uniacid=:uniacid limit 1', array(':id' => $cateid, ':uniacid' => $uniacid));
 		}
-		$category = pdo_fetchall('select id,name,thumb,isrecommand from ' . tablename('ewei_shop_creditshop_category') . "\n\t\t\t\t\t\t" . 'where uniacid=:uniacid and  enabled=1 order by displayorder desc', array(':uniacid' => $uniacid));
-		$category = set_medias($category, 'thumb');
+		$category = array();
+		if (0 < intval($_GPC['merchid'])) 
+		{
+			$merch_category = p('merch')->getSet('merch_creditshop_category', $_GPC['merchid']);
+			if (!(empty($merch_category))) 
+			{
+				foreach ($merch_category as $index => $row ) 
+				{
+					if (0 < $row) 
+					{
+						$category[$index] = pdo_fetchall('select id,name,thumb,isrecommand from ' . tablename('ewei_shop_creditshop_category') . "\n\t\t\t\t\t\t" . 'where id = ".$index." and uniacid=:uniacid and  enabled=1 order by displayorder desc', array(':uniacid' => $uniacid));
+						$category[$index] = set_medias($category, 'thumb');
+					}
+				}
+			}
+		}
+		else 
+		{
+			$category = pdo_fetchall('select id,name,thumb,isrecommand from ' . tablename('ewei_shop_creditshop_category') . ' where uniacid=:uniacid and  enabled=1 order by displayorder desc', array(':uniacid' => $uniacid));
+			$category = set_medias($category, 'thumb');
+		}
+		array_values($category);
 		$_W['shopshare'] = array('title' => $this->set['share_title'], 'imgUrl' => tomedia($this->set['share_icon']), 'link' => mobileUrl('creditshop', array(), true), 'desc' => $this->set['share_desc']);
 		$com = p('commission');
 		if ($com) 
@@ -53,10 +83,15 @@ class Lists_EweiShopV2Page extends CreditshopMobilePage
 		$shop = m('common')->getSysset('shop');
 		$uniacid = $_W['uniacid'];
 		$cateid = intval($_GPC['cate']);
+		$merchid = intval($_GPC['merchid']);
 		$cate = pdo_fetch('select id,name from ' . tablename('ewei_shop_creditshop_category') . ' where id=:id and uniacid=:uniacid limit 1', array(':id' => $cateid, ':uniacid' => $uniacid));
 		$pindex = max(1, intval($_GPC['page']));
 		$psize = 10;
 		$condition = ' and uniacid = :uniacid and status=1 and deleted=0 ';
+		if (0 < $merchid) 
+		{
+			$condition .= ' and merchid = ' . $merchid . ' ';
+		}
 		$params = array(':uniacid' => $_W['uniacid']);
 		if (!(empty($cate))) 
 		{

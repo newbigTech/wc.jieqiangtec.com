@@ -117,6 +117,31 @@ class Template_EweiShopV2Page extends PluginWebPage
 		$tpkw = $_GPC['tpkw'];
 		include $this->template();
 	}
+	public function check() 
+	{
+		global $_W;
+		global $_GPC;
+		$id = intval($_GPC['id']);
+		if ($_W['ispost']) 
+		{
+			$check_openid = $_GPC['check_openid'];
+			if (empty($check_openid)) 
+			{
+				show_json(0, array('message' => '请选择发送校验信息用户!'));
+			}
+			$member = pdo_fetch('select *  from ' . tablename('ewei_shop_member') . ' where openid=:openid and uniacid = :uniacid ', array(':openid' => $check_openid, ':uniacid' => $_W['uniacid']));
+			$ref = $this->sendTplNotice($check_openid, $id, $member['nickname']);
+			if (is_error($ref)) 
+			{
+				show_json(0, '发送失败,请检查模板信息是否正确!');
+			}
+			else 
+			{
+				show_json(1, '发送成功!');
+			}
+		}
+		include $this->template();
+	}
 	public function gettemplateid() 
 	{
 		global $_W;
@@ -190,6 +215,34 @@ class Template_EweiShopV2Page extends PluginWebPage
 			show_json(0, $result['errmsg']);
 		}
 		show_json(1, $result);
+	}
+	public function sendTplNotice($openid, $templateid, $nickname) 
+	{
+		global $_W;
+		$member = m('member')->getMember($openid);
+		$result = false;
+		if (!(empty($templateid))) 
+		{
+			$template = pdo_fetch('SELECT * FROM ' . tablename('ewei_message_mass_template') . ' WHERE id=:id and uniacid=:uniacid ', array(':id' => $templateid, ':uniacid' => $_W['uniacid']));
+			$data = iunserializer($template['data']);
+			$msg = array( 'first' => array('value' => $template['first'], 'color' => $template['firstcolor']), 'remark' => array('value' => $template['remark'], 'color' => $template['remarkcolor']) );
+			$i = 0;
+			while ($i < count($data)) 
+			{
+				if (stripos($data[$i]['value'], '[商城名称]') !== false) 
+				{
+					$data[$i]['value'] = str_replace('[商城名称]', $_W['shopset']['shop']['name'], $data[$i]['value']);
+				}
+				if (stripos($data[$i]['value'], '[粉丝昵称]') !== false) 
+				{
+					$data[$i]['value'] = str_replace('[粉丝昵称]', $nickname, $data[$i]['value']);
+				}
+				$msg[$data[$i]['keywords']] = array('value' => $data[$i]['value'], 'color' => $data[$i]['color']);
+				++$i;
+			}
+			$result = m('message')->sendTplNotice($openid, $template['template_id'], $msg, $template['url']);
+		}
+		return $result;
 	}
 }
 ?>

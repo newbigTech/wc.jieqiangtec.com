@@ -345,9 +345,8 @@ class Pay_EweiShopV2Page extends AppMobilePage
 			$pay_result = m('order')->payResult($ret);
 			m('order')->setOrderPayType($order['id'], 1);
 			$this->success($orderid);
-			return;
 		}
-		if ($type == 'wechat') 
+		else if ($type == 'wechat') 
 		{
 			if ((empty($set['pay']['weixin']) && is_weixin()) || (empty($_W['shopset']['wap']['payment']['wechat']) && is_h5app())) 
 			{

@@ -271,13 +271,13 @@
 
         <td  rowspan="{php echo count($item['goods'])}" style='text-align:center' >
             {ifp 'member.member.edit'}
-            <a href="{php echo webUrl('member/list/detail',array('id'=>$item['mid']))}"> {$item['m1']['nickname']}</a>
+            <a href="{php echo webUrl('member/list/detail',array('id'=>$item['m1']['id']))}"> {$item['m1']['nickname']}</a>
             {else}
             {$item['m1']['nickname']}
             {/if}
 
             <br/>
-            {$item['addressdata']['realname']}<br/>{$item['addressdata']['mobile']}</td>
+            {$item['m1']['realname']}<br/>{$item['m1']['mobile']}</td>
         </td>
 
         <td   rowspan="{php echo count($item['goods'])}" class='ops' style='line-height:20px;text-align:center' ><span class='text-{$item['statuscss']}'>{$item['status']}</span><br />

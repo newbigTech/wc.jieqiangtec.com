@@ -1,7 +1,7 @@
 {template '_header'}
 <div class="page-heading"> 
     <span class='pull-right'>
-        {ifp 'merch.category.add_swipe'}
+        {ifp 'merch.category.swipe.add'}
         	<a class='btn btn-primary btn-sm' href="{php echo webUrl('merch/category/add_swipe')}"><i class='fa fa-plus'></i> 添加商户分类幻灯</a>
         {/if}
     </span>
@@ -18,11 +18,11 @@
         <div class="col-sm-4">
             <div class="input-group-btn">
                 <button class="btn btn-default btn-sm"  type="button" data-toggle='refresh'><i class='fa fa-refresh'></i></button>
-                {ifp 'merch.category.swipe_edit'}
+                {ifp 'merch.category.swipe.edit'}
                 <button class="btn btn-default btn-sm" type="button" data-toggle='batch' data-href="{php echo webUrl('merch/category/status_swipe',array('status'=>1))}"><i class='fa fa-circle'></i> 启用</button>
                 <button class="btn btn-default btn-sm" type="button" data-toggle='batch'  data-href="{php echo webUrl('merch/category/status_swipe',array('status'=>0))}"><i class='fa fa-circle-o'></i> 禁用</button>
                 {/if}
-                {ifp 'merch.category.swipe_delete'}
+                {ifp 'merch.category.swipe.delete'}
                 <button class="btn btn-default btn-sm" type="button" data-toggle='batch-remove' data-confirm="确认要删除?" data-href="{php echo webUrl('merch/category/delete_swipe')}"><i class='fa fa-trash'></i> 删除</button>
                 {/if}
             </div>
@@ -71,7 +71,7 @@
             </td>
             <td>
                 <span class='label {if $row['status']==1}label-success{else}label-default{/if}'
-                {ifp 'merch.category.swipe_edit'}
+                {ifp 'merch.category.sswipe.edit'}
                 data-toggle='ajaxSwitch'
                 data-switch-value='{$row['status']}'
                 data-switch-value0='0|禁用|label label-default|{php echo webUrl('merch/category/status_swipe',array('status'=>1,'id'=>$row['id']))}'
@@ -82,13 +82,13 @@
             </td>
             <td style="text-align:left;">
 
-                {ifp 'merch.category.swipe_view|merch.category.swipe_edit'}
+                {ifp 'merch.category.swipe.view|merch.category.swipe.edit'}
                 <a href="{php echo webUrl('merch/category/edit_swipe', array('id' => $row['id']))}" class="btn btn-default btn-sm" >
                     <i class='fa fa-edit'></i> {ifp 'merch.group.edit'}修改{else}查看{/if}
                 </a>
                 {/if}
 
-                {ifp 'merch.category.swipe_delete'}
+                {ifp 'merch.category.swipe.delete'}
                 <a data-toggle='ajaxRemove' href="{php echo webUrl('merch/category/delete_swipe', array('id' => $row['id']))}"class="btn btn-default btn-sm" data-confirm='确认要删除此幻灯片吗?'><i class="fa fa-trash"></i> 删除</a>
                 {/if}
 

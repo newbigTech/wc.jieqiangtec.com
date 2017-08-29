@@ -1,16 +1,20 @@
 <?php
-
+/**
+ * [WeEngine System] Copyright (c) 2014 WE7.CC
+ * WeEngine is NOT a free software, it under the license terms, visited http://www.we7.cc/ for more details.
+ */
 defined('IN_IA') or exit('Access Denied');
-$dos = array( 'detail');
-$do = in_array($do, $dos) ? $do : 'list';
 load()->model('article');
 load()->model('user');
+
+$dos = array( 'detail', 'list');
+$do = in_array($do, $dos) ? $do : 'list';
 
 if($do == 'detail') {
 	$id = intval($_GPC['id']);
 	$notice = article_notice_info($id);
 	if(is_error($notice)) {
-		message('公告不存在或已删除', referer(), 'error');
+		itoast('公告不存在或已删除', referer(), 'error');
 	}
 	$_W['page']['title'] = $notice['title'] . '-公告列表';
 	pdo_query('UPDATE ' . tablename('article_notice') . ' SET click = click + 1 WHERE id = :id', array(':id' => $id));

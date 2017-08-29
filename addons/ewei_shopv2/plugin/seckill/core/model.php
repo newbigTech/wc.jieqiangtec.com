@@ -8,6 +8,10 @@ class SeckillModel extends PluginModel
 	public function get_prefix() 
 	{
 		global $_W;
+		if (empty($_W['account']['key'])) 
+		{
+			$_W['account']['key'] = pdo_fetchcolumn('SELECT `key` FROM ' . tablename('account_wechats') . ' WHERE uniacid=:uniacid', array(':uniacid' => $_W['uniacid']));
+		}
 		return 'ewei_shopv2_' . $_W['setting']['site']['key'] . '_' . $_W['uniacid'] . '_' . $_W['account']['key'] . '_seckill_';
 	}
 	public function setTaskCache($id) 
@@ -520,6 +524,21 @@ class SeckillModel extends PluginModel
 		$totalmaxbuy = 0;
 		if (!(empty($timegoods))) 
 		{
+			$opswi = false;
+			if (!(empty($optionid))) 
+			{
+				foreach ($timegoods as $tk => $tv ) 
+				{
+					if ($tv['optionid'] == $optionid) 
+					{
+						$opswi = true;
+					}
+				}
+				if (!($opswi)) 
+				{
+					return false;
+				}
+			}
 			$roomid = $timegoods[0]['roomid'];
 			$total = $timegoods[0]['total'];
 			$price = $timegoods[0]['price'];
@@ -632,11 +651,8 @@ class SeckillModel extends PluginModel
 			$realprice = round($realprice - $item['deductcredit2'], 2);
 			if (0 < $realprice) 
 			{
-				if (empty($item['isborrow'])) 
-				{
-					$result = m('finance')->refund($item['openid'], $item['ordersn'], $refundno, $realprice * 100, $realprice * 100, (!(empty($item['apppay'])) ? true : false));
-				}
-				else 
+				$result = m('finance')->refund($item['openid'], $item['ordersn'], $refundno, $realprice * 100, $realprice * 100, (!(empty($item['apppay'])) ? true : false));
+				if (is_error($result)) 
 				{
 					$result = m('finance')->refundBorrow($item['borrowopenid'], $item['ordersn'], $refundno, $realprice * 100, $realprice * 100, (!(empty($item['ordersn2'])) ? 1 : 0));
 				}
@@ -688,7 +704,12 @@ class SeckillModel extends PluginModel
 		{
 			return '';
 		}
-		$goods = pdo_fetchall('select  uniacid, total , goodsid,optionid,seckill_timeid,seckill_taskid from  ' . tablename('ewei_shop_order_goods') . ' where orderid=' . $order['id'] . ' and  seckill=1 ');
+		if (intval($order['status']) < 0) 
+		{
+			$this->orderRefund($order);
+			return 'refund';
+		}
+		$goods = pdo_fetchall('select uniacid,total,goodsid,optionid,seckill_timeid,seckill_taskid from  ' . tablename('ewei_shop_order_goods') . ' where orderid=' . $order['id'] . ' and  seckill=1 ');
 		foreach ($goods as $g ) 
 		{
 			$key = $redis_prefix . 'queue_' . $date . '_' . $g['seckill_taskid'] . '_' . $g['seckill_timeid'] . '_' . $g['goodsid'] . '_' . $g['optionid'];

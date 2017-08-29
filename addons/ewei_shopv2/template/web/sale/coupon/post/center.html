@@ -3,6 +3,26 @@
     .a-inline{margin-top: 6px}
     .input-sm{padding:2px;}
 </style>
+
+<div class="form-group">
+    <label class="col-sm-2 control-label">是否创建直接领取链接</label>
+    <div class="col-sm-9 col-xs-12" >
+        {ife 'sale.coupon' $item}
+        <label class="radio-inline">
+            <input type="radio" name="quickget" value="0" {if $item['quickget'] == 0}checked="true"{/if}  onclick="$('.quickget').hide()"/> 不可以
+        </label>
+        <label class="radio-inline">
+            <input type="radio" name="quickget" value="1" {if $item['quickget'] == 1}checked="true"{/if} onclick="$('.quickget').show()" /> 可以
+        </label>
+
+        <span class='help-block'>会员是否可以通过链接直接获取优惠券.注意!!!此功能无法与支付与积分兑换优惠券同时使用!!!</span>
+
+        {else} <div class='form-control-static'>
+        {if $item['quickget']==1}可以{else}不可以{/if}
+    </div>
+        {/if}
+    </div>
+</div>
 <div class="form-group">
     <label class="col-sm-2 control-label">加入领券中心</label>
     <div class="col-sm-9 col-xs-12" >
@@ -144,14 +164,14 @@
         <label class="col-sm-2 control-label label-italic">会员等级</label>
         <div class="col-sm-9 col-xs-12">
             {ife 'sale.coupon' $item}
-            <label class="checkbox-inline"><input type="checkbox"  class="checkall" name="limitmemberlevels[]" value="0" {if in_array("0",$limitmemberlevels)} checked="true"  {/if}  /> {php echo empty($shop['levelname'])?'普通等级':$shop['levelname']}</label>
+            <label class="checkbox-inline"><input type="checkbox"  class="checkall" name="limitmemberlevels[]" value="0" {if !empty($limitmemberlevels)&&in_array("0",$limitmemberlevels)} checked="true"  {/if}  /> {php echo empty($shop['levelname'])?'普通等级':$shop['levelname']}</label>
             {loop $levels $level}
-            <label class="checkbox-inline"><input type="checkbox"  class="checkall" name="limitmemberlevels[]" value="{$level['id']}"  {if in_array( $level['id'] , $limitmemberlevels)} checked="true"  {/if}  /> {$level['levelname']}</label>
+            <label class="checkbox-inline"><input type="checkbox"  class="checkall" name="limitmemberlevels[]" value="{$level['id']}"  {if !empty($limitmemberlevels)&&in_array( $level['id'] , $limitmemberlevels)} checked="true"  {/if}  /> {$level['levelname']}</label>
             {/loop}
             {else}
-            {if in_array("0",$limitmemberlevels)} {php echo  empty($shop['levelname'])?'普通等级':$shop['levelname']}  {/if}&nbsp;&nbsp;
+            {if  !empty($limitmemberlevels)&&in_array("0",$limitmemberlevels)} {php echo  empty($shop['levelname'])?'普通等级':$shop['levelname']}  {/if}&nbsp;&nbsp;
             {loop $levels $level}
-            {if  in_array($level['id'] , $limitmemberlevels)}
+            {if   !empty($limitmemberlevels)&&in_array($level['id'] , $limitmemberlevels)}
             {php echo $level['levelname']}&nbsp;&nbsp;
             {/if}
             {/loop}
@@ -164,14 +184,14 @@
         <label class="col-sm-2 control-label label-italic">分销商等级</label>
         <div class="col-sm-9 col-xs-12">
             {ife 'sale.coupon' $item}
-            <label class="checkbox-inline"><input type="checkbox"  class="checkall" name="limitagentlevels[]" value="0" {if in_array("0",$limitagentlevels)} checked="true"  {/if}  /> {php echo empty($plugin_com_set['levelname'])?'普通等级':$plugin_com_set['levelname']}</label>
+            <label class="checkbox-inline"><input type="checkbox"  class="checkall" name="limitagentlevels[]" value="0" {if !empty($limitagentlevels)&&in_array("0",$limitagentlevels)} checked="true"  {/if}  /> {php echo empty($plugin_com_set['levelname'])?'普通等级':$plugin_com_set['levelname']}</label>
             {loop $agentlevels $level}
-            <label class="checkbox-inline"><input type="checkbox"  class="checkall" name="limitagentlevels[]" value="{$level['id']}"  {if in_array( $level['id'] , $limitagentlevels)} checked="true"  {/if}  /> {$level['levelname']}</label>
+            <label class="checkbox-inline"><input type="checkbox"  class="checkall" name="limitagentlevels[]" value="{$level['id']}"  {if !empty($limitagentlevels)&&in_array( $level['id'] , $limitagentlevels)} checked="true"  {/if}  /> {$level['levelname']}</label>
             {/loop}
             {else}
-            {if in_array("0",$limitagentlevels)} {php echo empty($plugin_com_set['levelname'])?'普通等级':$plugin_com_set['levelname']}  {/if}&nbsp;&nbsp;
+            {if !empty($limitagentlevels)&&in_array("0",$limitagentlevels)} {php echo empty($plugin_com_set['levelname'])?'普通等级':$plugin_com_set['levelname']}  {/if}&nbsp;&nbsp;
             {loop $agentlevels $level}
-            {if  in_array( $level['id'] , $limitagentlevels)}
+            {if  !empty($limitagentlevels)&&in_array( $level['id'] , $limitagentlevels)}
             {php echo $level['levelname']}&nbsp;&nbsp;
             {/if}
             {/loop}
@@ -185,14 +205,14 @@
         <label class="col-sm-2 control-label label-italic">股东等级</label>
         <div class="col-sm-9 col-xs-12">
             {ife 'sale.coupon' $item}
-                <label class="checkbox-inline"><input type="checkbox"  class="checkall" name="limitpartnerlevels[]" value="0" {if in_array("0",$limitpartnerlevels)} checked="true"  {/if}  /> {php echo empty($plugin_globonus_set['levelname'])?'普通等级':$plugin_globonus_set['levelname']}</label>
+                <label class="checkbox-inline"><input type="checkbox"  class="checkall" name="limitpartnerlevels[]" value="0" {if !empty($limitpartnerlevels)&&in_array("0",$limitpartnerlevels)} checked="true"  {/if}  /> {php echo empty($plugin_globonus_set['levelname'])?'普通等级':$plugin_globonus_set['levelname']}</label>
                 {loop $partnerlevels $level}
-                    <label class="checkbox-inline"><input type="checkbox"  class="checkall" name="limitpartnerlevels[]" value="{$level['id']}"  {if in_array( $level['id'] , $limitpartnerlevels)} checked="true"  {/if}  /> {$level['levelname']}</label>
+                    <label class="checkbox-inline"><input type="checkbox"  class="checkall" name="limitpartnerlevels[]" value="{$level['id']}"  {if  !empty($limitpartnerlevels)&&in_array( $level['id'] , $limitpartnerlevels)} checked="true"  {/if}  /> {$level['levelname']}</label>
                 {/loop}
             {else}
-                {if in_array("0",$limitpartnerlevels)} {php echo empty($plugin_globonus_set['levelname'])?'普通等级':$plugin_globonus_set['levelname']}  {/if}&nbsp;&nbsp;
+                {if !empty($limitpartnerlevels)&&in_array("0",$limitpartnerlevels)} {php echo empty($plugin_globonus_set['levelname'])?'普通等级':$plugin_globonus_set['levelname']}  {/if}&nbsp;&nbsp;
                 {loop $partnerlevels $level}
-                    {if  in_array( $level['id'] , $limitpartnerlevels)}
+                    {if  !empty($limitpartnerlevels)&&in_array( $level['id'] , $limitpartnerlevels)}
                         {php echo $level['levelname']}&nbsp;&nbsp;
                     {/if}
                 {/loop}
@@ -206,14 +226,14 @@
         <label class="col-sm-2 control-label label-italic">区域代理等级</label>
         <div class="col-sm-9 col-xs-12">
             {ife 'sale.coupon' $item}
-                <label class="checkbox-inline"><input type="checkbox"  class="checkall"  name="limitaagentlevels[]" value="0" {if in_array("0",$limitaagentlevels)} checked="true"  {/if}  /> {php echo empty($plugin_abonus_set['levelname'])?'普通等级':$plugin_abonus_set['levelname']}</label>
+                <label class="checkbox-inline"><input type="checkbox"  class="checkall"  name="limitaagentlevels[]" value="0" {if !empty($limitaagentlevels)&&in_array("0",$limitaagentlevels)} checked="true"  {/if}  /> {php echo empty($plugin_abonus_set['levelname'])?'普通等级':$plugin_abonus_set['levelname']}</label>
                 {loop $aagentlevels $level}
-                    <label class="checkbox-inline"><input type="checkbox"   class="checkall" name="limitaagentlevels[]" value="{$level['id']}"  {if in_array( $level['id'] , $limitaagentlevels)} checked="true"  {/if}  /> {$level['levelname']}</label>
+                    <label class="checkbox-inline"><input type="checkbox"   class="checkall" name="limitaagentlevels[]" value="{$level['id']}"  {if !empty($limitaagentlevels)&&in_array( $level['id'] , $limitaagentlevels)} checked="true"  {/if}  /> {$level['levelname']}</label>
                 {/loop}
             {else}
-            {if in_array("0",$limitaagentlevels)} {php echo empty($plugin_abonus_set['levelname'])?'普通等级':$plugin_abonus_set['levelname']}  {/if}&nbsp;&nbsp;
+            {if  !empty($limitaagentlevels)&&in_array("0",$limitaagentlevels)} {php echo empty($plugin_abonus_set['levelname'])?'普通等级':$plugin_abonus_set['levelname']}  {/if}&nbsp;&nbsp;
                 {loop $aagentlevels $level}
-                    {if  in_array( $level['id'] , $limitaagentlevels)}
+                    {if   !empty($limitaagentlevels)&&in_array( $level['id'] , $limitaagentlevels)}
                         {php echo $level['levelname']}&nbsp;&nbsp;
                     {/if}
                 {/loop}
