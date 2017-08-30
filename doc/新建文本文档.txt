@@ -1,0 +1,22 @@
+http://wx.adjyc.com/web/index.php?c=user&a=profile&
+admin
+admin0830
+
+
+adjyc
+adjyc888
+
+
+jieqiang
+jieqiang888
+
+
+
+http://wx.adjyc.com/web/index.php?c=system&a=updatecache&
+
+
+INSERT INTO `ims_users` VALUES ('1', '0', 'admin', '22b31f04dd8b4cd4e4c087ad634e2fb7ddc96f83', '0cdc7671', '0', '0', '1504111321', '', '1504111340', '27.154.183.97', '', '0', '0');
+
+INSERT INTO `ims_users`																			    VALUES ('1', '0', 'admin', '22b31f04dd8b4cd4e4c087ad634e2fb7ddc96f83', '0cdc7671', '0', '0', '1504111321', '', '1504111340', '27.154.183.97', '', '0', '0');
+
+INSERT INTO `ims_users` (`uid`, `groupid`, `username`, `password`, `salt`, `type`, `status`, `joindate`, `joinip`, `lastvisit`, `lastip`, `remark`, `starttime`, `endtime`) VALUES ('1', '0', 'admin', 'a6f70742794a7674e6ebc45a30c9440e87e2686a', '22be8259', '0', '0', '1504027711', '', '1504102601', '27.154.183.97', '', '0', '0');
