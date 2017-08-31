@@ -3,6 +3,8 @@
  * [WeEngine System] Copyright (c) 2014 WE7.CC
  * WeEngine is NOT a free software, it under the license terms, visited http://www.we7.cc/ for more details.
  */
+
+// var_dump('TODO jieqiangtest 111');exit;
 require './framework/bootstrap.inc.php';
 $host = $_SERVER['HTTP_HOST'];
 if (!empty($host)) {
