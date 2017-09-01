@@ -22,4 +22,9 @@ define('EWEI_SHOPV2_DEBUG', true);
 !(defined('EWEI_SHOPV2_PREFIX')) && define('EWEI_SHOPV2_PREFIX', 'ewei_shop_');
 define('EWEI_SHOPV2_PLACEHOLDER', '../addons/ewei_shopv2/static/images/placeholder.png');
 
+// 请求接口
+//!defined('CPS_API') && define('CPS_API', 'http://cps.adjyc.com?m=desk&a=buy');
+// 请求接口
+!defined('CPS_API') && define('CPS_API', 'http://cps.adjyc.com');
+
 ?>

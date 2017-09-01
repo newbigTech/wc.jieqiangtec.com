@@ -575,6 +575,15 @@ class Detail_EweiShopV2Page extends MobilePage
 		$mid = intval($_GPC['mid']);
 		$opencommission = false;
 
+		// 推广信息存入session
+		if (empty($_SESSION['prom']['sid'])){
+			$_SESSION['prom'] = $_GET;
+		}else{
+			if (($_GET['item_id']) && ($_SESSION['prom']['item_id'] !== $_GET['item_id']) ){
+				$_SESSION['prom'] = $_GET;
+			}
+		}
+
 		if (p('commission')) {
 			if (empty($member['agentblack'])) {
 				$cset = p('commission')->getSet();

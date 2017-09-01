@@ -154,7 +154,17 @@ class DB {
 		$starttime = microtime();
 		$statement = $this->prepare($sql);
 		$result = $statement->execute($params);
-		if(PDO_DEBUG) {
+
+        foreach ($params as $key=>$val){
+            $arr1[] = $key;
+            $arr2[] = '\''.$val.'\'';
+        }
+        $sql2 = str_replace($arr1,$arr2,$sql);
+        WeUtility::logging('TODO debug2',  array('file'=>'D:\www\users\wd2.jieqiangtec.com\framework\class\db.class.php fetch($sql, $params = array()) ','sql2'=>$sql2,'$params'=>$params));
+//        WeUtility::logging('TODO debug2',  array('file'=>'D:\www\users\wd2.jieqiangtec.com\framework\class\db.class.php fetch($sql, $params = array()) ','sql2'=>$sql2,'sql'=>$sql,'$params'=>$params));
+
+
+        if(PDO_DEBUG) {
 			$info = array();
 			$info['sql'] = $sql;
 			$info['params'] = $params;

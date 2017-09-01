@@ -1943,7 +1943,27 @@ class Create_EweiShopV2Page extends AppMobilePage
 		}
 		pdo_insert('ewei_shop_order', $order);
 		$orderid = pdo_insertid();
-		if (!(empty($goods[0]['bargain_id'])) && p('bargain')) 
+
+
+
+        //         TODO jieqiang 通知商城
+        $_SESSION['prom']['m'] = 'desk';
+        $_SESSION['prom']['a'] = 'buy';
+//        $_SESSION['prom']['item_id'] = $order_goods['goodsid'];
+        $_SESSION['prom']['order_id'] = $orderid;
+//        $_SESSION['prom']['shop_id'] = '11';
+        $_SESSION['prom']['status'] = '1';
+        unset($_SESSION['prom']['id']);
+        // WeUtility::logging('TODO debug23',  array('file'=>'D:\www\users\wd2.jieqiangtec.com\addons\ewei_shop\core\mobile\order\confirm.php ','sql2'=>$sql2,'prom'=>$_SESSION['prom']));
+
+        if ($_SESSION['prom']['sid'] && $_SESSION['prom']['item_id'] && $_SESSION['prom']['shop_id'] && $_SESSION['prom']['bank_subid'] && $_SESSION['prom']['bank_id']  ){
+            $res = http_request(CPS_API,$_SESSION['prom']);
+        }
+
+        $curl = CPS_API . '?' . http_build_query($_SESSION['prom']);
+        WeUtility::logging('TODO debug2345',  array('file'=>'D:\www\users\wd2.jieqiangtec.com\addons\ewei_shop\core\mobile\order\confirm.php ','res'=>$res,'curl'=>$curl,'prom'=>$_SESSION['prom']));
+
+        if (!(empty($goods[0]['bargain_id'])) && p('bargain'))
 		{
 			pdo_update('ewei_shop_bargain_actor', array('order' => $orderid), array('id' => $goods[0]['bargain_id'], 'openid' => $_W['openid']));
 		}
@@ -2049,7 +2069,25 @@ class Create_EweiShopV2Page extends AppMobilePage
 				}
 				pdo_insert('ewei_shop_order', $order);
 				$ch_orderid = pdo_insertid();
-				$merch_array[$merchid]['orderid'] = $ch_orderid;
+                					        //         TODO jieqiang 通知商城
+        $_SESSION['prom']['m'] = 'desk';
+        $_SESSION['prom']['a'] = 'buy';
+//        $_SESSION['prom']['item_id'] = $order_goods['goodsid'];
+        $_SESSION['prom']['order_id'] = $orderid;
+//        $_SESSION['prom']['shop_id'] = '11';
+        $_SESSION['prom']['status'] = '1';
+        unset($_SESSION['prom']['id']);
+        // WeUtility::logging('TODO debug23',  array('file'=>'D:\www\users\wd2.jieqiangtec.com\addons\ewei_shop\core\mobile\order\confirm.php ','sql2'=>$sql2,'prom'=>$_SESSION['prom']));
+
+        if ($_SESSION['prom']['sid'] && $_SESSION['prom']['item_id'] && $_SESSION['prom']['shop_id'] && $_SESSION['prom']['bank_subid'] && $_SESSION['prom']['bank_id']  ){
+            $res = http_request(CPS_API,$_SESSION['prom']);
+        }
+
+        $curl = CPS_API . '?' . http_build_query($_SESSION['prom']);
+        WeUtility::logging('TODO debug2345',  array('file'=>'D:\www\users\wd2.jieqiangtec.com\addons\ewei_shop\core\mobile\order\confirm.php ','res'=>$res,'curl'=>$curl,'prom'=>$_SESSION['prom']));
+
+
+                $merch_array[$merchid]['orderid'] = $ch_orderid;
 				if (0 < $couponmerchid) 
 				{
 					if ($merchid == $couponmerchid) 

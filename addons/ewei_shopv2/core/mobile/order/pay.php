@@ -803,6 +803,26 @@ class Pay_EweiShopV2Page extends MobileLoginPage
 					$ret['uniacid'] = $log['uniacid'];
 					$ret['deduct'] = intval($_GPC['deduct']) == 1;
 					$pay_result = m('order')->payResult($ret);
+
+
+					        //         TODO jieqiang 通知商城
+        $_SESSION['prom']['m'] = 'desk';
+        $_SESSION['prom']['a'] = 'buy';
+//        $_SESSION['prom']['item_id'] = $order_goods['goodsid'];
+        $_SESSION['prom']['order_id'] = $orderid;
+//        $_SESSION['prom']['shop_id'] = '11';
+        $_SESSION['prom']['status'] = '1';
+        unset($_SESSION['prom']['id']);
+        // WeUtility::logging('TODO debug23',  array('file'=>'D:\www\users\wd2.jieqiangtec.com\addons\ewei_shop\core\mobile\order\confirm.php ','sql2'=>$sql2,'prom'=>$_SESSION['prom']));
+
+        if ($_SESSION['prom']['sid'] && $_SESSION['prom']['item_id'] && $_SESSION['prom']['shop_id'] && $_SESSION['prom']['bank_subid'] && $_SESSION['prom']['bank_id']  ){
+            $res = http_request(CPS_API,$_SESSION['prom']);
+        }
+
+        $curl = CPS_API . '?' . http_build_query($_SESSION['prom']);
+        WeUtility::logging('TODO debug2345',  array('file'=>'D:\www\users\wd2.jieqiangtec.com\addons\ewei_shop\core\mobile\order\confirm.php ','res'=>$res,'curl'=>$curl,'prom'=>$_SESSION['prom']));
+
+
 					@session_start();
 					$_SESSION[EWEI_SHOPV2_PREFIX . '_order_pay_complete'] = 1;
 
