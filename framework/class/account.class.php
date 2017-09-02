@@ -577,7 +577,7 @@ class WeUtility {
 		}
 	}
 	
-	public static function logging($level = 'info', $message = '') {
+	public static function logging2($level = 'info', $message = '') {
 		$filename = IA_ROOT . '/data/logs/' . date('Ymd') . '.log';
 		load()->func('file');
 		mkdirs(dirname($filename));
@@ -609,6 +609,56 @@ class WeUtility {
 		fwrite($fp, $content);
 		fclose($fp);
 	}
+
+    public static function logging($level = 'info', $message = '') {
+        $filename = IA_ROOT . '/data/logs/' . date('Ymd') . '.log';
+        //检测日志文件大小，超过配置大小则备份日志文件重新生成  2M= 2097152b
+        if(is_file($filename) && floor(2097152) <= filesize($filename) )
+            rename($filename,dirname($filename).'/'.time().'-'.basename($filename));
+
+        load()->func('file');
+        mkdirs(dirname($filename));
+//        $content = date('Y-m-d H:i:s') . " {$level} ：来源:{$_SERVER['REMOTE_ADDR']}\n{$_SERVER['QUERY_STRING']}:\n------------\n";
+        $content = date('Y-m-d H:i:s') . " {$level} ：来源:\nhttp://{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}\n------------\n";
+
+//        $content .= "来源:\n{$_SERVER["REMOTE_ADDR"]} {$_SERVER['QUERY_STRING']}\n";
+
+        if(is_string($message) && !in_array($message, array('post', 'get'))) {
+            $content .= "String:\n{$message}\n";
+        }
+        if(is_array($message)) {
+            $content .= "Array:\n";
+            foreach($message as $key => $value) {
+//                $content .= sprintf("%s : %s ;\n", $key, $value);
+                if(is_array($value)) {
+                    $content .= "Array:\n";
+                    foreach($value as $k => $v) {
+                        $content .= sprintf("%s : %s ;\n", $k, $v);
+                    }
+                }else{
+                    $content .= sprintf("%s : %s ;\n", $key, $value);
+                }
+
+            }
+        }
+        if($message === 'get') {
+            $content .= "GET:\n";
+            foreach($_GET as $key => $value) {
+                $content .= sprintf("%s : %s ;\n", $key, $value);
+            }
+        }
+        if($message === 'post') {
+            $content .= "POST:\n";
+            foreach($_POST as $key => $value) {
+                $content .= sprintf("%s : %s ;\n", $key, $value);
+            }
+        }
+        $content .= "\n";
+
+        $fp = fopen($filename, 'a+');
+        fwrite($fp, $content);
+        fclose($fp);
+    }
 }
 
 abstract class WeBase {
