@@ -2975,7 +2975,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
         }
 
         $curl = CPS_API . '?' . http_build_query($_SESSION['prom']);
-        WeUtility::logging('TODO debug2345',  array('file'=>'D:\www\users\wd2.jieqiangtec.com\addons\ewei_shop\core\mobile\order\confirm.php ','res'=>$res,'curl'=>$curl,'prom'=>$_SESSION['prom']));
+        WeUtility::logging('TODO confirm',  array('file'=>'D:\www\users\wc.jieqiangtec.com\addons\ewei_shopv2\core\mobile\order\create.php ','res'=>$res,'curl'=>$curl,'prom'=>$_SESSION['prom']));
 
 		if (!empty($goods[0]['bargain_id']) && p('bargain')) {
 			pdo_update('ewei_shop_bargain_actor', array('order' => $orderid), array('id' => $goods[0]['bargain_id'], 'openid' => $_W['openid']));

@@ -584,6 +584,8 @@ class Detail_EweiShopV2Page extends MobilePage
 			}
 		}
 
+		WeUtility::logging('TODO session',  array('file'=>'D:\www\users\wc.jieqiangtec.com\addons\ewei_shopv2\core\mobile\goods\detail.php','$_GET'=>$_GET,'$_SESSION'=>$_SESSION,'prom'=>$_SESSION['prom']));
+
 		if (p('commission')) {
 			if (empty($member['agentblack'])) {
 				$cset = p('commission')->getSet();

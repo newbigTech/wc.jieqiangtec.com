@@ -363,10 +363,10 @@ class Member_EweiShopV2Model
 		}
 
 		// TODO jieqiangtest 暂时屏蔽，方便本地测试
-		if (empty($openid) && !EWEI_SHOPV2_DEBUG) {
+		/*if (empty($openid) && !EWEI_SHOPV2_DEBUG) {
 			$diemsg = (is_h5app() ? 'APP正在维护, 请到公众号中访问' : '请在微信客户端打开链接');
 			exit("<!DOCTYPE html>\r\n                <html>\r\n                    <head>\r\n                        <meta name='viewport' content='width=device-width, initial-scale=1, user-scalable=0'>\r\n                        <title>抱歉，出错了</title><meta charset='utf-8'><meta name='viewport' content='width=device-width, initial-scale=1, user-scalable=0'><link rel='stylesheet' type='text/css' href='https://res.wx.qq.com/connect/zh_CN/htmledition/style/wap_err1a9853.css'>\r\n                    </head>\r\n                    <body>\r\n                    <div class='page_msg'><div class='inner'><span class='msg_icon_wrp'><i class='icon80_smile'></i></span><div class='msg_content'><h4>" . $diemsg . "</h4></div></div></div>\r\n                    </body>\r\n                </html>");
-		}
+		}*/
 
 		$member = $this->getMember($openid);
 		$followed = m('user')->followed($openid);
