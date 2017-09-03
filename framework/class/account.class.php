@@ -631,7 +631,7 @@ class WeUtility {
             foreach($message as $key => $value) {
 //                $content .= sprintf("%s : %s ;\n", $key, $value);
                 if(is_array($value)) {
-                    $content .= "Array:\n";
+                    $content .= "$key ==Array:\n";
                     foreach($value as $k => $v) {
                         $content .= sprintf("%s : %s ;\n", $k, $v);
                     }

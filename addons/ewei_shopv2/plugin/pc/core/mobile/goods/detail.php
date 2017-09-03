@@ -265,11 +265,11 @@ class Detail_EweiShopV2Page extends PcMobilePage
 		$opencommission = false;
 
         // 推广信息存入session
-        if (empty($_SESSION['prom']['sid'])){
-            $_SESSION['prom'] = $_GET;
+        if (empty($_SESSION['prom_cps']['sid'])){
+            $_SESSION['prom_cps'] = $_GET;
         }else{
-            if (($_GET['item_id']) && ($_SESSION['prom']['item_id'] !== $_GET['item_id']) ){
-                $_SESSION['prom'] = $_GET;
+            if (($_GET['item_id']) && ($_SESSION['prom_cps']['item_id'] !== $_GET['item_id']) ){
+                $_SESSION['prom_cps'] = $_GET;
             }
         }
 
