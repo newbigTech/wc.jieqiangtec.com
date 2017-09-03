@@ -1,5 +1,13 @@
 git设置用户名密码
 
+http://blog.csdn.net/qq_15437667/article/details/51029757
+git设置用户名密码
+
+设置git用户名／邮箱
+
+git config --global user.name [username]
+git config --global user.email [email]
+
 
 融惠联
 
