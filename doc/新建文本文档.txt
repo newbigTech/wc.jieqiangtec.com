@@ -1,3 +1,20 @@
+git设置用户名密码
+
+
+融惠联
+
+商城首页：
+http://wx.adjyc.com/app/index.php?i=6&c=entry&m=ewei_shopv2&do=mobile
+
+
+http://wc.jieqiangtec.cn/app/index.php?i=6&c=entry&m=ewei_shopv2&do=mobile
+
+
+
+图片地址
+background-image: url("http://wc.jieqiangtec.cn/attachment/images/6/2017/09/z80g1eA5ijs6SG0ZsiZ5zeziSJz555.jpg");
+
+
 http://wx.adjyc.com/web/index.php?c=user&a=profile&
 admin
 admin0830
@@ -11,8 +28,55 @@ jieqiang
 jieqiang888
 
 
+lisi的推广链接
+http://cps.adjyc.com/cps.php?m=desk&a=prom&sid=17&item_id=200&commission_id=17&shop_id=11&bank_id=12&bank_subid=16
+
+
+ims_mc_mapping_fans
+
+ims_core_sessions
+
+ims_core_cache
+
+ims_mc_members
+
+ims_mc_credits_record
+
+ims_ewei_shop_order
+
+ims_ewei_shop_goods
+
+ims_core_paylog
+
+
+
+
+充值：
+UPDATE `wc2`.`ims_mc_members` SET `uid`='1', `uniacid`='6', `mobile`='', `email`='885683cbf66237d4f7a25c37650d1255@we7.cc', `password`='c89aa80f72b50eaec5c96d57f015f02b', `salt`='WX60oR6U', `groupid`='6', `credit1`='0.00', `credit2`='99999999.00', `credit3`='0.00', `credit4`='0.00', `credit5`='0.00', `credit6`='0.00', `createtime`='1504141851', `realname`='', `nickname`='街墙', `avatar`='http://wx.qlogo.cn/mmopen/HImTr9Y5bJXOQ4MepvkH30XGia86KLWCuMh7tIeoP1EFeCUFlHAnFndPeLkg9gNkTAP5pLcvRam0TTxgobrsQJwlTDnLcCDwM/132', `qq`='', `vip`='0', `gender`='1', `birthyear`='0', `birthmonth`='0', `birthday`='0', `constellation`='', `zodiac`='', `telephone`='', `idcard`='', `studentid`='', `grade`='', `address`='', `zipcode`='', `nationality`='中国', `resideprovince`='福建省', `residecity`='厦门市', `residedist`='', `graduateschool`='', `company`='', `education`='', `occupation`='', `position`='', `revenue`='', `affectivestatus`='', `lookingfor`='', `bloodtype`='', `height`='', `weight`='', `alipay`='', `msn`='', `taobao`='', `site`='', `bio`='', `interest`='' WHERE (`uid`='1');
+
+充值记录：
+INSERT INTO `wc2`.`ims_mc_credits_record` (`id`, `uid`, `uniacid`, `credittype`, `num`, `operator`, `module`, `clerk_id`, `store_id`, `clerk_type`, `createtime`, `remark`) VALUES ('1', '1', '6', 'credit2', '99999999.00', '1', 'ewei_shopv2', '0', '0', '0', '1504402523', '后台会员充值余额 测试后台充值99999999');
+
+INSERT INTO `wc2`.`ims_ewei_shop_member_log` (`id`, `uniacid`, `openid`, `type`, `logno`, `title`, `createtime`, `status`, `money`, `rechargetype`, `gives`, `couponid`, `transid`, `realmoney`, `charge`, `deductionmoney`, `isborrow`, `borrowopenid`, `remark`, `apppay`, `alipay`, `bankname`, `bankcard`, `realname`, `applytype`, `sendmoney`, `senddata`) VALUES ('108', '6', 'oZo4hw8Wt565YLamn2TJqGExQirA', '0', 'RC20170903093523273464', 'adjyc会员充值', '1504402523', '1', '99999999.00', 'system', NULL, '0', '', '0.00', '0.00', '0.00', '0', '', '测试后台充值99999999', '0', '', '', '', '', '0', '0.00', NULL);
+
+
 
 http://wx.adjyc.com/web/index.php?c=system&a=updatecache&
+
+
+
+		//         TODO jieqiang 通知商城
+		$_SESSION['prom_cps']['m'] = 'desk';
+		$_SESSION['prom_cps']['a'] = 'buy';
+//        $_SESSION['prom_cps']['item_id'] = $order_goods['goodsid'];
+		$_SESSION['prom_cps']['order_id'] = $orderid;
+//        $_SESSION['prom_cps']['shop_id'] = '11';
+		$_SESSION['prom_cps']['status'] = '1';
+		unset($_SESSION['prom_cps']['id']);
+		// WeUtility::logging('TODO debug23',  array('file'=>'D:\www\users\wd2.jieqiangtec.com\addons\ewei_shop\core\mobile\order\confirm.php ','sql2'=>$sql2,'prom'=>$_SESSION['prom_cps']));
+
+
+
 
 
 INSERT INTO `ims_users` VALUES ('1', '0', 'admin', '22b31f04dd8b4cd4e4c087ad634e2fb7ddc96f83', '0cdc7671', '0', '0', '1504111321', '', '1504111340', '27.154.183.97', '', '0', '0');
@@ -20,3 +84,147 @@ INSERT INTO `ims_users` VALUES ('1', '0', 'admin', '22b31f04dd8b4cd4e4c087ad634e
 INSERT INTO `ims_users`																			    VALUES ('1', '0', 'admin', '22b31f04dd8b4cd4e4c087ad634e2fb7ddc96f83', '0cdc7671', '0', '0', '1504111321', '', '1504111340', '27.154.183.97', '', '0', '0');
 
 INSERT INTO `ims_users` (`uid`, `groupid`, `username`, `password`, `salt`, `type`, `status`, `joindate`, `joinip`, `lastvisit`, `lastip`, `remark`, `starttime`, `endtime`) VALUES ('1', '0', 'admin', 'a6f70742794a7674e6ebc45a30c9440e87e2686a', '22be8259', '0', '0', '1504027711', '', '1504102601', '27.154.183.97', '', '0', '0');
+
+
+        WeUtility::logging('TODO confirm',  array('file'=>'D:\www\users\wc.jieqiangtec.com\addons\ewei_shopv2\core\mobile\order\create.php ','res'=>$res,'curl'=>$curl,'prom'=>$_SESSION['prom']));
+
+
+
+14269 2017-09-02 16:04:05 TODO session ：来源:
+14270 http://wx.adjyc.com/app/index.php?i=6&c=entry&m=ewei_shopv2&do=mobile&r=goods.detail&id=200&sid=17&item_id=200&commission_id=undefined&con_id=&shop_id=11&bank_id
+      =12&bank_subid=16
+14271 ------------
+14272 Array:
+14273 file : D:\www\users\wc.jieqiangtec.com\addons\ewei_shopv2\core\mobile\goods\detail.php ;
+14274 $_GET == Array:
+14275 i : 6 ;
+14276 c : entry ;
+14277 m : ewei_shopv2 ;
+14278 do : mobile ;
+14279 r : goods.detail ;
+14280 id : 200 ;
+14281 sid : 17 ;
+14282 item_id : 200 ;
+14283 commission_id : undefined ;
+14284 con_id :  ;
+14285 shop_id : 11 ;
+14286 bank_id : 12 ;
+14287 bank_subid : 16 ;
+14288 $_SESSION == Array:
+14289 acid : 6 ;
+14290 uniacid : 6 ;
+14291 token : Array ;
+14292 dest_url : http%3A%2F%2Fwx.adjyc.com%2Fapp%2Findex.php%3Fi%3D6%26c%3Dentry%26m%3Dewei_shopv2%26do%3Dmobile%26r%3Dgoods.detail%26id%3D200%26sid%3D17%26item_id%3D2
+      00%26commission_id%3Dundefined%26con_id%3D%26shop_id%3D11%26bank_id%3D12%26bank_subid%3D16 ;
+14293 oauth_openid : oZo4hw8Wt565YLamn2TJqGExQirA ;
+14294 oauth_acid : 6 ;
+14295 openid : oZo4hw8Wt565YLamn2TJqGExQirA ;
+14296 uid : 1 ;
+14297 userinfo : YToxNDp7czo5OiJzdWJzY3JpYmUiO2k6MTtzOjY6Im9wZW5pZCI7czoyODoib1pvNGh3OFd0NTY1WUxhbW4yVEpxR0V4UWlyQSI7czo4OiJuaWNrbmFtZSI7czo2OiLooZflopkiO3M6Mzoic2V4Ij
+      tpOjE7czo4OiJsYW5ndWFnZSI7czo1OiJ6aF9DTiI7czo0OiJjaXR5IjtzOjY6IuWOpumXqCI7czo4OiJwcm92aW5jZSI7czo2OiLnpo/lu7oiO3M6NzoiY291bnRyeSI7czo2OiLkuK3lm70iO3M6MTA6ImhlYWR
+      pbWd1cmwiO3M6MTI3OiJodHRwOi8vd3gucWxvZ28uY24vbW1vcGVuL0hJbVRyOVk1YkpYT1E0TWVwdmtIMzBYR2lhODZLTFdDdU1oN3RJZW9QMUVGZUNVRmxIQW5GbmRQZUxrZzlnTmtUQVA1cExjdlJhbTBUVHhn
+      b2Jyc1FKd2xURG5MY0NEd00vMTMyIjtzOjE0OiJzdWJzY3JpYmVfdGltZSI7aToxNTA0MjcxNTc5O3M6NjoicmVtYXJrIjtzOjA6IiI7czo3OiJncm91cGlkIjtpOjA7czoxMDoidGFnaWRfbGlzdCI7YTowOnt9c
+      zo2OiJhdmF0YXIiO3M6MTI3OiJodHRwOi8vd3gucWxvZ28uY24vbW1vcGVuL0hJbVRyOVk1YkpYT1E0TWVwdmtIMzBYR2lhODZLTFdDdU1oN3RJZW9QMUVGZUNVRmxIQW5GbmRQZUxrZzlnTmtUQVA1cExjdlJhbT
+      BUVHhnb2Jyc1FKd2xURG5MY0NEd00vMTMyIjt9 ;
+14298 prom : Array ;
+14299 bargain_id :  ;
+14300 newstoreid : 0 ;
+14301 prom_cps : Array ;
+14302 prom_cps == Array:
+14303 i : 6 ;
+14304 c : entry ;
+14305 m : ewei_shopv2 ;
+14306 do : mobile ;
+14307 r : goods.detail ;
+14308 id : 200 ;
+14309 sid : 17 ;
+14310 item_id : 200 ;
+14311 commission_id : undefined ;
+14312 con_id :  ;
+14313 shop_id : 11 ;
+14314 bank_id : 12 ;
+14315 bank_subid : 16 ;
+
+
+42218 
+42219 2017-09-02 15:18:54 TODO confirm ：来源:
+42220 http://wx.adjyc.com/app/index.php?i=6&c=entry&m=ewei_shopv2&do=mobile&r=order.create.submit
+42221 ------------
+42222 Array:
+42223 file : D:\www\users\wc.jieqiangtec.com\addons\ewei_shopv2\core\mobile\order\create.php  ;
+42224 res :  ;
+42225 curl : http://cps.adjyc.com?i=6&c=entry&m=desk&do=mobile&r=goods.detail&from=singlemessage&a=buy&order_id=169&status=1 ;
+42226 Array:
+42227 i : 6 ;
+42228 c : entry ;
+42229 m : desk ;
+42230 do : mobile ;
+42231 r : goods.detail ;
+42232 from : singlemessage ;
+42233 a : buy ;
+42234 order_id : 169 ;
+42235 status : 1 ;
+
+
+
+WeUtility::logging('TODO session',  array('file'=>'D:\www\users\wc.jieqiangtec.com\addons\ewei_shopv2\core\mobile\goods\detail.php','$_GET'=>$_GET,'$_SESSION'=>$_SESSION,'prom'=>$_SESSION['prom']));
+
+
+
+ 2180 2017-09-02 14:57:21 TODO session ：来源:
+ 2181 http://wx.adjyc.com/app/index.php?i=6&c=entry&m=ewei_shopv2&do=mobile&r=goods.detail&id=200&sid=17&item_id=200&commission_id=undefined&con_id=&shop_id=11&bank_id
+      =12&bank_subid=16
+ 2182 ------------
+
+2180 2017-09-02 14:57:21 TODO session ：来源:
+2182 ------------
+2183 Array:
+2184 file : D:\www\users\wc.jieqiangtec.com\addons\ewei_shopv2\core\mobile\goods\detail.php ;
+2185 Array:
+2186 i : 6 ;
+2187 c : entry ;
+2188 m : ewei_shopv2 ;
+2189 do : mobile ;
+2190 r : goods.detail ;
+2191 id : 200 ;
+2192 sid : 17 ;
+2195 con_id :  ;
+2196 shop_id : 11 ;
+2197 bank_id : 12 ;
+2198 bank_subid : 16 ;
+2199 Array:
+2200 acid : 6 ;
+2201 uniacid : 6 ;
+2202 token : Array ;
+2203 dest_url : http%3A%2F%2Fwx.adjyc.com%2Fapp%2Findex.php%3Fi%3D6%26c%3Dentry%26m%3Dewei_shopv2%26do%3Dmobile%26r%3Dgoods.detail%26id%3D200%26sid%3D17%26item_id%3D20
+     0%26commission_id%3Dundefined%26con_id%3D%26shop_id%3D11%26bank_id%3D12%26bank_subid%3D16 ;
+2204 oauth_openid : oZo4hw8Wt565YLamn2TJqGExQirA ;
+2205 oauth_acid : 6 ;
+2206 openid : oZo4hw8Wt565YLamn2TJqGExQirA ;
+2207 uid : 1 ;
+2208 userinfo : YToxNDp7czo5OiJzdWJzY3JpYmUiO2k6MTtzOjY6Im9wZW5pZCI7czoyODoib1pvNGh3OFd0NTY1WUxhbW4yVEpxR0V4UWlyQSI7czo4OiJuaWNrbmFtZSI7czo2OiLooZflopkiO3M6Mzoic2V4Ijt
+     pOjE7czo4OiJsYW5ndWFnZSI7czo1OiJ6aF9DTiI7czo0OiJjaXR5IjtzOjY6IuWOpumXqCI7czo4OiJwcm92aW5jZSI7czo2OiLnpo/lu7oiO3M6NzoiY291bnRyeSI7czo2OiLkuK3lm70iO3M6MTA6ImhlYWRpb
+     Wd1cmwiO3M6MTI3OiJodHRwOi8vd3gucWxvZ28uY24vbW1vcGVuL0hJbVRyOVk1YkpYT1E0TWVwdmtIMzBYR2lhODZLTFdDdU1oN3RJZW9QMUVGZUNVRmxIQW5GbmRQZUxrZzlnTmtUQVA1cExjdlJhbTBUVHhnb2J
+     yc1FKd2xURG5MY0NEd00vMTMyIjtzOjE0OiJzdWJzY3JpYmVfdGltZSI7aToxNTA0MjcxNTc5O3M6NjoicmVtYXJrIjtzOjA6IiI7czo3OiJncm91cGlkIjtpOjA7czoxMDoidGFnaWRfbGlzdCI7YTowOnt9czo2O
+     iJhdmF0YXIiO3M6MTI3OiJodHRwOi8vd3gucWxvZ28uY24vbW1vcGVuL0hJbVRyOVk1YkpYT1E0TWVwdmtIMzBYR2lhODZLTFdDdU1oN3RJZW9QMUVGZUNVRmxIQW5GbmRQZUxrZzlnTmtUQVA1cExjdlJhbTBUVHh
+     nb2Jyc1FKd2xURG5MY0NEd00vMTMyIjt9 ;
+2209 prom : Array ;
+2210 bargain_id :  ;
+2211 newstoreid : 0 ;
+2212 Array:
+2213 i : 6 ;
+2214 c : entry ;
+2215 m : desk ;
+2216 do : mobile ;
+2217 r : goods.detail ;
+2218 sid : 17 ;
+2219 item_id : 200 ;
+2220 commission_id : undefined ;
+2221 con_id :  ;
+2222 shop_id : 11 ;
+2223 bank_id : 12 ;
+2224 bank_subid : 16 ;
+2225 wxref : mp.weixin.qq.com ;
+2226 a : buy ;
+2227 order_id : 166 ;
+2228 status : 1 ;
