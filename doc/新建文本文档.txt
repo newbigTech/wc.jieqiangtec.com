@@ -1,3 +1,15 @@
+[root@iZ300nn3dazZ git]# tar zcvf wc.jieqiangtec.com_20170903.tar.gz wc.jieqiangtec.com
+[root@iZ300nn3dazZ git]# tar zcvf cps.jieqiangtec.com_20170903.tar.gz cps.jieqiangtec.com
+
+
+
+http://cps.adjyc.cn//cps.php?m=desk&a=prom&sid=17&item_id=199&commission_id=16&shop_id=11&bank_subid=16&user_id=李四&img=data/qrcode/poster_bg.jpg&title=华为 Mate 9 4GB 64GB版 摩卡金 移动联通电信4G手机 双卡双待&bank_id=12
+
+
+http://cps2.jieqiangtec.cn/cps.php?m=desk&a=prom&sid=17&item_id=199&commission_id=16&shop_id=11&bank_id=12&bank_subid=16
+
+
+
 git设置用户名密码
 http://blog.csdn.net/qq_15437667/article/details/51029757
 git设置用户名密码

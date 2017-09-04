@@ -25,7 +25,7 @@
 				<input type="hidden" name="reasons" value="<?php  echo $settings['reason'];?>">
 			</div>
 		</div>
-	<h5 class="page-header">登录站点</h5>
+	<h5 class="page-header">登录站点222</h5>
 	<div class="form-group">
 		<label class="col-sm-2 control-label" style="text-align:left;">是否开启验证码</label>
 		<div class="col-sm-8 form-control-static">

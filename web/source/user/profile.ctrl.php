@@ -9,6 +9,7 @@ load()->func('file');
 
 $dos = array('base', 'post');
 $do = in_array($do, $dos) ? $do : 'base';
+//var_dump($do);
 $_W['page']['title'] = '账号信息 - 我的账户 - 用户管理';
 
 if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
@@ -147,7 +148,8 @@ if ($do == 'post' && $_W['isajax'] && $_W['ispost']) {
 }
 
 if ($do == 'base') {
-		$user = user_single($_W['uid']);
+    // var_dump('TODO jieqiangtest uid=='.$_W['uid']);
+    $user = user_single($_W['uid']);
 	if (empty($user)) {
 		itoast('抱歉，用户不存在或是已经被删除！', url('user/profile'), 'error');
 	}

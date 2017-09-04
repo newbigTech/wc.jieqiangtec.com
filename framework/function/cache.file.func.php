@@ -14,6 +14,7 @@ function cache_read($key, $dir = '', $include = true) {
 	if (!is_file($key)) {
 		return array();
 	}
+	// var_dump('TODO jieqiangtest==',$key);
 	return $include ? include $key : file_get_contents($key);
 }
 

@@ -1,4 +1,35 @@
 ﻿{template 'common/header-base'}
+
+
+<style type="text/css">
+/*.xiaokeduo-login-container {
+    position: fixed;
+     min-height: 360px; 
+    width: 330px;
+    top: 40%;
+    left: 50%;
+    margin-left: -365px;
+    margin-top: -150px;
+    background-color: #FFFFFF;
+opacity: 1;
+    border-radius: 5px;
+     box-shadow: 0 0 46px rgba(0,0,0,0.05); 
+    -moz-box-shadow: 0 0 46px rgba(0,0,0,0.05);
+    z-index: 100;
+     text-align: left; 
+}*/
+
+/*.login-content {
+    padding: 0px;
+    padding-top: 0px;
+    padding-right: 0px;
+    padding-bottom: 0px;
+    padding-left: 0px;
+}*/
+
+</style>
+
+
     <title><img src="{if !empty($_W['setting']['copyright']['blogo'])}{php echo tomedia($_W['setting']['copyright']['blogo'])}{else}{/if}" class="pull-left" width="110px" height="35px"></title>
     <link href="./resource/affordable/css/popnews.css" rel="stylesheet" />
     <link href="./resource/affordable/css/iconfont.css" rel="stylesheet" />
@@ -7,15 +38,16 @@
 </head>
 <body>        
 <form  class="form-box" method="post" role="form">    <div class="new-bg"></div>
-    <div class="xiaokeduo-login-container" style="top:40%">
-        <div class="qr-code">
+    <div class="xiaokeduo-login-container" style="top:40%;left: 65%;width: 360px;">
+        <!-- <div class="qr-code">
             <div class="qr-code-content">
                 <h3 class="qr-code-title">{$_W['setting']['copyright']['notice']}</h3>
                 <img class="qr-code-img" src="{if !empty($_W['setting']['copyright']['qrcode'])}{php echo tomedia($_W['setting']['copyright']['qrcode'])}{else}{/if}" width="145" height="145" />
                 <p class="text">扫一扫加入官方公众号立即体验</p>
+                <p class="text">扫一扫加入官方公众号立即体验22222</p>
             </div>
-        </div>
-        <div class="login-content">
+        </div> -->
+        <div class="login-content" style="padding:20px">
            <div class="logo text-center">
 			<a href="javascript:void(0);"><img  style="width:195px;height:41px;" src="{if !empty($_W['setting']['copyright']['flogo1'])}{php echo tomedia($_W['setting']['copyright']['flogo1'])}{else}./resource\affordable\images/logo-new.png{/if}" width="220px" height="50px"></a>
 		</div>
@@ -81,7 +113,7 @@ $('#toggle').click(function() {
 				
     <div class="subfooter">
         <p><small class="text-muted"><font color="#FFFFFF" size="2.5">{$_W['setting']['copyright']['footerright']}</small></p>
-        <p><small class="text-muted"><font color="#NaNNaNNaN">{if empty($_W['setting']['copyright']['footerleft'])}Powered by v{IMS_VERSION} &copy; 2014-2015 {else}{$_W['setting']['copyright']['footerleft']}{/if}</small></p>
+        <p><small class="text-muted"><font color="#NaNNaNNaN">{if empty($_W['setting']['copyright']['footerleft'])}Powered by v{IMS_VERSION} &copy; 2017-20122 {else}{$_W['setting']['copyright']['footerleft']}{/if}</small></p>
 		<p><small class="text-muted"><font color="#NaNNaNNaN">{$_W['setting']['copyright']['icp']}</small></p>
     </div>
     </div>

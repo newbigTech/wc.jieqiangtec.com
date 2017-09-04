@@ -5,16 +5,21 @@
  */
 defined('IN_IA') or exit('Access Denied');
 
- 
 
+// 模板引擎
 function template($filename, $flag = TEMPLATE_DISPLAY) {
 	global $_W;
 	$source = IA_ROOT . "/web/themes/{$_W['template']}/{$filename}.html";
 	$compile = IA_ROOT . "/data/tpl/web/{$_W['template']}/{$filename}.tpl.php";
+    // var_dump('TODO jieqiangtest template=='.$_W['template'].'==$source=='.$source.'==$compile=='.$compile);
+
 	if(!is_file($source)) {
 		$source = IA_ROOT . "/web/themes/default/{$filename}.html";
 		$compile = IA_ROOT . "/data/tpl/web/default/{$filename}.tpl.php";
 	}
+
+    // var_dump('TODO jieqiangtest template=='.$_W['template'].'==$source2=='.$source.'==$compile2=='.$compile);
+    
 
 	if(!is_file($source)) {
 		exit("Error: template source '{$filename}' is not exist!");
