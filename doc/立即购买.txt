@@ -1,0 +1,56 @@
+Request URL:http://wx.adjyc.com/app/index.php?i=6&c=entry&m=ewei_shopv2&do=mobile&r=goods.picker&id=200&_=1504336064589
+Request Method:GET
+Status Code:200 OK
+Remote Address:59.56.69.152:80
+Response Headers
+view source
+Cache-Control:no-store, no-cache, must-revalidate, post-check=0, pre-check=0
+Connection:Keep-Alive
+Content-Length:24
+Content-Type:text/html; charset=utf-8
+Date:Sat, 02 Sep 2017 07:08:01 GMT
+Expires:Thu, 19 Nov 1981 08:52:00 GMT
+Keep-Alive:timeout=5, max=92
+Pragma:no-cache
+Server:Apache/2.2.22 (Unix) PHP/5.3.18
+Set-Cookie:PHPSESSID=53c30a1c632328c4048d10fa4598f004; path=/
+X-Powered-By:PHP/5.3.18
+Request Headers
+view source
+Accept:application/json, text/javascript, */*; q=0.01
+Accept-Encoding:gzip, deflate, sdch
+Accept-Language:zh-CN,zh;q=0.8
+Connection:keep-alive
+Cookie:PHPSESSID=53c30a1c632328c4048d10fa4598f004; www%5Fadjyc%5Fcom=2017070815493560289015769; Hm_lvt_4422240d6dd1c0a525da1df03c1f422d=1504014273; UM_distinctid=15e335d5dbd30d-09b066bd19ba4e-1571466f-100200-15e335d5dbe4e0; gr_user_id=cae7516d-4865-42d7-baab-0913eb567981; 0ded___uniacid=6; 0ded___uid=1; CNZZDATA1255882846=2134747974-1494922785-%7C1494922785; Hm_lvt_4b53049028918cae5da1dbefaeeb49b2=1504100311; e44e___uniacid=6; e44e___uid=1; Hm_lvt_a3310531cb8b59df9ff2c9d07888c038=1504102503,1504268726; e44e___session=eyJ1aWQiOiIxIiwibGFzdHZpc2l0IjoiMTUwNDMyMTcwOSIsImxhc3RpcCI6IjEyMC40MS4yMjAuMTA3IiwiaGFzaCI6IjdkMGNkNzRmMDE5NTYxYjVhYTY4MWUwMjA0YmQzMzI5In0%3D; PHPSESSID=53c30a1c632328c4048d10fa4598f004
+Host:wx.adjyc.com
+Referer:http://wx.adjyc.com/app/index.php?i=6&c=entry&m=ewei_shopv2&do=mobile&r=goods.detail&id=200
+User-Agent:Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.221 Safari/537.36 SE 2.X MetaSr 1.0
+X-Requested-With:XMLHttpRequest
+Query String Parameters
+view source
+view URL encoded
+i:6
+c:entry
+m:ewei_shopv2
+do:mobile
+r:goods.picker
+id:200
+_:1504336064589
+Name	
+index.php?i=6&c=entry&m=ewei_shopv2&do=mobile&r=goods.picker&id=200&_=1504336064589	
+data:image/png;base¡­	
+data:image/png;base¡­	
+data:image/png;base¡­	
+data:image/png;base¡­	
+data:image/png;base¡­	
+data:image/png;base¡­	
+data:image/png;base¡­	
+data:image/png;base¡­	
+data:image/png;base¡­	
+data:image/png;base¡­	
+data:image/png;base¡­	
+data:image/png;base¡­	
+data:image/png;base¡­	
+data:image/png;base¡­	
+data:image/png;base¡­	
+data:image/png;base¡­	
