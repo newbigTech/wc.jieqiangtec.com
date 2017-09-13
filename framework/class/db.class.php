@@ -81,8 +81,7 @@ class DB {
 	
 	
 	public function query($sql, $params = array()) {
-
-        $sqlsafe = SqlChecker::checkquery($sql);
+		$sqlsafe = SqlChecker::checkquery($sql);
 		if (is_error($sqlsafe)) {
 			trigger_error($sqlsafe['message'], E_USER_ERROR);
 			return false;
@@ -90,17 +89,6 @@ class DB {
 				if (in_array(strtolower(substr($sql, 0, 6)), array('update', 'delete', 'insert', 'replac'))) {
 			$this->cacheNameSpace($sql, true);
 		}
-
-
-        foreach ($params as $key=>$val){
-            $arr1[] = $key;
-            $arr2[] = '\''.$val.'\'';
-        }
-        $sql2 = str_replace($arr1,$arr2,$sql);
-        WeUtility::logging('TODO debug3',  array('file'=>'D:\www\users\wd2.jieqiangtec.com\framework\class\db.class.php query($sql, $params = array()) ','sql2'=>$sql2,'$params'=>$params));
-        // var_dump($sql2);exit;
-
-
 		$starttime = microtime();
 		if (empty($params)) {
 			$result = $this->pdo->exec($sql);
@@ -167,13 +155,13 @@ class DB {
 		$statement = $this->prepare($sql);
 		$result = $statement->execute($params);
 
-        /*foreach ($params as $key=>$val){
+        foreach ($params as $key=>$val){
             $arr1[] = $key;
             $arr2[] = '\''.$val.'\'';
         }
         $sql2 = str_replace($arr1,$arr2,$sql);
         WeUtility::logging('TODO debug2',  array('file'=>'D:\www\users\wd2.jieqiangtec.com\framework\class\db.class.php fetch($sql, $params = array()) ','sql2'=>$sql2,'$params'=>$params));
-//        WeUtility::logging('TODO debug2',  array('file'=>'D:\www\users\wd2.jieqiangtec.com\framework\class\db.class.php fetch($sql, $params = array()) ','sql2'=>$sql2,'sql'=>$sql,'$params'=>$params));*/
+//        WeUtility::logging('TODO debug2',  array('file'=>'D:\www\users\wd2.jieqiangtec.com\framework\class\db.class.php fetch($sql, $params = array()) ','sql2'=>$sql2,'sql'=>$sql,'$params'=>$params));
 
 
         if(PDO_DEBUG) {
