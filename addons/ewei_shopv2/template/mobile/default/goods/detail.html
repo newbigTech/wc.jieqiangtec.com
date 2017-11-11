@@ -426,7 +426,7 @@
                 <div class="sale-line">
                     <span class="sale-tip">包邮</span>
                     <span>
-                            {if !is_array($goods['dispatchprice'])}
+                           {if !is_array($goods['dispatchprice'])}
                             {if $goods['type']==1 && $goods['isverify']!=2}
                             {if $goods['dispatchprice']==0}
                             本商品包邮;
@@ -435,11 +435,12 @@
                             {/if}
 
                             {if $enoughfree && $enoughfree==-1}
-                            全场包邮
+                            {if !empty($merch_set['enoughfree'])}本店{else}全场{/if}包邮
                             {else}
-                            {if $goods['ednum']>0}单品满 <span class="text-danger">{$goods['ednum']}</span> {php echo empty($goods['unit'])?'件':$goods['unit']}包邮; {/if}
+                            {if $goods['ednum']>0}单品满 <span class="text-danger">{$goods['ednum']}</span>
+                            {php echo empty($goods['unit'])?'件':$goods['unit']}包邮; {/if}
                             {if $goods['edmoney']>0}单品满 <span class="text-danger">&yen;{$goods['edmoney']}</span> 包邮; {/if}
-                            {if $enoughfree}全场满 <span class="text-danger">&yen;{$enoughfree}</span> 包邮; {/if}
+                            {if $enoughfree}{if !empty($merch_set['enoughfree'])}本店{else}全场{/if}满 <span class="text-danger">&yen;{$enoughfree}</span> 包邮; {/if}
                             {/if}
                         </span>
                 </div>

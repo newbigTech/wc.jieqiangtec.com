@@ -1,5 +1,9 @@
 {template '_header'}
-
+<style>
+    .time_search .btn-group .btn{
+        float:none;
+    }
+</style>
 <div class="page-header">
     当前位置：<span class="text-primary">模板数据 <small>总数:{$total} 模板名称:{$type['title']})</small></span>
 </div>
@@ -20,27 +24,41 @@
                 {/if}
                 <a class='btn btn-default' href="{php echo webUrl('goods/virtual/temp')}">返回虚拟卡密</a>
             </div>
-            <div class="col-sm-6 pull-right">
+            <div class="col-sm-8 pull-right" >
                 <div class="input-group">
-                <span class="input-group-select">
-                    <select name="status" class='form-control'>
-                        <option value="" {if $_GPC['status'] == ''} selected{/if}>状态</option>
-                        <option value='0' {if $_GPC['status']=='0'}selected{/if}>未使用</option>
-                        <option value='1' {if $_GPC['status']=='1'}selected{/if}>已使用</option>
-                    </select>
-                </span>
-                    <input type="text" class="form-control" name='keyword' value="{$_GPC['keyword']}" placeholder="请输入主键(key)进行搜索">
+                    <span class="input-group-select">
+                        <select name="status" class='form-control'>
+                            <option value="" {if $_GPC['status'] == ''} selected{/if}>状态</option>
+                            <option value='0' {if $_GPC['status']=='0'}selected{/if}>未使用</option>
+                            <option value='1' {if $_GPC['status']=='1'}selected{/if}>已使用</option>
+                        </select>
+                    </span>
+                    <span class="input-group-btn time_search">{php echo tpl_daterange('time', array('sm'=>true, 'placeholder'=>'导入时间'),true);}</span>
+                    <input type="text" class="form-control" name='keyword' id="keyword" value="{$_GPC['keyword']}" placeholder="请输入主键(key)进行搜索">
                     <span class="input-group-btn">
                     <button class="btn btn-primary" type="submit"> 搜索</button>
                     {ifp 'goods.virtual.data.export'}
-                    <a class='btn btn-success' href="{php echo webUrl('goods/virtual/data/export', array('typeid'=>$_GPC['typeid']))}"> 导出已使用数据</a>
+                    <!--<a class='btn btn-success' id="export" href="{php echo webUrl('goods/virtual/data/export', array('typeid'=>$_GPC['typeid']))}"> 导出数据</a>-->
+                    <a class='btn btn-success' id="export" href="javascript:;"> 导出数据</a>
                     {/if}
                 </span>
                 </div>
             </div>
         </div>
     </form>
+    <ul class="nav nav-arrow-next nav-tabs" id="myTab">
 
+        <li {if $_GPC['status'] == ''}class="active"{/if}>
+            <a href="{php echo webUrl('goods/virtual/data', array('typeid' => $_GPC['typeid']))}">全部</a>
+        </li>
+        <li {if $_GPC['status'] == '0'}class="active"{/if}>
+            <a href="{php echo webUrl('goods/virtual/data', array('typeid' => $_GPC['typeid'],'status' => 0))}">未使用</a>
+        </li>
+        <li {if $_GPC['status'] == '1'}class="active"{/if}>
+            <a href="{php echo webUrl('goods/virtual/data', array('typeid' => $_GPC['typeid'],'status' => 1))}">已使用</a>
+        </li>
+
+    </ul>
     {if empty($items)}
     <div class="panel panel-default">
         <div class="panel-body empty-data">未查询到相关数据</div>
@@ -60,6 +78,7 @@
                 <thead>
                 <tr>
                     <th style="width:25px;"></th>
+                    <th style="width:100px" class="text-center">ID</th>
                     {loop $type['fields'] $key $name}
                     <th> {$name} ({$key})</th>
                     {/loop}
@@ -69,10 +88,11 @@
                 </thead>
                 <tbody>
                 {loop $items $item}
-                <tr>
+                <tr {if !empty($item['openid'])}style="background:#F8F8F8"{/if}>
                     <td>
                         {if empty($item['openid'])}<input type='checkbox'   value="{$item['id']}"/>{/if}
                     </td>
+                    <td class="text-center">{$item['id']}</td>
                     {php $datas = iunserializer($item['fields'])}
                     {loop $type['fields'] $key $name}
                     <td> {$datas[$key]}</td>
@@ -91,8 +111,8 @@
                         </a>
                         {/if}
                         {ifp 'goods.virtual.data.delete'}
-                        <a class="btn btn-default btn-sm btn-operation btn-op" href="{php echo webUrl('goods/virtual/data/delete', array('typeid'=>$item['typeid'],'id' => $item['id']))}">
-                                                <span data-toggle="tooltip" data-placement="top" data-original-title="删除">
+                        <a class="btn btn-default btn-sm btn-operation btn-op" data-toggle='ajaxRemove' href="{php echo webUrl('goods/virtual/data/delete', array('typeid'=>$item['typeid'],'id' => $item['id']))}">
+                                                <span data-toggle="tooltip" data-placement="top" data-original-title="删除" >
                                                     <i class="icow icow-shanchu1"></i>
                                                 </span>
                         </a>
@@ -103,10 +123,10 @@
 				  会员: {$item['realname']}/{$item['mobile']}<br/>
 				  订单: <a href='{php echo webUrl('order/detail',array('id'=>$item['orderid']))}' target='_blank'> [{$item['orderid']}]{$item['ordersn']}</a> <br/>
 				  时间: {php echo date('Y-m-d H:i',$item['usetime'])}<br/>
-				  价格: {$item['price']}" data-placement='top' data-html='true'>
-                             <span data-toggle="tooltip" data-placement="top" data-original-title="购买情况">
+				  价格: {$item['price']}" data-placement='top' data-html='true' data-trigger="hover">
+
                                <i class="icow icow-member"></i>
-                            </span>
+
                        </a>
                         {/if}
                     </td>
@@ -134,7 +154,14 @@
     </div>
     {/if}
 </div>
-
+<script>
+    $(function () {
+        $("#export").click(function () {
+           var status = $("select[name='status'] option:selected").val();
+           var time = $(".date-title").text();
+           var key = $("#keyword").val();
+           window.location.href = "{php echo webUrl('goods/virtual/data/export',array('typeid'=>$_GPC['typeid']))}&status="+status+"&time="+time+"&keyword="+key;;
+        });
+    })
+</script>
 {template '_footer'}
-
-<!--weichengtech-->

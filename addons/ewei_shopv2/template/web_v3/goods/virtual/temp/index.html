@@ -13,6 +13,9 @@
                 {ifp 'goods.virtual.temp.add'}
                 <a class='btn btn-primary btn-sm' href="{php echo webUrl('goods/virtual/temp/add')}"><i class='fa fa-plus'></i> 添加模板</a>
                 {/if}
+                {ifp 'goods.virtual.recycled'}&nbsp;
+                <a class='btn btn-default btn-sm' href="{php echo webUrl('goods/virtual/recycled')}"><i class='fa fa-trash-o'></i> 回收站</a>
+                {/if}
             </div>
             <div class="col-sm-6 pull-right">
                 <div class="input-group">
@@ -33,8 +36,8 @@
                 <input type="checkbox">
                 <div class="btn-group">
                     {ifp 'goods.virtual.temp.delete'}
-                    <button class="btn btn-default dropdown-toggle btn-sm btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要删除?" data-href="{php echo webUrl('goods/virtual/temp/delete')}">
-                        <i class="icow icow icow-shanchu1"></i>删除
+                    <button class="btn btn-default dropdown-toggle btn-sm btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要放入回收站?" data-href="{php echo webUrl('goods/virtual/temp/recycled')}">
+                        <i class="icow icow icow-shanchu1"></i> 回收站
                     </button>
                     {/if}
                 </div>
@@ -86,9 +89,9 @@
                                 </a>
                             {/if}
                             {ifp 'goods.virtual.temp.delete'}
-                                <a class='btn btn-default  btn-sm btn-operation btn-op'  data-toggle='ajaxRemove' href="{php echo webUrl('goods/virtual/temp/delete', array('id' => $item['id']))}" data-confirm="确认删除此模版吗" title='删除模板'>
-                                 <span data-toggle="tooltip" data-placement="top" title="" data-original-title="删除">
-                                         <i class="icow icow icow-shanchu1"></i>
+                                <a class='btn btn-default  btn-sm btn-operation btn-op'  data-toggle='ajaxRemove' href="{php echo webUrl('goods/virtual/temp/recycled', array('id' => $item['id']))}" data-confirm="确认放入回收站吗" title='放入回收站'>
+                                 <span data-toggle="tooltip" data-placement="top" title="" data-original-title="放入回收站">
+                                         <i class="icow icow-shanchu1"></i>
                                     </span>
                                 </a>
                             {/if}
@@ -101,8 +104,8 @@
                             <input type="checkbox">
                             <div class="btn-group">
                                 {ifp 'goods.virtual.temp.delete'}
-                                <button class="btn btn-default dropdown-toggle btn-sm btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要删除?" data-href="{php echo webUrl('goods/virtual/temp/delete')}">
-                                    <i class="icow icow icow-shanchu1"></i>删除
+                                <button class="btn btn-default dropdown-toggle btn-sm btn-operation" type="button" data-toggle='batch-remove' data-confirm="确认要放入回收站?" data-href="{php echo webUrl('goods/virtual/temp/recycled')}">
+                                    <i class="icow icow icow-shanchu1"></i> 回收站
                                 </button>
                                 {/if}
                             </div>
@@ -124,4 +127,3 @@
 </div>
 {template '_footer'}
 
-<!--weichengtech54mI5p2D5omA5pyJ-->
