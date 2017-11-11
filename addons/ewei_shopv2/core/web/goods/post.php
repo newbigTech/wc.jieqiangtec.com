@@ -1,5 +1,4 @@
 <?php
-//weichengtech
 global $_W;
 global $_GPC;
 $shopset_level = intval($_W['shopset']['commission']['level']);
@@ -427,7 +426,7 @@ if ($_W['ispost']) {
 					show_json(0, '会员卡特权说明不能为空');
 				}
 
-				if (300 < strlen($prerogative)) {
+				if (300 < mb_strlen($prerogative, 'UTF-8')) {
 					show_json(0, '会员卡特权不能超过300个字符');
 				}
 
@@ -435,7 +434,7 @@ if ($_W['ispost']) {
 					show_json(0, '使用须知说明不能为空');
 				}
 
-				if (300 < strlen($card_description)) {
+				if (300 < mb_strlen($card_description, 'UTF-8')) {
 					show_json(0, '使用须知不能超过300个字符');
 				}
 
@@ -528,6 +527,10 @@ if ($_W['ispost']) {
 					if ($change) {
 						$result = com('wxcard')->verifygoodcard($carddata, $card['card_id']);
 
+						if ($result['errcode'] == 48001) {
+							show_json(0, '您尚未开通微信会员卡。');
+						}
+
 						if (is_wxerror($result)) {
 							show_json(0, '卡券信息填写有误。');
 						}
@@ -559,6 +562,10 @@ if ($_W['ispost']) {
 					$carddata['freepark'] = $_GPC['freepark'] == 'on' ? 1 : 0;
 					$carddata['deliver'] = $_GPC['deliver'] == 'on' ? 1 : 0;
 					$result = com('wxcard')->verifygoodcard($carddata);
+
+					if ($result['errcode'] == 48001) {
+						show_json(0, '您尚未开通微信会员卡。');
+					}
 
 					if (is_wxerror($result)) {
 						show_json(0, '卡券信息填写有误。');

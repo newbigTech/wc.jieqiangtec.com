@@ -3,7 +3,7 @@
 	   		<img class="{$diyfollowbar['params']['iconstyle']}" src="{$diyfollowbar['logo']}">
 	   	</div>
 	    <div class="fui-list-inner">
-	    	<div class="text">{$diyfollowbar['text']}</div>
+	    	<div class="text" style="color: {$diyfollowbar['style']['textcolor']};">{$diyfollowbar['text']}</div>
 	    </div>
    		<div class="fui-list-angle">
    			<div class="btn btn-success external" data-followurl="{$diyfollowbar['link']}" data-qrcode="{$diyfollowbar['qrcode']}" id="followbtn" style="border: none; color: {$diyfollowbar['style']['btncolor']}; background: {$diyfollowbar['style']['btnbgcolor']};">{if !empty($diyfollowbar['params']['btnicon'])}<i class="icon {$diyfollowbar['params']['btnicon']}" style="font-size: 0.6rem;"></i> {/if}{if !empty($diyfollowbar['params']['btntext'])}{$diyfollowbar['params']['btntext']}{else}点击关注{/if}</div>
@@ -52,3 +52,5 @@
    		});
    	</script>
    	
+
+<!--weichengtech-->

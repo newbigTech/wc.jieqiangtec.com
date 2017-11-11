@@ -70,6 +70,10 @@
 
 
 
+
+
+</div>
+
 <hr style="border-color:#ccc;"/>
 
 <div class="form-group">
@@ -77,7 +81,7 @@
 	<div class="col-sm-9 col-xs-12">
 		{ife 'sale.sendticket.share' $item}
 		<input type="text" name="share_title" id="share_title" class="form-control" value="{$item['sharetitle']}" data-rule-required="true"/>
-		<span class='help-block'>分享标题的字数长度不能超过12</span>
+		<span class='help-block'>分享标题的字数长度不能超过30</span>
 		{else}
 		<div class='form-control-static'>{$item['share_title']}</div>
 		{/if}
@@ -246,3 +250,5 @@
 	</div>
 </div>
 
+
+<!--weichengtech54mI5p2D5omA5pyJ-->

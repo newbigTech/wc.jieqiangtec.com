@@ -2,11 +2,10 @@
 
 <script language='javascript'>
     require(['jquery','bootstrap'], function ($,bs) {
-
-        $('[data-toggle="tooltip"]').tooltip({
+        $('[data-toggle="tooltip"]').tooltip("destroy").tooltip({
             container: $(document.body)
         });
-        $('[data-toggle="popover"]').popover({
+        $('[data-toggle="popover"]').popover("destroy").popover({
             container: $(document.body)
         });
     });
@@ -120,3 +119,5 @@
 
 </body>
 </html>
+
+<!--weichengtech-->

@@ -1,5 +1,4 @@
 <?php
-
 global $_W;
 global $_GPC;
 check_shop_auth('http://120.26.212.219/api.php', $this->pluginname);
@@ -13,7 +12,7 @@ if ($operation == 'display') {
 	$condition = ' and log.uniacid=:uniacid and g.type=:type and log.status>0';
 	$params = array(':uniacid' => $_W['uniacid'], ':type' => $type);
 
-	if (!empty($_GPC['keyword'])) {
+	if (!(empty($_GPC['keyword']))) {
 		$_GPC['keyword'] = trim($_GPC['keyword']);
 		$condition .= ' and ( log.logno like :keyword or log.eno like :keyword or g.title like :keyword ) ';
 		$params[':keyword'] = '%' . $_GPC['keyword'] . '%';
@@ -25,7 +24,7 @@ if ($operation == 'display') {
 	}
 
 
-	if (!empty($_GPC['realname'])) {
+	if (!(empty($_GPC['realname']))) {
 		$_GPC['realname'] = trim($_GPC['realname']);
 		$condition .= ' and ( m.realname like :realname or m.nickname like :realname or m.mobile like :realname or a.realname like :realname or a.mobile like :realname  ) ';
 		$params[':realname'] = '%' . $_GPC['realname'] . '%';
@@ -40,11 +39,11 @@ if ($operation == 'display') {
 
 	$searchtime = $_GPC['searchtime'];
 
-	if (!empty($_GPC['searchtime'])) {
+	if (!(empty($_GPC['searchtime']))) {
 		$starttime = strtotime($_GPC['time']['start']);
 		$endtime = strtotime($_GPC['time']['end']);
 
-		if (!empty($searchtime)) {
+		if (!(empty($searchtime))) {
 			$condition .= ' AND log.createtime >= :starttime AND log.createtime <= :endtime ';
 			$params[':starttime'] = $starttime;
 			$params[':endtime'] = $endtime;
@@ -59,7 +58,7 @@ if ($operation == 'display') {
 	foreach ($list as &$row ) {
 		$row['address'] = array();
 
-		if (!empty($row['addressid'])) {
+		if (!(empty($row['addressid']))) {
 			$row['address'] = pdo_fetch('select realname,mobile,address,province,city,area from ' . tablename('ewei_shop_member_address') . ' where id=:id and uniacid=:uniacid limit 1', array(':id' => $row['addressid'], ':uniacid' => $_W['uniacid']));
 		}
 
@@ -127,7 +126,7 @@ if ($operation == 'display') {
 	$log['canexchange'] = $canexchange;
 	$address = false;
 
-	if (!empty($log['addressid'])) {
+	if (!(empty($log['addressid']))) {
 		$address = pdo_fetch('select id,realname,mobile,address,province,city,area from ' . tablename('ewei_shop_member_address') . ' where id=:id and uniacid=:uniacid limit 1', array(':id' => $log['addressid'], ':uniacid' => $_W['uniacid']));
 	}
 
@@ -162,7 +161,7 @@ if ($operation == 'display') {
 	}
 
 
-	if (!empty($goods['type'])) {
+	if (!(empty($goods['type']))) {
 		if ($log['status'] <= 1) {
 			$this->message('未中奖，不能兑换!', referer(), 'error');
 		}

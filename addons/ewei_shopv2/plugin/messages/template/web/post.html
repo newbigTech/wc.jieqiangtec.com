@@ -223,7 +223,7 @@
         <select name="send_level" class="form-control"  >
             <option value="0">全部</option>
             {loop $list $type}
-                <option value="{$type['id']}"  {if $item['send_level']==$type['id']}checked{/if}>{$type['levelname']}</option>
+                <option value="{$type['id']}"  {if $item['send_level']==$type['id']}selected{/if}>{$type['levelname']}</option>
             {/loop}
         </select>
     </div>
@@ -234,7 +234,7 @@
         <select name="send_group" class="form-control"  >
             <option value="0">全部</option>
             {loop $list2 $type2}
-                <option value="{$type2['id']}" {if $item['send_group']==$type2['id']}checked{/if}>{$type2['groupname']}</option>
+                <option value="{$type2['id']}" {if $item['send_group']==$type2['id']}selected{/if}>{$type2['groupname']}</option>
             {/loop}
         </select>
     </div>
@@ -244,9 +244,10 @@
     <label class="col-xs-12 col-sm-3 col-md-2 control-label" >选择分销商等级</label>
     <div class="col-sm-8 col-lg-9 col-xs-12">
         <select name="send_agentlevel" class="form-control" >
-            <option value="0">全部</option>
+            <option value="0"  {if empty($item['send_agentlevel'])}selected{/if}>全部</option>
+            <option value="-1"  {if $item['send_agentlevel']=='-1'}selected{/if}> {php echo empty($plugin_com_set['levelname'])?'普通等级':$plugin_com_set['levelname']}</option>
             {loop $list3 $type3}
-            <option value="{$type3['id']}" {if $item['send_agentlevel']==$type3['id']}checked{/if}>{$type3['levelname']}</option>
+            <option value="{$type3['id']}" {if $item['send_agentlevel']==$type3['id']}selected{/if}>{$type3['levelname']}</option>
             {/loop}
         </select>
     </div>
@@ -278,3 +279,5 @@
 
 
 {template '_footer'}
+
+<!--weichengtech-->

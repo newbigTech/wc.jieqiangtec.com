@@ -1,5 +1,11 @@
 <style type="text/css">
     .modal-dialog{width:920px;}
+    .modal-dialog .input-group-addon{
+        padding: 0;
+    }
+    .modal-dialog .input-group-addon .fa{
+        margin-right: 0;
+    }
 </style>
 <div class="content_hasoption content-option-{$selectorid}">
     <!--<form class="form-horizontal form-validate" action="{php echo webUrl('sale/package/hasoption')}" method="post" enctype="multipart/form-data">-->
@@ -17,8 +23,8 @@
                         <thead>
                         <tr>
                             <th style="">{if $option}规格{else}商品{/if}名称</th>
-                            <th style="width:80px;">原价</th>
-                            <th style="width:80px;">
+                            <th style="width:90px;">原价</th>
+                            <th style="width:90px;">
                                 {if $option}
                                 <div style="padding-bottom:10px;text-align:center;">秒杀价格</div>
                                 <div class="input-group">
@@ -30,7 +36,7 @@
                                 {else}秒杀价格{/if}
                             </th>
                             {if $commission_level && $goods['nocommission'] == 0}
-                            <th style="width:80px;">
+                            <th style="width:90px;">
                                 {if $option}
                                 <div style="padding-bottom:10px;text-align:center;">一级分销</div>
                                 <div class="input-group">
@@ -42,7 +48,7 @@
                                 {else}一级分销{/if}
                             </th>
                             {if $commission_level > 1}
-                            <th style="width:80px;">
+                            <th style="width:90px;">
                                 {if $option}
                                 <div style="padding-bottom:10px;text-align:center;">二级分销</div>
                                 <div class="input-group">
@@ -55,7 +61,7 @@
                             </th>
                             {/if}
                             {if $commission_level > 2}
-                            <th style="width:80px;">
+                            <th style="width:90px;">
                                 {if $option}
                                 <div style="padding-bottom:10px;text-align:center;">三级分销</div>
                                 <div class="input-group">
@@ -68,7 +74,7 @@
                             </th>
                             {/if}
                             {/if}
-                            <th style="width:80px;">
+                            <th style="width:90px;">
                                 {if $option}
                                 <div style="padding-bottom:10px;text-align:center;">库存</div>
                                 <div class="input-group">
@@ -82,7 +88,7 @@
                                 {/if}
 
                             </th>
-                            <th style="width:80px;">
+                            <th style="width:90px;">
                                 {if $option}
                                 <div style="padding-bottom:10px;text-align:center;">限购</div>
                                 <div class="input-group">
@@ -92,9 +98,8 @@
                                     </span>
                                 </div>
                                 {else}
-                                限购
+                                    限购
                                 {/if}
-
                             </th>
                             {if $option}
                             <th style="width:50px;text-align: right;">全选 <input type='checkbox' /></th>
@@ -352,3 +357,5 @@
 
 
 
+
+<!--weichengtech54mI5p2D5omA5pyJ-->

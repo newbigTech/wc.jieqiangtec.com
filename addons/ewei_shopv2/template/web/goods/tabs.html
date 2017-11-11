@@ -16,6 +16,10 @@
      <li {if $_GPC['goodsfrom'] == 'out'} class="active" {/if}><a href="{php echo webUrl('goods',array('goodsfrom'=>'out'))}">已售罄<span  class='text-danger'>{$totals['out']}</span></a></li>
     <li {if $_GPC['goodsfrom'] == 'stock'} class="active" {/if}><a href="{php echo webUrl('goods',array('goodsfrom'=>'stock'))}">仓库中<span>{$totals['stock']}</span></a></li>
     <li {if $_GPC['goodsfrom'] == 'cycle'} class="active" {/if}><a href="{php echo webUrl('goods',array('goodsfrom'=>'cycle'))}">回收站<span  class='text-default'>{$totals['cycle']}</span></a></li>
+
+    {if p('merch')}
+    <li {if $_GPC['goodsfrom'] == 'verify'} class="active" {/if}><a href="{php echo webUrl('goods',array('goodsfrom'=>'verify'))}">待审核<span  class='text-default'>{$totals['verify']}</span></a></li>
+    {/if}
      {ifp 'goods.category'}<li {if $_W['action'] == 'goods.category'} class="active" {/if}><a href="{php echo webUrl('goods/category')}">商品分类</a></li>{/if}
     {ifp 'goods.group'}<li {if $_GPC['r'] == 'goods.group' || $_GPC['r'] == 'goods.group.edit'}class="active" {/if}><a href="{php echo webUrl('goods/group')}">商品组</a></li>{/if}
     <li {if $_W['action'] == 'goods.label'} class="active" {/if}><a href="{php echo webUrl('goods/label')}">标签管理</a></li>
@@ -34,3 +38,4 @@
 {/if}
 
   
+<!--weichengtech-->

@@ -1,9 +1,7 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
-
 
 require EWEI_SHOPV2_PLUGIN . 'commission/core/page_login_mobile.php';
 class Down_EweiShopV2Page extends CommissionMobileLoginPage
@@ -18,16 +16,13 @@ class Down_EweiShopV2Page extends CommissionMobileLoginPage
 		$levelcount3 = $member['level3'];
 		$level1 = $level2 = $level3 = 0;
 		$level1 = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_member') . ' where agentid=:agentid and uniacid=:uniacid limit 1', array(':agentid' => $member['id'], ':uniacid' => $_W['uniacid']));
-
 		if ((2 <= $this->set['level']) && (0 < $levelcount1)) {
 			$level2 = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_member') . ' where agentid in( ' . implode(',', array_keys($member['level1_agentids'])) . ') and uniacid=:uniacid limit 1', array(':uniacid' => $_W['uniacid']));
 		}
 
-
 		if ((3 <= $this->set['level']) && (0 < $levelcount2)) {
 			$level3 = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_member') . ' where agentid in( ' . implode(',', array_keys($member['level2_agentids'])) . ') and uniacid=:uniacid limit 1', array(':uniacid' => $_W['uniacid']));
 		}
-
 
 		$total = $level1 + $level2 + $level3;
 		include $this->template();
@@ -54,7 +49,7 @@ class Down_EweiShopV2Page extends CommissionMobileLoginPage
 			$hasangent = true;
 			$total_level = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_member') . ' where agentid=:agentid and uniacid=:uniacid limit 1', array(':agentid' => $member['id'], ':uniacid' => $_W['uniacid']));
 		}
-		 else if ($level == 2) {
+		else if ($level == 2) {
 			if (empty($levelcount1)) {
 				show_json(1, array(
 	'list'     => array(),
@@ -63,37 +58,35 @@ class Down_EweiShopV2Page extends CommissionMobileLoginPage
 	));
 			}
 
-
 			$condition = ' and agentid in( ' . implode(',', array_keys($member['level1_agentids'])) . ')';
 			$hasangent = true;
 			$total_level = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_member') . ' where agentid in( ' . implode(',', array_keys($member['level1_agentids'])) . ') and uniacid=:uniacid limit 1', array(':uniacid' => $_W['uniacid']));
 		}
-		 else if ($level == 3) {
-			if (empty($levelcount2)) {
-				show_json(1, array(
+		else {
+			if ($level == 3) {
+				if (empty($levelcount2)) {
+					show_json(1, array(
 	'list'     => array(),
 	'total'    => 0,
 	'pagesize' => $psize
 	));
+				}
+
+				$condition = ' and agentid in( ' . implode(',', array_keys($member['level2_agentids'])) . ')';
+				$hasangent = true;
+				$total_level = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_member') . ' where agentid in( ' . implode(',', array_keys($member['level2_agentids'])) . ') and uniacid=:uniacid limit 1', array(':uniacid' => $_W['uniacid']));
 			}
-
-
-			$condition = ' and agentid in( ' . implode(',', array_keys($member['level2_agentids'])) . ')';
-			$hasangent = true;
-			$total_level = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_member') . ' where agentid in( ' . implode(',', array_keys($member['level2_agentids'])) . ') and uniacid=:uniacid limit 1', array(':uniacid' => $_W['uniacid']));
 		}
-
 
 		$list = pdo_fetchall('select * from ' . tablename('ewei_shop_member') . ' where uniacid = ' . $_W['uniacid'] . ' ' . $condition . '  ORDER BY isagent desc,id desc limit ' . (($pindex - 1) * $psize) . ',' . $psize);
 
-		foreach ($list as &$row ) {
+		foreach ($list as &$row) {
 			if ($member['isagent'] && $member['status']) {
 				$info = $this->model->getInfo($row['openid'], array('total'));
 				$row['commission_total'] = $info['commission_total'];
 				$row['agentcount'] = $info['agentcount'];
 				$row['agenttime'] = date('Y-m-d H:i', $row['agenttime']);
 			}
-
 
 			$ordercount = pdo_fetchcolumn('select count(id) from ' . tablename('ewei_shop_order') . ' where openid=:openid and uniacid=:uniacid limit 1', array(':uniacid' => $_W['uniacid'], ':openid' => $row['openid']));
 			$row['ordercount'] = number_format(intval($ordercount), 0);
@@ -106,6 +99,5 @@ class Down_EweiShopV2Page extends CommissionMobileLoginPage
 		show_json(1, array('list' => $list, 'total' => $total_level, 'pagesize' => $psize));
 	}
 }
-
 
 ?>

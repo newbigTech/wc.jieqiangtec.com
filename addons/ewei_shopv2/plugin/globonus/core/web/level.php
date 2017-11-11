@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -12,7 +11,7 @@ class Level_EweiShopV2Page extends PluginWebPage
 		global $_GPC;
 		$set = $_W['shopset']['globonus'];
 		$leveltype = $set['leveltype'];
-		$default = array('id' => 'default', 'levelname' => (empty($set['levelname']) ? '默认等级' : $set['levelname']), 'bonus' => $set['bonus']);
+		$default = array('id' => 'default', 'levelname' => empty($set['levelname']) ? '默认等级' : $set['levelname'], 'bonus' => $set['bonus']);
 		$others = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_globonus_level') . ' WHERE uniacid = \'' . $_W['uniacid'] . '\' ORDER BY bonus asc');
 		$list = array_merge(array($default), $others);
 		include $this->template();
@@ -37,9 +36,9 @@ class Level_EweiShopV2Page extends PluginWebPage
 		$id = trim($_GPC['id']);
 
 		if ($id == 'default') {
-			$level = array('id' => 'default', 'levelname' => (empty($set['levelname']) ? '默认等级' : $set['levelname']), 'bonus' => $set['bonus']);
+			$level = array('id' => 'default', 'levelname' => empty($set['levelname']) ? '默认等级' : $set['levelname'], 'bonus' => $set['bonus']);
 		}
-		 else {
+		else {
 			$level = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_globonus_level') . ' WHERE id=:id and uniacid=:uniacid limit 1', array(':id' => intval($id), ':uniacid' => $_W['uniacid']));
 		}
 
@@ -54,13 +53,13 @@ class Level_EweiShopV2Page extends PluginWebPage
 					$this->updateSet($set);
 					plog('globonus.level.edit', '修改股东默认等级' . $updatecontent);
 				}
-				 else {
+				else {
 					$updatecontent = '<br/>等级名称: ' . $level['levelname'] . '->' . $data['levelname'] . '<br/>分红比例: ' . $level['bonus'] . '->' . $data['bonus'];
 					pdo_update('ewei_shop_globonus_level', $data, array('id' => $id, 'uniacid' => $_W['uniacid']));
 					plog('globonus.level.edit', '修改股东等级 ID: ' . $id . $updatecontent);
 				}
 			}
-			 else {
+			else {
 				pdo_insert('ewei_shop_globonus_level', $data);
 				$id = pdo_insertid();
 				plog('globonus.level.add', '添加股东等级 ID: ' . $id);
@@ -68,7 +67,6 @@ class Level_EweiShopV2Page extends PluginWebPage
 
 			show_json(1, array('url' => webUrl('globonus/level')));
 		}
-
 
 		include $this->template();
 	}
@@ -80,13 +78,12 @@ class Level_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = ((is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0));
+			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
 		}
-
 
 		$items = pdo_fetchall('SELECT id,levelname FROM ' . tablename('ewei_shop_globonus_level') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
 
-		foreach ($items as $item ) {
+		foreach ($items as $item) {
 			pdo_delete('ewei_shop_globonus_level', array('id' => $item['id']));
 			plog('globonus.level.delete', '删除股东等级 ID: ' . $id . ' 等级名称: ' . $item['levelname']);
 		}
@@ -94,6 +91,5 @@ class Level_EweiShopV2Page extends PluginWebPage
 		show_json(1);
 	}
 }
-
 
 ?>

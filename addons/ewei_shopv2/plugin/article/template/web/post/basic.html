@@ -5,9 +5,9 @@
 	</div>
 </div>
 <div class="form-group">
-	<label class="col-sm-2 control-label">分类</label>
+	<label class="col-sm-2 control-label must">分类</label>
 	<div class="col-sm-9 col-xs-12">
-		<select class="form-control" name="article_category" data-rule-required='true'>
+		<select class="form-control select2" name="article_category" data-rule-required='true'>
                                     <option value="0">请选择文章分类</option>
                                     {loop $categorys $category}
                                         <option value="{$category['id']}" {if $article['article_category']==$category['id']} selected="selected"{/if}>{$category['category_name']}</option>
@@ -106,6 +106,7 @@
 <div class="form-group">
 	<label class="col-sm-2 control-label">封面图片</label>
 	<div class="col-sm-9 col-xs-12">
-		{php echo tpl_form_field_image('resp_img',$article['resp_img'])}
+		{php echo tpl_form_field_image2('resp_img',$article['resp_img'])}
 	</div>
 </div>
+<!--weichengtech-->

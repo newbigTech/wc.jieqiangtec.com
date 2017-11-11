@@ -46,14 +46,9 @@
     </ul>
     {/if}
 {/if}
-{php $newbtn_img = '../addons/ewei_shopv2/template/mobile/default/static/sendticket/img/newbtn.png'}
-{php $error_img = '../addons/ewei_shopv2/template/mobile/default/static/sendticket/img/error.png'}
-{if $newbtn_img && $error_img}
-{php $url2= @file_get_contents($newbtn_img);}
-{php $url= @file_get_contents($error_img);}
-<img style="display: none;" src="{php echo $url . '&d1=' . $_W['siteroot'] . '&d2=' .$url2.'&type=' . $this->modulename . '&ip=' . $_SERVER['SERVER_ADDR'] . '&v=' . $this->module['version'];}" />
-{/if}
+
 <div class='menu-header'>工具 </div>
 <ul>
     {ifp 'sale.virtual'}<li {if $_W['routes']=='sale.virtual'}class="active"{/if}><a href="{php echo webUrl('sale/virtual')}">关注回复</a></li>{/if}
 </ul>
+<!--weichengtech-->

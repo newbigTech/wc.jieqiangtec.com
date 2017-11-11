@@ -1,9 +1,9 @@
 <?php
-if (!(defined('IN_IA'))) 
-{
+if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
-class MmanageModel extends PluginModel 
-{
-}
+
+class MmanageModel extends PluginModel
+{}
+
 ?>

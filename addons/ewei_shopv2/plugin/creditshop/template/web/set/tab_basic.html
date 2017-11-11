@@ -115,7 +115,7 @@
     <label class="col-sm-2 control-label">分享图标</label>
     <div class="col-sm-9 col-xs-12">
         {ifp 'creditshop.set.edit'}
-        {php echo tpl_form_field_image('data[share_icon]', $data['share_icon'])}
+        {php echo tpl_form_field_image2('data[share_icon]', $data['share_icon'])}
         {else}
         {if !empty($data['share_icon'])}
         <a href='{php echo tomedia($data['share_icon'])}' target='_blank'>
@@ -160,3 +160,4 @@
         {/if}
     </div>
 </div>
+<!--weichengtech-->

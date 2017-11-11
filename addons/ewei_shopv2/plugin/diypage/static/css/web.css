@@ -374,7 +374,7 @@
     width: 840px;
     height: auto;
     background: #fdfdfd;
-    margin-right: -500px;
+    margin-right: -455px;
     border: 1px solid #ddd;
     border-radius: 3px;
     position: fixed;
@@ -382,6 +382,8 @@
     right: 50%;
     box-shadow: 0 0 8px rgba(0,0,0,0.1);
     z-index: 999;
+    -webkit-transition: all 0.3s;
+    transition: all 0.3s;
 }
 .diy-menu .navs,
 .diy-menu .action {
@@ -438,6 +440,34 @@
     margin-right: 5px;
 }
 
+.wb-container.right-panel .diy-menu {
+    margin-right: -540px;
+}
+
+.wb-nav.fold~.wb-subnav~.wb-container .diy-menu {
+    margin-right: -420px;
+}
+.wb-nav.fold~.wb-subnav~.wb-container.right-panel .diy-menu {
+    margin-right: -505px;
+}
+
+.wb-nav~.wb-subnav.fold~.wb-container .diy-menu {
+    margin-right: -400px;
+}
+
+.wb-nav~.wb-subnav.fold~.wb-container.right-panel .diy-menu {
+    margin-right: -485px;
+}
+
+
+.wb-nav.fold~.wb-subnav.fold~.wb-container .diy-menu {
+    margin-right: -365px;
+}
+.wb-nav.fold~.wb-subnav.fold~.wb-container.right-panel .diy-menu {
+    margin-right: -450px;
+}
+
+
 .form-horizontal .checkbox, .form-horizontal .checkbox-inline, .form-horizontal .radio, .form-horizontal .radio-inline {
     padding-top: 6px;
 }
@@ -446,7 +476,14 @@
     border-color: #ed5565 !important;
 }
 
+.w840 {
+    width: 840px;
+    margin: auto;
+}
 
 
 
 
+
+
+/*weichengtech*/

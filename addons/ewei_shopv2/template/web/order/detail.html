@@ -283,7 +283,7 @@
                             <td style='width:80px'>配送方式：</td>
                             <td>
                                 {if $isonlyverifygoods}
-                                    会员卡商品
+                                    记次/时商品
                                 {elseif $item['isverify'] == 1}
                                     线下核销
                                 {elseif !empty($item['addressid'])}
@@ -863,3 +863,5 @@
 </script>
 
 {template '_footer'}
+
+<!--weichengtech-->

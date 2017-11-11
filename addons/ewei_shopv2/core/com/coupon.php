@@ -1,5 +1,4 @@
 <?php
-//weichengtech
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -1749,6 +1748,84 @@ class Coupon_EweiShopV2ComModel extends ComModel
 		$sql = 'SELECT * FROM ' . tablename('ewei_shop_sendticket_share') . ' WHERE uniacid = ' . intval($_W['uniacid']) . ' AND status = 1 AND (enough = ' . $money . ' OR enough <= ' . $money . ') AND (expiration = 0 OR (expiration = 1 AND endtime >= ' . TIMESTAMP . ')) ORDER BY enough DESC,createtime DESC LIMIT 1';
 		$activity = pdo_fetch($sql);
 		return $activity;
+	}
+
+	public function getCanGetCouponNum($merchid = 0)
+	{
+		global $_W;
+		$merch_plugin = p('merch');
+		$merch_data = m('common')->getPluginset('merch');
+		if ($merch_plugin && $merch_data['is_openmerch']) {
+			$is_openmerch = 1;
+		}
+		else {
+			$is_openmerch = 0;
+		}
+
+		$time = time();
+		$param = array();
+		$param[':uniacid'] = $_W['uniacid'];
+		$sql = 'select id,timelimit,coupontype,timedays,timestart,timeend,couponname,enough,backtype,deduct,discount,backmoney,backcredit,backredpack,bgcolor,thumb,credit,money,getmax,merchid,total as t,tagtitle,settitlecolor,titlecolor  from ' . tablename('ewei_shop_coupon');
+		$sql .= ' where uniacid=:uniacid';
+
+		if ($is_openmerch == 0) {
+			$sql .= ' and merchid=0';
+		}
+		else {
+			if (!empty($merchid)) {
+				$sql .= ' and merchid=:merchid';
+				$param[':merchid'] = intval($merchid);
+			}
+		}
+
+		$plugin_com = p('commission');
+
+		if ($plugin_com) {
+			$plugin_com_set = $plugin_com->getSet();
+
+			if (empty($plugin_com_set['level'])) {
+				$sql .= ' and ( limitagentlevels = "" or  limitagentlevels is null )';
+			}
+		}
+		else {
+			$sql .= ' and ( limitagentlevels = "" or  limitagentlevels is null )';
+		}
+
+		$plugin_globonus = p('globonus');
+
+		if ($plugin_globonus) {
+			$plugin_globonus_set = $plugin_globonus->getSet();
+
+			if (empty($plugin_globonus_set['open'])) {
+				$sql .= ' and ( limitpartnerlevels = ""  or  limitpartnerlevels is null )';
+			}
+		}
+		else {
+			$sql .= ' and ( limitpartnerlevels = ""  or  limitpartnerlevels is null )';
+		}
+
+		$plugin_abonus = p('abonus');
+
+		if ($plugin_abonus) {
+			$plugin_abonus_set = $plugin_abonus->getSet();
+
+			if (empty($plugin_abonus_set['open'])) {
+				$sql .= ' and ( limitaagentlevels = "" or  limitaagentlevels is null )';
+			}
+		}
+		else {
+			$sql .= ' and ( limitaagentlevels = "" or  limitaagentlevels is null )';
+		}
+
+		$sql .= ' and gettype=1 and (total=-1 or total>0) and ( timelimit = 0 or  (timelimit=1 and timeend>unix_timestamp()))';
+		$sql .= ' order by displayorder desc, id desc ';
+		$coupons = set_medias(pdo_fetchall($sql, $param), 'thumb');
+
+		if (empty($coupons)) {
+			return 0;
+		}
+
+		return count($coupons);
 	}
 }
 

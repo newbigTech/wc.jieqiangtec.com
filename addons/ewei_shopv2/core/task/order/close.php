@@ -1,5 +1,4 @@
 <?php
-//weichengtech
 error_reporting(0);
 require '../../../../../framework/bootstrap.inc.php';
 require '../../../../../addons/ewei_shopv2/defines.php';
@@ -74,51 +73,6 @@ foreach ($sets as $set) {
 			}
 		}
 	}
-}
-
-$list = pdo_fetchall('select id,uniacid,ordersn,cash,parentid from' . tablename('ewei_shop_order') . ' WHERE paytype = 22 limit 20000', array(), 'ordersn');
-$tids = implode('","', array_keys($list));
-$paylog = pdo_fetchall('select `type`,`uniacid`,`tid`,`tag` from' . tablename('core_paylog') . ' where tid in ("' . $tids . '")', array(), 'tid');
-
-foreach ($list as $k => $l) {
-	if (0 < $l['parentid']) {
-		$parent = pdo_fetch('select id,uniacid,ordersn,cash,parentid from' . tablename('ewei_shop_order') . ' WHERE id =:id', array(':id' => $l['parentid']));
-		$parentpaylog = pdo_fetch('select `type`,`uniacid`,`tid`,`tag` from' . tablename('core_paylog') . ' where tid=:tid', array(':tid' => $parent['ordersn']));
-		$paylog[$parentpaylog['tid']] = $parentpaylog;
-		$k = $parent['ordersn'];
-	}
-
-	if (empty($paylog[$k]['uniacid'])) {
-		continue;
-	}
-
-	$paytype = 1;
-
-	if ($paylog[$k]['type'] == 'wechat') {
-		$paytype = 21;
-	}
-	else if ($paylog[$k]['type'] == 'alipay') {
-		$paytype = 22;
-	}
-	else if ($paylog[$k]['type'] == 'cash') {
-		$paytype = 1;
-	}
-	else {
-		if ($paylog[$k]['type'] == '') {
-			$paytype = 11;
-
-			if ($l['cash'] == '1') {
-				$paytype = 3;
-			}
-
-			if (!empty($paylog[$k]['tag'])) {
-				$tag = iunserializer($paylog[$k]['tag']);
-				$paytype = (isset($tag['transaction_id']) ? 21 : 22);
-			}
-		}
-	}
-
-	pdo_update('ewei_shop_order', array('uniacid' => $paylog[$k]['uniacid'], 'paytype' => $paytype), array('id' => $l['id']));
 }
 
 ?>

@@ -1,5 +1,4 @@
 <?php
-
 require_once 'JSON.php';
 define('DEBUG', false);
 define('MAX_RECURSION_DEPTH_ALLOWED', 25);
@@ -42,13 +41,13 @@ class xml2json
 	static public function convertSimpleXmlElementObjectIntoArray($simpleXmlElementObject, &$recursionDepth = 0)
 	{
 		if (MAX_RECURSION_DEPTH_ALLOWED < $recursionDepth) {
-			return NULL;
+			return;
 		}
 
 
 		if ($recursionDepth == 0) {
 			if (get_class($simpleXmlElementObject) != SIMPLE_XML_ELEMENT_PHP_CLASS) {
-				return NULL;
+				return;
 			}
 
 

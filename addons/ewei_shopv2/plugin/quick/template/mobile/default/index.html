@@ -86,7 +86,7 @@
                                         {else}
                                             <ul>
                                                 {loop $data['notices'] $notice}
-                                                    <li><i class="icon icon-notification"></i><a href="{php echo mobileUrl('shop/notice/detail', array('id'=>$notice['id']))}" data-nocache="true">{$notice['title']}</a></li>
+                                                    <li><i class="icon icon-notification"></i><a href="{php echo $data['style']['notice']==2?$notice['linkurl']:mobileUrl('shop/notice/detail', array('id'=>$notice['id']))}" data-nocache="true">{$notice['title']}</a></li>
                                                 {/loop}
                                             </ul>
                                         {/if}
@@ -110,7 +110,7 @@
                 <div class="fui-goods-tab style{$data['style']['shopstyle']}">
                     <div class="menu">
                         {loop $data['datas'] $index $item}
-                            <div class="nav {if $index==0}active{/if}" data-index="{$index}">{if !empty($item['icon'])}<i class="icon {$item['icon']}"></i> {/if}{$item['title']}</div>
+                            <div class="nav {if $index==0}active{/if}" data-index="{$index}">{$item['title']}</div>
                         {/loop}
                     </div>
                     <div class="main">
@@ -214,3 +214,4 @@
 </div>
 
 {template '_footer'}
+<!--weichengtech54mI5p2D5omA5pyJ-->

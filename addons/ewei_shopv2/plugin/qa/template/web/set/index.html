@@ -82,7 +82,7 @@
         <label class="col-sm-2 control-label">入口图片</label>
         <div class="col-sm-9 col-xs-12">
             {ifp 'qa.set.save'}
-            {php echo tpl_form_field_image('enter_img', $set['enter_img'])}
+            {php echo tpl_form_field_image2('enter_img', $set['enter_img'])}
             {else}
             <img width="150" class="img-responsive img-thumbnail" onerror="this.src='./resource/images/nopic.jpg'; this.title='图片未找到.'" src="{php echo tomedia($set['enter_img'])}">
             {/if}
@@ -112,3 +112,4 @@
 </form>
 
 {template '_footer'}
+<!--weichengtech-->

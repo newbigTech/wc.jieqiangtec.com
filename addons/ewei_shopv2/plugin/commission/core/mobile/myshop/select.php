@@ -1,9 +1,7 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
-
 
 require EWEI_SHOPV2_PLUGIN . 'commission/core/page_login_mobile.php';
 class Select_EweiShopV2Page extends CommissionMobileLoginPage
@@ -21,10 +19,8 @@ class Select_EweiShopV2Page extends CommissionMobileLoginPage
 				show_json(-1, $err);
 			}
 
-
 			$this->message($err, '', 'error');
 		}
-
 
 		if (empty($this->set['select_goods'])) {
 			if ($member['agentselectgoods'] != 2) {
@@ -34,12 +30,9 @@ class Select_EweiShopV2Page extends CommissionMobileLoginPage
 					show_json(-1, $err);
 				}
 
-
 				$this->message($err, '', 'error');
 			}
-
 		}
-
 
 		$shop = pdo_fetch('select * from ' . tablename('ewei_shop_commission_shop') . ' where uniacid=:uniacid and mid=:mid limit 1', array(':uniacid' => $_W['uniacid'], ':mid' => $member['id']));
 
@@ -53,22 +46,19 @@ class Select_EweiShopV2Page extends CommissionMobileLoginPage
 				$shopdata['goodsids'] = implode(',', $_GPC['goodsids']);
 			}
 
-
 			if (!empty($shopdata['selectgoods']) && !is_array($_GPC['goodsids'])) {
 				show_json(0, '请选择商品!');
 			}
 
-
 			if (empty($shop['id'])) {
 				pdo_insert('ewei_shop_commission_shop', $shopdata);
 			}
-			 else {
+			else {
 				pdo_update('ewei_shop_commission_shop', $shopdata, array('id' => $shop['id']));
 			}
 
 			show_json(1);
 		}
-
 
 		$goods = array();
 
@@ -79,9 +69,7 @@ class Select_EweiShopV2Page extends CommissionMobileLoginPage
 				$goods = pdo_fetchall('select id,title,marketprice,thumb from ' . tablename('ewei_shop_goods') . ' where uniacid=:uniacid and id in ( ' . trim($shop['goodsids']) . ')', array(':uniacid' => $_W['uniacid']));
 				$goods = set_medias($goods, 'thumb');
 			}
-
 		}
-
 
 		$set = m('common')->getSysset('shop');
 
@@ -89,10 +77,8 @@ class Select_EweiShopV2Page extends CommissionMobileLoginPage
 			$category = m('shop')->getCategory();
 		}
 
-
 		include $this->template();
 	}
 }
-
 
 ?>

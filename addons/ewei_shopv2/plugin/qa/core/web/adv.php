@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -19,17 +18,15 @@ class Adv_EweiShopV2Page extends PluginWebPage
 			$condition .= ' and enabled=' . intval($_GPC['enabled']);
 		}
 
-
 		if (!empty($_GPC['keyword'])) {
 			$_GPC['keyword'] = trim($_GPC['keyword']);
 			$condition .= ' and advname  like :keyword';
 			$params[':keyword'] = '%' . $_GPC['keyword'] . '%';
 		}
 
-
 		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_qa_adv') . ' WHERE 1 ' . $condition . '  ORDER BY displayorder DESC limit ' . (($pindex - 1) * $psize) . ',' . $psize, $params);
 		$total = pdo_fetchcolumn('SELECT count(1) FROM ' . tablename('ewei_shop_qa_adv') . ' WHERE 1 ' . $condition, $params);
-		$pager = pagination($total, $pindex, $psize);
+		$pager = pagination2($total, $pindex, $psize);
 		include $this->template();
 	}
 
@@ -56,7 +53,7 @@ class Adv_EweiShopV2Page extends PluginWebPage
 				pdo_update('ewei_shop_qa_adv', $data, array('id' => $id));
 				plog('qa.adv.edit', '修改幻灯片 ID: ' . $id);
 			}
-			 else {
+			else {
 				pdo_insert('ewei_shop_qa_adv', $data);
 				$id = pdo_insertid();
 				plog('qa.adv.add', '添加幻灯片 ID: ' . $id);
@@ -64,7 +61,6 @@ class Adv_EweiShopV2Page extends PluginWebPage
 
 			show_json(1, array('url' => webUrl('qa/adv')));
 		}
-
 
 		$item = pdo_fetch('select * from ' . tablename('ewei_shop_qa_adv') . ' where id=:id and uniacid=:uniacid limit 1', array(':id' => $id, ':uniacid' => $_W['uniacid']));
 		include $this->template();
@@ -77,13 +73,12 @@ class Adv_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = ((is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0));
+			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
 		}
-
 
 		$items = pdo_fetchall('SELECT id,advname FROM ' . tablename('ewei_shop_qa_adv') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
 
-		foreach ($items as $item ) {
+		foreach ($items as $item) {
 			pdo_delete('ewei_shop_qa_adv', array('id' => $item['id']));
 			plog('qa.adv.delete', '删除幻灯片 ID: ' . $item['id'] . ' 标题: ' . $item['advname'] . ' ');
 		}
@@ -104,7 +99,6 @@ class Adv_EweiShopV2Page extends PluginWebPage
 			plog('qa.adv.edit', '修改幻灯片排序 ID: ' . $item['id'] . ' 标题: ' . $item['advname'] . ' 排序: ' . $displayorder . ' ');
 		}
 
-
 		show_json(1);
 	}
 
@@ -115,20 +109,18 @@ class Adv_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = ((is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0));
+			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
 		}
-
 
 		$items = pdo_fetchall('SELECT id,advname FROM ' . tablename('ewei_shop_qa_adv') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
 
-		foreach ($items as $item ) {
+		foreach ($items as $item) {
 			pdo_update('ewei_shop_qa_adv', array('enabled' => intval($_GPC['enabled'])), array('id' => $item['id']));
-			plog('qa.adv.edit', (('修改幻灯片状态<br/>ID: ' . $item['id'] . '<br/>标题: ' . $item['advname'] . '<br/>状态: ' . $_GPC['enabled']) == 1 ? '显示' : '隐藏'));
+			plog('qa.adv.edit', ('修改幻灯片状态<br/>ID: ' . $item['id'] . '<br/>标题: ' . $item['advname'] . '<br/>状态: ' . $_GPC['enabled']) == 1 ? '显示' : '隐藏');
 		}
 
 		show_json(1, array('url' => referer()));
 	}
 }
-
 
 ?>

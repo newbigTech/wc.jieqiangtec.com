@@ -1,5 +1,4 @@
 <?php
-//weichengtech
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -2061,7 +2060,7 @@ class Create_EweiShopV2Page extends MobileLoginPage
 				$threensql .= ',threen';
 			}
 
-			$sql = 'SELECT id as goodsid,' . $sql_condition . 'title,type,intervalfloor,intervalprice, weight,total,issendfree,isnodiscount, thumb,marketprice,liveprice,cash,isverify,verifytype,' . ' goodssn,productsn,sales,istime,timestart,timeend,hasoption,isendtime,usetime,endtime,ispresell,presellprice,preselltimeend,' . ' usermaxbuy,minbuy,maxbuy,unit,buylevels,buygroups,deleted,unite_total,' . ' status,deduct,manydeduct,`virtual`,discounts,deduct2,ednum,edmoney,edareas,edareas_code,diyformtype,diyformid,diymode,' . ' dispatchtype,dispatchid,dispatchprice,merchid,merchsale,cates,' . ' isdiscount,isdiscount_time,isdiscount_discounts, virtualsend,' . ' buyagain,buyagain_islong,buyagain_condition, buyagain_sale ' . $threensql . ' FROM ' . tablename('ewei_shop_goods') . ' where id=:id and uniacid=:uniacid  limit 1';
+			$sql = 'SELECT id as goodsid,' . $sql_condition . 'title,type,intervalfloor,intervalprice, weight,total,issendfree,isnodiscount, thumb,marketprice,liveprice,cash,isverify,verifytype,' . ' goodssn,productsn,sales,istime,timestart,timeend,hasoption,isendtime,usetime,endtime,ispresell,presellprice,preselltimeend,' . ' usermaxbuy,minbuy,maxbuy,unit,buylevels,buygroups,deleted,unite_total,' . ' status,deduct,manydeduct,`virtual`,discounts,deduct2,ednum,edmoney,edareas,edareas_code,diyformtype,diyformid,diymode,' . ' dispatchtype,dispatchid,dispatchprice,merchid,merchsale,cates,' . ' isdiscount,isdiscount_time,isdiscount_discounts, virtualsend,' . ' buyagain,buyagain_islong,buyagain_condition, buyagain_sale ,verifygoodslimittype,verifygoodslimitdate  ' . $threensql . ' FROM ' . tablename('ewei_shop_goods') . ' where id=:id and uniacid=:uniacid  limit 1';
 			$data = pdo_fetch($sql, array(':uniacid' => $uniacid, ':id' => $goodsid));
 			$data['seckillinfo'] = plugin_run('seckill::getSeckill', $goodsid, $optionid, true, $_W['openid']);
 			if ((0 < $data['ispresell']) && (($data['preselltimeend'] == 0) || (time() < $data['preselltimeend']))) {
@@ -2070,6 +2069,19 @@ class Create_EweiShopV2Page extends MobileLoginPage
 
 			if ($data['type'] != 5) {
 				$isonlyverifygoods = false;
+			}
+			else {
+				if (!empty($data['verifygoodslimittype'])) {
+					$verifygoodslimitdate = intval($data['verifygoodslimitdate']);
+
+					if ($verifygoodslimitdate < time()) {
+						show_json(0, '商品:"' . $data['title'] . '"的使用时间已失效,无法购买!');
+					}
+
+					if (($verifygoodslimitdate - 7200) < time()) {
+						show_json(0, '商品:"' . $data['title'] . '"的使用时间即将失效,无法购买!');
+					}
+				}
 			}
 
 			if (!empty($liveid)) {
@@ -2863,6 +2875,10 @@ class Create_EweiShopV2Page extends MobileLoginPage
 		$order['taskdiscountprice'] = $taskdiscountprice;
 		$order['lotterydiscountprice'] = $lotterydiscountprice;
 		$order['discountprice'] = $discountprice;
+		if (!empty($goods[0]['bargain_id']) && p('bargain')) {
+			$order['discountprice'] = 0;
+		}
+
 		$order['isdiscountprice'] = $isdiscountprice;
 		$order['merchisdiscountprice'] = $merchisdiscountprice;
 		$order['cash'] = $cash;
@@ -2959,24 +2975,6 @@ class Create_EweiShopV2Page extends MobileLoginPage
 
 		pdo_insert('ewei_shop_order', $order);
 		$orderid = pdo_insertid();
-
-        //         TODO jieqiang 通知商城
-        $_SESSION['prom_cps']['m'] = 'desk';
-        $_SESSION['prom_cps']['a'] = 'buy';
-//        $_SESSION['prom_cps']['item_id'] = $order_goods['goodsid'];
-        $_SESSION['prom_cps']['order_id'] = $orderid;
-//        $_SESSION['prom_cps']['shop_id'] = '11';
-        $_SESSION['prom_cps']['status'] = '1';
-        unset($_SESSION['prom_cps']['id']);
-        // WeUtility::logging('TODO debug23',  array('file'=>'D:\www\users\wd2.jieqiangtec.com\addons\ewei_shop\core\mobile\order\confirm.php ','sql2'=>$sql2,'prom'=>$_SESSION['prom_cps']));
-
-        if ($_SESSION['prom_cps']['sid'] && $_SESSION['prom_cps']['item_id'] && $_SESSION['prom_cps']['shop_id'] && $_SESSION['prom_cps']['bank_subid'] && $_SESSION['prom_cps']['bank_id']  ){
-            $res = http_request(CPS_API,$_SESSION['prom_cps']);
-        }
-
-        $curl = CPS_API . '?' . http_build_query($_SESSION['prom_cps']);
-        WeUtility::logging('TODO confirm',  array('file'=>'D:\www\users\wc.jieqiangtec.com\addons\ewei_shopv2\core\mobile\order\create.php ','res'=>$res,'curl'=>$curl,'prom'=>$_SESSION['prom_cps']));
-
 		if (!empty($goods[0]['bargain_id']) && p('bargain')) {
 			pdo_update('ewei_shop_bargain_actor', array('order' => $orderid), array('id' => $goods[0]['bargain_id'], 'openid' => $_W['openid']));
 		}
@@ -3119,23 +3117,6 @@ class Create_EweiShopV2Page extends MobileLoginPage
 
 				pdo_insert('ewei_shop_order', $order);
 				$ch_orderid = pdo_insertid();
-
-				        //         TODO jieqiang 通知商城
-        $_SESSION['prom_cps']['m'] = 'desk';
-        $_SESSION['prom_cps']['a'] = 'buy';
-//        $_SESSION['prom_cps']['item_id'] = $order_goods['goodsid'];
-        $_SESSION['prom_cps']['order_id'] = $orderid;
-//        $_SESSION['prom_cps']['shop_id'] = '11';
-        $_SESSION['prom_cps']['status'] = '1';
-        unset($_SESSION['prom_cps']['id']);
-        // WeUtility::logging('TODO debug23',  array('file'=>'D:\www\users\wd2.jieqiangtec.com\addons\ewei_shop\core\mobile\order\confirm.php ','sql2'=>$sql2,'prom'=>$_SESSION['prom_cps']));
-
-        if ($_SESSION['prom_cps']['sid'] && $_SESSION['prom_cps']['item_id'] && $_SESSION['prom_cps']['shop_id'] && $_SESSION['prom_cps']['bank_subid'] && $_SESSION['prom_cps']['bank_id']  ){
-            $res = http_request(CPS_API,$_SESSION['prom_cps']);
-        }
-
-        $curl = CPS_API . '?' . http_build_query($_SESSION['prom_cps']);
-        WeUtility::logging('TODO debug2345',  array('file'=>'D:\www\users\wd2.jieqiangtec.com\addons\ewei_shop\core\mobile\order\confirm.php ','res'=>$res,'curl'=>$curl,'prom'=>$_SESSION['prom_cps']));
 				$merch_array[$merchid]['orderid'] = $ch_orderid;
 
 				if (0 < $couponmerchid) {

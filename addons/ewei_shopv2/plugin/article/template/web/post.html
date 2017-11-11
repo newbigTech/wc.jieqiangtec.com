@@ -157,29 +157,14 @@
 	});
 	
 	function save(){
-		var title = $.trim($("input[name=article_title]").val());
-		if(title==''){
-			$('#myTab a[href="#tab_basic"]').tab('show');
-			$("input[name=article_title]").focus();
-			tip.msgbox.err("请填写文章标题!");
-			return false;
-		}
 		var category = $("select[name=article_category] option:selected").val();
 		if(category==0){
 			$('#myTab a[href="#tab_basic"]').tab('show');
-			$("select[name=article_category]").focus();
 			tip.msgbox.err("请选择文章分类!");
+			$("select[name=article_category]").focus();
 			return false;
 		}
-		var keyword2 = $.trim($("input[name=article_keyword2]").val());
-		if(keyword2==''){
-			$('#myTab a[href="#tab_basic"]').tab('show');
-			$("input[name=article_keyword2]").focus();
-			tip.msgbox.err("请填写文章关键词!");
-			return false;
-		}
-		
-		
 	}
 </script>
 {template '_footer'}
+<!--weichengtech-->

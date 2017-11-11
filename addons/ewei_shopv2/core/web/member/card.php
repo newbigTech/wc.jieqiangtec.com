@@ -1,5 +1,4 @@
 <?php
-//weichengtech
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -81,7 +80,7 @@ class Card_EweiShopV2Page extends WebPage
 				show_json(0, '会员卡特权说明不能为空');
 			}
 
-			if (300 < strlen($prerogative)) {
+			if (300 < mb_strlen($prerogative, 'UTF-8')) {
 				show_json(0, '会员卡特权不能超过300个字符');
 			}
 
@@ -89,7 +88,7 @@ class Card_EweiShopV2Page extends WebPage
 				show_json(0, '使用须知说明不能为空');
 			}
 
-			if (300 < strlen($card_description)) {
+			if (300 < mb_strlen($card_description, 'UTF-8')) {
 				show_json(0, '使用须知不能超过300个字符');
 			}
 
@@ -179,6 +178,14 @@ class Card_EweiShopV2Page extends WebPage
 			if (!empty($card)) {
 				$result = com('wxcard')->membercardmanager($carddata, $card['card_id']);
 
+				if ($result['errcode'] == 48001) {
+					show_json(0, '您尚未开通微信会员卡。');
+				}
+
+				if ($result['errcode'] == 43010) {
+					show_json(0, '不能使用余额，需要申请授权。');
+				}
+
 				if (is_wxerror($result)) {
 					show_json(0, '卡券信息填写有误');
 				}
@@ -190,6 +197,7 @@ class Card_EweiShopV2Page extends WebPage
 				$card_title = istripslashes($card_title);
 				$card_brand_name = htmlspecialchars($_GPC['card_brand_name'], ENT_QUOTES);
 				$card_brand_name = istripslashes($card_brand_name);
+				$card_supply_balance = $_GPC['card_supply_balance'];
 
 				if (empty($card_title)) {
 					show_json(0, '会员卡标题不能为空');
@@ -213,6 +221,7 @@ class Card_EweiShopV2Page extends WebPage
 
 				$carddata['card_title'] = $card_title;
 				$carddata['card_brand_name'] = $card_brand_name;
+				$carddata['card_supply_balance'] = $card_supply_balance;
 				$carddata['card_totalquantity'] = $_GPC['card_totalquantity'];
 				$carddata['card_quantity'] = $_GPC['card_totalquantity'];
 				$carddata['freewifi'] = $_GPC['freewifi'] == 'on' ? 1 : 0;
@@ -223,6 +232,10 @@ class Card_EweiShopV2Page extends WebPage
 
 				if ($result['errcode'] == 48001) {
 					show_json(0, '您尚未开通微信会员卡。');
+				}
+
+				if ($result['errcode'] == 43010) {
+					show_json(0, '不能使用余额，需要申请授权。');
 				}
 
 				if (is_wxerror($result)) {

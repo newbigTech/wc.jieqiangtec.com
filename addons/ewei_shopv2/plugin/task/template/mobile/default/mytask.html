@@ -34,11 +34,11 @@
         {loop $poster[1] $k $v}
         <div class="my-item" data-id="p{$v['join_id']}" data-status="0">
             <div class="my-title">
-                <div class="my-logo"><img src="{php echo tomedia($v['logo']);}" alt="" width="100%" height="100%"></div>
+                <div class="my-logo"><img src="{php echo $this->getpostericon($v['task_id'])}" alt="" width="100%" height="100%"></div>
                 <div class="my-right">
                     <div class="my-task-title">{$v['title']}</div>
                     <div class="blank"></div>
-                    <div class="my-task-time">{php echo date('Y-m-d',$v['pickuptime']);}至{php echo date('Y-m-d',$v['endtime']);}</div>
+                    <div class="my-task-time">{php echo date('Y-m-d',$v['addtime']);}至{php echo date('Y-m-d',$v['failtime']);}</div>
                 </div>
             </div>
             <div class="my-status">
@@ -55,23 +55,68 @@
                 </div>
             </div>
         </div>
-        {php $thisreward = unserialize($poster[0][0]['require_data']);}
+
         <div id="detailp{$v['join_id']}" style="display: none">
-            {loop $thisreward['rec'] $rk $rv}
+            {if $v['poster_type'] != 2}
+            {php $thisreward = unserialize($v['poster_reward']);}
             <div class="my-require">
                 <div class="my-require-title">
                     目标：邀请{$v['needcount']}人
                 </div>
+                {loop $thisreward['rec'] $rk $rv}
                 <div class="my-reward">
                     <div class="reward-title">
                         {if $rk == 'credit'}{$rv}积分
                         {elseif $rk == 'bribery'}{$rv}元红包
                         {elseif $rk == 'goods'}{php echo count($rv)}件特惠商品
-                        {elseif $rk == 'money'}{$rv['num']}元余额{/if}
+                        {elseif $rk == 'money'}{$rv['num']}元余额
+                        {elseif $rk == 'coupon'}{$rv['total']}张优惠券{/if}
                     </div>
                 </div>
+                {/loop}
             </div>
-            {/loop}
+            {else}
+            {php $thisreward = unserialize($v['reward_data']);}
+            <div class="my-require">
+                {loop $thisreward $rk $rv}
+                <div class="my-require-title">
+                    目标：邀请{$rv['needcount']}人
+                </div>
+                {if $rv['goods']}
+                {loop $rv['goods'] $gk $gv}
+                <div class="my-reward" style="overflow: hidden">
+                    <div class="reward-title">
+                        {$gv['title']}
+                    </div>
+                </div>
+                {/loop}
+                {/if}
+                {if $rv['credit']}
+                <div class="my-reward">
+                    <div class="reward-title">
+                        {$rv['credit']}积分
+
+                    </div>
+                </div>
+                {/if}
+                {if $rv['bribery']}
+                <div class="my-reward">
+                <div class="reward-title">{$rv['bribery']}元红包
+                </div></div>
+                {/if}
+                {if $rv['money']}
+                <div class="my-reward">
+                    <div class="reward-title">{$rv['money']['num']}元余额
+                    </div></div>
+                {/if}
+                {if $rv['coupon']}
+                <div class="my-reward">
+                    <div class="reward-title">{$rv['coupon']['total']}张优惠券
+                    </div></div>
+                {/if}
+                {/loop}
+            </div>
+            {/if}
         </div>
 
         {/loop}
@@ -105,7 +150,12 @@
                     {php $require = unserialize($v['require_data']);$reward = unserialize($v['reward_data']);}
                     {loop $require $ek $ev}
                     <div class="my-require-title">
-                        目标：{php echo $this->model->returnName($ek);}{$ev['verb']}{$ev['num']}{$ev['unit']}
+                        {if substr($ek,0,10) == 'cost_goods'}
+                        <a href="{php echo mobileUrl('goods.detail',array('id'=>substr($ek,10)));}">
+                        {/if}
+                        目标：{if $this->model->returnName($ek) == '绑定手机'}<a href="{php echo mobileUrl('member')}">{php echo $this->model->returnName($ek);}{if $this->model->returnName($ek) != '绑定手机'}{$ev['verb']}{$ev['num']}{$ev['unit']}{/if}</a>
+                            {else}{php echo $this->model->returnName($ek);}{if $this->model->returnName($ek) != '绑定手机'}{$ev['verb']}{$ev['num']}{$ev['unit']}{/if}{/if}
+                            {php if(substr($ek,0,10) == 'cost_goods')echo '件<div class="my-getreward">去购买</div></a>';}
                     </div>
                     {/loop}
                     {loop $reward $rk $rv}
@@ -121,7 +171,7 @@
                     {/if}
                     {if $rk == 'redpacket' && $rv>0}
                     <div class="my-require-title">
-                        {$rv}元余额
+                        {$rv}元红包
                     </div>
                     {/if}
                     {if $rk == 'goods'}
@@ -133,7 +183,7 @@
                     {/if}
                     {if $rk == 'coupon'}
                     <div class="my-require-title">
-                        {$rv['num']}张优惠券
+                        {php echo count($rv);}种优惠券
                     </div>
                     {/if}
                     {/loop}
@@ -145,11 +195,11 @@
         {loop $poster[2] $k $v}
         <div class="my-item" data-id="p{$v['join_id']}" data-status="0">
             <div class="my-title">
-                <div class="my-logo"><img src="{php echo tomedia($v['logo']);}" alt="" width="100%" height="100%"></div>
+                <div class="my-logo"><img src="{php echo $this->getpostericon($v['task_id'])}" alt="" width="100%" height="100%"></div>
                 <div class="my-right">
                     <div class="my-task-title">{$v['title']}</div>
                     <div class="blank"></div>
-                    <div class="my-task-time">{php echo date('Y-m-d',$v['pickuptime']);}至{php echo date('Y-m-d',$v['endtime']);}</div>
+                    <div class="my-task-time">{php echo date('Y-m-d',$v['addtime']);}至{php echo date('Y-m-d',$v['failtime']);}</div>
                 </div>
             </div>
             <div class="my-status">
@@ -166,24 +216,76 @@
                 </div>
             </div>
         </div>
-            {php $thisreward = unserialize($poster[0][0]['reward_data']);}
+
             <div id="detailp{$v['join_id']}" style="display: none">
-                {loop $thisreward['rec'] $rk $rv}
+                {if $v['poster_type'] != 2}
+                {php $thisreward = ($poster[2][$k]['reward_data']);}
                 <div class="my-require">
                     <div class="my-require-title">
                         目标：邀请{$v['needcount']}人
-                        <div class="my-getreward" onclick="FoxUI.alert('领取成功','领取成功')">领取</div>
                     </div>
+                    {loop $thisreward $rk $rv}
+                    {if $rk == 'goods'}
+                    {loop $rv $gk $gv}
+                    <div class="my-reward" style="overflow: hidden">
+                        <div class="reward-title">
+                            <a href="{php echo mobileUrl('goods.detail',array('id'=>$gk,'join_id'=>$v['join_id']),1);}">{$gv['title']}</a>
+                        </div>
+                    </div>
+                    {/loop}
+                    {else}
                     <div class="my-reward">
                         <div class="reward-title">
                             {if $rk == 'credit'}{$rv}积分
                             {elseif $rk == 'bribery'}{$rv}元红包
-                            {elseif $rk == 'goods'}{php echo count($rv)}件特惠商品
-                            {elseif $rk == 'money'}{$rv['num']}元余额{/if}
+                            {elseif $rk == 'money'}{$rv['num']}元余额
+                            {elseif $rk == 'coupon'}{php echo $rv['total']}张优惠券
+                            {/if}
                         </div>
                     </div>
+                    {/if}
+                    {/loop}
                 </div>
-                {/loop}
+                {else}
+                {php $thisreward = unserialize($v['reward_data']);}
+                <div class="my-require">
+                    {loop $thisreward $rk $rv}
+                    {php $rank++;}
+                    <div class="my-require-title">
+                        目标：邀请{$rv['needcount']}人
+                    </div>
+
+                    {if $rv['goods']}
+                    {if $v['completecount']>=$rv['needcount']}
+                    {loop $rv['goods'] $gk $gv}
+                    <div class="my-reward" style="overflow: hidden">
+                        <div class="reward-title">
+                            <a href="{php echo mobileUrl('goods.detail',array('id'=>$gk,'join_id'=>$v['join_id'],'rank'=>$rank),1);}">{$gv['title']}</a>
+                        </div>
+                    </div>
+                    {/loop}
+                    {else}
+                    <div class="my-reward" style="overflow: hidden">
+                        <div class="reward-title">
+                            尚未完成
+                        </div>
+                    </div>
+                    {/if}
+                    {else}
+                    <div class="my-reward">
+                        <div class="reward-title">
+                            {loop $rv $kk $vv}
+                            {if $kk=='credit'}{$rv['credit']}积分
+                            {elseif $kk=='bribery'}{$rv['bribery']}元红包
+                            {elseif $kk=='money'}{$rv['money']['num']}元余额
+                            {elseif $kk=='coupon'}{$rv['coupon']['total']}张优惠券{/if}
+                            {/loop}
+                        </div>
+                    </div>
+                    {/if}
+                    {/loop}
+                </div>
+                {/if}
             </div>
         {/loop}
         {loop $donelist $k $v}
@@ -193,7 +295,9 @@
                 <div class="my-right">
                     <div class="my-task-title">{$v['title']}</div>
                     <div class="blank"></div>
-                    <div class="my-task-time">{php echo date('Y-m-d',$v['pickuptime']);}至{php echo date('Y-m-d',$v['endtime']);}</div>
+                    <div class="my-task-time">
+                        {php echo date('Y-m-d',$v['pickuptime']);}至{php echo date('Y-m-d',$v['endtime']);}
+                    </div>
                 </div>
             </div>
             <div class="my-status">
@@ -215,36 +319,37 @@
                     {php $require = unserialize($v['require_data']);$reward = unserialize($v['rewarded']);}
                     {loop $require $ek $ev}
                     <div class="my-require-title">
-                        目标：{php echo $this->model->returnName($ek);}{$ev['verb']}{$ev['num']}{$ev['unit']}
-                        <div class="my-getreward" onclick="FoxUI.alert('已领取','领取成功')">领取</div>
+                        目标：
+                        {php echo $this->model->returnName($ek);}
+                        {if $this->model->returnName($ek) != '绑定手机'}{$ev['verb']}{$ev['num']}{$ev['unit']}{/if}
                     </div>
                     {/loop}
                     {loop $reward $rk $rv}
                     {if $rk == 'balance' && $rv>0}
                     <div class="my-require-title">
-                        {$rv}元余额
+                        {$rv}元余额<div class="my-getreward" onclick="getReward({$v['id']});">领取</div>
                     </div>
                     {/if}
                     {if $rk == 'score' && $rv>0}
                     <div class="my-require-title">
-                        {$rv}积分
+                        {$rv}积分<div class="my-getreward" onclick="getReward({$v['id']});">领取</div>
                     </div>
                     {/if}
                     {if $rk == 'redpacket' && $rv>0}
                     <div class="my-require-title">
-                        {$rv}元余额
+                        {$rv}元红包<div class="my-getreward" onclick="getReward({$v['id']});">领取</div>
                     </div>
                     {/if}
                     {if $rk == 'goods'}
-                    {loop $rv $k $v}
+                    {loop $rv $k $tv}
                     <div class="my-require-title" style="overflow: hidden;" >
-                        <a href="{php echo mobileUrl('goods.detail',array('id'=>$v['id']));}" style="color: #999">{$v['name']}</a>
+                        <a href="{php echo mobileUrl('goods.detail',array('id'=>$tv['id'],'task_id'=>$v['id']));}" style="color: #999">{$tv['name']}<div class="my-getreward">领取</div></a>
                     </div>
                     {/loop}
                     {/if}
                     {if $rk == 'coupon'}
                     <div class="my-require-title">
-                        {$rv['num']}张优惠券
+                        {$rv['num']}张优惠券<div class="my-getreward" onclick="getReward({$v['id']});">领取</div>
                     </div>
                     {/if}
                     {/loop}
@@ -256,11 +361,15 @@
             {loop $poster[3] $k $v}
             <div class="my-item" data-id="p{$v['join_id']}" data-status="0">
                 <div class="my-title">
-                    <div class="my-logo"><img src="{php echo tomedia($v['logo']);}" alt="" width="100%" height="100%"></div>
+                    <div class="my-logo">
+                        <img src="{php echo $this->getpostericon($v['task_id'])}" alt="" width="100%" height="100%">
+                    </div>
                     <div class="my-right">
                         <div class="my-task-title">{$v['title']}</div>
                         <div class="blank"></div>
-                        <div class="my-task-time">{php echo date('Y-m-d',$v['pickuptime']);}至{php echo date('Y-m-d',$v['endtime']);}</div>
+                        <div class="my-task-time">
+                            {php echo date('Y-m-d',$v['addtime']);}至{php echo date('Y-m-d',$v['failtime']);}
+                        </div>
                     </div>
                 </div>
                 <div class="my-status">
@@ -278,11 +387,13 @@
             {loop $fail $k $v}
             <div class="my-item" data-id="{$v['id']}" data-status="0">
                 <div class="my-title">
-                    <div class="my-logo"><img src="{php echo tomedia($v['logo']);}" alt="" width="100%" height="100%"></div>
+                    <div class="my-logo"><img src="{$v['logo']}" alt="" width="100%" height="100%"></div>
                     <div class="my-right">
                         <div class="my-task-title">{$v['title']}</div>
                         <div class="blank"></div>
-                        <div class="my-task-time">{php echo date('Y-m-d',$v['pickuptime']);}至{php echo date('Y-m-d',$v['endtime']);}</div>
+                        <div class="my-task-time">
+                            {php echo date('Y-m-d',$v['pickuptime']);}至{php echo date('Y-m-d',$v['endtime']);}
+                        </div>
                     </div>
                 </div>
                 <div class="my-status">
@@ -292,8 +403,7 @@
                         </svg>
                     </div>
                     <div class="my-statustext" style="color: #ccc">已失效</div>
-                    <div class="my-detail">
-                    </div>
+                    <div class="my-detail"></div>
                 </div>
             </div>
             {/loop}
@@ -326,10 +436,11 @@
                 if (json.status == 1){
                     FoxUI.alert(json.result.message);
                 }else{
-                    FoxUI.alert('失败');
+                    FoxUI.alert(json.result.message,'领取失败');
                 }
             }
         });
     }
 </script>
 {template '_footer'}
+<!--weichengtech-->

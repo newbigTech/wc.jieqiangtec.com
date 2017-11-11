@@ -2,14 +2,14 @@
 <div class="page-heading">
     <span class='pull-right'>
         <a class="btn btn-default" href="{php echo webUrl('store/goodsgroup');}">返回列表</a>
-        <a class="btn btn-primary">添加商品分组</a>
+        <a  href="{php echo weburl('store/goodsgroup/detail')}"class="btn btn-primary">添加商品分组</a>
 	</span>
     <h2>添加商品分组</h2>
 </div>
 <form action="" method="post" class="form-validate form-horizontal ">
 
     <div class="form-group">
-        <label class="col-sm-2 control-label">商品组名称</label>
+        <label class="col-sm-2 control-label must">商品组名称</label>
         <div class="col-sm-9">
             {ife 'store.goodsgroup' $detail}
             <input type="text" class="form-control valid" name="name" value="{$detail['name']}"
@@ -33,3 +33,4 @@
     </table>
 </form>
 {template '_footer'}
+<!--weichengtech-->

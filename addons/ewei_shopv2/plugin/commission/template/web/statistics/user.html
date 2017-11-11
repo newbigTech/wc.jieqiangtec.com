@@ -11,7 +11,7 @@
  		<a class="btn btn-default  btn-sm" href="{php echo referer()}">返回列表</a>
  	</span>
 
-    <h2>分销关系 <small>总数: <span class='text-danger'>{$total}</span></small></h2> </div>
+    <h2>分销关系 <small>当前页数量: <span class='text-danger'>{$list_total}</span> (提醒:因所有分销关系数量太大,每页只统计{$psize}个分销商的下级分销关系,所以每页显示数量不一致)</small></h2> </div>
 <!--<div class="panel panel-default">
     <div class='panel-body'>
         <div style='height:100px;width:110px;float:left;'>
@@ -41,13 +41,13 @@
     <input type="hidden" name="searchstart" value="1" />
     <div class='row  m-b-sm m-t-sm moresearch' style='overflow: hidden;'>
 
-        <div class="col-sm-2">
-            <select name='isagent'  class='form-control  input-sm'  >
-                <option value=''>是否分销商</option>
-                <option value='0' {if $_GPC['isagent']=='0'}selected{/if}>不是</option>
-                <option value='1' {if $_GPC['isagent']=='1'}selected{/if}>是</option>
-            </select>
-        </div>
+        <!--<div class="col-sm-2">-->
+            <!--<select name='isagent'  class='form-control  input-sm'  >-->
+                <!--<option value=''>是否分销商</option>-->
+                <!--<option value='0' {if $_GPC['isagent']=='0'}selected{/if}>不是</option>-->
+                <!--<option value='1' {if $_GPC['isagent']=='1'}selected{/if}>是</option>-->
+            <!--</select>-->
+        <!--</div>-->
 
         <div class="col-sm-2">
             <select name='level' class='form-control  input-sm' >
@@ -288,3 +288,4 @@
 
 
     {template '_footer'}
+<!--weichengtech-->

@@ -14,12 +14,12 @@
 			.fui-cell-group .fui-cell {padding: 0.7rem 0.5rem;}
 			.fui-cell-group .fui-cell .fui-cell-label {padding-left: 0;}
 			.fui-list-media img {width: 2.5rem; height: 2.5rem;}
-			#file-avatar {position: absolute; top: 0; left: 0; right: 0; bottom: 0; direction: rtl; z-index: 3;opacity: 0;}
+			#file-avatar {opacity: 0; position: absolute; top:0; left: 0; bottom: 0; right: 0; z-index: 9; background: red; width: 100%;}
 		</style>
 
-		<div class="fui-list-group" id="btn-avatar">
-			<div class="fui-list" >
-				<input type="file"  name="file-avatar" id="file-avatar" />
+		<div class="fui-list-group">
+			<input type="file" name="file-avatar" id="file-avatar" />
+			<div class="fui-list" id="btn-avatar">
 				<div class="fui-list-inner">修改头像</div>
 				<div class="fui-list-media">
 					<img src="{$member['avatar']}" id="avatar"
@@ -29,7 +29,6 @@
 				</div>
 			</div>
 		</div>
-
 
 		<div class="fui-cell-group">
 			<div class="fui-cell must ">
@@ -54,3 +53,5 @@
 </div>
 {template '_footer'}
 
+
+<!--weichengtech-->

@@ -1,5 +1,4 @@
 <?php
-//weichengtech
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -166,7 +165,7 @@ class LiveModel extends PluginModel
      */
 	public function getLiveList()
 	{
-		return array('panda' => '熊猫直播', 'douyu' => '斗鱼直播', 'huajiao' => '花椒直播', 'yizhibo' => '一直播', 'inke' => '映客直播', 'shuidi' => '水滴直播', 'qlive' => '青果直播', 'ys7' => '萤石直播');
+		return array('panda' => '熊猫直播', 'douyu' => '斗鱼直播', 'huajiao' => '花椒直播', 'yizhibo' => '一直播', 'inke' => '映客直播', 'shuidi' => '水滴直播', '360.' => '水滴直播', 'qlive' => '青果直播', 'ys7' => '萤石直播');
 	}
 
 	/**
@@ -507,6 +506,24 @@ class LiveModel extends PluginModel
 			break;
 
 		case 'shuidi':
+			preg_match('/.*view.html\\?.*sn=([0-9A-Z]*)/i', $url, $matchs);
+
+			if (empty($matchs)) {
+				return error(1, '视频地址参数错误或所选来源错误');
+			}
+
+			$roomid = $matchs[1];
+			$apiResult = ihttp_get('https://live2.jia.360.cn/public/getInfoAndPlayV2?from=mpc_ipcam_web&sn=' . $roomid);
+			$apiResult = json_decode($apiResult['content'], true);
+
+			if (empty($apiResult['publicInfo'])) {
+				return error(2, '获取房间信息失败');
+			}
+
+			$resultArr = array('status' => $apiResult['publicInfo']['online'], 'poster' => $apiResult['playInfo']['imageUrl'], 'hls_url' => $apiResult['playInfo']['hls'], 'rtmp_url' => $apiResult['playInfo']['rtmp']);
+			break;
+
+		case '360.':
 			preg_match('/.*view.html\\?.*sn=([0-9A-Z]*)/i', $url, $matchs);
 
 			if (empty($matchs)) {

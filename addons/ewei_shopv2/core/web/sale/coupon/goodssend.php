@@ -1,5 +1,4 @@
 <?php
-//dezend by http://www.yunlu99.com/ QQ:270656184
 echo "\r\n";
 
 if (!defined('IN_IA')) {

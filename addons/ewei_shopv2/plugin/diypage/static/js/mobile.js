@@ -114,7 +114,7 @@ define(['core', 'tpl'], function (core, tpl) {
                     if (list) {
                         _this.empty();
                         $.each(list, function (id, merch) {
-                            var thumb = merch.thumb ? merch.thumb : '../addons/ewei_shopv2/static/images/merch.jpg';
+                            var thumb = merch.thumb ? merch.thumb : '../addons/ewei_shopv2/plugin/diypage/static/images/default/logo.jpg';
                             var html = '';
                             html = '<div class="fui-list jump">';
                             html += '<a class="fui-list-media" href="' + core.getUrl("merch", {merchid: merch.id}) + '" data-nocache="true"><img src="' + thumb + '"/></a>';
@@ -124,11 +124,10 @@ define(['core', 'tpl'], function (core, tpl) {
                                 html += '<div class="subtitle" style="color: ' + item.style.textcolor + ';">' + merch.desc + '</div>'
                             }
                             if (merch.distance && item.params.openlocation) {
-                                html += '<div class="subtitle" style="color: ' + item.style.rangecolor + '; font-size: 0.6rem">距离您: ' + merch.distance + 'km</div>'
+                                html += '<div class="subtitle" style="color: ' + item.style.rangecolor + '; font-size: 0.6rem"><i class="icon icon-dingwei1" style="color: ' + item.style.rangecolor + '; font-size: 0.6rem;"></i>距离您: ' + merch.distance + 'km</div>'
                             }
                             html += '</a>';
                             html += '<a class="fui-remark jump" style="padding-right: 0.2rem; height: 2rem; width: 2rem; text-align: center; line-height: 2rem;" href="' + core.getUrl("merch/map", {merchid: merch.id}) + '" data-nocache="true">';
-                            html += '<i class="icon icon-location" style="color: ' + item.style.locationcolor + '; font-size: 1rem;"></i>';
                             html += '</a>';
                             html += '</div>';
                             _this.append(html)

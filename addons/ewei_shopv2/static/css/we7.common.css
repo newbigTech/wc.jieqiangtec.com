@@ -521,7 +521,8 @@
 .we7-modal-dialog .modal-body, .modal-dialog .modal-body {
     padding: 30px;
     overflow-y: auto;
-    overflow-x: hidden
+    overflow-x: hidden;
+    max-height: 600px;
 }
 
 .we7-modal-dialog .modal-footer, .modal-dialog .modal-footer {
@@ -708,7 +709,7 @@
 }
 
 select.we7-select {
-    height: 34px !important;
+    height: 34px;
     padding: 0 10px;
     color: #252424;
     border-color: #e7e7eb !important;
@@ -774,3 +775,8 @@ select.we7-select[multiple=multiple], select[multiple=multiple] {
 .wi-right:before {
     content: "\e955"
 }
+
+.modal.uploader-modal {
+    z-index: 2060 !important;
+}
+/*weichengtech*/

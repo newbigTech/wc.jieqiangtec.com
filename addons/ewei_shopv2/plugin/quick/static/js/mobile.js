@@ -5,6 +5,7 @@ define(['core', 'tpl', 'biz/goods/picker', './picker.js', 'biz/plugin/diyform', 
         modal.data = params.datas;
         modal.cart = params.cart;
         modal.fromquick = params.fromquick;
+        modal.merchid = params.merchid;
         if (modal.template == '1') {
             modal.initT2();
         } else {
@@ -15,16 +16,12 @@ define(['core', 'tpl', 'biz/goods/picker', './picker.js', 'biz/plugin/diyform', 
             modal.initGoods();
             modal.initCart();
 
-
-
             $('.container').infinite({
                 onLoading: function () {
                     modal.getGoods();
                 }
             });
-
         }
-
 
     };
     modal.initT2 = function () {
@@ -132,6 +129,8 @@ define(['core', 'tpl', 'biz/goods/picker', './picker.js', 'biz/plugin/diyform', 
             item.minbuy = parseInt(item.minbuy);
             item.totalmaxbuy = parseInt(item.totalmaxbuy);
             item.diyformtype = parseInt(item.diyformtype);
+            item.diyformid = parseInt(item.diyformid);
+
             if (item.gotodetail) {
                 location.href = core.getUrl('goods/detail', {id: item.id});
                 return;
@@ -146,7 +145,7 @@ define(['core', 'tpl', 'biz/goods/picker', './picker.js', 'biz/plugin/diyform', 
                     return;
                 }
             }
-            if (item.hasoption == 1 || item.diyformtype > 0 || !item.canAddCart) {
+            if (item.hasoption == 1 || (item.diyformtype>0&&item.diyformid>0) || !item.canAddCart) {
                 modal.child = child;
                 modal.childelm = $(this);
                 if (item.canAddCart && item.minbuy > 0 && item.num < item.minbuy) {
@@ -243,7 +242,7 @@ define(['core', 'tpl', 'biz/goods/picker', './picker.js', 'biz/plugin/diyform', 
                 $("#quick-cart").data('open', 0);
                 $(".mask").fadeOut();
                 FoxUI.loader.show('loading');
-                core.json('quick/clearCart', {quickid: modal.fromquick}, function (ret) {
+                core.json('quick/clearCart', {quickid: modal.fromquick, merchid: modal.merchid}, function (ret) {
                     modal.cart = {list: [], total: 0};
                     modal.initCart();
                     if (modal.data && modal.data.length > 0) {
@@ -277,7 +276,7 @@ define(['core', 'tpl', 'biz/goods/picker', './picker.js', 'biz/plugin/diyform', 
                 time = 1000;
             }
             setTimeout(function () {
-                core.json('quick/submit', {quickid: modal.fromquick}, function (ret) {
+                core.json('quick/submit', {quickid: modal.fromquick, merchid: modal.merchid}, function (ret) {
                     if (ret.status != 1) {
                         FoxUI.toast.show(ret.result.message);
                         _this.removeAttr("stop").html("去结算");
@@ -334,6 +333,7 @@ define(['core', 'tpl', 'biz/goods/picker', './picker.js', 'biz/plugin/diyform', 
             total: realNum,
             optionid: optionid || 0,
             update: update,
+            merchid: modal.merchid,
             diyformdata: diyformdata || ''
         }, function (ret) {
             if (ret.status == 0) {
@@ -525,7 +525,7 @@ define(['core', 'tpl', 'biz/goods/picker', './picker.js', 'biz/plugin/diyform', 
             return;
         }
         FoxUI.loader.show("loading");
-        var obj = {page: item.page, datatype: item.datatype, goodssort: item.goodssort};
+        var obj = {page: item.page, datatype: item.datatype, goodssort: item.goodssort, merchid: modal.merchid};
         if (item.datatype == 0) {
             if ($.isArray(item.goodsids)) {
                 item.goodsids = item.goodsids.toString();
@@ -596,7 +596,7 @@ define(['core', 'tpl', 'biz/goods/picker', './picker.js', 'biz/plugin/diyform', 
         }
     };
     modal.getCart = function () {
-        core.json('quick/getCart', {quickid: modal.fromquick}, function (ret) {
+        core.json('quick/getCart', {quickid: modal.fromquick, merchid: modal.merchid}, function (ret) {
             if (ret.status == 0) {
                 FoxUI.toast.show(ret.result.message);
                 return;

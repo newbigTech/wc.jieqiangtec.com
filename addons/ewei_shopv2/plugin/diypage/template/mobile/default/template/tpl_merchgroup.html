@@ -3,7 +3,7 @@
         {loop $diyitem['data'] $merchitem}
             <div class="fui-list jump">
                 <a class="fui-list-media" href="{php echo mobileUrl('merch', array('merchid'=>$merchitem['merchid']))}" data-nocache="true">
-                    <img src="{php echo !empty($merchitem['thumb'])?tomedia($merchitem['thumb']):'../addons/ewei_shopv2/static/images/merch.jpg'}" />
+                    <img class="round" src="{php echo !empty($merchitem['thumb'])?tomedia($merchitem['thumb']):'../addons/ewei_shopv2/plugin/diypage/static/images/default/logo.jpg'}" />
                 </a>
                 <a class="fui-list-inner" href="{php echo mobileUrl('merch', array('merchid'=>$merchitem['merchid']))}" data-nocache="true">
                     <div class="title" style="color: {$diyitem['style']['titlecolor']};">{$merchitem['name']}</div>
@@ -12,9 +12,9 @@
                     {/if}
                 </a>
                 <a class="fui-remark jump" style="padding-right: 0.2rem; height: 2rem; width: 2rem; text-align: center; line-height: 2rem;" href="{php echo mobileUrl('merch/map', array('merchid'=>$merchitem['merchid']))}" data-nocache="true">
-                    <i class="icon icon-location" style="color: {$diyitem['style']['locationcolor']};"></i>
                 </a>
             </div>
         {/loop}
     </div>
 {/if}
+<!--weichengtech-->

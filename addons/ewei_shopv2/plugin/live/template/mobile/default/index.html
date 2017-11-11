@@ -59,7 +59,7 @@
                     <div class="live-category-list-inner">
                         {loop $categorys $row}
                         <a href="{php echo mobileUrl('live/list',array('cate'=>$row['id']))}" class="external">
-                            <p style="width:5.5rem;"><img src="{php echo tomedia($row['thumb'])}" alt="{$row['name']}"></p>
+                            <p style="width:4.5rem;"><img src="{php echo tomedia($row['thumb'])}" alt="{$row['name']}"></p>
                             <span>{$row['name']}</span>
                         </a>
                         {/loop}
@@ -159,3 +159,4 @@
 </script>
 {template 'live/_menu'}
 {template '_footer'}
+<!--weichengtech-->

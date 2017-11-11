@@ -1,7 +1,7 @@
 <script type="text/html" id="tpl_navs">
     <nav class="btn btn-link" data-id="page"><i class="fa fa-cog"></i> {if $pagetype=='mod'}模块{else}页面{/if}设置</nav>
     <%each initnav as nav %>
-        <nav class="btn btn-link <%if nav.type==type%>special<%/if%>" data-id="<%nav.id%>"><i class="fa fa-plus"></i> <%nav.name%></nav>
+    <nav class="btn btn-link <%if nav.type==type%>special<%/if%>" data-id="<%nav.id%>"><i class="fa fa-plus"></i> <%nav.name%></nav>
     <%/each%>
 </script>
 
@@ -49,7 +49,7 @@
     <div class="form-group">
         <div class="col-sm-2 control-label">页面介绍</div>
         <div class="col-sm-10">
-            <textarea class="form-control richtext diy-bind" cols="70" rows="3" placeholder="请输入页面介绍" data-bind="desc" data-placeholder=""><%page.desc%></textarea>
+            <textarea class="form-control richtext diy-bind" cols="70" rows="5" placeholder="请输入页面介绍" data-bind="desc" data-placeholder=""><%page.desc%></textarea>
         </div>
     </div>
 
@@ -61,7 +61,7 @@
                 <span data-input="#iconsrc" data-img="#iconimg" data-toggle="selectImg" class="input-group-addon btn btn-default">选择图片</span>
             </div>
             <div class="input-group " style="margin-top:.5em;">
-                <img src="<%imgsrc page.icon%>" onerror="this.src='../addons/ewei_shopv2/static/images/nopic.jpg';" class="img-responsive img-thumbnail" width="150" id="iconimg">
+                <img src="<%imgsrc page.icon%>" onerror="this.src='../addons/ewei_shopv2/static/images/nopic.png';" class="img-responsive img-thumbnail" width="150" id="iconimg">
                 <em class="close" style="position:absolute; top: 0px; right: -14px;" title="删除这张图片" onclick="$('#iconsrc').val('').trigger('change');$(this).prev().attr('src', '')">×</em>
             </div>
         </div>
@@ -73,7 +73,7 @@
         <div class="col-sm-4">
             <div class="input-group input-group-sm">
                 <input class="form-control input-sm diy-bind color" data-bind="background" value="<%page.background%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#fafafa').trigger('propertychange')">重置</span>
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#f3f3f3').trigger('propertychange')">重置</span>
             </div>
         </div>
     </div>
@@ -98,8 +98,8 @@
     <div class="form-group">
         <div class="col-sm-2 control-label">悬浮按钮</div>
         <div class="col-sm-10">
-            <label class="radio-inline"><input type="radio" name="diylayer" value="0" class="diy-bind" data-bind="diylayer" <%if page.diylayer=='0' || !page.diylayer%>checked="checked"<%/if%> > 不显示</label>
             <label class="radio-inline"><input type="radio" name="diylayer" value="1" class="diy-bind" data-bind="diylayer" <%if page.diylayer=='1'%>checked="checked"<%/if%>> 显示</label>
+            <label class="radio-inline"><input type="radio" name="diylayer" value="0" class="diy-bind" data-bind="diylayer" <%if page.diylayer=='0' || !page.diylayer%>checked="checked"<%/if%> > 不显示</label>
             <div class="help-block">提示：按钮样式请至 <a href="{php echo webUrl('diypage/shop/layer')}" target="_blank">浮动按钮</a> 中设置 未设置则不显示</div>
         </div>
     </div>
@@ -107,8 +107,8 @@
     <div class="form-group">
         <div class="col-sm-2 control-label">返回顶部</div>
         <div class="col-sm-10">
-            <label class="radio-inline"><input type="radio" name="diygotop" value="0" class="diy-bind" data-bind="diygotop" <%if page.diygotop=='0' || !page.diygotop%>checked="checked"<%/if%> > 不显示</label>
             <label class="radio-inline"><input type="radio" name="diygotop" value="1" class="diy-bind" data-bind="diygotop" <%if page.diygotop=='1'%>checked="checked"<%/if%>> 显示</label>
+            <label class="radio-inline"><input type="radio" name="diygotop" value="0" class="diy-bind" data-bind="diygotop" <%if page.diygotop=='0' || !page.diygotop%>checked="checked"<%/if%> > 不显示</label>
             <div class="help-block">提示：样式请至 <a href="{php echo webUrl('diypage/shop/gotop')}" target="_blank">返回顶部</a> 中设置 未设置则不显示</div>
         </div>
     </div>
@@ -116,8 +116,8 @@
     <div class="form-group">
         <div class="col-sm-2 control-label">关注条</div>
         <div class="col-sm-10">
-            <label class="radio-inline"><input type="radio" name="followbar" value="0" class="diy-bind" data-bind="followbar" <%if page.followbar=='0' || !page.followbar%>checked="checked"<%/if%> > 不显示</label>
             <label class="radio-inline"><input type="radio" name="followbar" value="1" class="diy-bind" data-bind="followbar" <%if page.followbar=='1'%>checked="checked"<%/if%>> 显示</label>
+            <label class="radio-inline"><input type="radio" name="followbar" value="0" class="diy-bind" data-bind="followbar" <%if page.followbar=='0' || !page.followbar%>checked="checked"<%/if%> > 不显示</label>
             <div class="help-block">提示：关注条样式请至 <a href="{php echo webUrl('diypage/shop/followbar')}" target="_blank">自定义关注条</a> 中设置 未设置则不显示</div>
         </div>
     </div>
@@ -139,68 +139,68 @@
     <div class="form-group">
         <div class="col-sm-2 control-label">下单提醒</div>
         <div class="col-sm-10">
-            <label class="radio-inline"><input type="radio" name="danmu" value="0" class="diy-bind" data-bind="danmu" <%if page.danmu=='0' || !page.danmu%>checked="checked"<%/if%> > 不显示</label>
             <label class="radio-inline"><input type="radio" name="danmu" value="1" class="diy-bind" data-bind="danmu" <%if page.danmu=='1'%>checked="checked"<%/if%>> 显示</label>
+            <label class="radio-inline"><input type="radio" name="danmu" value="0" class="diy-bind" data-bind="danmu" <%if page.danmu=='0' || !page.danmu%>checked="checked"<%/if%> > 不显示</label>
             <div class="help-block">提示：设置请至 <a href="{php echo webUrl('diypage/shop/danmu')}" target="_blank">下单提醒</a> 中设置 未设置则不显示</div>
         </div>
     </div>
 
     <%if page.type==1%>
-        <div class="line"></div>
+    <div class="line"></div>
 
-        <div class="form-group">
-            <div class="col-sm-2 control-label">访问权限</div>
-            <div class="col-sm-10">
-                <label class="radio-inline"><input type="radio" name="visit" value="0" class="diy-bind" data-bind="visit" data-bind-init="true" <%if page.visit=='0' || !page.visit%>checked="checked"<%/if%> > 不开启</label>
-                <label class="radio-inline"><input type="radio" name="visit" value="1" class="diy-bind" data-bind="visit" data-bind-init="true" <%if page.visit=='1'%>checked="checked"<%/if%> > 开启</label>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">访问权限</div>
+        <div class="col-sm-10">
+            <label class="radio-inline"><input type="radio" name="visit" value="1" class="diy-bind" data-bind="visit" data-bind-init="true" <%if page.visit=='1'%>checked="checked"<%/if%> > 开启</label>
+            <label class="radio-inline"><input type="radio" name="visit" value="0" class="diy-bind" data-bind="visit" data-bind-init="true" <%if page.visit=='0' || !page.visit%>checked="checked"<%/if%> > 不开启</label>
             <%if page.visit==1%>
-                <div class="help-block">提示：请勾选有访问权限的等级</div>
+            <div class="help-block">提示：请勾选有访问权限的等级</div>
             <%/if%>
+        </div>
+    </div>
+
+    <%if page.visit==1%>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">会员等级</div>
+        <div class="col-sm-10">
+            <%each levels.member as level%>
+            <label class="checkbox-inline"><input type="checkbox" value="<%level.id%>" class="diy-bind" data-bind-child="visitlevel" data-bind="member" <%if inArray(page.visitlevel.member, level.id)%>checked="checked"<%/if%>> <%level.levelname%></label>
+            <%/each%>
+        </div>
+    </div>
+
+    <%if levels.commission%>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">分销商等级</div>
+        <div class="col-sm-10">
+            <%each levels.commission as level%>
+            <label class="checkbox-inline"><input type="checkbox" value="<%level.id%>" class="diy-bind" data-bind-child="visitlevel" data-bind="commission" <%if inArray(page.visitlevel.commission, level.id)%>checked="checked"<%/if%>> <%level.levelname%></label>
+            <%/each%>
+        </div>
+    </div>
+    <%/if%>
+
+    <div class="form-group">
+        <div class="col-sm-2 control-label">无权提示</div>
+        <div class="col-sm-10">
+            <div class="input-group">
+                <span class="input-group-addon">标题</span>
+                <input class="form-control input-sm diy-bind" data-bind-child="novisit" data-bind="title" data-placeholder="" placeholder="无权提示，请简单填写" value="<%page.novisit.title%>">
             </div>
         </div>
+    </div>
 
-        <%if page.visit==1%>
-            <div class="form-group">
-                <div class="col-sm-2 control-label">会员等级</div>
-                <div class="col-sm-10">
-                    <%each levels.member as level%>
-                    <label class="checkbox-inline"><input type="checkbox" value="<%level.id%>" class="diy-bind" data-bind-child="visitlevel" data-bind="member" <%if inArray(page.visitlevel.member, level.id)%>checked="checked"<%/if%>> <%level.levelname%></label>
-                    <%/each%>
-                </div>
+    <div class="form-group">
+        <div class="col-sm-2 control-label"></div>
+        <div class="col-sm-10">
+            <div class="input-group">
+                <span class="input-group-addon">链接</span>
+                <input class="form-control input-sm diy-bind" data-bind-child="novisit" data-bind="link" data-placeholder="" placeholder="确定跳转链接，不填则返回首页" value="<%page.novisit.link%>" id="noperm">
+                <span data-input="#noperm" data-toggle="selectUrl" class="input-group-addon btn btn-default">选择链接</span>
             </div>
-
-            <%if levels.commission%>
-            <div class="form-group">
-                <div class="col-sm-2 control-label">分销商等级</div>
-                <div class="col-sm-10">
-                    <%each levels.commission as level%>
-                    <label class="checkbox-inline"><input type="checkbox" value="<%level.id%>" class="diy-bind" data-bind-child="visitlevel" data-bind="commission" <%if inArray(page.visitlevel.commission, level.id)%>checked="checked"<%/if%>> <%level.levelname%></label>
-                    <%/each%>
-                </div>
-            </div>
-            <%/if%>
-
-            <div class="form-group">
-                <div class="col-sm-2 control-label">无权提示</div>
-                <div class="col-sm-10">
-                    <div class="input-group">
-                        <span class="input-group-addon">标题</span>
-                        <input class="form-control input-sm diy-bind" data-bind-child="novisit" data-bind="title" data-placeholder="" placeholder="无权提示，请简单填写" value="<%page.novisit.title%>">
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <div class="col-sm-2 control-label"></div>
-                <div class="col-sm-10">
-                    <div class="input-group">
-                        <span class="input-group-addon">链接</span>
-                        <input class="form-control input-sm diy-bind" data-bind-child="novisit" data-bind="link" data-placeholder="" placeholder="确定跳转链接，不填则返回首页" value="<%page.novisit.link%>" id="noperm">
-                        <span data-input="#noperm" data-toggle="selectUrl" class="input-group-addon btn btn-default">选择链接</span>
-                    </div>
-                </div>
-            </div>
-        <%/if%>
+        </div>
+    </div>
+    <%/if%>
     <%/if%>
 
 </script>
@@ -329,16 +329,6 @@
     </div>
 
     <div class="form-group">
-        <div class="col-sm-2 control-label">边框颜色</div>
-        <div class="col-sm-4">
-            <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="bordercolor" value="<%style.bordercolor||'#e2e2e2'%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#e2e2e2').trigger('propertychange')">重置</span>
-            </div>
-        </div>
-    </div>
-
-    <div class="form-group">
         <div class="col-sm-2 control-label">小图标颜色</div>
         <div class="col-sm-4">
             <div class="input-group input-group-sm">
@@ -367,7 +357,7 @@
             </div>
             <div class="input-group " style="margin-top:.5em;">
                 <img src="<%imgsrc params.iconurl%>" onerror="this.src='../addons/ewei_shopv2/static/images/nopic.jpg';" class="img-responsive img-thumbnail" width="150" id="iconimg">
-                <span class="close" style="position:absolute; top: -10px; right: -14px;" title="移除图片" onclick="$('#iconsrc').val('').trigger('change');$(this).prev().attr('src', '')">×</span>
+                <span class="close" style="position:absolute; top: -10px; right: -14px;" title="重置默认图片" onclick="$('#iconsrc').val('../addons/ewei_shopv2/static/images/hotdot.jpg').trigger('change');$(this).prev().attr('src', '../addons/ewei_shopv2/static/images/hotdot.jpg')">×</span>
             </div>
         </div>
     </div>
@@ -392,38 +382,38 @@
     </div>
 
     <%if params.noticedata=='1'%>
-        <div class="form-items indent" data-min="1">
-            <div class="inner" id="form-items">
-                <%each data as child itemid %>
-                <div class="item" data-id="<%itemid%>">
-                    <span class="btn-del" title="删除"></span>
-                    <div class="item-image drag-btn square">拖动排序</div>
-                    <div class="item-form">
-                        <div class="input-group" style="margin-bottom:0px; ">
-                            <span class="input-group-addon">标题</span>
-                            <input type="text" class="form-control input-sm diy-bind" data-bind-parent="data" data-bind-child="<%itemid%>" data-bind="title" placeholder="请输入公告标题" value="<%child.title%>" />
-                        </div>
-                        <div class="input-group" style="margin-top:10px; margin-bottom:0px; ">
-                            <input type="text" class="form-control input-sm diy-bind" data-bind-parent="data" data-bind-child="<%itemid%>" data-bind="linkurl" id="curl-<%itemid%>" placeholder="请选择链接或输入链接地址(http://开头)" value="<%child.linkurl%>" />
-                            <span class="input-group-addon btn btn-default" data-toggle="selectUrl" data-input="#curl-<%itemid%>">选择链接</span>
-                        </div>
+    <div class="form-items indent" data-min="1">
+        <div class="inner" id="form-items">
+            <%each data as child itemid %>
+            <div class="item" data-id="<%itemid%>">
+                <span class="btn-del" title="删除"></span>
+                <div class="item-image drag-btn square">拖动排序</div>
+                <div class="item-form">
+                    <div class="input-group" style="margin-bottom:0px; ">
+                        <span class="input-group-addon">标题</span>
+                        <input type="text" class="form-control input-sm diy-bind" data-bind-parent="data" data-bind-child="<%itemid%>" data-bind="title" placeholder="请输入公告标题" value="<%child.title%>" />
+                    </div>
+                    <div class="input-group" style="margin-top:10px; margin-bottom:0px; ">
+                        <input type="text" class="form-control input-sm diy-bind" data-bind-parent="data" data-bind-child="<%itemid%>" data-bind="linkurl" id="curl-<%itemid%>" placeholder="请选择链接或输入链接地址(http://开头)" value="<%child.linkurl%>" />
+                        <span class="input-group-addon btn btn-default" data-toggle="selectUrl" data-input="#curl-<%itemid%>">选择链接</span>
                     </div>
                 </div>
-                <%/each%>
             </div>
-            <div class="btn btn-w-m btn-block btn-default btn-outline" id="addChild"><i class="fa fa-plus"></i> 添加一个</div>
+            <%/each%>
         </div>
+        <div class="btn btn-w-m btn-block btn-default btn-outline" id="addChild"><i class="fa fa-plus"></i> 添加一个</div>
+    </div>
     <%/if%>
 
     <%if params.noticedata=='0'%>
-        <div class="form-group">
-            <div class="col-sm-2 control-label">读取数量</div>
-            <div class="col-sm-10">
-                <label class="radio-inline"><input type="radio" name="noticenum" value="5" class="diy-bind" data-bind-child="params" data-bind="noticenum" <%if params.noticenum=='5'%>checked="checked"<%/if%> > 5条</label>
-                <label class="radio-inline"><input type="radio" name="noticenum" value="10" class="diy-bind" data-bind-child="params" data-bind="noticenum" <%if params.noticenum=='10'%>checked="checked"<%/if%>> 10条</label>
-                <label class="radio-inline"><input type="radio" name="noticenum" value="20" class="diy-bind" data-bind-child="params" data-bind="noticenum" <%if params.noticenum=='20'%>checked="checked"<%/if%>> 20条</label>
-            </div>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">读取数量</div>
+        <div class="col-sm-10">
+            <label class="radio-inline"><input type="radio" name="noticenum" value="5" class="diy-bind" data-bind-child="params" data-bind="noticenum" <%if params.noticenum=='5'%>checked="checked"<%/if%> > 5条</label>
+            <label class="radio-inline"><input type="radio" name="noticenum" value="10" class="diy-bind" data-bind-child="params" data-bind="noticenum" <%if params.noticenum=='10'%>checked="checked"<%/if%>> 10条</label>
+            <label class="radio-inline"><input type="radio" name="noticenum" value="20" class="diy-bind" data-bind-child="params" data-bind="noticenum" <%if params.noticenum=='20'%>checked="checked"<%/if%>> 20条</label>
         </div>
+    </div>
     <%/if%>
 
 </script>
@@ -671,7 +661,7 @@
     </div>
     <div class="form-group">
         <div class="col-sm-2 control-label">元素高度</div>
-            <div class="col-sm-10">
+        <div class="col-sm-10">
             <div class="form-group">
                 <div class="slider col-sm-8" data-value="<%style.height%>" data-min="1" data-max="200"></div>
                 <div class="col-sm-4 control-labe count"><span><%style.height%></span>px(像素)</div>
@@ -865,22 +855,22 @@
     <div class="form-items indent" data-min="1">
         <div class="inner" id="form-items">
             <%each data as child itemid %>
-                <div class="item" data-id="<%itemid%>">
-                    <span class="btn-del" title="删除"></span>
-                    <div class="item-image">
-                        <img src="<%imgsrc child.imgurl%>" onerror="this.src='../addons/ewei_shopv2/static/images/nopic.jpg';" id="pimg-<%itemid%>" />
+            <div class="item" data-id="<%itemid%>">
+                <span class="btn-del" title="删除"></span>
+                <div class="item-image">
+                    <img src="<%imgsrc child.imgurl%>" onerror="this.src='../addons/ewei_shopv2/static/images/nopic.jpg';" id="pimg-<%itemid%>" />
+                </div>
+                <div class="item-form">
+                    <div class="input-group" style="margin-bottom:0px; ">
+                        <input type="text" class="form-control input-sm diy-bind" data-bind-parent="data" data-bind-child="<%itemid%>" data-bind="imgurl"  id="cimg-<%itemid%>" placeholder="请选择图片或输入图片地址" value="<%child.imgurl%>" />
+                        <span class="input-group-addon btn btn-default" data-toggle="selectImg" data-input="#cimg-<%itemid%>" data-img="#pimg-<%itemid%>">选择图片</span>
                     </div>
-                    <div class="item-form">
-                        <div class="input-group" style="margin-bottom:0px; ">
-                            <input type="text" class="form-control input-sm diy-bind" data-bind-parent="data" data-bind-child="<%itemid%>" data-bind="imgurl"  id="cimg-<%itemid%>" placeholder="请选择图片或输入图片地址" value="<%child.imgurl%>" />
-                            <span class="input-group-addon btn btn-default" data-toggle="selectImg" data-input="#cimg-<%itemid%>" data-img="#pimg-<%itemid%>">选择图片</span>
-                        </div>
-                        <div class="input-group" style="margin-top:10px; margin-bottom:0px; ">
-                            <input type="text" class="form-control input-sm diy-bind" data-bind-parent="data" data-bind-child="<%itemid%>" data-bind="linkurl" id="curl-<%itemid%>" placeholder="请选择链接或输入链接地址" value="<%child.linkurl%>" />
-                            <span class="input-group-addon btn btn-default" data-toggle="selectUrl" data-input="#curl-<%itemid%>">选择链接</span>
-                        </div>
+                    <div class="input-group" style="margin-top:10px; margin-bottom:0px; ">
+                        <input type="text" class="form-control input-sm diy-bind" data-bind-parent="data" data-bind-child="<%itemid%>" data-bind="linkurl" id="curl-<%itemid%>" placeholder="请选择链接或输入链接地址" value="<%child.linkurl%>" />
+                        <span class="input-group-addon btn btn-default" data-toggle="selectUrl" data-input="#curl-<%itemid%>">选择链接</span>
                     </div>
                 </div>
+            </div>
             <%/each%>
         </div>
         <div class="btn btn-w-m btn-block btn-default btn-outline" id="addChild"><i class="fa fa-plus"></i> 添加一个</div>
@@ -932,7 +922,7 @@
             <label class="radio-inline"><input type="radio" name="row" value="4" class="diy-bind" data-bind-child="params" data-bind="row" data-bind-init="true" <%if params.row=='4'%>checked="checked"<%/if%> > 堆积四列</label>
 
             <%if params.row==1%>
-                <div class="help-block">橱窗样式布局请参考 <a href="{php echo webUrl('shop/cube')}">首页魔方</a>，单组最多显示四个，超出隐藏</div>
+            <div class="help-block">橱窗样式布局请参考 <a href="{php echo webUrl('shop/cube')}" target="_blank">首页魔方</a>，单组最多显示四个，超出隐藏</div>
             <%/if%>
             <%if params.row>1%>
             <div class="help-block">图片大小不限制，但请确保所有图片的尺寸/比例相同。</div>
@@ -941,13 +931,13 @@
     </div>
 
     <%if params.row>1%>
-        <div class="form-group">
-            <div class="col-sm-2 control-label">显示类型</div>
-            <div class="col-sm-10">
-                <label class="radio-inline"><input type="radio" name="showtype" value="0" class="diy-bind" data-bind-child="params" data-bind="showtype" data-bind-init="true" <%if params.showtype=='0'||!params.showtype%>checked="checked"<%/if%>> 普通模式</label>
-                <label class="radio-inline"><input type="radio" name="showtype" value="1" class="diy-bind" data-bind-child="params" data-bind="showtype" data-bind-init="true" <%if params.showtype=='1'%>checked="checked"<%/if%> > 多页滑动模式</label>
-            </div>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">显示类型</div>
+        <div class="col-sm-10">
+            <label class="radio-inline"><input type="radio" name="showtype" value="0" class="diy-bind" data-bind-child="params" data-bind="showtype" data-bind-init="true" <%if params.showtype=='0'||!params.showtype%>checked="checked"<%/if%>> 普通模式</label>
+            <label class="radio-inline"><input type="radio" name="showtype" value="1" class="diy-bind" data-bind-child="params" data-bind="showtype" data-bind-init="true" <%if params.showtype=='1'%>checked="checked"<%/if%> > 多页滑动模式</label>
         </div>
+    </div>
     <%/if%>
 
     <%if params.row>1&&params.showtype==1%>
@@ -1021,7 +1011,9 @@
         <div class="col-sm-2 control-label">显示类型</div>
         <div class="col-sm-10">
             <label class="radio-inline"><input type="radio" name="goodsscroll" value="0" class="diy-bind" data-bind-child="params" data-bind="goodsscroll" data-bind-init="true" <%if params.goodsscroll=='0'||!params.goodsscroll%>checked="checked"<%/if%>> 普通模式</label>
+            <%if style.liststyle!=''%>
             <label class="radio-inline"><input type="radio" name="goodsscroll" value="1" class="diy-bind" data-bind-child="params" data-bind="goodsscroll" data-bind-init="true" <%if params.goodsscroll=='1'%>checked="checked"<%/if%> > 单行滑动模式</label>
+            <%/if%>
         </div>
     </div>
 
@@ -1031,14 +1023,14 @@
             <label class="radio-inline"><input type="radio" name="liststyle" value="block one" class="diy-bind" data-bind-child="style" data-bind="liststyle" data-bind-init="true" <%if style.liststyle=='block one'%>checked="checked"<%/if%> > 单列显示</label>
             <label class="radio-inline"><input type="radio" name="liststyle" value="block" class="diy-bind" data-bind-child="style" data-bind="liststyle" data-bind-init="true" <%if style.liststyle=='block'%>checked="checked"<%/if%>> 双列显示</label>
             <%if params.goodstype==0||!params.goodstype%>
-                <label class="radio-inline"><input type="radio" name="liststyle" value="block three" class="diy-bind" data-bind-child="style" data-bind="liststyle" data-bind-init="true" <%if style.liststyle=='block three'%>checked="checked"<%/if%>> 三列显示</label>
+            <label class="radio-inline"><input type="radio" name="liststyle" value="block three" class="diy-bind" data-bind-child="style" data-bind="liststyle" data-bind-init="true" <%if style.liststyle=='block three'%>checked="checked"<%/if%>> 三列显示</label>
             <%/if%>
             <%if params.goodsscroll=='0'||!params.goodsscroll%>
             <label class="radio-inline"><input type="radio" name="liststyle" value="" class="diy-bind" data-bind-child="style" data-bind="liststyle" data-bind-init="true" <%if style.liststyle==''%>checked="checked"<%/if%>> 列表显示</label>
             <%/if%>
 
             <%if style.liststyle=='block three' && params.goodstype!=1%>
-                <div class="help-block text-danger">提示："三列显示商品"显示商品原价及销量可能会造成样式错乱</div>
+            <div class="help-block text-danger">提示："三列显示商品"显示商品原价及销量可能会造成样式错乱</div>
             <%/if%>
         </div>
     </div>
@@ -1048,7 +1040,7 @@
         <div class="col-sm-4">
             <div class="input-group">
                 <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="background" value="<%style.background%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#fafafa').trigger('propertychange')">重置</span>
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#f3f3f3').trigger('propertychange')">重置</span>
             </div>
         </div>
     </div>
@@ -1056,28 +1048,28 @@
     <div class="line"></div>
 
     <%if params.goodstype==1%>
-        <div class="form-group">
-            <div class="col-sm-2 control-label">商品标签</div>
-            <div class="col-sm-10">
-                <label class="radio-inline"><input type="radio" name="showtag" value="0" class="diy-bind" data-bind-child="params" data-bind="showtag" data-bind-init="true" <%if params.showtag=='0'||!params.showtag%>checked="checked"<%/if%>> 不显示</label>
-                <label class="radio-inline"><input type="radio" name="showtag" value="1" class="diy-bind" data-bind-child="params" data-bind="showtag" data-bind-init="true" <%if params.showtag=='1'%>checked="checked"<%/if%>> 原价</label>
-                <label class="radio-inline"><input type="radio" name="showtag" value="2" class="diy-bind" data-bind-child="params" data-bind="showtag" data-bind-init="true" <%if params.showtag=='2'%>checked="checked"<%/if%> > 商品类型</label>
-                <label class="radio-inline"><input type="radio" name="showtag" value="3" class="diy-bind" data-bind-child="params" data-bind="showtag" data-bind-init="true" <%if params.showtag=='3'%>checked="checked"<%/if%> > 活动类型</label>
-                <div class="help-block">商品类型: 商品、优惠券、红包、余额 活动类型: 兑换、抽奖</div>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">商品标签</div>
+        <div class="col-sm-10">
+            <label class="radio-inline"><input type="radio" name="showtag" value="0" class="diy-bind" data-bind-child="params" data-bind="showtag" data-bind-init="true" <%if params.showtag=='0'||!params.showtag%>checked="checked"<%/if%>> 不显示</label>
+            <label class="radio-inline"><input type="radio" name="showtag" value="1" class="diy-bind" data-bind-child="params" data-bind="showtag" data-bind-init="true" <%if params.showtag=='1'%>checked="checked"<%/if%>> 原价</label>
+            <label class="radio-inline"><input type="radio" name="showtag" value="2" class="diy-bind" data-bind-child="params" data-bind="showtag" data-bind-init="true" <%if params.showtag=='2'%>checked="checked"<%/if%> > 商品类型</label>
+            <label class="radio-inline"><input type="radio" name="showtag" value="3" class="diy-bind" data-bind-child="params" data-bind="showtag" data-bind-init="true" <%if params.showtag=='3'%>checked="checked"<%/if%> > 活动类型</label>
+            <div class="help-block">商品类型: 商品、优惠券、红包、余额 活动类型: 兑换、抽奖</div>
+        </div>
+    </div>
+
+    <%if params.showtag>0%>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">标签背景</div>
+        <div class="col-sm-4">
+            <div class="input-group">
+                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="tagbackground" value="<%style.tagbackground%>" type="color" />
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#fe5455').trigger('propertychange')">重置</span>
             </div>
         </div>
-
-        <%if params.showtag>0%>
-            <div class="form-group">
-                <div class="col-sm-2 control-label">标签背景</div>
-                <div class="col-sm-4">
-                    <div class="input-group">
-                        <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="tagbackground" value="<%style.tagbackground%>" type="color" />
-                        <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#fe5455').trigger('propertychange')">重置</span>
-                    </div>
-                </div>
-            </div>
-        <%/if%>
+    </div>
+    <%/if%>
     <%/if%>
 
     <div class="form-group">
@@ -1089,15 +1081,15 @@
     </div>
 
     <%if params.showtitle=='1'%>
-        <div class="form-group">
-            <div class="col-sm-2 control-label">名称颜色</div>
-            <div class="col-sm-4">
-                <div class="input-group">
-                    <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="titlecolor" value="<%style.titlecolor%>" type="color" />
-                    <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#262626').trigger('propertychange')">重置</span>
-                </div>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">名称颜色</div>
+        <div class="col-sm-4">
+            <div class="input-group">
+                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="titlecolor" value="<%style.titlecolor%>" type="color" />
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#000000').trigger('propertychange')">重置</span>
             </div>
         </div>
+    </div>
     <%/if%>
 
     <div class="form-group">
@@ -1109,107 +1101,110 @@
     </div>
 
     <%if params.showprice=='1'%>
-        <div class="form-group">
-            <div class="col-sm-2 control-label">价格颜色</div>
-            <div class="col-sm-4">
-                <div class="input-group">
-                    <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="pricecolor" value="<%style.pricecolor%>" type="color" />
-                    <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ed2822').trigger('propertychange')">重置</span>
-                </div>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">价格颜色</div>
+        <div class="col-sm-4">
+            <div class="input-group">
+                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="pricecolor" value="<%style.pricecolor%>" type="color" />
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ff5555').trigger('propertychange')">重置</span>
             </div>
         </div>
+    </div>
 
-        <%if params.goodstype=='0'||!params.goodstype%>
-            <div class="form-group">
-                <div class="col-sm-2 control-label">商品原价</div>
-                <div class="col-sm-10">
-                    <label class="radio-inline"><input type="radio" name="showproductprice" value="0" class="diy-bind" data-bind-child="params" data-bind="showproductprice" data-bind-init="true" <%if params.showproductprice=='0'||!params.showproductprice%>checked="checked"<%/if%>> 不显示</label>
-                    <label class="radio-inline"><input type="radio" name="showproductprice" value="1" class="diy-bind" data-bind-child="params" data-bind="showproductprice" data-bind-init="true" <%if params.showproductprice=='1'%>checked="checked"<%/if%> > 显示</label>
-                </div>
+    <%if params.goodstype=='0'||!params.goodstype%>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">商品原价</div>
+        <div class="col-sm-10">
+            <label class="radio-inline"><input type="radio" name="showproductprice" value="0" class="diy-bind" data-bind-child="params" data-bind="showproductprice" data-bind-init="true" <%if params.showproductprice=='0'||!params.showproductprice%>checked="checked"<%/if%>> 不显示</label>
+            <label class="radio-inline"><input type="radio" name="showproductprice" value="1" class="diy-bind" data-bind-child="params" data-bind="showproductprice" data-bind-init="true" <%if params.showproductprice=='1'%>checked="checked"<%/if%> > 显示</label>
+        </div>
+    </div>
+
+    <%if params.showproductprice==1%>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">原价颜色</div>
+        <div class="col-sm-4">
+            <div class="input-group">
+                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="productpricecolor" value="<%style.productpricecolor%>" type="color" />
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#999999').trigger('propertychange')">重置</span>
             </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">原价文字</div>
+        <div class="col-sm-10">
+            <input class="form-control input-sm diy-bind" data-bind-child="params" data-bind="productpricetext" value="<%params.productpricetext||'原价'%>" style="width: 128px;" />
+            <div class="help-block">提示：建议在三字以内</div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">原价删除线</div>
+        <div class="col-sm-10">
+            <label class="radio-inline"><input type="radio" name="productpriceline" value="0" class="diy-bind" data-bind-child="params" data-bind="productpriceline" <%if params.productpriceline=='0'||!params.productpriceline%>checked="checked"<%/if%>> 不显示</label>
+            <label class="radio-inline"><input type="radio" name="productpriceline" value="1" class="diy-bind" data-bind-child="params" data-bind="productpriceline" <%if params.productpriceline=='1'%>checked="checked"<%/if%> > 显示</label>
+        </div>
+    </div>
+    <div class="line"></div>
+    <%/if%>
 
-            <%if params.showproductprice==1%>
-                <div class="form-group">
-                    <div class="col-sm-2 control-label">原价颜色</div>
-                    <div class="col-sm-4">
-                        <div class="input-group">
-                            <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="productpricecolor" value="<%style.productpricecolor%>" type="color" />
-                            <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#777777').trigger('propertychange')">重置</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-sm-2 control-label">原价文字</div>
-                    <div class="col-sm-10">
-                        <input class="form-control input-sm diy-bind" data-bind-child="params" data-bind="productpricetext" value="<%params.productpricetext||'原价'%>" style="width: 128px;" />
-                        <div class="help-block">提示：建议在三字以内</div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-sm-2 control-label">原价删除线</div>
-                    <div class="col-sm-10">
-                        <label class="radio-inline"><input type="radio" name="productpriceline" value="0" class="diy-bind" data-bind-child="params" data-bind="productpriceline" <%if params.productpriceline=='0'||!params.productpriceline%>checked="checked"<%/if%>> 不显示</label>
-                        <label class="radio-inline"><input type="radio" name="productpriceline" value="1" class="diy-bind" data-bind-child="params" data-bind="productpriceline" <%if params.productpriceline=='1'%>checked="checked"<%/if%> > 显示</label>
-                    </div>
-                </div>
-                <div class="line"></div>
-            <%/if%>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">商品销量</div>
+        <div class="col-sm-10">
+            <label class="radio-inline"><input type="radio" name="showsales" value="0" class="diy-bind" data-bind-child="params" data-bind="showsales" data-bind-init="true" <%if params.showsales=='0'||!params.showsales%>checked="checked"<%/if%>> 不显示</label>
+            <label class="radio-inline"><input type="radio" name="showsales" value="1" class="diy-bind" data-bind-child="params" data-bind="showsales" data-bind-init="true" <%if params.showsales=='1'%>checked="checked"<%/if%> > 显示</label>
+        </div>
+    </div>
 
-            <div class="form-group">
-                <div class="col-sm-2 control-label">商品销量</div>
-                <div class="col-sm-10">
-                    <label class="radio-inline"><input type="radio" name="showsales" value="0" class="diy-bind" data-bind-child="params" data-bind="showsales" data-bind-init="true" <%if params.showsales=='0'||!params.showsales%>checked="checked"<%/if%>> 不显示</label>
-                    <label class="radio-inline"><input type="radio" name="showsales" value="1" class="diy-bind" data-bind-child="params" data-bind="showsales" data-bind-init="true" <%if params.showsales=='1'%>checked="checked"<%/if%> > 显示</label>
-                </div>
+    <%if params.showsales==1%>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">销量颜色</div>
+        <div class="col-sm-4">
+            <div class="input-group">
+                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="salescolor" value="<%style.salescolor%>" type="color" />
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#999999').trigger('propertychange')">重置</span>
             </div>
-
-            <%if params.showsales==1%>
-                <div class="form-group">
-                    <div class="col-sm-2 control-label">销量颜色</div>
-                    <div class="col-sm-4">
-                        <div class="input-group">
-                            <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="salescolor" value="<%style.salescolor%>" type="color" />
-                            <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#777777').trigger('propertychange')">重置</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-sm-2 control-label">销量文字</div>
-                    <div class="col-sm-10">
-                        <input class="form-control input-sm diy-bind" data-bind-child="params" data-bind="salestext" value="<%params.salestext||'销量'%>" style="width: 128px;" />
-                        <div class="help-block">提示：建议在三字以内</div>
-                    </div>
-                </div>
-                <div class="line"></div>
-            <%/if%>
-        <%/if%>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">销量文字</div>
+        <div class="col-sm-10">
+            <input class="form-control input-sm diy-bind" data-bind-child="params" data-bind="salestext" value="<%params.salestext||'销量'%>" style="width: 128px;" />
+            <div class="help-block">提示：建议在三字以内</div>
+        </div>
+    </div>
+    <div class="line"></div>
+    <%/if%>
+    <%/if%>
     <%/if%>
 
     <%if params.showprice=='1' && (params.goodstype=='0'||!params.goodstype)%>
-        <div class="form-group">
-            <div class="col-sm-2 control-label">购买按钮</div>
-            <div class="col-sm-10">
-                <label class="radio-inline"><input type="radio" name="buystyle" value="" class="diy-bind" data-bind-child="style" data-bind="buystyle" data-bind-init="true" <%if style.buystyle==''%>checked="checked"<%/if%> > 不显示</label>
-                <label class="radio-inline"><input type="radio" name="buystyle" value="buybtn-1" class="diy-bind" data-bind-child="style" data-bind="buystyle" data-bind-init="true" <%if style.buystyle=='buybtn-1'%>checked="checked"<%/if%>> 样式一</label>
-                <label class="radio-inline"><input type="radio" name="buystyle" value="buybtn-2" class="diy-bind" data-bind-child="style" data-bind="buystyle" data-bind-init="true" <%if style.buystyle=='buybtn-2'%>checked="checked"<%/if%>> 样式二</label>
-                <label class="radio-inline"><input type="radio" name="buystyle" value="buybtn-3" class="diy-bind" data-bind-child="style" data-bind="buystyle" data-bind-init="true" <%if style.buystyle=='buybtn-3'%>checked="checked"<%/if%>> 样式三</label>
-            </div>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">购买按钮</div>
+        <div class="col-sm-10">
+            <label class="radio-inline"><input type="radio" name="buystyle" value="" class="diy-bind" data-bind-child="style" data-bind="buystyle" data-bind-init="true" <%if style.buystyle==''%>checked="checked"<%/if%> > 不显示</label>
+            <label class="radio-inline"><input type="radio" name="buystyle" value="buybtn-1" class="diy-bind" data-bind-child="style" data-bind="buystyle" data-bind-init="true" <%if style.buystyle=='buybtn-1'%>checked="checked"<%/if%>> 样式一</label>
+            <label class="radio-inline"><input type="radio" name="buystyle" value="buybtn-2" class="diy-bind" data-bind-child="style" data-bind="buystyle" data-bind-init="true" <%if style.buystyle=='buybtn-2'%>checked="checked"<%/if%>> 样式二</label>
+            <label class="radio-inline"><input type="radio" name="buystyle" value="buybtn-3" class="diy-bind" data-bind-child="style" data-bind="buystyle" data-bind-init="true" <%if style.buystyle=='buybtn-3'%>checked="checked"<%/if%>> 样式三</label>
+            <label class="radio-inline"><input type="radio" name="buystyle" value="buybtn-4" class="diy-bind" data-bind-child="style" data-bind="buystyle" data-bind-init="true" <%if style.buystyle=='buybtn-4'%>checked="checked"<%/if%>> 样式四</label>
+            <label class="radio-inline"><input type="radio" name="buystyle" value="buybtn-5" class="diy-bind" data-bind-child="style" data-bind="buystyle" data-bind-init="true" <%if style.buystyle=='buybtn-5'%>checked="checked"<%/if%>> 样式五</label>
+            <label class="radio-inline"><input type="radio" name="buystyle" value="buybtn-6" class="diy-bind" data-bind-child="style" data-bind="buystyle" data-bind-init="true" <%if style.buystyle=='buybtn-6'%>checked="checked"<%/if%>> 样式六</label>
         </div>
+    </div>
     <%/if%>
 
     <%if ((params.goodstype=='0'||!params.goodstype) && params.showprice=='1' && style.buystyle!='') || (params.goodstype=='1') && params.showprice=='1'%>
-        <div class="form-group">
-            <div class="col-sm-2 control-label">按钮颜色</div>
-            <div class="col-sm-10">
-                <div class="input-group" style="width: 130px;">
-                    <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="buybtncolor" value="<%style.buybtncolor%>" type="color" />
-                    <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#fe5455').trigger('propertychange')">重置</span>
-                </div>
-                {if p('bargain')}
-                <span class="help-block">砍价商品不支持自定义按钮样式，仅支持自定义按钮颜色</span>
-                {/if}
+    <div class="form-group">
+        <div class="col-sm-2 control-label">按钮颜色</div>
+        <div class="col-sm-10">
+            <div class="input-group" style="width: 130px;">
+                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="buybtncolor" value="<%style.buybtncolor%>" type="color" />
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ff5555').trigger('propertychange')">重置</span>
             </div>
+            {if p('bargain')}
+            <span class="help-block">砍价商品不支持自定义按钮样式，仅支持自定义按钮颜色</span>
+            {/if}
         </div>
+    </div>
     <%/if%>
 
     <div class="line"></div>
@@ -1224,79 +1219,112 @@
     </div>
 
     <%if params.showicon=='2'%>
-        <div class="form-group">
-            <div class="col-sm-2 control-label">自定义图标</div>
-            <div class="col-sm-10">
-                <div class="input-group">
-                    <input class="form-control input-sm diy-bind" data-bind-child="params" data-bind="goodsiconsrc" placeholder="请输入图片地址或选择图片" value="<%params.goodsiconsrc%>" id="goodsiconsrc" />
-                    <span data-input="#goodsiconsrc" data-img="#goodsicon" data-toggle="selectImg" class="input-group-addon btn btn-default">选择图片</span>
-                </div>
-                <div class="input-group " style="margin-top:.5em;">
-                    <img src="<%imgsrc params.goodsiconsrc%>" onerror="this.src='../addons/ewei_shopv2/static/images/nopic.jpg';" class="img-responsive img-thumbnail" id="goodsicon" style="width: 60px; height: 60px;">
-                    <em class="close" style="position:absolute; top: 0px; right: -14px;" title="删除这张图片" onclick="$('#goodsiconsrc').val('').trigger('change');$(this).prev().attr('src', '')">×</em>
-                </div>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">自定义图标</div>
+        <div class="col-sm-10">
+            <div class="input-group">
+                <input class="form-control input-sm diy-bind" data-bind-child="params" data-bind="goodsiconsrc" placeholder="请输入图片地址或选择图片" value="<%params.goodsiconsrc%>" id="goodsiconsrc" />
+                <span data-input="#goodsiconsrc" data-img="#goodsicon" data-toggle="selectImg" class="input-group-addon btn btn-default">选择图片</span>
+            </div>
+            <div class="input-group " style="margin-top:.5em;">
+                <img src="<%imgsrc params.goodsiconsrc%>" onerror="this.src='../addons/ewei_shopv2/static/images/nopic.jpg';" class="img-responsive img-thumbnail" id="goodsicon" style="width: 60px; height: 60px;">
+                <em class="close" style="position:absolute; top: 0px; right: -14px;" title="删除这张图片" onclick="$('#goodsiconsrc').val('').trigger('change');$(this).prev().attr('src', '')">×</em>
             </div>
         </div>
+    </div>
     <%/if%>
 
     <%if params.showicon=='1'%>
-        <div class="form-group">
-            <div class="col-sm-2 control-label">系统图标</div>
-            <div class="col-sm-10">
-                <label class="radio-inline"><input type="radio" name="goodsicon" value="recommand" class="diy-bind" data-bind-child="style" data-bind="goodsicon" <%if style.goodsicon=='recommand'%>checked="checked"<%/if%>> 推荐</label>
-                <label class="radio-inline"><input type="radio" name="goodsicon" value="hotsale" class="diy-bind" data-bind-child="style" data-bind="goodsicon" <%if style.goodsicon=='hotsale'%>checked="checked"<%/if%>> 热销</label>
-                <label class="radio-inline"><input type="radio" name="goodsicon" value="isnew" class="diy-bind" data-bind-child="style" data-bind="goodsicon" <%if style.goodsicon=='isnew'%>checked="checked"<%/if%>> 新上</label>
-                <label class="radio-inline"><input type="radio" name="goodsicon" value="sendfree" class="diy-bind" data-bind-child="style" data-bind="goodsicon" <%if style.goodsicon=='sendfree'%>checked="checked"<%/if%>> 包邮</label>
-                <label class="radio-inline"><input type="radio" name="goodsicon" value="istime" class="diy-bind" data-bind-child="style" data-bind="goodsicon" <%if style.goodsicon=='istime'%>checked="checked"<%/if%>> 限时卖</label>
-                <label class="radio-inline"><input type="radio" name="goodsicon" value="bigsale" class="diy-bind" data-bind-child="style" data-bind="goodsicon" <%if style.goodsicon=='bigsale'%>checked="checked"<%/if%>> 促销</label>
-            </div>
+
+    <div class="form-group">
+        <div class="col-sm-2 control-label">图标样式</div>
+        <div class="col-sm-10">
+            <label class="radio-inline"><input type="radio" name="goodsiconstyle" value="triangle" class="diy-bind" data-bind-child="style" data-bind="iconstyle" <%if style.iconstyle=='triangle'%>checked="checked"<%/if%>> 样式一</label>
+            <label class="radio-inline"><input type="radio" name="goodsiconstyle" value="circle" class="diy-bind" data-bind-child="style" data-bind="iconstyle" <%if style.iconstyle=='circle'%>checked="checked"<%/if%>> 样式二</label>
+            <label class="radio-inline"><input type="radio" name="goodsiconstyle" value="square" class="diy-bind" data-bind-child="style" data-bind="iconstyle" <%if style.iconstyle=='square'%>checked="checked"<%/if%>> 样式三</label>
+            <label class="radio-inline"><input type="radio" name="goodsiconstyle" value="echelon" class="diy-bind" data-bind-child="style" data-bind="iconstyle" <%if style.iconstyle=='echelon'%>checked="checked"<%/if%>> 样式四</label>
+            <label class="radio-inline"><input type="radio" name="goodsiconstyle" value="rectangle" class="diy-bind" data-bind-child="style" data-bind="iconstyle" <%if style.iconstyle=='rectangle'%>checked="checked"<%/if%>> 样式五</label>
         </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-sm-2 control-label">图标属性</div>
+        <div class="col-sm-10">
+            <label class="radio-inline"><input type="radio" name="goodsicon" value="recommand" class="diy-bind" data-bind-child="style" data-bind="goodsicon" <%if style.goodsicon=='recommand'%>checked="checked"<%/if%>> 推荐</label>
+            <label class="radio-inline"><input type="radio" name="goodsicon" value="hotsale" class="diy-bind" data-bind-child="style" data-bind="goodsicon" <%if style.goodsicon=='hotsale'%>checked="checked"<%/if%>> 热销</label>
+            <label class="radio-inline"><input type="radio" name="goodsicon" value="isnew" class="diy-bind" data-bind-child="style" data-bind="goodsicon" <%if style.goodsicon=='isnew'%>checked="checked"<%/if%>> 新上</label>
+            <label class="radio-inline"><input type="radio" name="goodsicon" value="sendfree" class="diy-bind" data-bind-child="style" data-bind="goodsicon" <%if style.goodsicon=='sendfree'%>checked="checked"<%/if%>> 包邮</label>
+            <label class="radio-inline"><input type="radio" name="goodsicon" value="istime" class="diy-bind" data-bind-child="style" data-bind="goodsicon" <%if style.goodsicon=='istime'%>checked="checked"<%/if%>> 限时卖</label>
+            <label class="radio-inline"><input type="radio" name="goodsicon" value="bigsale" class="diy-bind" data-bind-child="style" data-bind="goodsicon" <%if style.goodsicon=='bigsale'%>checked="checked"<%/if%>> 促销</label>
+        </div>
+    </div>
     <%/if%>
 
-    <%if params.showicon=='1' || params.showicon=='2'%>
-        <div class="form-group">
-            <div class="col-sm-2 control-label">图标位置</div>
-            <div class="col-sm-10">
-                <label class="radio-inline"><input type="radio" name="iconposition" value="left top" class="diy-bind" data-bind-child="params" data-bind="iconposition" data-bind-init="true" <%if params.iconposition=='left top'%>checked="checked"<%/if%>> 左上</label>
-                <label class="radio-inline"><input type="radio" name="iconposition" value="right top" class="diy-bind" data-bind-child="params" data-bind="iconposition" data-bind-init="true" <%if params.iconposition=='right top'%>checked="checked"<%/if%> > 右上</label>
-                <label class="radio-inline"><input type="radio" name="iconposition" value="left bottom" class="diy-bind" data-bind-child="params" data-bind="iconposition" data-bind-init="true" <%if params.iconposition=='left bottom'%>checked="checked"<%/if%> > 左下</label>
-                <label class="radio-inline"><input type="radio" name="iconposition" value="right bottom" class="diy-bind" data-bind-child="params" data-bind="iconposition" data-bind-init="true" <%if params.iconposition=='right bottom'%>checked="checked"<%/if%> > 右下</label>
+    <%if params.showicon=='2'%>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">图标位置</div>
+        <div class="col-sm-10">
+            <label class="radio-inline"><input type="radio" name="iconposition" value="left top" class="diy-bind" data-bind-child="params" data-bind="iconposition" data-bind-init="true" <%if params.iconposition=='left top'%>checked="checked"<%/if%>> 左上</label>
+            <label class="radio-inline"><input type="radio" name="iconposition" value="right top" class="diy-bind" data-bind-child="params" data-bind="iconposition" data-bind-init="true" <%if params.iconposition=='right top'%>checked="checked"<%/if%> > 右上</label>
+            <label class="radio-inline"><input type="radio" name="iconposition" value="left bottom" class="diy-bind" data-bind-child="params" data-bind="iconposition" data-bind-init="true" <%if params.iconposition=='left bottom'%>checked="checked"<%/if%> > 左下</label>
+            <label class="radio-inline"><input type="radio" name="iconposition" value="right bottom" class="diy-bind" data-bind-child="params" data-bind="iconposition" data-bind-init="true" <%if params.iconposition=='right bottom'%>checked="checked"<%/if%> > 右下</label>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-sm-2 control-label">上下偏移</div>
+        <div class="col-sm-10">
+            <div class="form-group">
+                <div class="slider col-sm-8" data-value="<%style.iconpaddingtop%>" data-min="0" data-max="30"></div>
+                <div class="col-sm-4 control-labe count"><span><%style.iconpaddingtop%></span>px(像素)</div>
+                <input class="diy-bind input" data-bind-child="style" data-bind="iconpaddingtop" value="<%style.iconpaddingtop%>" type="hidden" />
             </div>
         </div>
+    </div>
 
-        <div class="form-group">
-            <div class="col-sm-2 control-label">上下偏移</div>
-            <div class="col-sm-10">
-                <div class="form-group">
-                    <div class="slider col-sm-8" data-value="<%style.iconpaddingtop%>" data-min="0" data-max="30"></div>
-                    <div class="col-sm-4 control-labe count"><span><%style.iconpaddingtop%></span>px(像素)</div>
-                    <input class="diy-bind input" data-bind-child="style" data-bind="iconpaddingtop" value="<%style.iconpaddingtop%>" type="hidden" />
-                </div>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">左右偏移</div>
+        <div class="col-sm-10">
+            <div class="form-group">
+                <div class="slider col-sm-8" data-value="<%style.iconpaddingleft%>" data-min="0" data-max="30"></div>
+                <div class="col-sm-4 control-labe count"><span><%style.iconpaddingleft%></span>px(像素)</div>
+                <input class="diy-bind input" data-bind-child="style" data-bind="iconpaddingleft" value="<%style.iconpaddingleft%>" type="hidden" />
             </div>
         </div>
+    </div>
 
-        <div class="form-group">
-            <div class="col-sm-2 control-label">左右偏移</div>
-            <div class="col-sm-10">
-                <div class="form-group">
-                    <div class="slider col-sm-8" data-value="<%style.iconpaddingleft%>" data-min="0" data-max="30"></div>
-                    <div class="col-sm-4 control-labe count"><span><%style.iconpaddingleft%></span>px(像素)</div>
-                    <input class="diy-bind input" data-bind-child="style" data-bind="iconpaddingleft" value="<%style.iconpaddingleft%>" type="hidden" />
-                </div>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">图标缩放</div>
+        <div class="col-sm-10">
+            <div class="form-group">
+                <div class="slider col-sm-8" data-value="<%style.iconzoom%>" data-min="1" data-max="100"></div>
+                <div class="col-sm-4 control-labe count"><span><%style.iconzoom%></span>%</div>
+                <input class="diy-bind input" data-bind-child="style" data-bind="iconzoom" value="<%style.iconzoom%>" type="hidden" />
             </div>
         </div>
+    </div>
 
-        <div class="form-group">
-            <div class="col-sm-2 control-label">图标缩放</div>
-            <div class="col-sm-10">
-                <div class="form-group">
-                    <div class="slider col-sm-8" data-value="<%style.iconzoom%>" data-min="1" data-max="100"></div>
-                    <div class="col-sm-4 control-labe count"><span><%style.iconzoom%></span>%</div>
-                    <input class="diy-bind input" data-bind-child="style" data-bind="iconzoom" value="<%style.iconzoom%>" type="hidden" />
-                </div>
-            </div>
+    <%/if%>
+
+    <div class="line"></div>
+
+    <div class="form-group">
+        <div class="col-sm-2 control-label">售罄图标</div>
+        <div class="col-sm-10">
+            <label class="radio-inline"><input type="radio" name="saleout" value="-1" class="diy-bind" data-bind-child="params" data-bind="saleout" data-bind-init="true" <%if params.saleout=='-1'%>checked="checked"<%/if%>> 不显示</label>
+            <label class="radio-inline"><input type="radio" name="saleout" value="1" class="diy-bind" data-bind-child="params" data-bind="saleout" data-bind-init="true" <%if params.saleout=='1'%>checked="checked"<%/if%> > 内置图标</label>
+            <label class="radio-inline"><input type="radio" name="saleout" value="0" class="diy-bind" data-bind-child="params" data-bind="saleout" data-bind-init="true" <%if params.saleout=='0'||!params.saleout%>checked="checked"<%/if%> > 读取系统设置</label>
         </div>
-
+    </div>
+    <%if params.saleout==1%>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">图标样式</div>
+        <div class="col-sm-10">
+            <label class="radio-inline"><input type="radio" name="saleoutstyle" value="1" class="diy-bind" data-bind-child="style" data-bind="saleoutstyle" data-bind-init="true" <%if style.saleoutstyle=='1'%>checked="checked"<%/if%>> 样式一</label>
+            <label class="radio-inline"><input type="radio" name="saleoutstyle" value="2" class="diy-bind" data-bind-child="style" data-bind="saleoutstyle" data-bind-init="true" <%if style.saleoutstyle=='2'%>checked="checked"<%/if%>> 样式二</label>
+            <label class="radio-inline"><input type="radio" name="saleoutstyle" value="3" class="diy-bind" data-bind-child="style" data-bind="saleoutstyle" data-bind-init="true" <%if style.saleoutstyle=='3'%>checked="checked"<%/if%>> 样式三</label>
+        </div>
+    </div>
     <%/if%>
 
     <div class="line"></div>
@@ -1307,7 +1335,7 @@
             <label class="radio-inline"><input type="radio" name="goodsdata" value="0" class="diy-bind" data-bind-child="params" data-bind="goodsdata" data-bind-init="true" <%if params.goodsdata=='0'%>checked="checked"<%/if%>> 手动选择</label>
             <label class="radio-inline"><input type="radio" name="goodsdata" value="1" class="diy-bind" data-bind-child="params" data-bind="goodsdata" data-bind-init="true" <%if params.goodsdata=='1'%>checked="checked"<%/if%> > 选择分类</label>
             <%if !params.goodstype||params.goodstype==0%>
-                <label class="radio-inline"><input type="radio" name="goodsdata" value="2" class="diy-bind" data-bind-child="params" data-bind="goodsdata" data-bind-init="true" <%if params.goodsdata=='2'%>checked="checked"<%/if%> > 选择分组</label>
+            <label class="radio-inline"><input type="radio" name="goodsdata" value="2" class="diy-bind" data-bind-child="params" data-bind="goodsdata" data-bind-init="true" <%if params.goodsdata=='2'%>checked="checked"<%/if%> > 选择分组</label>
             <%/if%>
         </div>
     </div>
@@ -1325,72 +1353,72 @@
             <label class="radio-inline"><input type="radio" name="goodsdata" value="5" class="diy-bind" data-bind-child="params" data-bind="goodsdata" data-bind-init="true" <%if params.goodsdata=='5'%>checked="checked"<%/if%> > 推荐商品</label>
 
             <%if params.goodstype==1%>
-                <label class="radio-inline"><input type="radio" name="goodsdata" value="9" class="diy-bind" data-bind-child="params" data-bind="goodsdata" data-bind-init="true" <%if params.goodsdata=='9'%>checked="checked"<%/if%> > 积分兑换商品</label>
-                <label class="radio-inline"><input type="radio" name="goodsdata" value="10" class="diy-bind" data-bind-child="params" data-bind="goodsdata" data-bind-init="true" <%if params.goodsdata=='10'%>checked="checked"<%/if%> > 积分抽奖商品</label>
+            <label class="radio-inline"><input type="radio" name="goodsdata" value="9" class="diy-bind" data-bind-child="params" data-bind="goodsdata" data-bind-init="true" <%if params.goodsdata=='9'%>checked="checked"<%/if%> > 积分兑换商品</label>
+            <label class="radio-inline"><input type="radio" name="goodsdata" value="10" class="diy-bind" data-bind-child="params" data-bind="goodsdata" data-bind-init="true" <%if params.goodsdata=='10'%>checked="checked"<%/if%> > 积分抽奖商品</label>
             <%/if%>
         </div>
     </div>
 
     <%if params.goodsdata=='0'%>
-        <div class="form-items indent" data-min="1">
-            <div class="inner" id="form-items">
-                <%each data as child itemid %>
-                <div class="item" data-id="<%itemid%>">
-                    <span class="btn-del" title="删除"></span>
-                    <div class="item-image square">
-                        <div class="text goods-selector" data-goodstype="<%params.goodstype%>">选择商品</div>
-                        <img src="<%imgsrc child.thumb%>" onerror="this.src='../addons/ewei_shopv2/static/images/nopic.jpg';" id="pimg-<%itemid%>" />
-                        <input type="hidden" class="diy-bind" data-bind-parent="data" data-bind-child="<%itemid%>" data-bind="imgurl"  id="cimg-<%itemid%>" value="<%child.imgurl%>" />
-                    </div>
-                    <div class="item-form">
-                        <div class="input-group" style="margin-bottom:0px; ">
-                            <span class="input-group-addon">名称</span>
-                            <input class="form-control input-sm" value="<%child.title||'未设置'%>" readonly="readonly" />
-                        </div>
-                        <%if params.goodstype==0||!params.goodstype%>
-                            <div class="input-group" style="margin-top:10px; margin-bottom:0px; ">
-                                <span class="input-group-addon">价格</span>
-                                <input class="form-control input-sm" value="￥<%child.price%>" readonly="readonly" />
-                            </div>
-                        <%else%>
-                            <div class="input-group" style="margin-top:10px; margin-bottom:0px; ">
-                                <span class="input-group-addon">价格</span>
-                                <input class="form-control input-sm" value="<%child.price%>" readonly="readonly" />
-                                <span class="input-group-addon" style="border-left: 0; border-right: 0;">元</span>
-                                <input class="form-control input-sm" value="<%child.credit%>" readonly="readonly" />
-                                <span class="input-group-addon">积分</span>
-                            </div>
-                        <%/if%>
-                    </div>
+    <div class="form-items indent" data-min="1">
+        <div class="inner" id="form-items">
+            <%each data as child itemid %>
+            <div class="item" data-id="<%itemid%>">
+                <span class="btn-del" title="删除"></span>
+                <div class="item-image square">
+                    <div class="text goods-selector" data-goodstype="<%params.goodstype%>">选择商品</div>
+                    <img src="<%imgsrc child.thumb%>" onerror="this.src='../addons/ewei_shopv2/static/images/nopic.jpg';" id="pimg-<%itemid%>" />
+                    <input type="hidden" class="diy-bind" data-bind-parent="data" data-bind-child="<%itemid%>" data-bind="imgurl"  id="cimg-<%itemid%>" value="<%child.imgurl%>" />
                 </div>
-                <%/each%>
+                <div class="item-form">
+                    <div class="input-group" style="margin-bottom:0px; ">
+                        <span class="input-group-addon">名称</span>
+                        <input class="form-control input-sm" value="<%child.title||'未设置'%>" readonly="readonly" />
+                    </div>
+                    <%if params.goodstype==0||!params.goodstype%>
+                    <div class="input-group" style="margin-top:10px; margin-bottom:0px; ">
+                        <span class="input-group-addon">价格</span>
+                        <input class="form-control input-sm" value="￥<%child.price%>" readonly="readonly" />
+                    </div>
+                    <%else%>
+                    <div class="input-group" style="margin-top:10px; margin-bottom:0px; ">
+                        <span class="input-group-addon">价格</span>
+                        <input class="form-control input-sm" value="<%child.price%>" readonly="readonly" />
+                        <span class="input-group-addon" style="border-left: 0; border-right: 0;">元</span>
+                        <input class="form-control input-sm" value="<%child.credit%>" readonly="readonly" />
+                        <span class="input-group-addon">积分</span>
+                    </div>
+                    <%/if%>
+                </div>
             </div>
-            <div class="btn btn-w-m btn-block btn-default btn-outline" id="addChild"><i class="fa fa-plus"></i> 添加一个</div>
+            <%/each%>
         </div>
+        <div class="btn btn-w-m btn-block btn-default btn-outline" id="addChild"><i class="fa fa-plus"></i> 添加一个</div>
+    </div>
     <%/if%>
 
     <%if params.goodsdata=='1'%>
-        <div class="form-group">
-            <div class="col-sm-2 control-label">选择分类</div>
-            <div class="col-sm-10">
-                <div class="input-group">
-                    <input type="text" class="form-control input-sm" placeholder="请点击选择分类" value="<%params.catename%>" readonly="readonly"/>
-                    <span class="input-group-addon btn btn-default category-selector" data-goodstype="<%params.goodstype%>">选择分类</span>
-                </div>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">选择分类</div>
+        <div class="col-sm-10">
+            <div class="input-group">
+                <input type="text" class="form-control input-sm" placeholder="请点击选择分类" value="<%params.catename%>" readonly="readonly"/>
+                <span class="input-group-addon btn btn-default category-selector" data-goodstype="<%params.goodstype%>">选择分类</span>
             </div>
         </div>
+    </div>
     <%/if%>
 
     <%if params.goodsdata=='2'%>
-        <div class="form-group">
-            <div class="col-sm-2 control-label">选择分组</div>
-            <div class="col-sm-10">
-                <div class="input-group">
-                    <input type="text" class="form-control input-sm" placeholder="请点击选择分组" value="<%params.groupname%>" readonly="readonly"/>
-                    <span class="input-group-addon btn btn-default group-selector">选择分组</span>
-                </div>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">选择分组</div>
+        <div class="col-sm-10">
+            <div class="input-group">
+                <input type="text" class="form-control input-sm" placeholder="请点击选择分组" value="<%params.groupname%>" readonly="readonly"/>
+                <span class="input-group-addon btn btn-default group-selector">选择分组</span>
             </div>
         </div>
+    </div>
     <%/if%>
 
     <%if params.goodsdata>0%>
@@ -1650,7 +1678,7 @@
         <div class="col-sm-4">
             <div class="input-group input-group-sm">
                 <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="iconcolor" value="<%style.iconcolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#aaaaaa').trigger('propertychange')">重置</span>
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#666666').trigger('propertychange')">重置</span>
             </div>
         </div>
     </div>
@@ -1660,7 +1688,7 @@
         <div class="col-sm-4">
             <div class="input-group input-group-sm">
                 <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="textcolor" value="<%style.textcolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#7a7a7a').trigger('propertychange')">重置</span>
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#000000').trigger('propertychange')">重置</span>
             </div>
         </div>
     </div>
@@ -1670,7 +1698,7 @@
         <div class="col-sm-4">
             <div class="input-group input-group-sm">
                 <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="dotcolor" value="<%style.dotcolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ff0011').trigger('propertychange')">重置</span>
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ff5555').trigger('propertychange')">重置</span>
             </div>
         </div>
     </div>
@@ -1825,21 +1853,21 @@
     </div>
 
     <div class="form-group">
-        <div class="col-sm-2 control-label">背景颜色</div>
+        <div class="col-sm-2 control-label">主色调</div>
         <div class="col-sm-4">
             <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="background" value="<%style.background%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ffffff').trigger('propertychange')">重置</span>
+                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="maincolor" value="<%style.maincolor%>" type="color" />
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ff5555').trigger('propertychange')">重置</span>
             </div>
         </div>
     </div>
 
     <div class="form-group">
-        <div class="col-sm-2 control-label">文字颜色</div>
+        <div class="col-sm-2 control-label">副色调</div>
         <div class="col-sm-4">
             <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="textcolor" value="<%style.textcolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ff0011').trigger('propertychange')">重置</span>
+                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="subcolor" value="<%style.subcolor%>" type="color" />
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ffffff').trigger('propertychange')">重置</span>
             </div>
         </div>
     </div>
@@ -1847,11 +1875,11 @@
 
 <script type="text/html" id="tpl_edit_memberc">
     <div class="form-group">
-    <div class="col-sm-2 control-label">样式选择</div>
-    <div class="col-sm-10">
-        <label class="radio-inline"><input type="radio" name="style" value="default1" class="diy-bind" data-bind-child="params" data-bind="style" data-bind-init="true" <%if params.style=='default1' || params.style==''%>checked="checked"<%/if%>> 样式一</label>
-        <label class="radio-inline"><input type="radio" name="style" value="default2" class="diy-bind" data-bind-child="params" data-bind="style" data-bind-init="true" <%if params.style=='default2'%>checked="checked"<%/if%> > 样式二</label>
-    </div>
+        <div class="col-sm-2 control-label">样式选择</div>
+        <div class="col-sm-10">
+            <label class="radio-inline"><input type="radio" name="style" value="default1" class="diy-bind" data-bind-child="params" data-bind="style" data-bind-init="true" <%if params.style=='default1' || params.style==''%>checked="checked"<%/if%>> 样式一</label>
+            <label class="radio-inline"><input type="radio" name="style" value="default2" class="diy-bind" data-bind-child="params" data-bind="style" data-bind-init="true" <%if params.style=='default2'%>checked="checked"<%/if%> > 样式二</label>
+        </div>
     </div>
 
     <div class="form-group">
@@ -2045,7 +2073,7 @@
         <div class="col-sm-4">
             <div class="input-group input-group-sm">
                 <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="activecolor" value="<%style.activecolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ef4f4f').trigger('propertychange')">重置</span>
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ff5555').trigger('propertychange')">重置</span>
             </div>
         </div>
     </div>
@@ -2163,7 +2191,7 @@
         <div class="col-sm-4">
             <div class="input-group input-group-sm">
                 <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="titlecolor" value="<%style.titlecolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#333333').trigger('propertychange')">重置</span>
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#000000').trigger('propertychange')">重置</span>
             </div>
         </div>
     </div>
@@ -2172,7 +2200,7 @@
         <div class="col-sm-4">
             <div class="input-group input-group-sm">
                 <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="subtitlecolor" value="<%style.subtitlecolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ef4f4f').trigger('propertychange')">重置</span>
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#999999').trigger('propertychange')">重置</span>
             </div>
         </div>
     </div>
@@ -2181,7 +2209,7 @@
         <div class="col-sm-4">
             <div class="input-group input-group-sm">
                 <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="pricecolor" value="<%style.pricecolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ef4f4f').trigger('propertychange')">重置</span>
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ff5555').trigger('propertychange')">重置</span>
             </div>
         </div>
     </div>
@@ -2190,7 +2218,7 @@
         <div class="col-sm-4">
             <div class="input-group input-group-sm">
                 <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="textcolor" value="<%style.textcolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#c0c0c0').trigger('propertychange')">重置</span>
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#666666').trigger('propertychange')">重置</span>
             </div>
         </div>
     </div>
@@ -2203,25 +2231,25 @@
         </div>
     </div>
     <%if params.hideshare=='0'||!params.hideshare%>
-        <div class="form-group">
-            <div class="col-sm-2 control-label">自定义</div>
-            <div class="col-sm-10">
-                <div class="input-group">
-                    <span class="input-group-addon">文字</span>
-                    <input class="form-control input-sm diy-bind" data-bind-child="params" data-bind="share" data-placeholder="分享" placeholder="分享" value="<%params.share%>" maxlength="2" style="width: 60px;" />
-                    <span class="input-group-addon" style="border-left: 0; border-right: 0">链接</span>
-                    <input class="form-control input-sm diy-bind" data-bind-child="params" data-bind="share_link" value="<%params.share_link%>" id="sharelink" />
-                    <span class="input-group-addon btn btn-default" data-toggle="selectUrl" data-input="#sharelink">选择</span>
-                </div>
-                <div class="input-group" style="margin-top: 10px; width: 150px;">
-                    <span class="input-group-addon">图标</span>
-                    <span class="input-group-addon"><i class="icon <%params.share_icon||'icon-share'%>" id="showshareicon"></i> </span>
-                    <input type="hidden" class="form-control input-sm diy-bind" data-bind-child="params" data-bind="share_icon" value="<%params.share_icon%>" id="shareicon" />
-                    <span class="input-group-addon btn btn-default" data-toggle="selectIcon" data-input="#shareicon" data-element="#showshareicon">选择</span>
-                </div>
-                <span class="help-block">提示: 链接不填则读取系统默认</span>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">自定义</div>
+        <div class="col-sm-10">
+            <div class="input-group">
+                <span class="input-group-addon">文字</span>
+                <input class="form-control input-sm diy-bind" data-bind-child="params" data-bind="share" data-placeholder="分享" placeholder="分享" value="<%params.share%>" maxlength="2" style="width: 60px;" />
+                <span class="input-group-addon" style="border-left: 0; border-right: 0">链接</span>
+                <input class="form-control input-sm diy-bind" data-bind-child="params" data-bind="share_link" value="<%params.share_link%>" id="sharelink" />
+                <span class="input-group-addon btn btn-default" data-toggle="selectUrl" data-input="#sharelink">选择</span>
             </div>
+            <div class="input-group" style="margin-top: 10px; width: 150px;">
+                <span class="input-group-addon">图标</span>
+                <span class="input-group-addon"><i class="icon <%params.share_icon||'icon-share'%>" id="showshareicon"></i> </span>
+                <input type="hidden" class="form-control input-sm diy-bind" data-bind-child="params" data-bind="share_icon" value="<%params.share_icon%>" id="shareicon" />
+                <span class="input-group-addon btn btn-default" data-toggle="selectIcon" data-input="#shareicon" data-element="#showshareicon">选择</span>
+            </div>
+            <span class="help-block">提示: 链接不填则读取系统默认</span>
         </div>
+    </div>
     <%/if%>
     <div class="line"></div>
     <div class="form-group">
@@ -2229,7 +2257,7 @@
         <div class="col-sm-4">
             <div class="input-group input-group-sm">
                 <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="timecolor" data-bind-init="true" value="<%style.timecolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ef4f4f').trigger('propertychange')">重置</span>
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ff5555').trigger('propertychange')">重置</span>
             </div>
         </div>
     </div>
@@ -2238,7 +2266,7 @@
         <div class="col-sm-4">
             <div class="input-group input-group-sm">
                 <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="timetextcolor" data-bind-init="true" value="<%style.timetextcolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ef4f4f').trigger('propertychange')">重置</span>
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#000000').trigger('propertychange')">重置</span>
             </div>
         </div>
     </div>
@@ -2293,53 +2321,6 @@
             </div>
         </div>
     </div>
-    <div class="line"></div>
-    <div class="form-items indent">
-        <div class="inner" id="form-items">
-            <%each data as child itemid %>
-            <div class="item" data-id="<%itemid%>" style="cursor: move">
-                <div class="item-form">
-                    <%if child.type=='yushou'%>
-                        <span style="color: <%style.textcolor%>;"><label class="label label-default">预售</label> 预计发货时间：购买后<span class="text-danger" style="color: <%style.textcolorhigh%>;"> 7 </span>天发货</span>
-                    <%/if%>
-                    <%if child.type=='erci'%>
-                    <span style="color: <%style.textcolor%>;">此商品二次购买 可享受<span class="text-danger" style="color: <%style.textcolorhigh%>;"> 5 </span>折优惠</span>
-                    <%/if%>
-                    <%if child.type=='huiyuan'%>
-                    <span style="color: <%style.textcolor%>;">您的会员等级是<span class="text-danger" style="color: <%style.textcolorhigh%>;"> VIP </span>可享受￥10的价格</span>
-                    <%/if%>
-                    <%if child.type=='youhui'%>
-                    <span style="color: <%style.textcolor%>;">优惠 全场满<span class="text-danger" style="color: <%style.textcolorhigh%>;"> ￥100 </span>包邮</span>
-                    <%/if%>
-                    <%if child.type=='jifen'%>
-                    <span style="color: <%style.textcolor%>;">积分 购买赠送<span class="text-danger" style="color: <%style.textcolorhigh%>;"> 20 </span>积分</span>
-                    <%/if%>
-                    <%if child.type=='bupeisong'%>
-                    <span style="color: <%style.textcolor%>;">不配送区域: 天津辖区 天津辖县 (拖动排序)</span>
-                    <%/if%>
-                    <%if child.type=='biaoqian'%>
-                    <span>
-                        <span class="label label-danger" style="border-radius: 5px;">货到付款</span>
-                        <span class="label label-danger" style="border-radius: 5px;">正品保证</span>
-                        <span class="label label-danger" style="border-radius: 5px;">保修</span>
-                        <span class="label label-danger" style="border-radius: 5px;">发票</span>
-                    </span>
-                    <%/if%>
-                    <%if child.type=='coupon'%>
-                        <span style="color: <%style.textcolor%>;">领取可用优惠券</span>
-                    <%/if%>
-                    <%if child.type=='zengpin'%>
-                        <span style="color: <%style.textcolor%>;">赠品: 赠品名称</span>
-                    <%/if%>
-                    <%if child.type=='fullback'%>
-                        <span style="color: <%style.textcolorhigh%>;">该商品享受 <b>￥1.00~￥1.00</b> 的全返</span>
-                    <%/if%>
-                </div>
-            </div>
-            <%/each%>
-        </div>
-    </div>
-    <div class="alert alert-danger" style="margin: 0 10px;">注意：此处仅对营销信息显示进行排序，营销信息、标签样式请到商品中设置(以上元素拖动可排序)</div>
 </script>
 
 <script type="text/html" id="tpl_edit_detail_spec">
@@ -2426,7 +2407,7 @@
         <div class="col-sm-4">
             <div class="input-group input-group-sm">
                 <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="shopnamecolor" value="<%style.shopnamecolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#333333').trigger('propertychange')">重置</span>
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#000000').trigger('propertychange')">重置</span>
             </div>
         </div>
     </div>
@@ -2435,64 +2416,19 @@
         <div class="col-sm-4">
             <div class="input-group input-group-sm">
                 <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="shopdesccolor" value="<%style.shopdesccolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#444444').trigger('propertychange')">重置</span>
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#666666').trigger('propertychange')">重置</span>
             </div>
         </div>
     </div>
-
-    <div class="line"></div>
-
     <div class="form-group">
-        <div class="col-sm-2 control-label">商品数量</div>
-        <div class="col-sm-4">
-            <label class="radio-inline"><input type="radio" name="hidenum" value="0" class="diy-bind" data-bind-child="params" data-bind="hidenum" data-bind-init="true" <%if params.hidenum=='0' || !params.hidenum%>checked="checked"<%/if%> > 显示</label>
-            <label class="radio-inline"><input type="radio" name="hidenum" value="1" class="diy-bind" data-bind-child="params" data-bind="hidenum" data-bind-init="true" <%if params.hidenum=='1'%>checked="checked"<%/if%>> 隐藏</label>
-        </div>
-    </div>
-
-    <%if params.hidenum=='0' || !params.hidenum%>
-    <div class="form-group">
-        <div class="col-sm-2 control-label">数量颜色</div>
+        <div class="col-sm-2 control-label">按钮颜色</div>
         <div class="col-sm-4">
             <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="goodsnumcolor" value="<%style.goodsnumcolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#333333').trigger('propertychange')">重置</span>
+                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="rightnavcolor" value="<%style.rightnavcolor%>" type="color" />
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ff5555').trigger('propertychange')">重置</span>
             </div>
         </div>
     </div>
-    <div class="form-group">
-        <div class="col-sm-2 control-label">文字颜色</div>
-        <div class="col-sm-4">
-            <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="goodstextcolor" value="<%style.goodstextcolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#7c7c7c').trigger('propertychange')">重置</span>
-            </div>
-        </div>
-    </div>
-    <%/if%>
-
-    <div class="line"></div>
-
-    <div class="form-group">
-        <div class="col-sm-2 control-label">左侧按钮</div>
-        <div class="col-sm-4">
-            <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="leftnavcolor" value="<%style.leftnavcolor%>" type="color" style="width: 90px;" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#7c7c7c').trigger('propertychange')">重置</span>
-            </div>
-        </div>
-    </div>
-
-    <div class="form-group">
-        <div class="col-sm-2 control-label">右侧按钮</div>
-        <div class="col-sm-4">
-            <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="rightnavcolor" value="<%style.rightnavcolor%>" type="color" style="width: 90px;" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#7c7c7c').trigger('propertychange')">重置</span>
-            </div>
-        </div>
-    </div>
-
     <div class="alert alert-danger" style="margin: 10px 10px 0;">提示：信息读取商城、商品设置</div>
 
 </script>
@@ -2693,7 +2629,7 @@
         </div>
     </div>
 
-    <div class="alert alert-info" style="margin-bottom: 0; margin-top: 10px;">提示：左侧图标最多输入3个字，购买按钮最多输入4个字</div>
+    <div class="alert alert-primary" style="margin-bottom: 0; margin-top: 10px;">提示：左侧图标最多输入3个字，购买按钮最多输入4个字</div>
 </script>
 
 <script type="text/html" id="tpl_edit_detail_comment">
@@ -2731,7 +2667,7 @@
         <div class="col-sm-4">
             <div class="input-group input-group-sm">
                 <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="maincolor" value="<%style.maincolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#fd5454').trigger('propertychange')">重置</span>
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ff5555').trigger('propertychange')">重置</span>
             </div>
         </div>
     </div>
@@ -2740,7 +2676,7 @@
         <div class="col-sm-4">
             <div class="input-group input-group-sm">
                 <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="subcolor" value="<%style.subcolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#7c7c7c').trigger('propertychange')">重置</span>
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#999999').trigger('propertychange')">重置</span>
             </div>
         </div>
     </div>
@@ -2749,7 +2685,7 @@
         <div class="col-sm-4">
             <div class="input-group input-group-sm">
                 <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="textcolor" value="<%style.textcolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#333333').trigger('propertychange')">重置</span>
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#666666').trigger('propertychange')">重置</span>
             </div>
         </div>
     </div>
@@ -2816,7 +2752,7 @@
             </div>
         </div>
     </div>
-    <div class="alert alert-info" style="margin-bottom: 0;">提示：这里是购买可见区域，购买可见内容请到商品中设置</div>
+    <div class="alert alert-primary" style="margin-bottom: 0;">提示：这里是购买可见区域，购买可见内容请到商品中设置</div>
 </script>
 
 <script type="text/html" id="tpl_edit_detail_store">
@@ -2870,36 +2806,6 @@
             </div>
         </div>
     </div>
-
-    <div class="form-group">
-        <div class="col-sm-2 control-label">门店信息</div>
-        <div class="col-sm-4">
-            <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="shopinfocolor" value="<%style.shopinfocolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#666666').trigger('propertychange')">重置</span>
-            </div>
-        </div>
-    </div>
-
-    <div class="form-group">
-        <div class="col-sm-2 control-label">电话按钮</div>
-        <div class="col-sm-4">
-            <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="navtelcolor" value="<%style.navtelcolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#008000').trigger('propertychange')">重置</span>
-            </div>
-        </div>
-    </div>
-
-    <div class="form-group">
-        <div class="col-sm-2 control-label">定位按钮</div>
-        <div class="col-sm-4">
-            <div class="input-group input-group-sm">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="navlocationcolor" value="<%style.navlocationcolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ff9900').trigger('propertychange')">重置</span>
-            </div>
-        </div>
-    </div>
 </script>
 
 <script type="text/html" id="tpl_edit_detail_package">
@@ -2939,7 +2845,7 @@
         <div class="col-sm-4">
             <div class="input-group input-group-sm">
                 <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="textcolor" value="<%style.textcolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#7c7c7c').trigger('propertychange')">重置</span>
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#000000').trigger('propertychange')">重置</span>
             </div>
         </div>
     </div>
@@ -2988,7 +2894,7 @@
         <div class="col-sm-4">
             <div class="input-group input-group-sm">
                 <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="rangecolor" value="<%style.rangecolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#008000').trigger('propertychange')">重置</span>
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ff5555').trigger('propertychange')">重置</span>
             </div>
         </div>
     </div>
@@ -2997,10 +2903,11 @@
         <div class="col-sm-4">
             <div class="input-group input-group-sm">
                 <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="locationcolor" value="<%style.locationcolor%>" type="color" />
-                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ff9900').trigger('propertychange')">重置</span>
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ff5555').trigger('propertychange')">重置</span>
             </div>
         </div>
     </div>
+
     <div class="form-group">
         <div class="col-sm-2 control-label">开启定位</div>
         <div class="col-sm-10">
@@ -3021,79 +2928,79 @@
     </div>
 
     <%if params.merchdata=='0' || !params.merchdata%>
-        <div class="form-items indent" data-min="1">
-            <div class="inner" id="form-items">
-                <%each data as child itemid %>
-                <div class="item" data-id="<%itemid%>">
-                    <span class="btn-del" title="删除"></span>
-                    <div class="item-image square">
-                        <div class="text merch-selector" data-goodstype="<%params.goodstype%>">选择商户</div>
-                        <img src="<%imgsrc child.thumb%>" onerror="this.src='../addons/ewei_shopv2/static/images/nopic.jpg';" id="pimg-<%itemid%>" />
-                        <input type="hidden" class="diy-bind" data-bind-parent="data" data-bind-child="<%itemid%>" data-bind="imgurl"  id="cimg-<%itemid%>" value="<%child.imgurl%>" />
+    <div class="form-items indent" data-min="1">
+        <div class="inner" id="form-items">
+            <%each data as child itemid %>
+            <div class="item" data-id="<%itemid%>">
+                <span class="btn-del" title="删除"></span>
+                <div class="item-image square">
+                    <div class="text merch-selector" data-goodstype="<%params.goodstype%>">选择商户</div>
+                    <img src="<%imgsrc child.thumb%>" onerror="this.src='../addons/ewei_shopv2/static/images/nopic.jpg';" id="pimg-<%itemid%>" />
+                    <input type="hidden" class="diy-bind" data-bind-parent="data" data-bind-child="<%itemid%>" data-bind="imgurl"  id="cimg-<%itemid%>" value="<%child.imgurl%>" />
+                </div>
+                <div class="item-form">
+                    <div class="input-group" style="margin-bottom:0px; ">
+                        <span class="input-group-addon">商户名称</span>
+                        <input class="form-control input-sm" value="<%child.name||'未设置'%>" readonly="readonly" />
                     </div>
-                    <div class="item-form">
-                        <div class="input-group" style="margin-bottom:0px; ">
-                            <span class="input-group-addon">商户名称</span>
-                            <input class="form-control input-sm" value="<%child.name||'未设置'%>" readonly="readonly" />
-                        </div>
-                        <div class="input-group" style="margin-top:10px; margin-bottom:0px; ">
-                            <span class="input-group-addon">商户介绍</span>
-                            <input class="form-control input-sm" value="<%child.desc%>" readonly="readonly" />
-                        </div>
+                    <div class="input-group" style="margin-top:10px; margin-bottom:0px; ">
+                        <span class="input-group-addon">商户介绍</span>
+                        <input class="form-control input-sm" value="<%child.desc%>" readonly="readonly" />
                     </div>
                 </div>
-                <%/each%>
             </div>
-            <div class="btn btn-w-m btn-block btn-default btn-outline" id="addChild"><i class="fa fa-plus"></i> 添加一个</div>
+            <%/each%>
         </div>
+        <div class="btn btn-w-m btn-block btn-default btn-outline" id="addChild"><i class="fa fa-plus"></i> 添加一个</div>
+    </div>
     <%/if%>
 
     <%if params.merchdata=='1'%>
-        <div class="form-group">
-            <div class="col-sm-2 control-label">选择分类</div>
-            <div class="col-sm-10">
-                <div class="input-group">
-                    <input type="text" class="form-control input-sm" placeholder="请点击选择分类" value="<%params.catename%>" readonly="readonly"/>
-                    <span class="input-group-addon btn btn-default merch-category-selector" data-goodstype="<%params.goodstype%>">选择分类</span>
-                </div>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">选择分类</div>
+        <div class="col-sm-10">
+            <div class="input-group">
+                <input type="text" class="form-control input-sm" placeholder="请点击选择分类" value="<%params.catename%>" readonly="readonly"/>
+                <span class="input-group-addon btn btn-default merch-category-selector" data-goodstype="<%params.goodstype%>">选择分类</span>
             </div>
         </div>
+    </div>
     <%/if%>
 
     <%if params.merchdata=='2'%>
-        <div class="form-group">
-            <div class="col-sm-2 control-label">选择分组</div>
-            <div class="col-sm-10">
-                <div class="input-group">
-                    <input type="text" class="form-control input-sm" placeholder="请点击选择分组" value="<%params.groupname%>" readonly="readonly"/>
-                    <span class="input-group-addon btn btn-default merch-group-selector">选择分组</span>
-                </div>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">选择分组</div>
+        <div class="col-sm-10">
+            <div class="input-group">
+                <input type="text" class="form-control input-sm" placeholder="请点击选择分组" value="<%params.groupname%>" readonly="readonly"/>
+                <span class="input-group-addon btn btn-default merch-group-selector">选择分组</span>
             </div>
         </div>
+    </div>
     <%/if%>
 
     <%if params.merchdata>0%>
-        <div class="form-group">
-            <div class="col-sm-2 control-label">显示数量</div>
-            <div class="col-sm-10">
-                <div class="form-group">
-                    <div class="slider col-sm-8" data-value="<%params.merchnum%>" data-min="1" data-max="20"></div>
-                    <div class="col-sm-4 control-labe count"><span><%params.merchnum%></span>个</div>
-                    <input class="diy-bind input" data-bind-child="params" data-bind="merchnum" value="<%params.merchnum%>" type="hidden" />
-                </div>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">显示数量</div>
+        <div class="col-sm-10">
+            <div class="form-group">
+                <div class="slider col-sm-8" data-value="<%params.merchnum%>" data-min="1" data-max="20"></div>
+                <div class="col-sm-4 control-labe count"><span><%params.merchnum%></span>个</div>
+                <input class="diy-bind input" data-bind-child="params" data-bind="merchnum" value="<%params.merchnum%>" type="hidden" />
             </div>
         </div>
+    </div>
     <%/if%>
 
     <%if params.openlocation==1%>
-        <div class="form-group">
-            <div class="col-sm-2 control-label">商品排序</div>
-            <div class="col-sm-10">
-                <label class="radio-inline"><input type="radio" name="merchsort" value="0" class="diy-bind" data-bind-child="params" data-bind="merchsort" <%if params.merchsort=='0'||!params.merchsort%>checked="checked"<%/if%>> 综合</label>
-                <label class="radio-inline"><input type="radio" name="merchsort" value="1" class="diy-bind" data-bind-child="params" data-bind="merchsort" <%if params.merchsort=='1'%>checked="checked"<%/if%> > 距离降序</label>
-                <label class="radio-inline"><input type="radio" name="merchsort" value="2" class="diy-bind" data-bind-child="params" data-bind="merchsort" <%if params.merchsort=='2'%>checked="checked"<%/if%> > 距离升序</label>
-            </div>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">商品排序</div>
+        <div class="col-sm-10">
+            <label class="radio-inline"><input type="radio" name="merchsort" value="0" class="diy-bind" data-bind-child="params" data-bind="merchsort" <%if params.merchsort=='0'||!params.merchsort%>checked="checked"<%/if%>> 综合</label>
+            <label class="radio-inline"><input type="radio" name="merchsort" value="1" class="diy-bind" data-bind-child="params" data-bind="merchsort" <%if params.merchsort=='1'%>checked="checked"<%/if%> > 距离降序</label>
+            <label class="radio-inline"><input type="radio" name="merchsort" value="2" class="diy-bind" data-bind-child="params" data-bind="merchsort" <%if params.merchsort=='2'%>checked="checked"<%/if%> > 距离升序</label>
         </div>
+    </div>
     <%/if%>
 
 </script>
@@ -3458,13 +3365,13 @@
     </div>
 
     <%if params.showtype==1%>
-        <div class="form-group">
-            <div class="col-sm-2 control-label">分页按钮</div>
-            <div class="col-sm-10">
-                <label class="radio-inline"><input type="radio" name="showbtn" value="0" class="diy-bind" data-bind-child="params" data-bind="showbtn" data-bind-init="true" <%if params.showbtn=='0'||!params.showbtn%>checked="checked"<%/if%>>隐藏</label>
-                <label class="radio-inline"><input type="radio" name="showbtn" value="1" class="diy-bind" data-bind-child="params" data-bind="showbtn" data-bind-init="true" <%if params.showbtn=='1'%>checked="checked"<%/if%>> 显示</label>
-            </div>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">分页按钮</div>
+        <div class="col-sm-10">
+            <label class="radio-inline"><input type="radio" name="showbtn" value="0" class="diy-bind" data-bind-child="params" data-bind="showbtn" data-bind-init="true" <%if params.showbtn=='0'||!params.showbtn%>checked="checked"<%/if%>>隐藏</label>
+            <label class="radio-inline"><input type="radio" name="showbtn" value="1" class="diy-bind" data-bind-child="params" data-bind="showbtn" data-bind-init="true" <%if params.showbtn=='1'%>checked="checked"<%/if%>> 显示</label>
         </div>
+    </div>
     <%/if%>
 
     <div class="form-group">
@@ -3548,7 +3455,7 @@
         <div class="btn btn-w-m btn-block btn-default btn-outline" id="addChild"><i class="fa fa-plus"></i> 添加一个</div>
     </div>
 
-    <div class="alert alert-info" style="margin-top: 10px; margin-bottom: 0;">注意：如果上标题 、下标题为空则不显示</div>
+    <div class="alert alert-primary" style="margin-top: 10px; margin-bottom: 0;">注意：如果上标题 、下标题为空则不显示</div>
 </script>
 
 <script type="text/html" id="tpl_edit_audio">
@@ -3721,7 +3628,7 @@
         </div>
     </div>
 
-    <div class="alert alert-info" style="margin-bottom: 0;">提示：编辑页面播放只提供播放/停止功能，更多动画、功能请在手机端查看</div>
+    <div class="alert alert-primary" style="margin-bottom: 0;">提示：编辑页面播放只提供播放/停止功能，更多动画、功能请在手机端查看</div>
 
 </script>
 
@@ -4072,13 +3979,24 @@
                         <span class="input-group-addon" style="border-left: 0; border-right: 0;">使用条件</span>
                         <input class="form-control input-sm diy-bind" value="<%child.desc%>" data-bind-parent="data" data-bind-child="<%itemid%>" data-bind="desc" readonly />
                     </div>
-                    <div class="input-group" style="margin-top:10px; margin-bottom:0px; ">
-                        <span class="input-group-addon">文字</span>
+                    <div class="input-group " style="margin-top:10px; margin-bottom:0px; ">
+                        <span class="input-group-addon">色调</span>
+                        <span class="form-control input-sm" style="padding-top: 0;">
+                            <label class="radio-inline" style="padding-top: 4px;">
+                                <input type="radio" name="couponcolor-<%itemid%>" value="#55b5ff" class="diy-bind" data-bind-parent="data" data-bind-child="<%itemid%>" data-bind="couponcolor" style="margin-top: 4px;" <%if child.couponcolor=='#55b5ff'||!child.couponcolor%>checked<%/if%>> 蓝</label>
+                            <label class="radio-inline" style="padding-top: 4px;">
+                                <input type="radio" name="couponcolor-<%itemid%>" value="#ff5555" class="diy-bind" data-bind-parent="data" data-bind-child="<%itemid%>" data-bind="couponcolor" style="margin-top: 4px;" <%if child.couponcolor=='#ff5555'%>checked<%/if%>> 红</label>
+                            <label class="radio-inline" style="padding-top: 4px;">
+                                <input type="radio" name="couponcolor-<%itemid%>" value="#ff913f" class="diy-bind" data-bind-parent="data" data-bind-child="<%itemid%>" data-bind="couponcolor" style="margin-top: 4px;" <%if child.couponcolor=='#ff913f'%>checked<%/if%>> 橙</label>
+                            <label class="radio-inline" style="padding-top: 4px;">
+                                <input type="radio" name="couponcolor-<%itemid%>" value="#fd72d4" class="diy-bind" data-bind-parent="data" data-bind-child="<%itemid%>" data-bind="couponcolor" style="margin-top: 4px;" <%if child.couponcolor=='#fd72d4'%>checked<%/if%>> 粉</label>
+                        </span>
+                        <!--
                         <input class="form-control input-sm color diy-bind" value="<%child.textcolor%>" type="color" data-bind-parent="data" data-bind-child="<%itemid%>" data-bind="textcolor" />
                         <span class="input-group-addon" style="border-left: 0; border-right: 0;">边框</span>
                         <input class="form-control input-sm color diy-bind" value="<%child.bordercolor%>" type="color" data-bind-parent="data" data-bind-child="<%itemid%>" data-bind="bordercolor" />
                         <span class="input-group-addon" style="border-left: 0; border-right: 0;">背景</span>
-                        <input class="form-control input-sm color diy-bind" value="<%child.background%>" type="color" data-bind-parent="data" data-bind-child="<%itemid%>" data-bind="background" />
+                        <input class="form-control input-sm color diy-bind" value="<%child.background%>" type="color" data-bind-parent="data" data-bind-child="<%itemid%>" data-bind="background" />-->
                     </div>
                 </div>
             </div>
@@ -4099,22 +4017,12 @@
         </div>
     </div>
     <div class="form-group">
-        <div class="col-sm-2 control-label">背景透明度</div>
+        <div class="col-sm-2 control-label">透明度</div>
         <div class="col-sm-10">
             <div class="form-group">
                 <div class="slider col-sm-8 " data-value="<%style.opacity%>" data-min="0" data-max="10" data-decimal="10"></div>
                 <div class="col-sm-4 control-labe count"><span><%style.opacity%></span>(最大是1)</div>
                 <input class="diy-bind input" data-bind-child="style" data-bind="opacity" value="<%style.opacity%>" type="hidden" />
-            </div>
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-sm-2 control-label">搜索框透明度</div>
-        <div class="col-sm-10">
-            <div class="form-group">
-                <div class="slider col-sm-8 " data-value="<%style.opacityinput%>" data-min="0" data-max="10" data-decimal="10"></div>
-                <div class="col-sm-4 control-labe count"><span><%style.opacityinput%></span>(最大是1)</div>
-                <input class="diy-bind input" data-bind-child="style" data-bind="opacityinput" value="<%style.opacityinput%>" type="hidden" />
             </div>
         </div>
     </div>
@@ -4128,44 +4036,44 @@
         </div>
     </div>
     <%if params.leftnav==1%>
-        <div class="form-group">
-            <div class="col-sm-2 control-label">图标设置</div>
-            <div class="col-sm-7">
-                <div class="input-group input-group-sm">
-                    <span class="form-control" style="line-height: 28px; text-align: center; width: 40px;"><i class="icon <%params.leftnavicon||'icon-shop'%>" id="showleftnavicon"></i></span>
-                    <span data-input="#leftnavicon" data-element="#showleftnavicon" data-toggle="selectIcon" class="input-group-addon btn btn-default">选择图标</span>
-                    <input type="hidden" class="diy-bind" data-bind-child="params" data-bind="leftnavicon" value="<%params.leftnavicon%>" id="leftnavicon" />
-                    <div class="input-group-addon" style="border-left: 0; border-right: 0;">图标颜色</div>
-                    <input class="form-control color diy-bind" type="color" style="width: 80px;" data-bind-child="style" data-bind="leftnavcolor" value="<%style.leftnavcolor%>"  />
-                </div>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">图标设置</div>
+        <div class="col-sm-7">
+            <div class="input-group input-group-sm">
+                <span class="form-control" style="line-height: 28px; text-align: center; width: 40px;"><i class="icon <%params.leftnavicon||'icon-shop'%>" id="showleftnavicon"></i></span>
+                <span data-input="#leftnavicon" data-element="#showleftnavicon" data-toggle="selectIcon" class="input-group-addon btn btn-default">选择图标</span>
+                <input type="hidden" class="diy-bind" data-bind-child="params" data-bind="leftnavicon" value="<%params.leftnavicon%>" id="leftnavicon" />
+                <div class="input-group-addon" style="border-left: 0; border-right: 0;">图标颜色</div>
+                <input class="form-control color diy-bind" type="color" style="width: 80px;" data-bind-child="style" data-bind="leftnavcolor" value="<%style.leftnavcolor%>"  />
             </div>
         </div>
+    </div>
     <%/if%>
     <%if params.leftnav==2%>
-        <div class="form-group">
-            <div class="col-sm-2 control-label">选择图片</div>
-            <div class="col-sm-10">
-                <div class="input-group">
-                    <input class="form-control input-sm diy-bind" data-bind-child="params" data-bind="leftnavimg" value="<%params.leftnavimg%>" id="leftnavimg" />
-                    <span data-input="#leftnavimg" data-img="#showleftnavimg" data-toggle="selectImg" class="input-group-addon btn btn-default">选择图片</span>
-                </div>
-                <div class="input-group " style="margin-top:.5em;">
-                    <img src="<%imgsrc params.leftnavimg%>" onerror="this.src='../addons/ewei_shopv2/static/images/nopic.jpg';" class="img-responsive img-thumbnail" style="height: 50px; background: #eee;" id="showleftnavimg">
-                    <em class="close" style="position:absolute; top: 0px; right: -14px;" title="删除这张图片" onclick="$('#leftnavimg').val('').trigger('change');$(this).prev().attr('src', '')">×</em>
-                </div>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">选择图片</div>
+        <div class="col-sm-10">
+            <div class="input-group">
+                <input class="form-control input-sm diy-bind" data-bind-child="params" data-bind="leftnavimg" value="<%params.leftnavimg%>" id="leftnavimg" />
+                <span data-input="#leftnavimg" data-img="#showleftnavimg" data-toggle="selectImg" class="input-group-addon btn btn-default">选择图片</span>
+            </div>
+            <div class="input-group " style="margin-top:.5em;">
+                <img src="<%imgsrc params.leftnavimg%>" onerror="this.src='../addons/ewei_shopv2/static/images/nopic.jpg';" class="img-responsive img-thumbnail" style="height: 50px; background: #eee;" id="showleftnavimg">
+                <em class="close" style="position:absolute; top: 0px; right: -14px;" title="删除这张图片" onclick="$('#leftnavimg').val('').trigger('change');$(this).prev().attr('src', '')">×</em>
             </div>
         </div>
+    </div>
     <%/if%>
     <%if params.leftnav==1||params.leftnav==2%>
-        <div class="form-group">
-            <div class="col-sm-2 control-label">选择链接</div>
-            <div class="col-sm-10">
-                <div class="input-group input-group-sm">
-                    <input class="form-control input-sm diy-bind" data-bind-child="params" data-bind="leftnavlink"  value="<%params.leftnavlink%>" id="leftnavlink" />
-                    <span data-input="#leftnavlink" data-toggle="selectUrl" class="input-group-addon btn btn-default">选择链接</span>
-                </div>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">选择链接</div>
+        <div class="col-sm-10">
+            <div class="input-group input-group-sm">
+                <input class="form-control input-sm diy-bind" data-bind-child="params" data-bind="leftnavlink"  value="<%params.leftnavlink%>" id="leftnavlink" />
+                <span data-input="#leftnavlink" data-toggle="selectUrl" class="input-group-addon btn btn-default">选择链接</span>
             </div>
         </div>
+    </div>
     <%/if%>
     <div class="line"></div>
     <div class="form-group">
@@ -4177,44 +4085,53 @@
         </div>
     </div>
     <%if params.rightnav==1%>
-        <div class="form-group">
-            <div class="col-sm-2 control-label">选择图标</div>
-            <div class="col-sm-7">
-                <div class="input-group input-group-sm">
-                    <span class="form-control" style="line-height: 28px; text-align: center; width: 40px;"><i class="icon <%params.rightnavicon||'icon-shop'%>" id="showrightnavicon"></i></span>
-                    <span data-input="#rightnavicon" data-element="#showrightnavicon" data-toggle="selectIcon" class="input-group-addon btn btn-default">选择图标</span>
-                    <input type="hidden" class="diy-bind" data-bind-child="params" data-bind="rightnavicon" value="<%params.rightnavicon%>" id="rightnavicon" />
-                    <div class="input-group-addon" style="border-left: 0; border-right: 0;">图标颜色</div>
-                    <input class="form-control color diy-bind" type="color" style="width: 80px;" data-bind-child="style" data-bind="rightnavcolor" value="<%style.rightnavcolor%>"  />
-                </div>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">选择图标</div>
+        <div class="col-sm-7">
+            <div class="input-group input-group-sm">
+                <span class="form-control" style="line-height: 28px; text-align: center; width: 40px;"><i class="icon <%params.rightnavicon||'icon-shop'%>" id="showrightnavicon"></i></span>
+                <span data-input="#rightnavicon" data-element="#showrightnavicon" data-toggle="selectIcon" class="input-group-addon btn btn-default">选择图标</span>
+                <input type="hidden" class="diy-bind" data-bind-child="params" data-bind="rightnavicon" value="<%params.rightnavicon%>" id="rightnavicon" />
+                <div class="input-group-addon" style="border-left: 0; border-right: 0;">图标颜色</div>
+                <input class="form-control color diy-bind" type="color" style="width: 80px;" data-bind-child="style" data-bind="rightnavcolor" value="<%style.rightnavcolor%>"  />
             </div>
         </div>
+    </div>
     <%/if%>
     <%if params.rightnav==2%>
-        <div class="form-group">
-            <div class="col-sm-2 control-label">选择图片</div>
-            <div class="col-sm-10">
-                <div class="input-group">
-                    <input class="form-control input-sm diy-bind" data-bind-child="params" data-bind="rightnavimg"  value="<%params.rightnavimg%>" id="rightnavimg" />
-                    <span data-input="#rightnavimg" data-img="#showrightnavimg" data-toggle="selectImg" class="input-group-addon btn btn-default">选择图片</span>
-                </div>
-                <div class="input-group " style="margin-top:.5em;">
-                    <img src="<%imgsrc params.rightnavimg%>" onerror="this.src='../addons/ewei_shopv2/static/images/nopic.jpg';" class="img-responsive img-thumbnail" style="height: 50px; background: #eee;" id="showrightnavimg">
-                    <em class="close" style="position:absolute; top: 0px; right: -14px;" title="删除这张图片" onclick="$('#rightnavimg').val('').trigger('change');$(this).prev().attr('src', '')">×</em>
-                </div>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">选择图片</div>
+        <div class="col-sm-10">
+            <div class="input-group">
+                <input class="form-control input-sm diy-bind" data-bind-child="params" data-bind="rightnavimg"  value="<%params.rightnavimg%>" id="rightnavimg" />
+                <span data-input="#rightnavimg" data-img="#showrightnavimg" data-toggle="selectImg" class="input-group-addon btn btn-default">选择图片</span>
+            </div>
+            <div class="input-group " style="margin-top:.5em;">
+                <img src="<%imgsrc params.rightnavimg%>" onerror="this.src='../addons/ewei_shopv2/static/images/nopic.jpg';" class="img-responsive img-thumbnail" style="height: 50px; background: #eee;" id="showrightnavimg">
+                <em class="close" style="position:absolute; top: 0px; right: -14px;" title="删除这张图片" onclick="$('#rightnavimg').val('').trigger('change');$(this).prev().attr('src', '')">×</em>
             </div>
         </div>
+    </div>
     <%/if%>
     <%if params.rightnav==1||params.rightnav==2%>
-        <div class="form-group">
-            <div class="col-sm-2 control-label">选择链接</div>
-            <div class="col-sm-10">
-                <div class="input-group input-group-sm">
-                    <input class="form-control input-sm diy-bind" data-bind-child="params" data-bind="rightnavlink"  value="<%params.rightnavlink%>" id="rightnavlink" />
-                    <span data-input="#rightnavlink" data-toggle="selectUrl" class="input-group-addon btn btn-default">选择链接</span>
-                </div>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">点击事件</div>
+        <div class="col-sm-10">
+            <label class="radio-inline"><input type="radio" name="rightnavclick" value="0" class="diy-bind" data-bind-child="params" data-bind="rightnavclick" data-bind-init="true" <%if params.rightnavclick=='0'||!params.rightnavclick%>checked="checked"<%/if%>> 跳转链接</label>
+            <label class="radio-inline"><input type="radio" name="rightnavclick" value="1" class="diy-bind" data-bind-child="params" data-bind="rightnavclick" data-bind-init="true" <%if params.rightnavclick=='1'%>checked="checked"<%/if%>> 提交搜索</label>
+        </div>
+    </div>
+    <%if params.rightnavclick=='0'||!params.rightnavclick%>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">选择链接</div>
+        <div class="col-sm-10">
+            <div class="input-group input-group-sm">
+                <input class="form-control input-sm diy-bind" data-bind-child="params" data-bind="rightnavlink"  value="<%params.rightnavlink%>" id="rightnavlink" />
+                <span data-input="#rightnavlink" data-toggle="selectUrl" class="input-group-addon btn btn-default">选择链接</span>
             </div>
         </div>
+    </div>
+    <%/if%>
     <%/if%>
     <div class="line"></div>
     <div class="form-group">
@@ -4319,29 +4236,29 @@
     </div>
 
     <%if params.datatype=='1'%>
-        <div class="form-items" data-min="1">
-            <div class="inner" id="form-items">
-                <%each data as child itemid %>
-                <div class="item" data-id="<%itemid%>">
-                    <span class="btn-del" title="删除"></span>
-                    <div class="item-image">
-                        <img src="<%imgsrc child.imgurl%>" onerror="this.src='../addons/ewei_shopv2/static/images/nopic.jpg';" id="pimg-<%itemid%>" />
+    <div class="form-items" data-min="1">
+        <div class="inner" id="form-items">
+            <%each data as child itemid %>
+            <div class="item" data-id="<%itemid%>">
+                <span class="btn-del" title="删除"></span>
+                <div class="item-image">
+                    <img src="<%imgsrc child.imgurl%>" onerror="this.src='../addons/ewei_shopv2/static/images/nopic.jpg';" id="pimg-<%itemid%>" />
+                </div>
+                <div class="item-form">
+                    <div class="input-group" style="margin-bottom:0px; ">
+                        <input type="text" class="form-control input-sm diy-bind" data-bind-parent="data" data-bind-child="<%itemid%>" data-bind="imgurl"  id="cimg-<%itemid%>" placeholder="请选择图片或输入图片地址" value="<%child.imgurl%>" />
+                        <span class="input-group-addon btn btn-default" data-toggle="selectImg" data-input="#cimg-<%itemid%>" data-img="#pimg-<%itemid%>">选择图片</span>
                     </div>
-                    <div class="item-form">
-                        <div class="input-group" style="margin-bottom:0px; ">
-                            <input type="text" class="form-control input-sm diy-bind" data-bind-parent="data" data-bind-child="<%itemid%>" data-bind="imgurl"  id="cimg-<%itemid%>" placeholder="请选择图片或输入图片地址" value="<%child.imgurl%>" />
-                            <span class="input-group-addon btn btn-default" data-toggle="selectImg" data-input="#cimg-<%itemid%>" data-img="#pimg-<%itemid%>">选择图片</span>
-                        </div>
-                        <div class="input-group" style="margin-top:10px; margin-bottom:0px; ">
-                            <input type="text" class="form-control input-sm diy-bind" data-bind-parent="data" data-bind-child="<%itemid%>" data-bind="linkurl" id="curl-<%itemid%>" placeholder="请选择链接或输入链接地址" value="<%child.linkurl%>" />
-                            <span class="input-group-addon btn btn-default" data-toggle="selectUrl" data-input="#curl-<%itemid%>">选择链接</span>
-                        </div>
+                    <div class="input-group" style="margin-top:10px; margin-bottom:0px; ">
+                        <input type="text" class="form-control input-sm diy-bind" data-bind-parent="data" data-bind-child="<%itemid%>" data-bind="linkurl" id="curl-<%itemid%>" placeholder="请选择链接或输入链接地址" value="<%child.linkurl%>" />
+                        <span class="input-group-addon btn btn-default" data-toggle="selectUrl" data-input="#curl-<%itemid%>">选择链接</span>
                     </div>
                 </div>
-                <%/each%>
             </div>
-            <div class="btn btn-w-m btn-block btn-default btn-outline" id="addChild"><i class="fa fa-plus"></i> 添加一个</div>
+            <%/each%>
         </div>
+        <div class="btn btn-w-m btn-block btn-default btn-outline" id="addChild"><i class="fa fa-plus"></i> 添加一个</div>
+    </div>
     <%/if%>
 </script>
 
@@ -4417,144 +4334,144 @@
     <%/if%>
 
     <%if params.preview=='1'%>
-        <div class="form-group">
-            <div class="col-sm-2 control-label">兑换码颜色</div>
-            <div class="col-sm-4">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="codecolor" value="<%style.codecolor%>" type="color" />
-            </div>
-            <div class="col-sm-2 control-label">查询次数颜色</div>
-            <div class="col-sm-4">
-                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="numcolor" value="<%style.numcolor%>" type="color" />
-            </div>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">兑换码颜色</div>
+        <div class="col-sm-4">
+            <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="codecolor" value="<%style.codecolor%>" type="color" />
         </div>
+        <div class="col-sm-2 control-label">查询次数颜色</div>
+        <div class="col-sm-4">
+            <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="numcolor" value="<%style.numcolor%>" type="color" />
+        </div>
+    </div>
 
-        <div class="line"></div>
-        <div class="form-group">
-            <div class="col-sm-2 control-label">商品样式</div>
-            <div class="col-sm-10">
-                <div class="input-group input-group-sm">
-                    <span class="input-group-addon" style="border-right: 0;">标题颜色</span>
-                    <input class="form-control color diy-bind" type="color" value="<%style.goodstitle%>" data-bind-child="style" data-bind="goodstitle" style="width: 113px;" />
-                    <span class="input-group-addon" style="border-left: 0; border-right: 0;">面值颜色</span>
-                    <input class="form-control color diy-bind" type="color" value="<%style.goodsprice%>" data-bind-child="style" data-bind="goodsprice" style="width: 113px;" />
-                </div>
+    <div class="line"></div>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">商品样式</div>
+        <div class="col-sm-10">
+            <div class="input-group input-group-sm">
+                <span class="input-group-addon" style="border-right: 0;">标题颜色</span>
+                <input class="form-control color diy-bind" type="color" value="<%style.goodstitle%>" data-bind-child="style" data-bind="goodstitle" style="width: 113px;" />
+                <span class="input-group-addon" style="border-left: 0; border-right: 0;">面值颜色</span>
+                <input class="form-control color diy-bind" type="color" value="<%style.goodsprice%>" data-bind-child="style" data-bind="goodsprice" style="width: 113px;" />
             </div>
         </div>
-        <div class="form-group">
-            <div class="col-sm-2 control-label">兑换按钮</div>
-            <div class="col-sm-10">
-                <div class="input-group input-group-sm">
-                    <span class="input-group-addon">文字</span>
-                    <input class="form-control diy-bind" value="<%params.exbtntext||'兑换'%>" data-bind-child="params" data-bind="exbtntext" style="width: 90px;" placeholder="兑换" data-placeholder="兑换" />
-                    <span class="input-group-addon" style="border-left: 0; border-right: 0;">文字</span>
-                    <input class="form-control color diy-bind" type="color" value="<%style.exbtncolor%>" data-bind-child="style" data-bind="exbtncolor" style="width: 70px;" />
-                    <span class="input-group-addon" style="border-left: 0; border-right: 0;">背景</span>
-                    <input class="form-control color diy-bind" type="color" value="<%style.exbtnbackground%>" data-bind-child="style" data-bind="exbtnbackground" style="width: 70px;" />
-                </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">兑换按钮</div>
+        <div class="col-sm-10">
+            <div class="input-group input-group-sm">
+                <span class="input-group-addon">文字</span>
+                <input class="form-control diy-bind" value="<%params.exbtntext||'兑换'%>" data-bind-child="params" data-bind="exbtntext" style="width: 90px;" placeholder="兑换" data-placeholder="兑换" />
+                <span class="input-group-addon" style="border-left: 0; border-right: 0;">文字</span>
+                <input class="form-control color diy-bind" type="color" value="<%style.exbtncolor%>" data-bind-child="style" data-bind="exbtncolor" style="width: 70px;" />
+                <span class="input-group-addon" style="border-left: 0; border-right: 0;">背景</span>
+                <input class="form-control color diy-bind" type="color" value="<%style.exbtnbackground%>" data-bind-child="style" data-bind="exbtnbackground" style="width: 70px;" />
             </div>
         </div>
-        <div class="form-group">
-            <div class="col-sm-2 control-label">已兑换按钮</div>
-            <div class="col-sm-10">
-                <div class="input-group input-group-sm">
-                    <span class="input-group-addon">文字</span>
-                    <input class="form-control diy-bind" value="<%params.exbtn2text||'已兑换'%>" data-bind-child="params" data-bind="exbtn2text" style="width: 90px;" placeholder="已兑换" data-placeholder="已兑换" />
-                    <span class="input-group-addon" style="border-left: 0; border-right: 0;">文字</span>
-                    <input class="form-control color diy-bind" type="color" value="<%style.exbtn2color%>" data-bind-child="style" data-bind="exbtn2color" style="width: 70px;" />
-                    <span class="input-group-addon" style="border-left: 0; border-right: 0;">背景</span>
-                    <input class="form-control color diy-bind" type="color" value="<%style.exbtn2background%>" data-bind-child="style" data-bind="exbtn2background" style="width: 70px;" />
-                </div>
-                </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">已兑换按钮</div>
+        <div class="col-sm-10">
+            <div class="input-group input-group-sm">
+                <span class="input-group-addon">文字</span>
+                <input class="form-control diy-bind" value="<%params.exbtn2text||'已兑换'%>" data-bind-child="params" data-bind="exbtn2text" style="width: 90px;" placeholder="已兑换" data-placeholder="已兑换" />
+                <span class="input-group-addon" style="border-left: 0; border-right: 0;">文字</span>
+                <input class="form-control color diy-bind" type="color" value="<%style.exbtn2color%>" data-bind-child="style" data-bind="exbtn2color" style="width: 70px;" />
+                <span class="input-group-addon" style="border-left: 0; border-right: 0;">背景</span>
+                <input class="form-control color diy-bind" type="color" value="<%style.exbtn2background%>" data-bind-child="style" data-bind="exbtn2background" style="width: 70px;" />
             </div>
         </div>
-        <div class="line"></div>
-        <div class="form-group">
-            <div class="col-sm-2 control-label">余额图标</div>
-            <div class="col-sm-10">
-                <div class="input-group input-group-sm">
+    </div>
+    </div>
+    <div class="line"></div>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">余额图标</div>
+        <div class="col-sm-10">
+            <div class="input-group input-group-sm">
                     <span class="input-group-addon" style="padding: 0; width: 30px;">
                         <img src="<%imgsrc params.moneyicon%>" style="height: 20px; width: 20px;" id="showmoneyicon">
                     </span>
-                    <input class="form-control diy-bind" value="<%params.moneyicon||'已兑换'%>" data-bind-child="params" data-bind="moneyicon" placeholder="请选择图标或恢复默认" id="moneyicon" data-bind-init="true" />
-                    <span class="input-group-addon btn" style="border-left: 0;" data-toggle="selectImg" data-input="#moneyicon" data-img="#showmoneyicon">选择图片</span>
-                    <span class="input-group-addon btn" style="border-left: 0;" onclick="$('#moneyicon').val('../addons/ewei_shopv2/plugin/diypage/static/images/default/icon_money.png').trigger('change');">恢复默认</span>
-                </div>
+                <input class="form-control diy-bind" value="<%params.moneyicon||'已兑换'%>" data-bind-child="params" data-bind="moneyicon" placeholder="请选择图标或恢复默认" id="moneyicon" data-bind-init="true" />
+                <span class="input-group-addon btn" style="border-left: 0;" data-toggle="selectImg" data-input="#moneyicon" data-img="#showmoneyicon">选择图片</span>
+                <span class="input-group-addon btn" style="border-left: 0;" onclick="$('#moneyicon').val('../addons/ewei_shopv2/plugin/diypage/static/images/default/icon_money.png').trigger('change');">恢复默认</span>
             </div>
         </div>
-        <div class="form-group">
-            <div class="col-sm-2 control-label">积分图标</div>
-            <div class="col-sm-10">
-                <div class="input-group input-group-sm">
+    </div>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">积分图标</div>
+        <div class="col-sm-10">
+            <div class="input-group input-group-sm">
                     <span class="input-group-addon" style="padding: 0; width: 30px;">
                         <img src="<%imgsrc params.crediticon%>" style="height: 20px; width: 20px;" id="showcrediticon">
                     </span>
-                    <input class="form-control diy-bind" value="<%params.crediticon%>" data-bind-child="params" data-bind="crediticon" placeholder="请选择图标或恢复默认" id="crediticon" data-bind-init="true" />
-                    <span class="input-group-addon btn" style="border-left: 0;" data-toggle="selectImg" data-input="#crediticon" data-img="#showcrediticon">选择图片</span>
-                    <span class="input-group-addon btn" style="border-left: 0;" onclick="$('#crediticon').val('../addons/ewei_shopv2/plugin/diypage/static/images/default/icon_credit.png').trigger('change')">恢复默认</span>
-                </div>
+                <input class="form-control diy-bind" value="<%params.crediticon%>" data-bind-child="params" data-bind="crediticon" placeholder="请选择图标或恢复默认" id="crediticon" data-bind-init="true" />
+                <span class="input-group-addon btn" style="border-left: 0;" data-toggle="selectImg" data-input="#crediticon" data-img="#showcrediticon">选择图片</span>
+                <span class="input-group-addon btn" style="border-left: 0;" onclick="$('#crediticon').val('../addons/ewei_shopv2/plugin/diypage/static/images/default/icon_credit.png').trigger('change')">恢复默认</span>
             </div>
         </div>
-        <div class="form-group">
-            <div class="col-sm-2 control-label">优惠券图标</div>
-            <div class="col-sm-10">
-                <div class="input-group input-group-sm">
+    </div>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">优惠券图标</div>
+        <div class="col-sm-10">
+            <div class="input-group input-group-sm">
                     <span class="input-group-addon" style="padding: 0; width: 30px;">
                         <img src="<%imgsrc params.couponicon%>" style="height: 20px; width: 20px;" id="showcouponicon">
                     </span>
-                    <input class="form-control diy-bind" value="<%params.couponicon%>" data-bind-child="params" data-bind="couponicon" placeholder="请选择图标或恢复默认" id="couponicon" data-bind-init="true" />
-                    <span class="input-group-addon btn" style="border-left: 0;" data-toggle="selectImg" data-input="#couponicon" data-img="#showcouponicon">选择图片</span>
-                    <span class="input-group-addon btn" style="border-left: 0;" onclick="$('#couponicon').val('../addons/ewei_shopv2/plugin/diypage/static/images/default/icon_coupon.png').trigger('change')">恢复默认</span>
-                </div>
+                <input class="form-control diy-bind" value="<%params.couponicon%>" data-bind-child="params" data-bind="couponicon" placeholder="请选择图标或恢复默认" id="couponicon" data-bind-init="true" />
+                <span class="input-group-addon btn" style="border-left: 0;" data-toggle="selectImg" data-input="#couponicon" data-img="#showcouponicon">选择图片</span>
+                <span class="input-group-addon btn" style="border-left: 0;" onclick="$('#couponicon').val('../addons/ewei_shopv2/plugin/diypage/static/images/default/icon_coupon.png').trigger('change')">恢复默认</span>
             </div>
         </div>
-        <div class="form-group">
-            <div class="col-sm-2 control-label">红包图标</div>
-            <div class="col-sm-10">
-                <div class="input-group input-group-sm">
+    </div>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">红包图标</div>
+        <div class="col-sm-10">
+            <div class="input-group input-group-sm">
                     <span class="input-group-addon" style="padding: 0; width: 30px;">
                         <img src="<%imgsrc params.redbagicon%>" style="height: 20px; width: 20px;" id="showredbagicon">
                     </span>
-                    <input class="form-control diy-bind" value="<%params.redbagicon%>" data-bind-child="params" data-bind="redbagicon" placeholder="请选择图标或恢复默认" id="redbagicon" data-bind-init="true" />
-                    <span class="input-group-addon btn" style="border-left: 0;" data-toggle="selectImg" data-input="#redbagicon" data-img="#showredbagicon">选择图片</span>
-                    <span class="input-group-addon btn" style="border-left: 0;" onclick="$('#redbagicon').val('../addons/ewei_shopv2/plugin/diypage/static/images/default/icon_redbag.png').trigger('change')">恢复默认</span>
-                </div>
+                <input class="form-control diy-bind" value="<%params.redbagicon%>" data-bind-child="params" data-bind="redbagicon" placeholder="请选择图标或恢复默认" id="redbagicon" data-bind-init="true" />
+                <span class="input-group-addon btn" style="border-left: 0;" data-toggle="selectImg" data-input="#redbagicon" data-img="#showredbagicon">选择图片</span>
+                <span class="input-group-addon btn" style="border-left: 0;" onclick="$('#redbagicon').val('../addons/ewei_shopv2/plugin/diypage/static/images/default/icon_redbag.png').trigger('change')">恢复默认</span>
             </div>
         </div>
-        <div class="form-group">
-            <div class="col-sm-2 control-label">红包图标</div>
-            <div class="col-sm-10">
-                <div class="input-group input-group-sm">
+    </div>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">红包图标</div>
+        <div class="col-sm-10">
+            <div class="input-group input-group-sm">
                     <span class="input-group-addon" style="padding: 0; width: 30px;">
                         <img src="<%imgsrc params.goodsicon%>" style="height: 20px; width: 20px;" id="showgoodsicon">
                     </span>
-                    <input class="form-control diy-bind" value="<%params.goodsicon%>" data-bind-child="params" data-bind="goodsicon" placeholder="请选择图标或恢复默认" id="goodsicon" data-bind-init="true" />
-                    <span class="input-group-addon btn" style="border-left: 0;" data-toggle="selectImg" data-input="#goodsicon" data-img="#showgoodsicon">选择图片</span>
-                    <span class="input-group-addon btn" style="border-left: 0;" onclick="$('#goodsicon').val('../addons/ewei_shopv2/plugin/diypage/static/images/default/icon_goods.png').trigger('change')">恢复默认</span>
-                </div>
-                <div class="help-block">提示：图标尺寸为正方形，建议80*80</div>
+                <input class="form-control diy-bind" value="<%params.goodsicon%>" data-bind-child="params" data-bind="goodsicon" placeholder="请选择图标或恢复默认" id="goodsicon" data-bind-init="true" />
+                <span class="input-group-addon btn" style="border-left: 0;" data-toggle="selectImg" data-input="#goodsicon" data-img="#showgoodsicon">选择图片</span>
+                <span class="input-group-addon btn" style="border-left: 0;" onclick="$('#goodsicon').val('../addons/ewei_shopv2/plugin/diypage/static/images/default/icon_goods.png').trigger('change')">恢复默认</span>
             </div>
+            <div class="help-block">提示：图标尺寸为正方形，建议80*80</div>
         </div>
+    </div>
 
-        <div class="line"></div>
-        <div class="form-group">
-            <div class="col-sm-2 control-label">返回按钮文字</div>
-            <div class="col-sm-10">
-                <input class="form-control input-sm diy-bind" data-bind-child="params" data-bind="backbtn" data-placeholder="返回重新输入兑换码" placeholder="返回重新输入兑换码" value="<%params.backbtn%>" />
+    <div class="line"></div>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">返回按钮文字</div>
+        <div class="col-sm-10">
+            <input class="form-control input-sm diy-bind" data-bind-child="params" data-bind="backbtn" data-placeholder="返回重新输入兑换码" placeholder="返回重新输入兑换码" value="<%params.backbtn%>" />
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">返回按钮颜色</div>
+        <div class="col-sm-10">
+            <div class="input-group input-group-sm">
+                <span class="input-group-addon">文字</span>
+                <input class="form-control color diy-bind" type="color" value="<%style.backbtncolor%>" data-bind-child="style" data-bind="backbtncolor" />
+                <span class="input-group-addon" style="border-left: 0; border-right: 0;">背景</span>
+                <input class="form-control color diy-bind" type="color" value="<%style.backbtnbackground%>" data-bind-child="style" data-bind="backbtnbackground" />
+                <span class="input-group-addon" style="border-left: 0; border-right: 0;">边框</span>
+                <input class="form-control color diy-bind" type="color" value="<%style.backbtnborder%>" data-bind-child="style" data-bind="backbtnborder" />
             </div>
         </div>
-        <div class="form-group">
-            <div class="col-sm-2 control-label">返回按钮颜色</div>
-            <div class="col-sm-10">
-                <div class="input-group input-group-sm">
-                    <span class="input-group-addon">文字</span>
-                    <input class="form-control color diy-bind" type="color" value="<%style.backbtncolor%>" data-bind-child="style" data-bind="backbtncolor" />
-                    <span class="input-group-addon" style="border-left: 0; border-right: 0;">背景</span>
-                    <input class="form-control color diy-bind" type="color" value="<%style.backbtnbackground%>" data-bind-child="style" data-bind="backbtnbackground" />
-                    <span class="input-group-addon" style="border-left: 0; border-right: 0;">边框</span>
-                    <input class="form-control color diy-bind" type="color" value="<%style.backbtnborder%>" data-bind-child="style" data-bind="backbtnborder" />
-                </div>
-            </div>
-        </div>
+    </div>
     <%/if%>
 </script>
 
@@ -4576,7 +4493,7 @@
 
 <script type="text/html" id="tpl_edit_tabbar">
 
-    <div class="alert alert-info">提示：当访问页面链接等于选项卡中的链接时高亮, 选项卡个数超过三个自动滚动</div>
+    <div class="alert alert-primary">提示：当访问页面链接等于选项卡中的链接时高亮, 选项卡个数超过三个自动滚动</div>
 
     <div class="form-group">
         <div class="col-sm-2 control-label">背景颜色</div>
@@ -4612,14 +4529,6 @@
         </div>
     </div>
 
-    <div class="form-group">
-        <div class="col-sm-2 control-label">超出滚动数</div>
-        <div class="col-sm-10">
-            <label class="radio-inline"><input type="radio" name="scrollnum" value="3" class="diy-bind" data-bind-child="style" data-bind="scrollnum" <%if style.scrollnum==3||!style.scrollnum%>checked="checked"<%/if%> > 超出3个滚动</label>
-            <label class="radio-inline"><input type="radio" name="scrollnum" value="4" class="diy-bind" data-bind-child="style" data-bind="scrollnum" <%if style.scrollnum==4%>checked="checked"<%/if%>> 超出4个滚动</label>
-        </div>
-    </div>
-
     <div class="line"></div>
 
     <div class="form-items indent" data-min="1" data-max="8">
@@ -4631,7 +4540,7 @@
                 <div class="item-form">
                     <div class="input-group" style="margin-bottom:0px; ">
                         <span class="input-group-addon">选项卡文字</span>
-                        <input type="text" class="form-control input-sm diy-bind" data-bind-parent="data" data-bind-child="<%itemid%>" data-bind="text" placeholder="请输入选项卡文字最大10字" value="<%child.text%>" maxlength="10" />
+                        <input type="text" class="form-control input-sm diy-bind" data-bind-parent="data" data-bind-child="<%itemid%>" data-bind="text" placeholder="请输入选项卡文字最大5字" value="<%child.text%>" maxlength="5" />
                     </div>
                     <div class="input-group" style="margin-top:10px; margin-bottom:0px; ">
                         <input type="text" class="form-control input-sm diy-bind" data-bind-parent="data" data-bind-child="<%itemid%>" data-bind="linkurl" id="curl-<%itemid%>" placeholder="请选择链接或输入链接地址" value="<%child.linkurl%>" />
@@ -4645,3 +4554,119 @@
     </div>
 
 </script>
+
+<script type="text/html" id="tpl_edit_wxcard">
+    <div class="form-group">
+        <div class="col-sm-2 control-label">顶部边距</div>
+        <div class="col-sm-10">
+            <div class="form-group">
+                <div class="slider col-sm-8" data-value="<%style.margintop%>" data-min="0" data-max="50"></div>
+                <div class="col-sm-4 control-labe count"><span><%style.margintop%></span>px(像素)</div>
+                <input class="diy-bind input" data-bind-child="style" data-bind="margintop" value="<%style.margintop%>" type="hidden" />
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-sm-2 control-label">背景颜色</div>
+        <div class="col-sm-4">
+            <div class="input-group input-group-sm">
+                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="background" value="<%style.background%>" type="color" />
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ffffff').trigger('propertychange')">重置</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-sm-2 control-label">图标颜色</div>
+        <div class="col-sm-4">
+            <div class="input-group input-group-sm">
+                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="iconcolor" value="<%style.iconcolor%>" type="color" />
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#999999').trigger('propertychange')">重置</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-sm-2 control-label">文字颜色</div>
+        <div class="col-sm-4">
+            <div class="input-group input-group-sm">
+                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="textcolor" value="<%style.textcolor%>" type="color" />
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#333333').trigger('propertychange')">重置</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-sm-2 control-label">选择图标</div>
+        <div class="col-sm-4">
+            <div class="input-group input-group-sm">
+                <span class="form-control input-sm" style="line-height: 28px; text-align: center;">
+                    <%if params.iconclass%>
+                        <i class="icon <%params.iconclass%>" id="showicon"></i>
+                    <%else%>无
+                    <%/if%>
+                </span>
+                <span class="input-group-addon btn btn-default" data-toggle="selectIcon" data-input="#iconclass" data-element="#showicon">选择</span>
+                <input type="hidden" class="diy-bind" data-bind-child="params" data-bind="iconclass" id="iconclass" data-bind-init="true" value="<%params.iconclass%>"/>
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('').trigger('propertychange')">清除</span>
+            </div>
+
+        </div>
+    </div>
+
+</script>
+
+<script type="text/html" id="tpl_edit_verify">
+
+    <div class="form-group">
+        <div class="col-sm-2 control-label">样式选择</div>
+        <div class="col-sm-10">
+            <label class="radio-inline"><input type="radio" name="style" value="" class="diy-bind" data-bind-child="params" data-bind="style" <%if params.style==''||!params.style%>checked<%/if%>> 样式一</label>
+            <label class="radio-inline"><input type="radio" name="style" value="style2" class="diy-bind" data-bind-child="params" data-bind="style" <%if params.style=='style2'%>checked<%/if%>> 样式二</label>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">标题文字</div>
+        <div class="col-sm-10">
+            <div class="input-group input-group-sm">
+                <input class="form-control input-sm diy-bind" style="width: 175px;" value="<%params.title%>" data-bind-child="params" data-bind="title" />
+                <span class="input-group-addon" style="border-left: 0; border-right: 0;">提示文字</span>
+                <input class="form-control input-sm diy-bind" style="width: 120px;" value="<%params.remark%>" data-bind-child="params" data-bind="remark" />
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">标题颜色</div>
+        <div class="col-sm-4">
+            <div class="input-group input-group-sm">
+                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="titlecolor" value="<%style.titlecolor%>" type="color">
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#333333').trigger('propertychange')">重置</span>
+            </div>
+        </div>
+        <div class="col-sm-2 control-label">提示文字颜色</div>
+        <div class="col-sm-4">
+            <div class="input-group input-group-sm">
+                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="remarkcolor" value="<%style.remarkcolor%>" type="color">
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#888888').trigger('propertychange')">重置</span>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-2 control-label">标题背景</div>
+        <div class="col-sm-4">
+            <div class="input-group input-group-sm">
+                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="titlebg" value="<%style.titlebg%>" type="color">
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ffffff').trigger('propertychange')">重置</span>
+            </div>
+        </div>
+        <div class="col-sm-2 control-label">整体背景</div>
+        <div class="col-sm-4">
+            <div class="input-group input-group-sm">
+                <input class="form-control input-sm diy-bind color" data-bind-child="style" data-bind="background" value="<%style.background%>" type="color">
+                <span class="input-group-addon btn btn-default" onclick="$(this).prev().val('#ffffff').trigger('propertychange')">重置</span>
+            </div>
+        </div>
+    </div>
+</script>
+<!--weichengtech-->

@@ -37,7 +37,7 @@
         <label class="col-sm-2 control-label">默认版块Banner</label>
         <div class="col-sm-9 col-xs-12">
             {ifp 'sns.set.edit'}
-            {php echo tpl_form_field_image('data[banner]', empty($data['banner'])?'../addons/ewei_shopv2/plugin/sns/static/images/banner.png':$data['banner'])}
+            {php echo tpl_form_field_image2('data[banner]', empty($data['banner'])?'../addons/ewei_shopv2/plugin/sns/static/images/banner.png':$data['banner'])}
             <span class='help-block'>建议尺寸:640 * 320,版块可以单独设置</span>
             {else}
             {if !empty($data['banner'])}
@@ -52,7 +52,7 @@
         <label class="col-sm-2 control-label">会员默认头像</label>
         <div class="col-sm-9 col-xs-12">
             {ifp 'sns.set.edit'}
-            {php echo tpl_form_field_image('data[avatar]', empty($data['avatar'])?'../addons/ewei_shopv2/plugin/sns/static/images/head.jpg':$data['avatar'])}
+            {php echo tpl_form_field_image2('data[avatar]', empty($data['avatar'])?'../addons/ewei_shopv2/plugin/sns/static/images/head.jpg':$data['avatar'])}
             <span class='help-block'>W建议尺寸:100 * 100</span>
             {else}
             {if !empty($data['avatar'])}
@@ -128,7 +128,7 @@
     <label class="col-sm-2 control-label">分享图标</label>
     <div class="col-sm-9 col-xs-12">
           {ifp 'sns.set.edit'}
-        {php echo tpl_form_field_image('data[share_icon]', $data['share_icon'])}
+        {php echo tpl_form_field_image2('data[share_icon]', $data['share_icon'])}
              {else}
                             {if !empty($data['share_icon'])}
                             <a href='{php echo tomedia($data['share_icon'])}' target='_blank'>
@@ -176,3 +176,4 @@
 </form>
 
 {template '_footer'}
+<!--weichengtech-->

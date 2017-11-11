@@ -5,7 +5,7 @@
 		{loop $list $item}
 			<div class="line good">
 				<div class="image"><img src="{php echo tomedia($item['thumb'])}"/></div>
-				<nav title="选择" class="btn btn-default btn-sm" data-href="{if $item['type']==30}{php echo mobileUrl('newstore/goods/detail', array('id'=>$item['id']), $full)}{else}{php echo mobileUrl('goods/detail', array('id'=>$item['id']), $full)}{/if}">选择</nav>
+				<nav title="选择" class="btn btn-default btn-sm" data-href="{if $item['type']==30}{php echo mobileUrl('newstore/trade/detail', array('id'=>$item['id']), $full)}{else}{php echo mobileUrl('newstore/goods/detail', array('id'=>$item['id']), $full)}{/if}">选择</nav>
 				<div class="text">
 					<p class="name">{$item['title']}</p>
 					<p class="price">最低价: {$item['minprice']} 原价: {$item['productprice']}元 现价: {$item['marketprice']}元</p>
@@ -28,3 +28,5 @@
 {else}
 	<div class="tip">抱歉！未查询到相关内容。</div>
 {/if}
+
+<!--weichengtech-->

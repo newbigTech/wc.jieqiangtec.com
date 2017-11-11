@@ -40,7 +40,7 @@
                     <div class="row-text">编号: <%log.applyno%></div>
                 </div>
                 <div class="subtitle">申请{php echo $this->set['texts']['commission']}: <%log.commission%>
-                    实际金额:<%if log.deductionmoney>0%><%log.realmoney%><%else%><%log.commission%><%/if%>,个人所得税:<%log.deductionmoney%> {php echo $this->set['texts']['yuan']}
+                    实际金额:<%if log.deductionmoney>0%><%log.realmoney%><%else%><%log.commission%><%/if%>,提现手续费:<%log.deductionmoney%> {php echo $this->set['texts']['yuan']}
                     <br>
                     <%if log.status==1%>申请时间:<%/if%>
                     <%if log.status==2%>审核时间:<%/if%>
@@ -67,3 +67,5 @@
 </div>
 {php $this->footerMenus()}
 {template '_footer'}
+
+<!--weichengtech-->

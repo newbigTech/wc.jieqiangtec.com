@@ -1,5 +1,4 @@
 <?php
-//weichengtech
 class Plugin_EweiShopV2Model
 {
 	/**
@@ -81,7 +80,7 @@ class Plugin_EweiShopV2Model
 
 			foreach ($plugins as $key => $value) {
 				if (!strstr($item['plugins'], $value['identity']) && !strstr($setting['plugin'], $value['identity']) && !strstr($setting['com'], $value['identity'])) {
-					$plugin = pdo_fetch('SELECT max(permendtime) as permendtime FROM ' . tablename('ewei_shop_system_grant_log') . " \n                    WHERE `identity` = '" . $value['identity'] . '\' and uniacid = ' . $_W['uniacid'] . ' and isperm = 1 ');
+					$plugin = pdo_fetch('SELECT max(permendtime) as permendtime FROM ' . tablename('ewei_shop_system_grant_log') . " \r\n                    WHERE `identity` = '" . $value['identity'] . '\' and uniacid = ' . $_W['uniacid'] . ' and isperm = 1 ');
 					$plugins[$key]['isgrant'] = 1;
 					$plugins[$key]['permendtime'] = $plugin['permendtime'];
 				}
@@ -95,13 +94,13 @@ class Plugin_EweiShopV2Model
 
 				foreach ($plugins as $key => $value) {
 					if (!strstr($item['plugins'], $value['identity']) && !strstr($setting['plugin'], $value['identity']) && !strstr($setting['com'], $value['identity'])) {
-						$plugin = pdo_fetchcolumn('SELECT count(1) FROM ' . tablename('ewei_shop_system_plugingrant_log') . "\n                    WHERE `identity` = '" . $value['identity'] . '\' and uniacid = ' . $acid['uniacid'] . ' and isperm = 1 and `month` = 0 ');
+						$plugin = pdo_fetchcolumn('SELECT count(1) FROM ' . tablename('ewei_shop_system_plugingrant_log') . "\r\n                    WHERE `identity` = '" . $value['identity'] . '\' and uniacid = ' . $acid['uniacid'] . ' and isperm = 1 and `month` = 0 ');
 
 						if (0 < $plugin) {
-							$plugin = pdo_fetch('SELECT max(permendtime) as permendtime,`month`,isperm FROM ' . tablename('ewei_shop_system_plugingrant_log') . "\n                        WHERE `identity` = '" . $value['identity'] . '\' and uniacid = ' . $acid['uniacid'] . ' and isperm = 1 and `month` = 0 ');
+							$plugin = pdo_fetch('SELECT max(permendtime) as permendtime,`month`,isperm FROM ' . tablename('ewei_shop_system_plugingrant_log') . "\r\n                        WHERE `identity` = '" . $value['identity'] . '\' and uniacid = ' . $acid['uniacid'] . ' and isperm = 1 and `month` = 0 ');
 						}
 						else {
-							$plugin = pdo_fetch('SELECT max(permendtime) as permendtime,`month`,isperm FROM ' . tablename('ewei_shop_system_plugingrant_log') . " \n                        WHERE `identity` = '" . $value['identity'] . '\' and uniacid = ' . $acid['uniacid'] . ' and isperm = 1 and permendtime > ' . time() . ' ');
+							$plugin = pdo_fetch('SELECT max(permendtime) as permendtime,`month`,isperm FROM ' . tablename('ewei_shop_system_plugingrant_log') . " \r\n                        WHERE `identity` = '" . $value['identity'] . '\' and uniacid = ' . $acid['uniacid'] . ' and isperm = 1 and permendtime > ' . time() . ' ');
 						}
 
 						$plugins[$key]['isplugingrant'] = 1;

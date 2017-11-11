@@ -6,7 +6,7 @@
             {/loop}
         </div>
     {else}
-        <div class="swiper swiper-{$diyitemid}" data-element=".swiper-{$diyitemid}" data-view="{$diyitem['style']['scrollnum']}" data-slideto="{$diyitem['params']['slideto']}">
+        <div class="swiper swiper-{$diyitemid}" data-element=".swiper-{$diyitemid}" data-view="3" data-slideto="{$diyitem['params']['slideto']}">
             <div class="fui-tab fui-tab-success swiper-container">
                 <div class="swiper-wrapper">
                     {loop $diyitem['data'] $tabitem}
@@ -17,3 +17,4 @@
         </div>
     {/if}
 {/if}
+<!--weichengtech-->

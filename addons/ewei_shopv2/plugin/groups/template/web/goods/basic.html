@@ -63,7 +63,7 @@
     <label class="col-sm-2 control-label must">商品图片</label>
     <div class="col-sm-9 col-xs-12 gimgs">
         {ife 'groups.goods' $item}
-        {php echo tpl_form_field_multi_image('thumbs',$piclist)}
+        {php echo tpl_form_field_multi_image2('thumbs',$piclist)}
         <span class="help-block image-block" style="display: block;">第一张为缩略图，建议为正方型图片，其他为详情页面图片，尺寸建议宽度为640，并保持图片大小一致</span>
         <span class="help-block">您可以拖动图片改变其显示顺序 </span>
         {else}
@@ -301,3 +301,4 @@ $(function(){
     })
 })
 </script>
+<!--weichengtech-->

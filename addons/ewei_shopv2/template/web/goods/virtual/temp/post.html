@@ -54,6 +54,24 @@
             {/if}
         </div> 
     </div>
+
+    <div class="form-group">
+        <label class="col-lg control-label" >自定义链接</label>
+        <div class="col-sm-9 col-xs-12">
+            <div class="input-group">
+                <span class="input-group-addon">文字</span>
+                <input type="text" class="form-control novalidate" value="{php echo empty($item['linktext'])? '使用地址': $item['linktext']}" {ife "goods.virtual.temp" $item}name="tp_linktext"{else}disabled{/if}>
+                <span class="input-group-addon" style="border-left: 0; border-right: 0;">链接</span>
+                <input type="text" class="form-control novalidate" value="{$item['linkurl']}" id="linkurl"  {ife "goods.virtual.temp" $item}name="tp_linkurl"{else}disabled{/if}>
+                <span class="input-group-addon btn btn-default" data-toggle="selectUrl" data-input="#linkurl">选择链接</span>
+            </div>
+            <div class="help-block">提示：文字不设置默认为"使用地址"，不选择链接则不显示</div>
+        </div>
+    </div>
+
+    <div class="form-group-title">数据结构</div>
+
+    <div class="fileds">
     {php $key="key";}
     {php $name= $item['fields']['key'];}
     {template 'goods/virtual/temp/tpl'}
@@ -75,6 +93,8 @@
     </div>
     {/if}
     {/if}
+
+        </div>
 
 
 
@@ -113,7 +133,7 @@
 
 
         var check = true;
-        $("input[type=text]").each(function () {
+        $(".fileds input[type=text]").each(function () {
             var val = $(this).val();
             if (!val) {
                 $('form').validate('false');
@@ -130,12 +150,12 @@
         }
         $('form').removeAttr('stop');
         var o = {}; // 判断重复
-        $("input[mk=1]").each(function () {
+        $(".fileds input[mk=1]").each(function () {
             if (!(o[$(this).val()])) {
                 o[$(this).val()] = true;
             } else {
                 var val = $(this).val();
-                $("input[mk=1]").each(function () {
+                $(".fileds input[mk=1]").each(function () {
                     if ($(this).val() == val) {
                         $(this).css("border-color", "#f01");
                     } else {
@@ -159,3 +179,5 @@
 </script>
 
 {template '_footer'}
+
+<!--weichengtech-->

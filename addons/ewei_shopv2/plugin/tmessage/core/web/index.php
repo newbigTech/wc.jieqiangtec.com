@@ -1,6 +1,5 @@
 <?php
-
-if (!defined('IN_IA')) {
+if (!(defined('IN_IA'))) {
 	exit('Access Denied');
 }
 
@@ -15,7 +14,7 @@ class Index_EweiShopV2Page extends PluginWebPage
 		$condition = ' and uniacid=:uniacid';
 		$params = array(':uniacid' => $_W['uniacid']);
 
-		if (!empty($_GPC['keyword'])) {
+		if (!(empty($_GPC['keyword']))) {
 			$_GPC['keyword'] = trim($_GPC['keyword']);
 			$condition .= ' and title  like :keyword';
 			$params[':keyword'] = '%' . $_GPC['keyword'] . '%';
@@ -44,7 +43,7 @@ class Index_EweiShopV2Page extends PluginWebPage
 		global $_GPC;
 		$id = intval($_GPC['id']);
 
-		if (!empty($_GPC['id'])) {
+		if (!(empty($_GPC['id']))) {
 			$list = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_member_message_template') . ' WHERE id=:id and uniacid=:uniacid ', array(':id' => $_GPC['id'], ':uniacid' => $_W['uniacid']));
 			$data = iunserializer($list['data']);
 		}
@@ -56,7 +55,7 @@ class Index_EweiShopV2Page extends PluginWebPage
 			$value = $_GPC['tp_value'];
 			$color = $_GPC['tp_color'];
 
-			if (!empty($keywords)) {
+			if (!(empty($keywords))) {
 				$data = array();
 
 				foreach ($keywords as $key => $val ) {
@@ -112,7 +111,7 @@ class Index_EweiShopV2Page extends PluginWebPage
 		$params[':uniacid'] = $_W['uniacid'];
 		$condition = ' and uniacid=:uniacid';
 
-		if (!empty($kwd)) {
+		if (!(empty($kwd))) {
 			$condition .= ' AND `title` LIKE :keyword';
 			$params[':keyword'] = '%' . $kwd . '%';
 		}

@@ -2,7 +2,7 @@
     height: 1.6rem;
     max-width: 14rem;
     border-radius: 0.8rem;
-    position: absolute;
+    position: fixed;
     top: 3rem;
     left: 1rem;
     z-index: 999;
@@ -15,6 +15,9 @@
     color: #fff;
     overflow: hidden;
     display: none;
+}
+.diy-fixedsearch ~ .fui-danmu {
+    top: 5rem;
 }
 .fui-danmu.show{
     display: -webkit-box;
@@ -195,3 +198,4 @@
     margin: 0 3px;
     border-radius: 10px;
 }
+/*weichengtech*/

@@ -1,8 +1,7 @@
 <?php
-
 $GLOBALS['_transient']['static']['nusoap_base']['globalDebugLevel'] = 9;
 
-if (!extension_loaded('soap')) {
+if (!(extension_loaded('soap'))) {
 	class soapclient extends nusoap_client
 	{	}
 

@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -12,7 +11,7 @@ class Category_EweiShopV2Page extends SystemPage
 		global $_GPC;
 
 		if (!empty($_GPC['catid'])) {
-			foreach ($_GPC['catid'] as $k => $v ) {
+			foreach ($_GPC['catid'] as $k => $v) {
 				$data = array('name' => trim($_GPC['catname'][$k]), 'displayorder' => $k, 'status' => intval($_GPC['status'][$k]));
 
 				if (empty($v)) {
@@ -20,7 +19,7 @@ class Category_EweiShopV2Page extends SystemPage
 					$insert_id = pdo_insertid();
 					plog('system.category.add', '添加分类 ID: ' . $insert_id);
 				}
-				 else {
+				else {
 					pdo_update('ewei_shop_system_category', $data, array('id' => $v));
 					plog('system.category.edit', '修改分类 ID: ' . $v);
 				}
@@ -29,7 +28,6 @@ class Category_EweiShopV2Page extends SystemPage
 			plog('system.category.edit', '批量修改分类');
 			show_json(1);
 		}
-
 
 		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_system_category') . ' ORDER BY displayorder asc');
 		include $this->template();
@@ -47,10 +45,8 @@ class Category_EweiShopV2Page extends SystemPage
 			plog('system.category.delete', '删除分类 ID: ' . $id . ' 标题: ' . $item['name'] . ' ');
 		}
 
-
 		show_json(1);
 	}
 }
-
 
 ?>

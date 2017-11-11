@@ -16,7 +16,7 @@
     <label class="col-sm-2 control-label">申请头部图片</label>
     <div class="col-sm-9 col-xs-12">
     	{ifp 'globonus.set.edit'}
-			{php echo tpl_form_field_image('data[regbg]',$data['regbg'],'../addons/ewei_shopv2/plugin/globonus/template/mobile/default/static/images/bg.png')}
+			{php echo tpl_form_field_image2('data[regbg]',$data['regbg'],'../addons/ewei_shopv2/plugin/globonus/template/mobile/default/static/images/bg.png')}
 		{else}
 			{if empty($data['regbg'])}
 				<img src="../addons/ewei_shop/plugin/globonus/template/mobile/default/static/images/bg.png" onerror="this.src='../addons/ewei_shop/plugin/globonus/template/mobile/default/static/images/bg.png'; this.title='图片未找到.'" class="img-responsive img-thumbnail" width="150">
@@ -147,11 +147,11 @@
     <label class="col-sm-2 control-label"></label>
     <div class="col-sm-9 col-xs-12">
         <div class="input-group">
-            <div class="input-group-addon">扣除个人所得税</div>
+            <div class="input-group-addon">扣除提现手续费</div>
             {ifp 'globonus.set.edit'}
-            <input type="text" name="texts[bonus_charge]" class="form-control" value="{php echo empty($data['texts']['bonus_charge'])?'扣除个人所得税':$data['texts']['bonus_charge']}"  />
+            <input type="text" name="texts[bonus_charge]" class="form-control" value="{php echo empty($data['texts']['bonus_charge'])?'扣除提现手续费':$data['texts']['bonus_charge']}"  />
             {else}
-            <div class="form-control valid">{php echo empty($data['texts']['bonus_charge'])?'扣除个人所得税':$data['texts']['bonus_charge']}</div>
+            <div class="form-control valid">{php echo empty($data['texts']['bonus_charge'])?'扣除提现手续费':$data['texts']['bonus_charge']}</div>
             {/if}
         </div>
     </div>
@@ -170,3 +170,5 @@
     </div>
 </div>
 
+
+<!--weichengtech-->

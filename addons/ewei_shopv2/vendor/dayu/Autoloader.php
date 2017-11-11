@@ -1,5 +1,4 @@
 <?php
-
 spl_autoload_register('Autoloader::autoload');
 class Autoloader
 {
@@ -21,7 +20,7 @@ class Autoloader
 
 		if (is_file($filename)) {
 			include $filename;
-			return NULL;
+			return;
 		}
 
 
@@ -29,7 +28,7 @@ class Autoloader
 
 		if (is_file($filename)) {
 			include $filename;
-			return NULL;
+			return;
 		}
 
 	}

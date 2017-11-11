@@ -43,7 +43,12 @@
     {if empty($seckillinfo) && $goods['type']!=4}
     <div class="fui-cell">
         <div class="fui-cell-text price">
-			<span class="text-danger" style="color: {$diyitem['style']['pricecolor']};">
+
+            {if $islive}
+                <span class="live-price" style="background-color: {$diyitem['style']['pricecolor']};">直播价</span>
+            {/if}
+
+			<span class="text-danger" style="vertical-align: middle; color: {$diyitem['style']['pricecolor']}; ">
 			￥{if $goods['ispresell']>0 && ($goods['preselltimeend'] == 0 || $goods['preselltimeend'] > time())}{$goods['presellprice']}
                 {else}
                     {if $goods['minprice']==$goods['maxprice']}{$goods['minprice']}{else}{$goods['minprice']}~{$goods['maxprice']}{/if}
@@ -129,7 +134,9 @@
             {if $goods['showtotal'] == 1}
             <span style="color: {$diyitem['style']['textcolor']};">库存:  {$goods['total']}</span>
             {/if}
-            <span style="color: {$diyitem['style']['textcolor']};">销量:  {php echo number_format($goods['sales'],0)} {$goods['unit']}</span>
+            {if !empty($goods['showsales'])}
+                <span style="color: {$diyitem['style']['textcolor']};">销量:  {php echo number_format($goods['sales'],0)} {$goods['unit']}</span>
+            {/if}
         {else}
             <span></span>
             <span></span>
@@ -141,3 +148,4 @@
 </div>
 
 </div>
+<!--weichengtech54mI5p2D5omA5pyJ-->

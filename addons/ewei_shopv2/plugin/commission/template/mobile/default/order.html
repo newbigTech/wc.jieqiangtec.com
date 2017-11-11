@@ -49,7 +49,7 @@
                 {if !empty($this->set['openorderbuyer'])}
                 <div class="fui-list">
                     <div class="fui-list-media">
-                        <img data-lazy="<%order.buyer.avatar%>" class="round" style='width:2rem;height:2rem;'>
+                        <img src="<%order.buyer.avatar%>" class="round" style='width:2rem;height:2rem;'>
                         <!--<div class="badge">1</div>-->
                     </div>
                     <div class="fui-list-inner">
@@ -64,7 +64,7 @@
                 <%each order.order_goods as g%>
                 <div class="fui-list">
                     <div class="fui-list-media">
-                        <img data-lazy="<%g.thumb%>" class="round" style='width:2rem;height:2rem;'>
+                        <img src="<%g.thumb%>" class="round" style='width:2rem;height:2rem;'>
                     </div>
                     <div class="fui-list-inner">
                         <div class="row">
@@ -79,9 +79,9 @@
                 </div>
                 <%/each%>
                 {/if}
-                {/if}
             </div>
         </div>
+        {/if}
     </div>
     <%/each%>
 </script>
@@ -93,3 +93,5 @@
 </script>
 {php $this->footerMenus()}
 {template '_footer'}
+
+<!--weichengtech-->

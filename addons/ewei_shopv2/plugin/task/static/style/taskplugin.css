@@ -1,10 +1,7 @@
 .fui-content{
     font-family: "微软雅黑";
 }
-.task-bg{
-    background: #a8c2d8 url("../images/taskbluebg.png") no-repeat;
-    background-size: 100%;
-}
+
 .task-head{
     width: 100%;
     height:6.5rem;
@@ -179,7 +176,9 @@
     background: #fff;
     position: static;
     float: left;
-    display: flex;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
     margin-top: 0.6rem;
 }
 .fui-tab a{
@@ -191,7 +190,9 @@
     margin-top: 0.6rem;
     margin-left: 0.8rem;
     float: left;
-    display: flex;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
 }
 .my-status{
     flex: 1;
@@ -282,6 +283,9 @@
     line-height: 2.5rem;
     padding-left: 1rem;
     border-bottom: 1px solid #D9D9D9;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
     display: flex;
 }
 .my-getreward{
@@ -326,6 +330,9 @@
     height: 4rem;
     border-bottom: 1px solid #D9D9D9;
     margin-left: 3%;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
     display: flex;
 }
 .dd-logo{
@@ -343,7 +350,7 @@
 .d-content{
     flex: 1;
     height:3rem;
-    margin-top: 1.5rem;
+    margin-top: 1.2rem;
     margin-left: 0.5rem;
 }
 .d-title{
@@ -405,3 +412,4 @@
     right: 0.5rem;
     z-index: 1;
 }
+/*weichengtech*/

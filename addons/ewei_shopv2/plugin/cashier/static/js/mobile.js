@@ -97,7 +97,6 @@ define(['core'], function (core) {
                 FoxUI.toast.show('金额必须大于0!');
                 return
             }
-            FoxUI.loader.show('mini');
             setTimeout(function () {
                 FoxUI.confirm('确认要支付 '+money+' 元吗?','提醒',function () {
                     core.json('cashier/pay/pay', {
@@ -110,7 +109,6 @@ define(['core'], function (core) {
                         money: money
                     }, function (rjson) {
                         if (rjson.status == 1) {
-                            FoxUI.loader.hide();
                             if (typeof rjson.result.code_url != 'undefined') {
                                 var ua = navigator.userAgent.toLowerCase();
                                 if (/iphone|ipad|ipod/.test(ua)) {
@@ -147,7 +145,7 @@ define(['core'], function (core) {
                         } else {
                             FoxUI.toast.show(rjson.result.message)
                         }
-                    })
+                    },true)
                 })
             },100);
         });

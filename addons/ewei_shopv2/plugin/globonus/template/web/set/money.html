@@ -63,14 +63,14 @@
 </div>
 
 <div class="form-group">
-    <label class="col-sm-2 control-label">分红个人所得税</label>
+    <label class="col-sm-2 control-label">分红提现手续费</label>
     <div class="col-sm-9 col-xs-12">
         {ifp 'globonus.set.edit'}
         <div class="input-group">
             <input type="text" name="data[paycharge]" class="form-control" value="{$data['paycharge']}" />
             <div class="input-group-addon">%</div>
         </div>
-        <span class="help-block">发放分红时,扣除的个人所得税.空为不扣除个人所得税</span>
+        <span class="help-block">发放分红时,扣除的提现手续费.空为不扣除提现手续费</span>
         {else}
         {php echo empty($data['paycharge'])?"0":$data['paycharge']}%
         {/if}
@@ -78,7 +78,7 @@
 </div>
 
 <div class="form-group">
-    <label class="col-sm-2 control-label">免个人所得税金额区间</label>
+    <label class="col-sm-2 control-label">免提现手续费金额区间</label>
     <div class="col-sm-9 col-xs-12">
         {ifp 'sysset.trade.edit'}
         <div class='input-group'>
@@ -87,8 +87,8 @@
             <span class='input-group-addon'>结束金额￥</span>
             <input type="text" name="data[payend]" class="form-control" value="{$data['payend']}" />
         </div>
-        <span class='help-block'>当个人所得税金额在此区间内时,不扣除个人所得税. 结束金额 必须大于 开始金额才能生效</span>
-        <span class='help-block'>例如 设置开始金额0元 结束金额5元,只有个人所得税金额高于5元时,才扣除</span>
+        <span class='help-block'>当提现手续费金额在此区间内时,不扣除提现手续费. 结束金额 必须大于 开始金额才能生效</span>
+        <span class='help-block'>例如 设置开始金额0元 结束金额5元,只有提现手续费金额高于5元时,才扣除</span>
         {else}
         <input type="hidden" name="data[paybegin]" value="{$data['paybegin']}"/>
         <input type="hidden" name="data[payend]" value="{$data['payend']}"/>
@@ -98,3 +98,5 @@
         {/if}
     </div>
 </div>
+
+<!--weichengtech-->

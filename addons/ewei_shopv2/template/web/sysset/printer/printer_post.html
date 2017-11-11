@@ -222,6 +222,62 @@
                     </div>
                 </div>
 
+                <!--飞鹅打印机(新接口)-->
+                <div id="printer_feie_new" class="printer" {if $list['type']!='5'}style="display: none"{/if}>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" >USER</label>
+                    {ifp 'sysset.printer.printer_add'||'sysset.printer.printer_edit'}
+                    <div class="col-sm-9 title" style='padding-right:0' >
+                        <input type="text" name="printer_feie_new[user]" class="form-control" value="{$printer_feie_new['user']}"/>
+                        <span class='help-block'>飞鹅云后台注册用户名</span>
+                    </div>
+                    {else}
+                    <div class="col-sm-3">
+                        <div class='form-control-static'>{$printer_feie_new['user']}</div>
+                    </div>
+                    {/if}
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" >UKEY</label>
+                    {ifp 'sysset.printer.printer_add'||'sysset.printer.printer_edit'}
+                    <div class="col-sm-9 title" style='padding-right:0' >
+                        <input type="text" name="printer_feie_new[ukey]" class="form-control" value="{$printer_feie_new['ukey']}"/>
+                        <span class='help-block'>飞鹅云后台登录生成的UKEY</span>
+                    </div>
+                    {else}
+                    <div class="col-sm-3">
+                        <div class='form-control-static'>{$printer_feie_new['ukey']}</div>
+                    </div>
+                    {/if}
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" >打印机编号</label>
+                    {ifp 'sysset.printer.printer_add'||'sysset.printer.printer_edit'}
+                    <div class="col-sm-9 title" style='padding-right:0' >
+                        <input type="text" name="printer_feie_new[sn]" class="form-control" value="{$printer_feie_new['sn']}"/>
+                        <span class='help-block'>打印机编号9位,查看飞鹅打印机底部贴纸上面的打印机编号</span>
+                    </div>
+                    {else}
+                    <div class="col-sm-3">
+                        <div class='form-control-static'>{$printer_feie_new['sn']}</div>
+                    </div>
+                    {/if}
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" >打印联数</label>
+                    {ifp 'sysset.printer.printer_add'||'sysset.printer.printer_edit'}
+                    <div class="col-sm-9 title" style='padding-right:0' >
+                        <input type="text" name="printer_feie_new[times]" class="form-control" value="{$printer_feie_new['times']}"/>
+                        <span class='help-block'>同一订单，打印的次数</span>
+                    </div>
+                    {else}
+                    <div class="col-sm-3">
+                        <div class='form-control-static'>{$printer_feie_new['times']}</div>
+                    </div>
+                    {/if}
+                </div>
+                </div>
+
                 <!--易联云打印机-->
                 <div id="printer_yilianyun" class="printer" {if $list['type']!='2'}style="display: none"{/if}>
                     <div class="form-group">
@@ -421,6 +477,7 @@
                 case '2':$("#printer_yilianyun").show();break;
                 case '3':$("#printer_365_s1").show();break;
                 case '4':$("#printer_yilianyun_new").show();break;
+                case '5':$("#printer_feie_new").show();break;
             }
         });
         require(['jquery.caret'],function(){
@@ -441,3 +498,5 @@
     </script>
 
 {template '_footer'}
+
+<!--weichengtech54mI5p2D5omA5pyJ-->

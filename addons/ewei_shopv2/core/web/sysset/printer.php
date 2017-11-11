@@ -1,5 +1,4 @@
 <?php
-//weichengtech
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -89,11 +88,13 @@ class Printer_EweiShopV2Page extends WebPage
 			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
 		}
 
-		$items = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_member_printer_template') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid'] . ' AND  and merchid=0');
+		$items = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_member_printer_template') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid'] . ' AND merchid=0');
 
-		foreach ($items as $item) {
-			pdo_delete('ewei_shop_member_printer_template', array('id' => $id));
-			plog('sysset.printer.delete', '删除群发模板 ID: ' . $item['id'] . ' 标题: ' . $item['title'] . ' ');
+		if (!empty($items)) {
+			foreach ($items as $item) {
+				pdo_delete('ewei_shop_member_printer_template', array('id' => $id));
+				plog('sysset.printer.delete', '删除群发模板 ID: ' . $item['id'] . ' 标题: ' . $item['title'] . ' ');
+			}
 		}
 
 		show_json(1, array('url' => referer()));
@@ -178,11 +179,12 @@ class Printer_EweiShopV2Page extends WebPage
 			$printer_yilianyun = (isset($print_data['printer_yilianyun']) ? $print_data['printer_yilianyun'] : array());
 			$printer_yilianyun_new = (isset($print_data['printer_yilianyun_new']) ? $print_data['printer_yilianyun_new'] : array());
 			$printer_365_s1 = (isset($print_data['printer_365_s1']) ? $print_data['printer_365_s1'] : array());
+			$printer_feie_new = (isset($print_data['printer_feie_new']) ? $print_data['printer_feie_new'] : array());
 		}
 
 		if ($_W['ispost']) {
 			$data = array('uniacid' => $_W['uniacid'], 'merchid' => 0, 'type' => intval($_GPC['type']), 'title' => trim($_GPC['title']));
-			$data['print_data'] = json_encode(array('printer_365' => is_array($_GPC['printer_365']) ? $_GPC['printer_365'] : array(), 'printer_feie' => is_array($_GPC['printer_feie']) ? $_GPC['printer_feie'] : array(), 'printer_yilianyun' => is_array($_GPC['printer_yilianyun']) ? $_GPC['printer_yilianyun'] : array(), 'printer_yilianyun_new' => is_array($_GPC['printer_yilianyun_new']) ? $_GPC['printer_yilianyun_new'] : array(), 'printer_365_s1' => is_array($_GPC['printer_365_s1']) ? $_GPC['printer_365_s1'] : array()));
+			$data['print_data'] = json_encode(array('printer_365' => is_array($_GPC['printer_365']) ? $_GPC['printer_365'] : array(), 'printer_feie' => is_array($_GPC['printer_feie']) ? $_GPC['printer_feie'] : array(), 'printer_yilianyun' => is_array($_GPC['printer_yilianyun']) ? $_GPC['printer_yilianyun'] : array(), 'printer_yilianyun_new' => is_array($_GPC['printer_yilianyun_new']) ? $_GPC['printer_yilianyun_new'] : array(), 'printer_365_s1' => is_array($_GPC['printer_365_s1']) ? $_GPC['printer_365_s1'] : array(), 'printer_feie_new' => is_array($_GPC['printer_feie_new']) ? $_GPC['printer_feie_new'] : array()));
 
 			if (empty($id)) {
 				$data['createtime'] = time();

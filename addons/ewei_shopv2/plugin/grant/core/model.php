@@ -1,5 +1,5 @@
 <?php
-if (!(defined('IN_IA'))) {
+if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
 
@@ -10,21 +10,16 @@ class GrantModel extends PluginModel
 		global $_W;
 		$uniacid = $_W['uniacid'];
 		$setting = pdo_fetch('select * from ' . tablename('ewei_shop_system_plugingrant_setting') . ' where 1 = 1 limit 1 ');
-
-		if (!(strstr($setting['plugin'], $identity)) && !(strstr($setting['com'], $identity))) {
+		if (!strstr($setting['plugin'], $identity) && !strstr($setting['com'], $identity)) {
 			$plugin = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_system_plugingrant_log') . ' WHERE uniacid = ' . $uniacid . ' and `identity` = \'' . $identity . '\' ');
-
-			if (($plugin['month'] == 0) && ($plugin['isperm'] == 1)) {
+			if ((($plugin['month'] == 0) && ($plugin['isperm'] == 1)) || ((0 < $plugin['month']) && ($plugin['isperm'] == 1))) {
 				return true;
 			}
-
 
 			if ($plugin['permendtime'] < time()) {
 				return false;
 			}
-
 		}
-
 
 		return true;
 	}
@@ -37,15 +32,13 @@ class GrantModel extends PluginModel
 			message('抱歉，该记录不存在！', '', 'error');
 		}
 
-
 		$data = array('isperm' => 1);
-		$lastitem = pdo_fetch('SELECT MAX(permendtime) as permendtime,permlasttime FROM ' . tablename('ewei_shop_system_plugingrant_log') . ' ' . "\n" . '                            WHERE uniacid = ' . $item['uniacid'] . ' and pluginid = ' . $item['pluginid'] . ' and isperm = 1 limit 1');
-
-		if (!(empty($lastitem)) && (0 < $lastitem['permendtime'])) {
+		$lastitem = pdo_fetch('SELECT MAX(permendtime) as permendtime,permlasttime FROM ' . tablename('ewei_shop_system_plugingrant_log') . " \n                            WHERE uniacid = " . $item['uniacid'] . ' and pluginid = ' . $item['pluginid'] . ' and isperm = 1 limit 1');
+		if (!empty($lastitem) && (0 < $lastitem['permendtime'])) {
 			$data['permendtime'] = strtotime('+' . $item['month'] . ' month', $lastitem['permendtime']);
 			$data['permlasttime'] = $lastitem['permendtime'];
 		}
-		 else {
+		else {
 			$data['permendtime'] = strtotime('+' . $item['month'] . ' month');
 		}
 
@@ -60,30 +53,28 @@ class GrantModel extends PluginModel
 		$package['mch_id'] = $wechat['mchid'];
 		$package['nonce_str'] = random(32);
 		$package['body'] = $params['title'];
-		$package['device_info'] = ((isset($params['device_info']) ? 'ewei_shopv2:' . $params['device_info'] : 'ewei_shopv2'));
-		$package['attach'] = ((isset($params['uniacid']) ? $params['uniacid'] : $_W['uniacid'])) . ':' . $type;
+		$package['device_info'] = isset($params['device_info']) ? 'ewei_shopv2:' . $params['device_info'] : 'ewei_shopv2';
+		$package['attach'] = (isset($params['uniacid']) ? $params['uniacid'] : $_W['uniacid']) . ':' . $type;
 		$package['out_trade_no'] = $params['tid'];
 		$package['total_fee'] = $params['fee'] * 100;
 		$package['spbill_create_ip'] = CLIENT_IP;
 		$package['product_id'] = $params['tid'];
 
-		if (!(empty($params['goods_tag']))) {
+		if (!empty($params['goods_tag'])) {
 			$package['goods_tag'] = $params['goods_tag'];
 		}
 
-
 		$package['time_start'] = date('YmdHis', TIMESTAMP);
 		$package['time_expire'] = date('YmdHis', TIMESTAMP + 3600);
-		$package['notify_url'] = ((empty($params['notify_url']) ? $_W['siteroot'] . 'addons/ewei_shopv2/payment/wechat/notify.php' : $params['notify_url']));
+		$package['notify_url'] = empty($params['notify_url']) ? $_W['siteroot'] . 'addons/ewei_shopv2/payment/wechat/notify.php' : $params['notify_url'];
 		$package['trade_type'] = 'NATIVE';
 		ksort($package, SORT_STRING);
 		$string1 = '';
 
-		foreach ($package as $key => $v ) {
+		foreach ($package as $key => $v) {
 			if (empty($v)) {
 				continue;
 			}
-
 
 			$string1 .= $key . '=' . $v . '&';
 		}
@@ -98,7 +89,6 @@ class GrantModel extends PluginModel
 			return $response;
 		}
 
-
 		libxml_disable_entity_loader(true);
 		$xml = simplexml_load_string($response['content'], 'SimpleXMLElement', LIBXML_NOCDATA);
 
@@ -106,11 +96,9 @@ class GrantModel extends PluginModel
 			return error(-1, strval($xml->return_msg));
 		}
 
-
 		if (strval($xml->result_code) == 'FAIL') {
 			return error(-1, strval($xml->err_code) . ': ' . strval($xml->err_code_des));
 		}
-
 
 		$result = json_decode(json_encode($xml), true);
 		return $result;
@@ -139,11 +127,10 @@ class GrantModel extends PluginModel
 		$parameter = array_merge($parameter, $params);
 		$prepares = array();
 
-		foreach ($parameter as $key => $value ) {
+		foreach ($parameter as $key => $value) {
 			if (($key == 'sign') || ($key == 'sign_type') || ($value == '')) {
 				continue;
 			}
-
 
 			$prepares[$key] = $parameter[$key];
 		}
@@ -174,7 +161,6 @@ class GrantModel extends PluginModel
 		if (get_magic_quotes_gpc()) {
 			$arg = stripslashes($arg);
 		}
-
 
 		return $arg;
 	}
@@ -213,19 +199,16 @@ class GrantModel extends PluginModel
 			return false;
 		}
 
-
 		$isSign = $this->getSignVeryfy($post, $post['sign']);
 		$responseTxt = 'false';
 
-		if (!(empty($post['notify_id']))) {
+		if (!empty($post['notify_id'])) {
 			$responseTxt = $this->getResponse($post['notify_id']);
 		}
-
 
 		if (preg_match('/true$/i', $responseTxt) && $isSign) {
 			return true;
 		}
-
 
 		return false;
 	}
@@ -242,11 +225,10 @@ class GrantModel extends PluginModel
 		$config = $aliconfig['config'];
 		$para_filter = array();
 
-		foreach ($para_temp as $key => $value ) {
+		foreach ($para_temp as $key => $value) {
 			if (($key == 'sign') || ($key == 'sign_type') || ($value == '')) {
 				continue;
 			}
-
 
 			$para_filter[$key] = $para_temp[$key];
 		}
@@ -274,7 +256,6 @@ class GrantModel extends PluginModel
 			return true;
 		}
 
-
 		return false;
 	}
 
@@ -298,7 +279,7 @@ class GrantModel extends PluginModel
 		if ($transport == 'https') {
 			$veryfy_url = $aliconfig['https_verify_url'];
 		}
-		 else {
+		else {
 			$veryfy_url = $aliconfig['https_verify_url'];
 		}
 
@@ -338,23 +319,19 @@ class GrantModel extends PluginModel
 			return false;
 		}
 
-
 		$isSign = $this->getSignVeryfy($get, $get['sign']);
 		$responseTxt = 'false';
 
-		if (!(empty($get['notify_id']))) {
+		if (!empty($get['notify_id'])) {
 			$responseTxt = $this->getResponse($get['notify_id']);
 		}
-
 
 		if (preg_match('/true$/i', $responseTxt) && $isSign) {
 			return true;
 		}
 
-
 		return false;
 	}
 }
-
 
 ?>

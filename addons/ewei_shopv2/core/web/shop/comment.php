@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -21,12 +20,10 @@ class Comment_EweiShopV2Page extends WebPage
 			$params[':keyword'] = '%' . $_GPC['keyword'] . '%';
 		}
 
-
 		if (empty($starttime) || empty($endtime)) {
 			$starttime = strtotime('-1 month');
 			$endtime = time();
 		}
-
 
 		if (!empty($_GPC['time']['start']) && !empty($_GPC['time']['end'])) {
 			$starttime = strtotime($_GPC['time']['start']);
@@ -36,30 +33,27 @@ class Comment_EweiShopV2Page extends WebPage
 			$params[':endtime'] = $endtime;
 		}
 
-
 		if ($_GPC['fade'] != '') {
 			if (empty($_GPC['fade'])) {
 				$condition .= ' AND c.openid=\'\'';
 			}
-			 else {
+			else {
 				$condition .= ' AND c.openid<>\'\'';
 			}
 		}
-
 
 		if ($_GPC['replystatus'] != '') {
 			if (empty($_GPC['replystatus'])) {
 				$condition .= ' AND c.reply_content=\'\'';
 			}
-			 else {
+			else {
 				$condition .= ' AND c.append_content=\'\' and c.append_reply_content=\'\'';
 			}
 		}
 
-
 		$list = pdo_fetchall('SELECT  c.*, o.ordersn,g.title,g.thumb FROM ' . tablename('ewei_shop_order_comment') . ' c  ' . ' left join ' . tablename('ewei_shop_goods') . ' g on c.goodsid = g.id  ' . ' left join ' . tablename('ewei_shop_order') . ' o on c.orderid = o.id  ' . ' WHERE 1 ' . $condition . ' ORDER BY createtime desc LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize, $params);
 		$total = pdo_fetchcolumn('SELECT count(*) FROM ' . tablename('ewei_shop_order_comment') . ' c  ' . ' left join ' . tablename('ewei_shop_goods') . ' g on c.goodsid = g.id  ' . ' left join ' . tablename('ewei_shop_order') . ' o on c.orderid = o.id  ' . ' WHERE 1 ' . $condition . ' ', $params);
-		$pager = pagination($total, $pindex, $psize);
+		$pager = pagination2($total, $pindex, $psize);
 		include $this->template();
 	}
 
@@ -70,13 +64,12 @@ class Comment_EweiShopV2Page extends WebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = ((is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0));
+			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
 		}
-
 
 		$items = pdo_fetchall('SELECT id FROM ' . tablename('ewei_shop_order_comment') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
 
-		foreach ($items as $item ) {
+		foreach ($items as $item) {
 			pdo_update('ewei_shop_order_comment', array('deleted' => 1), array('id' => $item['id'], 'uniacid' => $_W['uniacid']));
 			$goods = pdo_fetch('select id,thumb,title from ' . tablename('ewei_shop_goods') . ' where id=:id and uniacid=:uniacid limit 1', array(':id' => $item['goodsid'], ':uniacid' => $_W['uniacid']));
 			plog('shop.comment.delete', '删除评价 ID: ' . $id . ' 商品ID: ' . $goods['id'] . ' 商品标题: ' . $goods['title']);
@@ -108,37 +101,32 @@ class Comment_EweiShopV2Page extends WebPage
 				show_json(0, array('message' => '请选择要评价的商品'));
 			}
 
-
 			$goods = set_medias(pdo_fetch('select id,thumb,title from ' . tablename('ewei_shop_goods') . ' where id=:id and uniacid=:uniacid limit 1', array(':id' => $goodsid, ':uniacid' => $_W['uniacid'])), 'thumb');
 
 			if (empty($goods)) {
 				show_json(0, array('message' => '请选择要评价的商品'));
 			}
 
-
 			$createtime = strtotime($_GPC['createtime']);
 			if (empty($createtime) || (time() < $createtime)) {
 				$createtime = time();
 			}
 
-
-			$data = array('uniacid' => $_W['uniacid'], 'level' => intval($_GPC['level']), 'goodsid' => intval($_GPC['goodsid']), 'nickname' => trim($_GPC['nickname']), 'headimgurl' => trim($_GPC['headimgurl']), 'content' => $_GPC['content'], 'images' => (is_array($_GPC['images']) ? iserializer($_GPC['images']) : iserializer(array())), 'reply_content' => $_GPC['reply_content'], 'reply_images' => (is_array($_GPC['reply_images']) ? iserializer($_GPC['reply_images']) : iserializer(array())), 'append_content' => $_GPC['append_content'], 'append_images' => (is_array($_GPC['append_images']) ? iserializer($_GPC['append_images']) : iserializer(array())), 'append_reply_content' => $_GPC['append_reply_content'], 'append_reply_images' => (is_array($_GPC['append_reply_images']) ? iserializer($_GPC['append_reply_images']) : iserializer(array())), 'createtime' => $createtime);
+			$data = array('uniacid' => $_W['uniacid'], 'level' => intval($_GPC['level']), 'goodsid' => intval($_GPC['goodsid']), 'nickname' => trim($_GPC['nickname']), 'headimgurl' => trim($_GPC['headimgurl']), 'content' => $_GPC['content'], 'images' => is_array($_GPC['images']) ? iserializer($_GPC['images']) : iserializer(array()), 'reply_content' => $_GPC['reply_content'], 'reply_images' => is_array($_GPC['reply_images']) ? iserializer($_GPC['reply_images']) : iserializer(array()), 'append_content' => $_GPC['append_content'], 'append_images' => is_array($_GPC['append_images']) ? iserializer($_GPC['append_images']) : iserializer(array()), 'append_reply_content' => $_GPC['append_reply_content'], 'append_reply_images' => is_array($_GPC['append_reply_images']) ? iserializer($_GPC['append_reply_images']) : iserializer(array()), 'createtime' => $createtime);
 
 			if (empty($data['nickname'])) {
 				$data['nickname'] = pdo_fetchcolumn('select nickname from ' . tablename('mc_members') . ' where nickname<>\'\' order by rand() limit 1');
 			}
 
-
 			if (empty($data['headimgurl'])) {
 				$data['headimgurl'] = pdo_fetchcolumn('select avatar from ' . tablename('mc_members') . ' where avatar<>\'\' order by rand() limit 1');
 			}
-
 
 			if (!empty($id)) {
 				pdo_update('ewei_shop_order_comment', $data, array('id' => $id));
 				plog('shop.comment.edit', '编辑商品虚拟评价 ID: ' . $id . ' 商品ID: ' . $goods['id'] . ' 商品标题: ' . $goods['title']);
 			}
-			 else {
+			else {
 				pdo_insert('ewei_shop_order_comment', $data);
 				$id = pdo_insertid();
 				plog('shop.comment.add', '添加虚拟评价 ID: ' . $id . ' 商品ID: ' . $goods['id'] . ' 商品标题: ' . $goods['title']);
@@ -147,11 +135,9 @@ class Comment_EweiShopV2Page extends WebPage
 			show_json(1, array('url' => webUrl('shop/comment')));
 		}
 
-
 		if (empty($goodsid)) {
 			$goodsid = intval($item['goodsid']);
 		}
-
 
 		$goods = pdo_fetch('select id,thumb,title from ' . tablename('ewei_shop_goods') . ' where id=:id and uniacid=:uniacid limit 1', array(':id' => $goodsid, ':uniacid' => $_W['uniacid']));
 		include $this->template('shop/comment/virtual');
@@ -169,11 +155,11 @@ class Comment_EweiShopV2Page extends WebPage
 
 		if ($_W['ispost']) {
 			if ($type == 0) {
-				$data = array('uniacid' => $_W['uniacid'], 'reply_content' => $_GPC['reply_content'], 'reply_images' => (is_array($_GPC['reply_images']) ? iserializer(m('common')->array_images($_GPC['reply_images'])) : iserializer(array())), 'append_reply_content' => $_GPC['append_reply_content'], 'append_reply_images' => (is_array($_GPC['append_reply_images']) ? iserializer($_GPC['append_reply_images']) : iserializer(array())));
+				$data = array('uniacid' => $_W['uniacid'], 'reply_content' => $_GPC['reply_content'], 'reply_images' => is_array($_GPC['reply_images']) ? iserializer(m('common')->array_images($_GPC['reply_images'])) : iserializer(array()), 'append_reply_content' => $_GPC['append_reply_content'], 'append_reply_images' => is_array($_GPC['append_reply_images']) ? iserializer($_GPC['append_reply_images']) : iserializer(array()));
 				pdo_update('ewei_shop_order_comment', $data, array('id' => $id));
 				plog('shop.comment.post', '回复商品评价 ID: ' . $id . ' 商品ID: ' . $goods['id'] . ' 商品标题: ' . $goods['title']);
 			}
-			 else {
+			else {
 				$checked = intval($_GPC['checked']);
 				$change_data = array();
 				$change_data['checked'] = $checked;
@@ -183,7 +169,6 @@ class Comment_EweiShopV2Page extends WebPage
 					$change_data['replychecked'] = $replychecked;
 				}
 
-
 				$checked_array = array('审核通过', '审核中', '审核不通过');
 				pdo_update('ewei_shop_order_comment', $change_data, array('id' => $id));
 				$log_msg = '商品首次评价' . $checked_array[$checked];
@@ -192,7 +177,6 @@ class Comment_EweiShopV2Page extends WebPage
 					$log_msg .= ' 追加评价' . $checked_array[$checked];
 				}
 
-
 				$log_msg .= ' ID: ' . $id . ' 商品ID: ' . $goods['id'] . ' 商品标题: ' . $goods['title'];
 				plog('shop.comment.post', $log_msg);
 			}
@@ -200,10 +184,8 @@ class Comment_EweiShopV2Page extends WebPage
 			show_json(1, array('url' => webUrl('shop/comment')));
 		}
 
-
 		include $this->template();
 	}
 }
-
 
 ?>

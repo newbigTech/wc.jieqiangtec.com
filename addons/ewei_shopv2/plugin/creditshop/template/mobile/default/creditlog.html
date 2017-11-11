@@ -52,7 +52,7 @@
 								<div class="text"><%item.createtime%></div>
 							</div>
 							<div class="fui-list-media" style="display:block;display:block;display:block;font-size:0.7rem;text-align: right;">
-								<p class="text-danger">-<%item.credit%>{$_W['shopset']['trade']['credittext']}</p>
+								<p class="text-danger2">-<%item.credit%>{$_W['shopset']['trade']['credittext']}</p>
 								<p>已兑换</p>
 							</div>
 						</a>
@@ -67,12 +67,12 @@
 								<div class="text"><%item.createtime%></div>
 							</div>
 							<div class="fui-list-media" style="display:block;display:block;display:block;font-size:0.7rem;text-align: right;">
-								<p class="text-danger" style="background: none;">-<%item.credit%>{$_W['shopset']['trade']['credittext']}</p>
+								<p class="text-danger2" style="background: none;">-<%item.credit%>{$_W['shopset']['trade']['credittext']}</p>
 								<%if item.status==1%>
 									<p style="color: #666;">未中奖</p>
 								<%/if%>
 								<%if item.status>1%>
-									<p class="text-danger">已中奖</p>
+									<p class="text-danger2">已中奖</p>
 								<%/if%>
 							</div>
 						</a>
@@ -87,3 +87,4 @@
 </div>
 {php $this->footerMenus()}
 {template '_footer'}
+<!--weichengtech54mI5p2D5omA5pyJ-->

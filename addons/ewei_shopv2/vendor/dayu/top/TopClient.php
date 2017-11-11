@@ -1,5 +1,4 @@
 <?php
-
 class TopClient
 {
 	public $appkey;
@@ -68,7 +67,7 @@ class TopClient
 			$postMultipart = false;
 
 			foreach ($postFields as $k => $v ) {
-				if (!is_string($v)) {
+				if (!(is_string($v))) {
 					continue;
 				}
 
@@ -334,7 +333,7 @@ class TopClient
 
 	public function exec($paramsArray)
 	{
-		if (!isset($paramsArray['method'])) {
+		if (!(isset($paramsArray['method']))) {
 			trigger_error('No api name passed');
 		}
 
@@ -343,7 +342,7 @@ class TopClient
 		$inflector->conf['separator'] = '.';
 		$requestClassName = ucfirst($inflector->camelize(substr($paramsArray['method'], 7))) . 'Request';
 
-		if (!class_exists($requestClassName)) {
+		if (!(class_exists($requestClassName))) {
 			trigger_error('No such api: ' . $paramsArray['method']);
 		}
 

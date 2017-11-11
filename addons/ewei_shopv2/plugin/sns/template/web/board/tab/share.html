@@ -2,8 +2,12 @@
     <label class="col-sm-2 control-label">发帖强制关注</label>
     <div class="col-sm-9">
         {ife 'goods' $item}
-        <label class="radio-inline"><input type="radio" name="needpostfollow" value="0" {if empty($item['needpostfollow']) }checked="true"{/if}  /> 不需关注</label>
-        <label class="radio-inline"><input type="radio" name="needpostfollow" value="1" {if $item['needpostfollow'] == 1}checked="true"{/if}   /> 必须关注</label>
+        <label class="radio-inline">
+            <input type="radio" name="needpostfollow" value="1" {if $item['needpostfollow'] == 1}checked="true"{/if}   /> 必须关注
+        </label>
+        <label class="radio-inline">
+            <input type="radio" name="needpostfollow" value="0" {if empty($item['needpostfollow']) }checked="true"{/if}  /> 不需关注
+        </label>
         {else}
         <div class='form-control-static'>{if empty($item['needpostfollow'])}不需关注{else}必须关注{/if}</div>
         {/if}
@@ -26,7 +30,7 @@
     <label class="col-sm-2 control-label">分享图标</label>
     <div class="col-sm-9 col-xs-12">
            {ife 'goods' $item}
-        {php echo tpl_form_field_image('share_icon', $item['share_icon'])}
+        {php echo tpl_form_field_image2('share_icon', $item['share_icon'])}
         <span class='help-block'>如果不选择，默认为版块LOGO</span>
              {else}
                             {if !empty($item['share_icon'])}
@@ -48,3 +52,4 @@
         {/if}
     </div>
 </div>
+<!--weichengtech-->

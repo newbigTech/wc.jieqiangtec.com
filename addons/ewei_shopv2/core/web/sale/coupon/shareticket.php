@@ -1,5 +1,4 @@
 <?php
-//dezend by http://www.yunlu99.com/ QQ:270656184
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -112,8 +111,8 @@ class Shareticket_EweiShopV2Page extends WebPage
 
 			$titlelen = mb_strlen(trim($_GPC['share_title']), 'utf-8');
 
-			if (12 < $titlelen) {
-				show_json(0, '分享标题的字数长度最大为12！');
+			if (6 < $titlelen) {
+				show_json(0, '分享标题的字数长度最大为6！');
 			}
 
 			$data = array('uniacid' => $uniacid, 'order' => intval($_GPC['order']), 'enough' => floatval($_GPC['enough']), 'expiration' => intval($_GPC['expiration']), 'status' => intval($_GPC['status']), 'sharetitle' => trim($_GPC['share_title']), 'shareicon' => trim($_GPC['share_icon']), 'createtime' => TIMESTAMP, 'issync' => intval($_GPC['issync']));

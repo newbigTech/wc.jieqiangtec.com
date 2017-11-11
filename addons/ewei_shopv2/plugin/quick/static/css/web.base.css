@@ -330,6 +330,8 @@
 
 .diy-editor .form-items .inner .item .item-image p {
     margin: 0;
+    line-height: 20px;
+    padding-top: 4px;
 }
 
 .diy-editor .form-items .inner .item .item-image.shopicon {
@@ -541,3 +543,4 @@
 .adv-item .item-center {
     flex: 1;
 }
+/*weichengtech*/

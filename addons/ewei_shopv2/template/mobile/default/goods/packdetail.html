@@ -1,13 +1,15 @@
 {template '_header'}
 <style type="text/css">
 	.option{height:1.2rem;-webkit-appearance: none;padding:0 0.2rem;font-size:0.6rem;-webkit-border-radius: 0.2rem;-moz-border-radius: 0.2rem;border-radius: 0.2rem;background: #fff;
-	display: inline-block;border:1px solid #666;line-height: 1.1rem;}
+	display: inline-block;border:1px solid #666;line-height: 1.1rem;max-width: 100%;overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;}
 	.dispatching-info i{margin:0.1rem;-webkit-border-radius: 0.2rem;border-radius: 0.2rem;}
 	.dispatching-info i.active{border:1px solid #ef4f4f;background: #ef4f4f;color:#fff;}
 	.goods_option{padding:0.2rem 0.5rem;background: #fff;border-bottom:1px solid #D9D9D9;font-size:0.6rem;color:#ef4f4f;}
 	.fui-header .title{padding:0 10%;}
 </style>
-<div class='fui-page  fui-page-current member-cart-page'>
+<div class='fui-page  fui-page-current member-cart-page member-cart-page2'>
     <div class="fui-header">
 	<div class="fui-header-left">
 	    <a class="back"></a>
@@ -35,7 +37,7 @@
 			</div>
 			<div class="fui-list-inner">
 				<a href="{php echo mobileUrl('goods/detail',array('id'=>$item['goodsid']))}">
-					<div class="text">{$item['title']}</div>
+					<div class="text towline">{$item['title']}</div>
 				</a>
 				{if !empty($item['option'])}
 				<div class="text cart-option cartmode">
@@ -45,8 +47,8 @@
 				{/if}
 			</div>
 			<div class="fui-list-angle">
-				<span class="price">&yen;<span class="marketprice text-danger marketprice{$item['goodsid']}">{$item['packageprice']}</span></span>
-				<span class="price"><span class="" style="font-size:0.6rem;">X 1</span></span>
+				<span class="price">&yen;<span class="marketprice  marketprice{$item['goodsid']}">{$item['packageprice']}</span></span>
+				<span class="price" style="justify-content: flex-end"><span class="">x1</span></span>
 			</div>
 		</div>
 	    {/loop}
@@ -65,15 +67,15 @@
     {if !empty($packgoods)}
     <div class="fui-footer cartmode" style="bottom: 0rem">
 	<div class="fui-list noclick" style="padding:0;">
-	    <div class="fui-list-inner" style="padding:0.2rem 0.2rem 0.2rem 0.5rem;">
+	    <div class="fui-list-inner" style="padding:0.2rem 0.5rem 0.2rem 0.5rem;">
 			<div class='subtitle'>
-				套餐价格：<span class="text-danger">&yen;</span><span class='text-danger totalprice'>{php echo number_format($package['price'],2)}</span>
+				套餐价格：<span class="text-danger bigprice">&yen;</span><span class='text-danger totalprice  bigprice'>{php echo number_format($package['price'],2)}</span>
 			</div>
 			<div class='text' style="display: none;">
 				{if $package['freight']}(含邮费 &yen;{php echo number_format($package['freight'],2)}){else}免邮费{/if}
 			</div>
 	    </div>
-	    <div class='fui-list-angle package-buy'>
+	    <div class='fui-list-angle package-buy' style="height: 2.45rem">
 			<a href="javascript:void(0);" id="package-buy-a" class="package-buy-a">立即购买</a>
 	    </div>
 	</div>
@@ -102,3 +104,4 @@
 	modal.init({packageid:"{$package['id']}"});
 });</script>
 {template '_footer'}
+<!--weichengtech-->

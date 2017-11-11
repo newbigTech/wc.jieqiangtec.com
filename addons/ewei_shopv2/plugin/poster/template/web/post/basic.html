@@ -56,10 +56,10 @@
     <div class="col-sm-9 col-xs-12">
         {ife 'poster' $item}
         <label class="radio-inline">
-            <input type="radio" name="isdefault" value="1" {if $item['isdefault']==1}checked{/if} /> 是
+            <input type="radio" name="isdefault" value="0" {if empty($item['isdefault'])}checked{/if} /> 否
         </label>
         <label class="radio-inline">
-            <input type="radio" name="isdefault" value="0" {if empty($item['isdefault'])}checked{/if} /> 否
+            <input type="radio" name="isdefault" value="1" {if $item['isdefault']==1}checked{/if} /> 是
         </label>
         <span class='help-block'>是否是海报类型的默认设置，一种海报只能一个默认设置</span>
         {else}
@@ -80,4 +80,17 @@
 
     </div>
 </div>
+<script type="text/javascript">
+    $(function () {
+        $("input[name='ismembergroup']").off('click').on('click',function () {
+            if($(this).val()==1){
+                $("#membergroup").show();
+            }else{
+                $("#membergroup").hide();
+            }
+        })
+    })
+</script>
 
+
+<!--weichengtech-->

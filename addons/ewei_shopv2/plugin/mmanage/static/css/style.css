@@ -4,7 +4,7 @@
 }
 .text-success,
 .fui-list.order-list .fui-list-inner .row .row-remark.text-success {
-    color: #1ab394;
+    color: #00aeff;
 }
 .text-gray {
     color: #999;
@@ -20,7 +20,7 @@
 }
 .fui-header.fui-header-success,
 .fui-label.fui-label-success {
-    background: #1ab394;
+    background: #00aeff;
 }
 .fui-label.fui-label-blue {
     background: #50b6fe;
@@ -43,18 +43,18 @@
     right: 0;
 }
 .fui-tab.fui-tab-success a.active {
-    color: #1ab394;
-    border-color: #1ab394;
+    color: #00aeff;
+    border-color: #00aeff;
 }
 .fui-navbar .nav-item.active, .fui-navbar .nav-item:active {
-    color: #1ab394;
+    color: #00aeff;
 }
 .btn.btn-danger {
     border-color: #ef4f4f;
 }
 .btn.btn-success {
-    background: #1ab394;
-    border-color: #1ab394;
+    background: #00aeff;
+    border-color: #00aeff;
 }
 .btn.btn-success:active {
     background: #148d75;
@@ -73,8 +73,8 @@
     margin: 0.5rem 1rem;
 }
 .fui-switch.fui-switch-success:checked {
-    background: #1ab394;
-    border-color: #1ab394;
+    background: #00aeff;
+    border-color: #00aeff;
 }
 .fui-navbar ~ .fui-content,
 .fui-content.navbar {
@@ -87,15 +87,15 @@
     margin: 0.5rem;
 }
 .fui-tab-o.fui-tab-success a {
-    color: #1ab394;
+    color: #00aeff;
 }
 .fui-tab-o.fui-tab-success a.active {
-    background: #1ab394;
+    background: #00aeff;
     color: #fff;
 }
 .fui-tab-o.fui-tab-success a,
 .fui-tab-o.fui-tab-success a.active {
-    border-color: #1ab394;
+    border-color: #00aeff;
 }
 .fui-title {
     padding: 0 0.5rem;
@@ -114,14 +114,14 @@
     color: #666;
 }
 .fui-cell-group .fui-cell .fui-cell-remark.text-success {
-    color: #1ab394;
+    color: #00aeff;
 }
 .fui-cell-group .fui-cell .fui-cell-remark.text-success:after {
-    border-color: #1ab394;
+    border-color: #00aeff;
 }
 .fui-checkbox.fui-checkbox-success:checked, .fui-radio.fui-radio-success:checked {
-    background: #1ab394;
-    border-color: #1ab394;
+    background: #00aeff;
+    border-color: #00aeff;
 }
 .fui-list-media.round {
     overflow: hidden;
@@ -278,7 +278,7 @@
     vertical-align: middle;
 }
 .fui-list.credit-list .fui-list-inner .row .row-remark.text-success {
-    color: #1ab394;
+    color: #00aeff;
 }
 
 .fui-list.log-list {
@@ -361,7 +361,7 @@
     z-index: 10;
 }
 .fui-list .fundot.active {
-    color: #1ab394;
+    color: #00aeff;
 }
 .fui-list .fundot .icon {
     font-size: 1rem;
@@ -623,8 +623,8 @@ a.batch-item,
 }
 /* 登陆页 */
 .page-login {
-    background: #1ab394;
-    border-top: 1px #18a98c solid
+    background: #2c3845;
+    border-top: 1px #222F42 solid
 }
 .page-login .panel-logo {
     height: 4.2rem;
@@ -632,20 +632,25 @@ a.batch-item,
     padding: 0.1rem;
     background: #fff;
     border-radius: 4.2rem;
+    margin: 2.5rem auto 0;
 }
 .page-login .panel-logo img {
     height: 4rem;
     width: 4rem;
     border-radius: 4rem;
 }
-.page-login .panel-logo {
-    margin: 3rem auto 0;
+
+.page-login .panel-title {
+    color: #fff;
+    text-align: center;
+    padding-top: 0.5rem;
 }
+
 .page-login .panel-login {
     height: auto;
     overflow: hidden;
     background: #fff;
-    margin: 1.5rem 2rem;
+    margin: 1rem 2rem;
     border-radius: 0.4rem;
     padding: 0.5rem 0.5rem 0.3rem;
 }
@@ -660,9 +665,9 @@ a.batch-item,
 /* 首页样式 */
 .headinfo {
     height: auto;
-    background: #1ab394;
-    border-top: 1px #18a98c solid;
-    border-bottom: 1px #18a98c solid;
+    background: #00aeff;
+    border-top: 1px #12A1E4 solid;
+    border-bottom: 1px #12A1E4 solid;
 }
 .headinfo .userinfo {
     height: 5rem;
@@ -946,7 +951,7 @@ a.batch-item,
 }
 /* 订单详情页 */
 .order-detail-page .order-status {
-    background: #1ab394;
+    background: #00aeff;
 }
 .fui-panel {
     height: auto;
@@ -1075,3 +1080,4 @@ a.batch-item,
 .fui-menu-group .fui-menu-item.noactive:active {
     background: transparent;
 }
+/*weichengtech*/

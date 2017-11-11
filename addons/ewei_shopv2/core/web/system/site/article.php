@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -19,18 +18,16 @@ class Article_EweiShopV2Page extends SystemPage
 			$condition .= ' and status=' . intval($_GPC['status']);
 		}
 
-
 		if (!empty($_GPC['keyword'])) {
 			$_GPC['keyword'] = trim($_GPC['keyword']);
 			$condition .= ' and title like :keyword';
 			$params[':keyword'] = '%' . $_GPC['keyword'] . '%';
 		}
 
-
 		$category = pdo_fetchall('select * from ' . tablename('ewei_shop_system_category'), array(), 'id');
 		$list = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_system_article') . ' WHERE 1 ' . $condition . '  ORDER BY displayorder DESC limit ' . (($pindex - 1) * $psize) . ',' . $psize, $params);
 		$total = pdo_fetchcolumn('SELECT count(*) FROM ' . tablename('ewei_shop_system_article') . ' WHERE 1 ' . $condition, $params);
-		$pager = pagination($total, $pindex, $psize);
+		$pager = pagination2($total, $pindex, $psize);
 		include $this->template();
 	}
 
@@ -60,7 +57,7 @@ class Article_EweiShopV2Page extends SystemPage
 				pdo_update('ewei_shop_system_article', $data, array('id' => $id));
 				plog('system.site.article.edit', '修改文章 ID: ' . $id);
 			}
-			 else {
+			else {
 				$data['createtime'] = TIMESTAMP;
 				pdo_insert('ewei_shop_system_article', $data);
 				$id = pdo_insertid();
@@ -69,7 +66,6 @@ class Article_EweiShopV2Page extends SystemPage
 
 			show_json(1);
 		}
-
 
 		$item = pdo_fetch('select * from ' . tablename('ewei_shop_system_article') . ' where id=:id limit 1', array(':id' => $id));
 		$category = pdo_fetchall('select * from ' . tablename('ewei_shop_system_category'), array(), 'id');
@@ -83,13 +79,12 @@ class Article_EweiShopV2Page extends SystemPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = ((is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0));
+			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
 		}
-
 
 		$items = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_system_article') . ' WHERE id in( ' . $id . ' )');
 
-		foreach ($items as $item ) {
+		foreach ($items as $item) {
 			pdo_delete('ewei_shop_system_article', array('id' => $item['id']));
 			plog('system.site.article.delete', '删除幻灯片 ID: ' . $item['id'] . ' 标题: ' . $item['title'] . ' ');
 		}
@@ -110,7 +105,6 @@ class Article_EweiShopV2Page extends SystemPage
 			plog('system.site.article.delete', '修改幻灯片排序 ID: ' . $item['id'] . ' 标题: ' . $item['title'] . ' 排序: ' . $displayorder . ' ');
 		}
 
-
 		show_json(1);
 	}
 
@@ -120,20 +114,18 @@ class Article_EweiShopV2Page extends SystemPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = ((is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0));
+			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
 		}
-
 
 		$items = pdo_fetchall('SELECT id,title FROM ' . tablename('ewei_shop_system_article') . ' WHERE id in( ' . $id . ' )');
 
-		foreach ($items as $item ) {
+		foreach ($items as $item) {
 			pdo_update('ewei_shop_system_article', array('status' => intval($_GPC['status'])), array('id' => $item['id']));
-			plog('system.site.article.edit', (('修改幻灯片状态<br/>ID: ' . $item['id'] . '<br/>标题: ' . $item['title'] . '<br/>状态: ' . $_GPC['enabled']) == 1 ? '显示' : '隐藏'));
+			plog('system.site.article.edit', ('修改幻灯片状态<br/>ID: ' . $item['id'] . '<br/>标题: ' . $item['title'] . '<br/>状态: ' . $_GPC['enabled']) == 1 ? '显示' : '隐藏');
 		}
 
 		show_json(1, array('url' => referer()));
 	}
 }
-
 
 ?>

@@ -3,12 +3,15 @@
         {loop $diyitem['data'] $couponitem}
             {if !empty($couponitem['couponid'])}
                 <a class="diy-coupon-item" href="{php echo mobileUrl('sale/coupon/detail', array('id'=>$couponitem['couponid']))}" data-nocache="true">
-                    <div class="inner" style="border: 1px solid {$couponitem['bordercolor']}; background: {$couponitem['background']}; color: {$couponitem['textcolor']}; margin: {$diyitem['style']['margintop']}px {$diyitem['style']['marginleft']}px">
+                    <div class="inner" style="border: 0; background: {$couponitem['couponcolor']}; margin: {$diyitem['style']['margintop']}px {$diyitem['style']['marginleft']}px">
                         <div class="name">{$couponitem['price']}</div>
-                        <div class="desc">{$couponitem['desc']}</div>
+                        <div class="receive" style="border: 1px solid {$couponitem['textcolor']};">立即领取</div>
+                        <i style="left: -0.35rem;background: {$diyitem['style']['background']};"></i>
+                        <i style="right: -0.35rem;background: {$diyitem['style']['background']};"></i>
                     </div>
                 </a>
             {/if}
         {/loop}
     </div>
 {/if}
+<!--weichengtech-->

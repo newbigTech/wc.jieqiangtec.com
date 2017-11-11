@@ -1,5 +1,4 @@
 <?php
-//weichengtech
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -149,7 +148,7 @@ class Transfer_EweiShopV2Page extends SystemPage
 							$pcate['uniacid'] = $wechatid1;
 							pdo_insert('ewei_shop_category', $pcate);
 							$newpcateid = pdo_insertid();
-							$pcates1[$pcate['id']] = $newpcateid;
+							$pcates1[$pcateid] = $newpcateid;
 							pdo_update('ewei_shop_goods', array('pcate' => $newpcateid), array('uniacid' => $wechatid1, 'pcate' => $pcateid));
 							$ccates = pdo_fetchall('select * from ' . tablename('ewei_shop_category') . ' where parentid=:parentid ', array(':parentid' => $pcateid));
 
@@ -160,24 +159,24 @@ class Transfer_EweiShopV2Page extends SystemPage
 								$ccate['parentid'] = $newpcateid;
 								pdo_insert('ewei_shop_category', $ccate);
 								$newccateid = pdo_insertid();
-								$ccates1[$ccate['id']] = $newccateid;
-								pdo_update('ewei_shop_goods', array('ccate' => $newpcateid), array('uniacid' => $wechatid1, 'ccate' => $ccateid));
+								$ccates1[$ccateid] = $newccateid;
+								pdo_update('ewei_shop_goods', array('ccate' => $newccateid), array('uniacid' => $wechatid1, 'ccate' => $ccateid));
 								$tcates = pdo_fetchall('select * from ' . tablename('ewei_shop_category') . ' where parentid=:parentid ', array(':parentid' => $ccateid));
 
 								foreach ($tcates as $tcate) {
-									$tcateid = $ccate['id'];
+									$tcateid = $tcate['id'];
 									unset($tcate['id']);
 									$tcate['uniacid'] = $wechatid1;
 									$tcate['parentid'] = $newccateid;
 									pdo_insert('ewei_shop_category', $tcate);
 									$newtcateid = pdo_insertid();
-									$tcates1[$tcate['id']] = $newtcateid;
+									$tcates1[$tcateid] = $newtcateid;
 									pdo_update('ewei_shop_goods', array('tcate' => $newtcateid), array('uniacid' => $wechatid1, 'tcate' => $tcateid));
 								}
 							}
 						}
 
-						$goods = pdo_fetchall('select id,pcates,ccates,tcates from ' . tablename('ewei_shop_goods') . ' where uniacid=:uniacid', array(':uniacid' => $wechatid1));
+						$goods = pdo_fetchall('select id,pcates,ccates,tcates,cates from ' . tablename('ewei_shop_goods') . ' where uniacid=:uniacid', array(':uniacid' => $wechatid1));
 
 						foreach ($goods as $g) {
 							$gpcates = explode(',', $g['pcates']);
@@ -207,7 +206,24 @@ class Transfer_EweiShopV2Page extends SystemPage
 								}
 							}
 
-							pdo_update('ewei_shop_goods', array('pcates' => implode(',', $newpcates), 'ccates' => implode(',', $newccates), 'tcates' => implode(',', $newtcates)), array('id' => $g['id']));
+							$gcates = explode(',', $g['cates']);
+							$newcates = array();
+
+							foreach ($gcates as $oldcate) {
+								if (isset($pcates1[$oldcate])) {
+									$newcates[] = $pcates1[$oldcate];
+								}
+
+								if (isset($ccates1[$oldcate])) {
+									$newcates[] = $ccates1[$oldcate];
+								}
+
+								if (isset($tcates1[$oldcate])) {
+									$newcates[] = $tcates1[$oldcate];
+								}
+							}
+
+							pdo_update('ewei_shop_goods', array('pcates' => implode(',', $newpcates), 'ccates' => implode(',', $newccates), 'tcates' => implode(',', $newtcates), 'cates' => implode(',', $newcates)), array('id' => $g['id']));
 						}
 
 						if ($transtype == 1) {

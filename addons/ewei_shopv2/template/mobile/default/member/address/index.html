@@ -11,8 +11,9 @@
 
 	
 	<div class='content-empty' {if !empty($list)}style='display:none'{/if}>
-	    <i class='icon icon-location'></i>
-	    <br/>您还没有任何收货地址
+	    <!--<i class='icon icon-location'></i>-->
+	    <!--<br/>您还没有任何收货地址-->
+		<img src="{EWEI_SHOPV2_STATIC}images/noadd.png" style="width: 6rem;margin-bottom: .5rem;"><br/><p style="color: #999;font-size: .75rem">您暂时没有任何收货地址哦！</p>
 	</div>
 	
 	{loop $list $address}
@@ -80,3 +81,4 @@
                 });</script>
 </div> 
 {template '_footer'}
+<!--weichengtech-->

@@ -226,7 +226,7 @@ class Detail_EweiShopV2Page extends PcMobilePage
 			$minprice = min($prices);
 			$maxprice = max($prices);
 		}
-	/*	else 
+		else 
 		{
 			if (isset($options) && (0 < count($options)) && ($goods['hasoption'] !== 0)) 
 			{
@@ -248,7 +248,7 @@ class Detail_EweiShopV2Page extends PcMobilePage
 			$goods_price = pdo_fetch('select minprice,maxprice from ' . tablename('ewei_shop_goods') . ' where id=:id and uniacid=:uniacid limit 1', array(':id' => $id, ':uniacid' => $_W['uniacid']));
 			$goods['minprice'] = $goods_price['minprice'];
 			$goods['maxprice'] = $goods_price['maxprice'];
-		}*/
+		}
 		$goods['minprice'] = number_format($minprice, 2);
 		$goods['maxprice'] = number_format($maxprice, 2);
 		$getComments = empty($_W['shopset']['trade']['closecommentshow']);
@@ -263,16 +263,6 @@ class Detail_EweiShopV2Page extends PcMobilePage
 		$shop['url'] = mobileUrl('', NULL, true);
 		$mid = intval($_GPC['mid']);
 		$opencommission = false;
-
-        // 推广信息存入session
-        if (empty($_SESSION['prom_cps']['sid'])){
-            $_SESSION['prom_cps'] = $_GET;
-        }else{
-            if (($_GET['item_id']) && ($_SESSION['prom_cps']['item_id'] !== $_GET['item_id']) ){
-                $_SESSION['prom_cps'] = $_GET;
-            }
-        }
-
 		if (p("commission")) 
 		{
 			if (empty($member['agentblack'])) 

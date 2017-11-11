@@ -1,4 +1,4 @@
-var requireConfig = {
+require.config({
     baseUrl: "resource/js/app",
     paths: {
         datetimepicker: "../../components/datetimepicker/jquery.datetimepicker",
@@ -17,6 +17,7 @@ var requireConfig = {
         hammer: "../lib/hammer.min",
         "bootstrap.switch": "../../components/switch/bootstrap-switch.min",
         validator: "../lib/bootstrapValidator.min",
+        bootstrap: "../lib/bootstrap.min",
         "jquery.ui": "../lib/jquery-ui-1.10.3.min",
         "jquery.caret": "../lib/jquery.caret",
         "jquery.jplayer": "../../components/jplayer/jquery.jplayer.min",
@@ -49,10 +50,10 @@ var requireConfig = {
         datetimepicker: {deps: ["loadcss!../../components/datetimepicker/jquery.datetimepicker.css"]},
         colorpicker: {deps: ["loadcss!../../components/colorpicker/spectrum.css"]},
         map: {exports: "BMap"},
+        bootstrap: {exports: "$"},
         "jquery.wookmark": {exports: "$"},
         "jquery.ui": {exports: "$"},
         "jquery.caret": {exports: "$"},
-        bootstrap: {exports: "$"},
         "bootstrap.switch": {deps: ["bootstrap", "loadcss!../../components/switch/bootstrap-switch.min.css"]},
         fileUploader: {deps: ["webuploader", "jquery.jplayer", "loadcss!../../components/webuploader/webuploader.css", "loadcss!../../components/webuploader/style.css"]},
         clockpicker: {exports: "$", deps: ["loadcss!../../components/clockpicker/clockpicker.min.css"]},
@@ -64,13 +65,6 @@ var requireConfig = {
         "angular.sanitize": {exports: "angular", deps: ["angular"]},
         "angular.hotkeys": {exports: "angular", deps: ["angular"]}
     }
-};
-jQuery.fn.modal ? define("bootstrap", [], function () {
-    if ("undefined" == typeof jQuery.fn.modal) {
-        require(["../lib/bootstrap.min"]);
-        return jQuery
-    }
-    return jQuery
-}) : requireConfig.paths.bootstrap = "../lib/bootstrap.min", require.config(requireConfig), define("jquery", [], function () {
+}), define("jquery", [], function () {
     return jQuery
 });

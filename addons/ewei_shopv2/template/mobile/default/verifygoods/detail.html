@@ -15,11 +15,11 @@
 		<div class="fui-list-group notop" style="background: #f7f7f7;">
 			<div class="fui-list">
 				<div class="fui-list-media">
-					<img src="{php echo tomedia($verifygoods['thumb']);}"/>
+					<img src="{php echo tomedia($item['thumb']);}"/>
 				</div>
 				<div class="fui-list-inner">
-					<div class="title">{$verifygoods['title']}</div>
-					<div class="subtitle">{$verifygoods['subtitle']}</div>
+					<div class="title">{$item['title']}</div>
+					<div class="subtitle">{$item['subtitle']}</div>
 				</div>
 				<div class="fui-list-angle">
 					<div></div>
@@ -28,7 +28,7 @@
 		</div>
 		<div class="code_box">
 			<p>请将二维码出示给核销员</p>
-			<div class="img_box">
+			<div class="img_box detail_code">
 				<img  src="{php echo tomedia($qrurl);}"  alt="" />
 			</div>
 			<div class="cav_code">{$verifycode}</div>
@@ -36,19 +36,19 @@
 		<div class="fui-cell-group noborder cav_detail">
 			<div class="fui-cell-title upright" style="padding-left: 1rem;font-size: 0.7rem;">核销详情</div>
 			<div class="fui-cell" style="padding: 0.3rem 0.6rem">
-				<div class="fui-cell-info">
-					{if empty($verifygoods['limitnum'])}
+				<div class="fui-cell-info" style="font-size: 0.7rem;color: #000;">
+					{if empty($item['limitnum'])}
 						不限次数
 					{else}
-						核销总次数：{$verifygoods['limitnum']} 剩余次数：{php echo intval($verifygoods['limitnum']) - $verifynum}
+						核销总次数：{$item['limitnum']} 剩余次数：{php echo intval($item['limitnum']) - $verifynum}
 					{/if}
 				</div>
 				<div class="fui-cell-remark noremark">
 				</div>
 			</div>
 			<div class="fui-cell">
-				<div class="fui-cell-info">
-					有效日期：{php echo date('Y-m-d',  intval($verifygoods['starttime']) +  $verifygoods['limitdays']*86400  );}日前有效
+				<div class="fui-cell-info" style="font-size: 0.7rem;color: #999;">
+					有效日期：{$limitdatestr}前有效
 				</div>
 				<div class="fui-cell-remark noremark">
 				</div>
@@ -75,6 +75,21 @@
 		</div>
 	</div>
 	<div id="gotop"><i class="icon icon-totop" style="font-size:1.5rem;"></i></div>
+
+
+	<div class="mask">
+		<div class="codebox">
+			<p>请将二维码出示给核销员</p>
+			<div class="img_box">
+				<img class="qrimg" src="{php echo tomedia($qrurl);}"/>
+			</div>
+			<div class="cav_code">{$verifycode}</div>
+			<div class="error">
+				<p style="padding: 0 1.3rem">温馨提示：为了更好的保护您利益,请不要轻易将您的核销二维码泄露给他人</p>
+			</div>
+		</div>
+	</div>
+
 </div>
 
 <script type="text/javascript">
@@ -89,5 +104,14 @@
 	$("#gotop").unbind('click').click(function () {
 		$(".fui-content").animate({scrollTop: "0px"}, 1000)
 	});
+
+	$('.detail_code').click(function(){
+		$('.mask').css({display:'block'})
+	})
+	$('.mask').click(function(){
+		$(this).css({display:'none'})
+	})
 </script>
 
+
+<!--weichengtech-->

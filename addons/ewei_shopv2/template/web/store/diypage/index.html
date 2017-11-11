@@ -24,7 +24,7 @@
                 <button class="btn btn-default btn-sm" type="button" data-toggle="batch" data-confirm="确认要禁用?" data-href="{php echo webUrl('store/diypage/status', array('status'=>0))}" disabled="disabled"><i class="fa fa-circle-o"></i> 禁用</button>
                 {/if}
                 {ifp 'store.diypage.delete'}
-                <button class="btn btn-default btn-sm" type="button" data-toggle="batch" data-confirm="确认要删除?" data-href="{php echo webUrl('store/diypage/delete', array('status'=>1))}" disabled="disabled"><i class="fa fa-trash"></i> 删除</button>
+                <button class="btn btn-default btn-sm" type="button" data-toggle="batch" data-confirm="确认要删除?" data-href="{php echo webUrl('store/diypage/delete')}" disabled="disabled"><i class="fa fa-trash"></i> 删除</button>
                 {/if}
             </div>
         </div>
@@ -94,7 +94,7 @@
                             <a class="btn btn-default btn-sm" href="{php echo webUrl('store/diypage/edit', array('id'=>$item['id']))}"><i class="fa fa-edit"></i> 编辑</a>
                         {/if}
                         {ifp 'store.diypage.delete'}
-                            <a class="btn btn-default btn-sm" data-toggle="ajaxRemove" href="" data-confirm="确定要删除此模板吗？"><i class="fa fa-remove"></i> 删除</a>
+                            <a class="btn btn-default btn-sm" data-toggle="ajaxRemove" href="{php echo webUrl('store/diypage/delete', array('id'=>$item['id']))}" data-confirm="确定要删除此模板吗？"><i class="fa fa-remove"></i> 删除</a>
                         {/if}
                     {/if}
                 </td>
@@ -106,3 +106,4 @@
 {/if}
 
 {template '_footer'}
+<!--weichengtech-->

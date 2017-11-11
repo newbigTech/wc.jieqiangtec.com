@@ -1,5 +1,4 @@
 <?php
-//weichengtech
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -83,7 +82,7 @@ class Selecturl_EweiShopV2Page extends WebPage
 					14 => array('name' => '消费排行', 'url' => mobileUrl('member/rank/order_rank', array(), $full), 'url_wxapp' => ''),
 					16 => array('name' => '收货地址管理', 'url' => mobileUrl('member/address', array(), $full), 'url_wxapp' => '/pages/member/address/index'),
 					18 => array('name' => '我的全返', 'url' => mobileUrl('member/fullback', array(), $full), 'url_wxapp' => ''),
-					19 => array('name' => '核销商品', 'url' => mobileUrl('verifygoods', array(), $full), 'url_wxapp' => '')
+					19 => array('name' => '记次时商品', 'url' => mobileUrl('verifygoods', array(), $full), 'url_wxapp' => '')
 					)
 				)
 			);

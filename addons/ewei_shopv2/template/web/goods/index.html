@@ -1,11 +1,6 @@
 {template '_header'}
 <div class="page-heading"> 
     <span class='pull-right'>
-        {if p('hotelreservation')}
-            {ifp 'hotelreservation.goods.add'}
-                <a class='btn btn-primary btn-sm' href="{php echo webUrl('hotelreservation/goods/add')}"><i class='fa fa-plus'></i> 添加民宿</a>
-            {/if}
-        {/if}
         {ifp 'goods.add'}
         <a class='btn btn-primary btn-sm' href="{php echo webUrl('goods/add')}"><i class='fa fa-plus'></i> 添加商品</a>
         {/if}
@@ -21,7 +16,6 @@
     <input type="hidden" name="goodsfrom" value="{$goodsfrom}" />
     <div class="page-toolbar row m-b-sm m-t-sm">
         <div class="col-sm-4">
-
             <div class="input-group-btn">
                 <button class="btn btn-default btn-sm"  type="button" data-toggle='refresh'><i class='fa fa-refresh'></i></button>
                 {ifp 'goods.edit'}
@@ -33,7 +27,6 @@
 
                 {/if}
                 {/if}
-
                 {if $_GPC['goodsfrom']=='cycle'}
                 {ifp 'goods.delete1'}
                 <button class="btn btn-default btn-sm" type="button" data-toggle='batch-remove' data-confirm="如果商品存在购买记录，会无法关联到商品, 确认要彻底删除吗?" data-href="{php echo webUrl('goods/delete1')}"><i class='fa fa-remove'></i> 彻底删除</button>
@@ -304,3 +297,5 @@
                           </div>
                           {/if}
                           {template '_footer'}
+
+<!--weichengtech-->

@@ -1,9 +1,7 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
-
 
 if (!class_exists('ArticleModel')) {
 	class ArticleModel extends PluginModel
@@ -16,20 +14,17 @@ if (!class_exists('ArticleModel')) {
 				return NULL;
 			}
 
-
 			$article = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_article') . ' WHERE id=:aid and article_state=1 and uniacid=:uniacid limit 1 ', array(':aid' => $aid, ':uniacid' => $_W['uniacid']));
 
 			if (empty($article)) {
 				return NULL;
 			}
 
-
 			$profile = m('member')->getMember($shareid);
 			$myinfo = m('member')->getMember($myid);
 			if (empty($myinfo) || empty($profile)) {
 				return NULL;
 			}
-
 
 			$shopset = $_W['shopset'];
 			$givecredit = intval($article['article_rule_credit']);
@@ -41,11 +36,9 @@ if (!class_exists('ArticleModel')) {
 				$givemoney = floatval($article['article_rule_money2']);
 			}
 
-
 			if (!empty($article['article_hasendtime']) && ($article['article_endtime'] < time())) {
 				return NULL;
 			}
-
 
 			$readtime = $article['article_readtime'];
 
@@ -53,13 +46,11 @@ if (!class_exists('ArticleModel')) {
 				$readtime = 4;
 			}
 
-
 			$clicktime = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_shop_article_share') . ' WHERE aid=:aid and share_user=:share_user and click_user=:click_user and uniacid=:uniacid ', array(':aid' => $article['id'], ':share_user' => $shareid, ':click_user' => $myid, ':uniacid' => $_W['uniacid']));
 
 			if ($readtime <= $clicktime) {
 				return NULL;
 			}
-
 
 			$all_click = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_shop_article_share') . ' WHERE aid=:aid and share_user=:share_user and uniacid=:uniacid ', array(':aid' => $article['id'], ':share_user' => $shareid, ':uniacid' => $_W['uniacid']));
 
@@ -67,7 +58,7 @@ if (!class_exists('ArticleModel')) {
 				$givecredit = 0;
 				$givemoney = 0;
 			}
-			 else {
+			else {
 				$day_start = mktime(0, 0, 0, date('m'), date('d'), date('Y'));
 				$day_end = mktime(0, 0, 0, date('m'), date('d') + 1, date('Y')) - 1;
 				$day_click = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_shop_article_share') . ' WHERE aid=:aid and share_user=:share_user and click_date>:day_start and click_date<:day_end and uniacid=:uniacid ', array(':aid' => $article['id'], ':share_user' => $shareid, ':day_start' => $day_start, ':day_end' => $day_end, ':uniacid' => $_W['uniacid']));
@@ -76,7 +67,6 @@ if (!class_exists('ArticleModel')) {
 					$givecredit = 0;
 					$givemoney = 0;
 				}
-
 			}
 
 			$toto = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('ewei_shop_article_share') . ' WHERE aid=:aid and share_user=:click_user and click_user=:share_user and uniacid=:uniacid ', array(':aid' => $article['id'], ':share_user' => $shareid, ':click_user' => $myid, ':uniacid' => $_W['uniacid']));
@@ -84,7 +74,6 @@ if (!class_exists('ArticleModel')) {
 			if (!empty($toto)) {
 				return NULL;
 			}
-
 
 			if ((0 < $article['article_rule_credittotal']) || (0 < $article['article_rule_moneytotal'])) {
 				$creditlast = 0;
@@ -95,25 +84,23 @@ if (!class_exists('ArticleModel')) {
 
 				if (0 < $article['article_rule_credittotal']) {
 					if (!empty($article['article_advance'])) {
-						$creditlast = $article['article_rule_credittotal'] - (($firstreads + (($article['article_virtualadd'] ? $article['article_readnum_v'] : 0))) * $article['article_rule_creditm']) - ($secreads * $article['article_rule_creditm2']);
+						$creditlast = $article['article_rule_credittotal'] - (($firstreads + ($article['article_virtualadd'] ? $article['article_readnum_v'] : 0)) * $article['article_rule_creditm']) - ($secreads * $article['article_rule_creditm2']);
 					}
-					 else {
+					else {
 						$creditout = pdo_fetchcolumn('select sum(add_credit) from ' . tablename('ewei_shop_article_share') . ' where aid=:aid and uniacid=:uniacid limit 1', array(':aid' => $article['id'], ':uniacid' => $_W['uniacid']));
 						$creditlast = $article['article_rule_credittotal'] - $creditout;
 					}
 				}
 
-
 				if (0 < $article['article_rule_moneytotal']) {
 					if (!empty($article['article_advance'])) {
-						$moneylast = $article['article_rule_moneytotal'] - (($firstreads + (($article['article_virtualadd'] ? $article['article_readnum_v'] : 0))) * $article['article_rule_moneym']) - ($secreads * $article['article_rule_moneym2']);
+						$moneylast = $article['article_rule_moneytotal'] - (($firstreads + ($article['article_virtualadd'] ? $article['article_readnum_v'] : 0)) * $article['article_rule_moneym']) - ($secreads * $article['article_rule_moneym2']);
 					}
-					 else {
+					else {
 						$moneyout = pdo_fetchcolumn('select sum(add_money) from ' . tablename('ewei_shop_article_share') . ' where aid=:aid and uniacid=:uniacid limit 1', array(':aid' => $article['id'], ':uniacid' => $_W['uniacid']));
 						$moneylast = $article['article_rule_moneytotal'] - $moneyout;
 					}
 				}
-
 
 				($creditlast <= 0) && ($creditlast = 0);
 				($moneylast <= 0) && ($moneylast = 0);
@@ -122,13 +109,10 @@ if (!class_exists('ArticleModel')) {
 					$givecredit = 0;
 				}
 
-
 				if ($moneylast <= 0) {
 					$givemoney = 0;
 				}
-
 			}
-
 
 			$insert = array('aid' => $article['id'], 'share_user' => $shareid, 'click_user' => $myid, 'click_date' => time(), 'add_credit' => $givecredit, 'add_money' => $givemoney, 'uniacid' => $_W['uniacid']);
 			pdo_insert('ewei_shop_article_share', $insert);
@@ -137,11 +121,9 @@ if (!class_exists('ArticleModel')) {
 				m('member')->setCredit($profile['openid'], 'credit1', $givecredit, array(0, $shopset['name'] . ' 文章营销奖励积分'));
 			}
 
-
 			if (0 < $givemoney) {
 				m('member')->setCredit($profile['openid'], 'credit2', $givemoney, array(0, $shopset['name'] . ' 文章营销奖励余额'));
 			}
-
 
 			if ((0 < $givecredit) || (0 < $givemoney)) {
 				$article_sys = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_article_sys') . ' WHERE uniacid=:uniacid limit 1 ', array(':uniacid' => $_W['uniacid']));
@@ -152,11 +134,9 @@ if (!class_exists('ArticleModel')) {
 					$p .= $givecredit . '个积分、';
 				}
 
-
 				if (0 < $givemoney) {
 					$p .= $givemoney . '元余额';
 				}
-
 
 				$msg = array(
 					'first'    => array('value' => '您的奖励已到帐！', 'color' => '#4a5077'),
@@ -167,13 +147,11 @@ if (!class_exists('ArticleModel')) {
 
 				if (!empty($article_sys['article_message'])) {
 					m('message')->sendTplNotice($profile['openid'], $article_sys['article_message'], $msg, $detailurl);
-					return NULL;
 				}
-
-
-				m('message')->sendCustomNotice($profile['openid'], $msg, $detailurl);
+				else {
+					m('message')->sendCustomNotice($profile['openid'], $msg, $detailurl);
+				}
 			}
-
 		}
 
 		public function mid_replace($content)
@@ -181,7 +159,7 @@ if (!class_exists('ArticleModel')) {
 			global $_GPC;
 			preg_match_all('/href\\=["|\\\'](.*?)["|\\\']/is', $content, $links);
 
-			foreach ($links[1] as $key => $lnk ) {
+			foreach ($links[1] as $key => $lnk) {
 				$newlnk = $this->href_replace($lnk);
 				$content = str_replace($links[0][$key], 'href="' . $newlnk . '"', $content);
 			}
@@ -197,11 +175,10 @@ if (!class_exists('ArticleModel')) {
 				if (strexists($lnk, '?')) {
 					$newlnk = $lnk . '&mid=' . intval($_GPC['mid']);
 				}
-				 else {
+				else {
 					$newlnk = $lnk . '?mid=' . intval($_GPC['mid']);
 				}
 			}
-
 
 			return $newlnk;
 		}
@@ -220,8 +197,6 @@ if (!class_exists('ArticleModel')) {
 	);
 		}
 	}
-
 }
-
 
 ?>

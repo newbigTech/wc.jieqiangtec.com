@@ -41,11 +41,10 @@
     </div>
     <script id='tpl_board_lists' type='text/html'>
         <%each list as s%>
-        <a class='fui-list board-lists-item'
+        <a class='fui-list board-lists-item external'
              data-id='<%s.id%>'
              data-title='<%s.title%>'
-             href="{php echo mobileUrl('sns/board')}&id=<%s.id%>&page=1" data-nocache="true"
-        >
+             href="{php echo mobileUrl('sns/board')}&id=<%s.id%>&page=1" data-nocache="true">
             <div class='fui-list-media'>
                 <img data-lazy='<%s.logo%>' class='round' />
             </div>
@@ -70,3 +69,4 @@
 </div>
 {php $this->footerMenus()}
 {template '_footer'}
+<!--weichengtech-->

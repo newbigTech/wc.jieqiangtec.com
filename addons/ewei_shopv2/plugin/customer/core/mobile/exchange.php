@@ -1,13 +1,12 @@
 <?php
-
-if (!defined('IN_IA')) {
+if (!(defined('IN_IA'))) {
 	exit('Access Denied');
 }
 
 
 global $_W;
 global $_GPC;
-$operation = ((!empty($_GPC['op']) ? $_GPC['op'] : 'display'));
+$operation = ((!(empty($_GPC['op'])) ? $_GPC['op'] : 'display'));
 $openid = m('user')->getOpenid();
 $uniacid = $_W['uniacid'];
 $id = intval($_GPC['id']);
@@ -15,7 +14,7 @@ $id = intval($_GPC['id']);
 if ($operation == 'check') {
 	$log = pdo_fetch('select id,status from ' . tablename('ewei_shop_creditshop_log') . ' where id=:id and uniacid=:uniacid and openid=:openid limit 1', array(':id' => $id, ':uniacid' => $uniacid, ':openid' => $openid));
 
-	if (!empty($log) && ($log['status'] == 3)) {
+	if (!(empty($log)) && ($log['status'] == 3)) {
 		show_json(1);
 	}
 
@@ -83,7 +82,7 @@ if ($operation == 'exchange') {
 		}
 
 
-		if (!empty($goods['type'])) {
+		if (!(empty($goods['type']))) {
 			if ($log['status'] <= 1) {
 				show_json(0, '未中奖，不能兑换!');
 			}
@@ -103,9 +102,9 @@ if ($operation == 'exchange') {
 
 		$stores = explode(',', $goods['storeids']);
 
-		if (!empty($storeids)) {
-			if (!empty($saler['storeid'])) {
-				if (!in_array($saler['storeid'], $storeids)) {
+		if (!(empty($storeids))) {
+			if (!(empty($saler['storeid']))) {
+				if (!(in_array($saler['storeid'], $storeids))) {
 					show_json(0, '您无此门店的兑换权限!');
 				}
 

@@ -3,12 +3,12 @@
 	<application setting="false">
 		<name><![CDATA[人人店]]></name>
 		<identifie><![CDATA[ewei_shopv2]]></identifie>
-		<version><![CDATA[3.5.4]]></version>
+		<version><![CDATA[3.5.5]]></version>
 		<type><![CDATA[business]]></type>
 		<ability><![CDATA[人人店]]></ability>
 		<description><![CDATA[人人店]]></description>
 		<author><![CDATA[weichengtech]]></author>
-		<url><![CDATA[weichengtech]]></url>
+		<url><![CDATA[]]></url>
 	</application>
 	<platform>
 		<subscribes>
@@ -53,7 +53,7 @@
 	</bindings>
 	<permissions>
 	</permissions>
-	<install><![CDATA[install.php]]></install>
-	<uninstall><![CDATA[uninstall.php]]></uninstall>
+<install><![CDATA[install.php]]></install>
+	<uninstall><![CDATA[]]></uninstall>
 	<upgrade><![CDATA[upgrade.php]]></upgrade>
 </manifest>

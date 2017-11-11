@@ -1,5 +1,4 @@
 <?php
-
 class nusoap_fault extends nusoap_base
 {
 	/**

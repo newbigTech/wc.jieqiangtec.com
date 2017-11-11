@@ -1,5 +1,4 @@
 <?php
-
 error_reporting(0);
 require '../../../../../framework/bootstrap.inc.php';
 require '../../../../../addons/ewei_shopv2/defines.php';
@@ -11,20 +10,18 @@ ignore_user_abort();
 set_time_limit(0);
 $sets = pdo_fetchall('select uniacid,receive from ' . tablename('ewei_shop_groups_set'));
 
-foreach ($sets as $set ) {
+foreach ($sets as $set) {
 	$_W['uniacid'] = $set['uniacid'];
 
 	if (empty($_W['uniacid'])) {
 		continue;
 	}
 
-
 	$days = intval($set['receive']);
 
 	if ($days <= 0) {
 		continue;
 	}
-
 
 	$daytimes = 86400 * $days;
 	$p = p('groups');
@@ -38,9 +35,7 @@ foreach ($sets as $set ) {
 		if (!empty($orderids)) {
 			pdo_query('update ' . tablename('ewei_shop_groups_order') . ' set status=3,finishtime=' . time() . ' where id in (' . $orderids . ')');
 		}
-
 	}
-
 }
 
 ?>

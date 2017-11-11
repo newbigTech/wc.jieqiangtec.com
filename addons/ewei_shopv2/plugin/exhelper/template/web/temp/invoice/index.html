@@ -60,14 +60,17 @@
 					<td>
 						<span class='defaults label {if $row['isdefault']==1}label-primary{else}label-default{/if}' 
 	                      {ifp 'exhelper.temp.invoice.setdefault'}
-	                      data-toggle='ajaxSwitch' 
-	                      data-confirm = "确认{if $row['isdefault']==1}取消{else}设为{/if}默认吗？"
-	                      data-switch-css='.defaults'
-                          data-switch-other = 'true'
-	                      data-switch-value='{$row['isdefault']}'
-	                      data-switch-value0='0|否|label label-default|{php echo webUrl('exhelper/temp/invoice/setdefault',array('isdefault'=>1, 'id'=>$row['id'], 'type'=>$type))}'  
-	                      data-switch-value1='1|是|label label-primary|{php echo webUrl('exhelper/temp/invoice/setdefault',array('isdefault'=>0, 'id'=>$row['id'], 'type'=>$type))}'  
-	                      style="cursor: pointer;"
+							{if $row['isdefault']==0}
+							  data-toggle='ajaxSwitch'
+							  data-confirm = "确认设为默认吗？"
+							  data-switch-css='.defaults'
+							  data-switch-other = 'true'
+							  data-switch-refresh='true'
+							  data-switch-value='{$row['isdefault']}'
+							  data-switch-value0='0|否|label label-default|{php echo webUrl('exhelper/temp/invoice/setdefault',array('isdefault'=>1, 'id'=>$row['id'], 'type'=>$type))}'
+							  data-switch-value1='1|是|label label-primary|{php echo webUrl('exhelper/temp/invoice/setdefault',array('isdefault'=>0, 'id'=>$row['id'], 'type'=>$type))}'
+							  style="cursor: pointer;"
+							{/if}
 	                      {/if}
 	                    >{if $row['isdefault']==1}是{else}否{/if}</span>
 					</td>
@@ -86,3 +89,4 @@
 
 </form>
 {template '_footer'}
+<!--weichengtech54mI5p2D5omA5pyJ-->

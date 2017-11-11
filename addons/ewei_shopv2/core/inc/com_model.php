@@ -1,9 +1,9 @@
 <?php
-if (!defined('IN_IA')) 
-{
+class ComModel
+{}
+
+if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
-class ComModel 
-{
-}
+
 ?>

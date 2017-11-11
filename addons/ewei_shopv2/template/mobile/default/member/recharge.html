@@ -36,7 +36,7 @@
 
 {if !empty($acts)}
 		<div class='fui-cell-group'>
-			<div class='fui-according'>
+			<div class='fui-according expanded'>
 				<div class='fui-according-header'>
 					<div class="text">充值活动 
 						充值满 <span class='text-danger'>{$acts[0]['enough']}</span> 元立即送 <span class='text-danger'>{$acts[0]['give']}</span> 元
@@ -61,7 +61,6 @@
 			</div>
 		</div>
 {/if}
-
 		<a id='btn-next' class='btn btn-success block disabled'>下一步</a>
 		{if $wechat['success'] || $payinfo['wechat']}
 		<a id='btn-wechat' class='btn btn-success block btn-pay ' style='display:none'>微信支付</a>
@@ -84,3 +83,4 @@
 
 {template 'sale/coupon/util/picker'}
 {template '_footer'}
+<!--weichengtech-->

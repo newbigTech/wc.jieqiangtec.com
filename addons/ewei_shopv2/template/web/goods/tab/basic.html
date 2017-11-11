@@ -77,13 +77,16 @@
 
         <label class="radio-inline"><input type="radio" name="type" value="4" {if !empty($item['id'])}disabled{/if}  {if $item['type'] == 4}checked="true"{/if}  onclick="type_change(4);" /> 批发商品</label>
 
-        <label class="radio-inline"><input type="radio" name="type" value="5" {if !empty($item['id'])}disabled{/if}  {if $item['type'] == 5}checked="true"{/if}  onclick="type_change(5);" /> 核销商品</label>
+        <label class="radio-inline"><input type="radio" name="type" value="5" {if !empty($item['id'])}disabled{/if}  {if $item['type'] == 5}checked="true"{/if}  onclick="type_change(5);" /> 记次/时商品</label>
 
 
         {if p('mr')}
         <label class="radio-inline"><input type="radio" name="type" value="10" {if !empty($item['id'])}disabled{/if}  {if $item['type'] == 10}checked="true"{/if}  onclick="type_change(10);" /> 话费流量充值</label>
         {/if}
 
+        {if p('ccard')}
+        <label class="radio-inline"><input type="radio" name="type" value="20" {if !empty($item['id'])}disabled{/if}  {if $item['type'] == 20}checked="true"{/if}  onclick="type_change(20);" /> 充值卡</label>
+        {/if}
         <span class="help-block">商品类型，商品保存后无法修改，请谨慎选择</span>
 
         {else}
@@ -529,11 +532,11 @@
 </div>
 {/if}
 
-<div class="form-group">
+<div class="form-group" {if $item['isverify'] == 2 || $item['type'] == 2 || $item['type'] == 3|| $item['type'] == 5}style="display:none;"{/if}>
     <label class="col-sm-2 control-label">货到付款</label>
     <div class="col-sm-9 col-xs-12">
         {ife 'goods' $item}
-        <label class="checkbox-inline" {if $item['isverify'] == 2 || $item['type'] == 2 || $item['type'] == 3|| $item['type'] == 5}style="display:none;"{/if}>
+        <label class="checkbox-inline" >
             <input type="checkbox" name="cash" value="2" {if $item['cash'] =='2'}checked="true"{/if}  /> 支持
         </label>
         {else}
@@ -711,3 +714,4 @@
         })
     })
 </script>
+<!--weichengtech-->

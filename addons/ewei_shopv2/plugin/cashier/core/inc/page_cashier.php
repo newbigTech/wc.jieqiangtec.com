@@ -48,7 +48,7 @@ class CashierWebPage extends PluginWebPage
 				$this->message('账号已到期!', cashierUrl('quit'));
 			}
 		}
-		if (!($this->model->is_perm($_W['routes'])) && ($_W['routes'] != 'login') && ($_W['routes'] != 'quit') && ($_W['routes'] != 'qr')) 
+		if (!($this->model->is_perm($_W['routes'])) && ($_W['routes'] != 'login') && ($_W['routes'] != 'quit')) 
 		{
 			$this->message('暂时没有权限查看!');
 		}

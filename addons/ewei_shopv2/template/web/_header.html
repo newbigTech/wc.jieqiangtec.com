@@ -31,7 +31,7 @@
         {if com('sale') || com('coupon')}
         {ifp 'sale'}<li {if $_W['controller']=='sale'} class="active"{/if}><a href="{php echo webUrl('sale')}">营销</a></li>{/if}
         {/if}
-        {ifp 'finance'}<li {if $_W['controller']=='finance'} class="active"{/if}><a href="{php echo webUrl('finance/log/recharge')}"> 财务</a></li>{/if}
+        {ifp 'finance'}<li {if $_W['controller']=='finance'} class="active"{/if}><a href="{php echo webUrl('finance')}"> 财务</a></li>{/if}
 
         {ifp 'statistics.sale'}<li {if $_W['controller']=='statistics'} class="active"{/if}><a href="{php echo webUrl('statistics')}">数据</a></li>{/if}
         {ifp $this->isOpenPlugin()}<li {if $_W['controller']=='plugins' || !empty($_W['plugin'])} class="active"{/if}><a href="{php echo webUrl('plugins')}">应用</a></li>{/if}
@@ -50,7 +50,7 @@
             <ul role="menu" class="dropdown-menu">
                 <li><a href="{php echo webUrl('sysset/account')}"><i class="icon icon-similar"></i>  切换公众号</a></li>
                 {if $_W['role'] == 'manager' || $_W['role'] == 'founder'}
-                <li><a href="./index.php?c=account&a=post&uniacid={$GLOBALS['_W']['uniacid']}" target="_blank"><i class="icon icon-wechat"></i>  编辑公众号</a></li>
+                <li><a href="./index.php?c=account&a=post&uniacid={$GLOBALS['_W']['uniacid']}&acid={$GLOBALS['_W']['acid']}" target="_blank"><i class="icon icon-wechat"></i>  编辑公众号</a></li>
                 <li><a href="{php echo webUrl('sysset/payset')}"><i class="icon icon-pay"></i>  支付方式</a></li>
                 {/if}
                 <li><a href="./index.php?c=utility&a=emulator&" target="_blank"><i class="icon icon-machinery"></i>  模拟测试</a></li>
@@ -60,19 +60,18 @@
                 {/if}
                 {if $_W['role'] == 'founder'}
                 <li class="divider"></li>
-                
                 {if p("grant")}
                 <li><a href="{php echo webUrl('plugingrant')}"><i class="icon icon-assessedbadge"></i> 应用授权</a></li>
                 {/if}
                 <li><a href="{php echo webUrl('system')}"><i class="icon icon-settings"></i> 系统管理</a></li>
-                <li><a href="{php echo webUrl('system/auth/upgrade')}"><i class="icon icon-down"></i> 系统更新</a></li>
+                <li class="divider"></li> 
+	            <li><a href="{php echo webUrl('system/auth/upgrade')}" style="color: red;"><b><i class="icon icon-down"></i> 系统更新</b></a></li>
                 {/if}
                 <li><a href="./index.php?c=user&a=profile&" target="_blank"><i class="icon icon-lock"></i>  修改密码</a></li>
                 <li><a href="./index.php?c=account&a=display&" target="_blank"><i class="icon icon-back"></i>  返回系统</a></li>
             </ul>
         </li>
     </ul>
-
     {else}
     <ul class="nav navbar-nav    gray-bg">
 
@@ -80,8 +79,8 @@
         <li {if $_W['current_menu']=='plugin'} class="active"{/if}><a href="{php echo webUrl('system/plugin')}"> 应用</a></li>
         <li {if $_W['current_menu']=='copyright'} class="active"{/if}><a href="{php echo webUrl('system/copyright')}">版权</a></li>
         <li {if $_W['current_menu']=='data'} class="active"{/if}><a href="{php echo webUrl('system/data')}">数据</a></li>
-        <li {if $_W['current_menu']=='site'} class="active"{/if}><a href="{php echo webUrl('system/site')}">网站</a></li>
-        <li {if $_W['current_menu']=='auth'} class="active"{/if}><a href="{php echo webUrl('system/auth')}">授权</a></li>
+		<li {if $_W['current_menu']=='site'} class="active"{/if}><a href="{php echo webUrl('system/site')}">网站</a></li>
+        <li {if $_W['current_menu']=='auth'} class="active"{/if}><a href="{php echo webUrl('system/auth/upgrade')}">更新</a></li>
     </ul>
     <ul class="nav navbar-top-links navbar-right" style="width: 120px !important;">
         <li>
@@ -89,6 +88,7 @@
         </li>
     </ul>
     {/if}
+        <a class="switch-version" title="体验新版" href="{php echo webUrl('switchversion', array('route'=>$_GET['r'], 'id'=>$_GET['id']))}">体验新版</a>
 </div>
 </nav>
 </div>
@@ -102,3 +102,4 @@
         <div class="page-content">
             {/if}
         
+<!--weichengtech-->

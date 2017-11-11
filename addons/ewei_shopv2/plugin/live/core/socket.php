@@ -1,14 +1,9 @@
 <?php
-//weichengtech
 class LiveSocket
 {
 	public function redis($server)
 	{
-		if (!$server->redis || empty($server->redis)) {
-			return redis();
-		}
-
-		return $server->redis;
+		return redis();
 	}
 
 	/**
@@ -589,7 +584,7 @@ class LiveSocket
 			return false;
 		}
 
-		if (!$server->exist($fd)) {
+		if (!$this->exist($server, $fd)) {
 			$this->delUser($server, $data['roomid'], $fd, true, false);
 			return true;
 		}
@@ -604,8 +599,47 @@ class LiveSocket
 			$data = json_encode($data);
 		}
 
-		$result = $server->push($fd, $data);
+		if (isset($server->workerman)) {
+			$result = $this->push($fd, $data);
+		}
+		else {
+			$result = $server->push($fd, $data);
+		}
+
 		return $result;
+	}
+
+	protected function push($uid, $data)
+	{
+		global $worker;
+
+		if (isset($worker->uidConnections[$uid])) {
+			$connection = $worker->uidConnections[$uid];
+			$connection->send($data);
+			return true;
+		}
+
+		return false;
+	}
+
+	protected function exist($server = NULL, $fd = 0)
+	{
+		if (empty($server) || empty($fd)) {
+			return false;
+		}
+
+		if (isset($server->workerman)) {
+			if (!isset($server->uidConnections[$fd])) {
+				return false;
+			}
+		}
+		else {
+			if (!$server->exist($fd)) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	protected function sendAll($server = NULL, $data = array(), $fd = 0, $at = array(), $isUid = false)

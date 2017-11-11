@@ -68,7 +68,6 @@ a.fui-list-group.noborder{
 .fui-cell-label img{
 	width: 3.1rem;
 	height: 3.1rem;
-	border-radius: 50%;
 }
 .fui-cell-group .fui-cell .fui-cell-info{
 	color: #000;
@@ -372,7 +371,7 @@ i{
     line-height: 2.5rem;
     
 }
-.order_detail .mask{
+.mask{
 	position: fixed;
 	background:rgba(0,0,0,0.5);
 	width: 100%;
@@ -382,47 +381,50 @@ i{
 	z-index: 100;
 	display: none;
 }
-.order_detail .mask .code_box{
+.mask .codebox{
 	position: absolute;
-	margin-top:-9rem;
+	margin-top:-10rem;
 	top: 50%;
 	left: 50%;
-	margin-left: -7.35rem;
-	width: 14.7rem;
-	height: 18rem;
+	margin-left: -7.5rem;
+	width: 15rem;
+	height: 20rem;
 	background: #fff;
 	border-radius:20px;
-	line-height: 3.5rem;
+	line-height: 2.5rem;
 	font-size: 0.7rem;
 	color: #000;
 	font-weight: bold;
+	padding-top: 1.1rem;
 }
-.order_detail .mask .code_box img{
-	width: 8.25rem;
-	height: 8.25rem;
+.mask .codebox img{
+	width: 10rem;
+	height: 10rem;
 }
-.order_detail .mask .code_box .img_box{
+ .mask .codebox .img_box{
 	line-height: 3;
+	height:auto;
 }
-.order_detail .mask .cav_code{
+ .mask .cav_code{
 	width: 10rem;
 	height: 1.8rem;
 	line-height: 1.8rem;
 	margin: auto;
 	background: #f7f7f7;
 	color: #6f6f6f;
+	 font-size: 0.8rem;
 }
-.order_detail .mask .error{
+ .mask .error{
 	font-size: 0.65rem;
 	line-height: 1.2rem;
 	font-weight: normal;
 	color: #e85a6a;
 	margin-top: 0.5rem;
 }
-.order-info.fui-cell-group.noborder  .fui-cell{
+.fui-cell-group.noborder  .fui-cell{
 	padding: 0.2rem 0.6rem;
 }
-.order-info.fui-cell-group.noborder  .fui-cell .fui-cell-info{
+.fui-cell-group.noborder  .fui-cell .fui-cell-info{
 	color: #999;
 	font-size: 0.6rem;
 }
@@ -1078,27 +1080,27 @@ i{
 	color: #f95b4d;
 }
 /*核销码*/
-.cav .code_box{
+ .code_box{
 	text-align: center;
 	background: #fff;
 	height: 12.4rem;
 }
-.cav .code_box p{
+ .code_box p{
 	line-height: 2.4rem;
 	font-size: 0.75rem;
 	color: #000;
 }
-.cav .code_box .img_box{
+ /*.code_box .img_box{*/
+	/*height: 6.9rem;*/
+	/*width: 6.9rem;*/
+	/*margin: 0 auto;*/
+	/*text-align: center;*/
+/*}*/
+ .code_box img{
 	height: 6.9rem;
 	width: 6.9rem;
-	margin: 0 auto;
-	text-align: center;
 }
-.cav .code_box img{
-	height: 6.9rem;
-	width: 6.9rem;
-}
-.cav .code_box .cav_code{
+ .code_box .cav_code{
 	height: 1.7rem;
 	line-height: 1.7rem;
 	margin: 0.7rem auto;
@@ -1107,10 +1109,10 @@ i{
 	width: 8.2rem;
 	color: #666;
 }
-.cav .upright{
+ .upright{
 	position: relative;
 }
-.cav .upright:before{
+ .upright:before{
 	position: absolute;
 	content: '';
 	width: 0.2rem;
@@ -1163,3 +1165,27 @@ i{
 	padding: 0.5rem 0.7rem;
 	line-height: 1.4;
 }
+
+.nopadding{
+	padding: 0 !important;
+}
+.no_active .fui-cell-label img{
+	width: 3.25rem;
+	height: 2.8rem;
+}
+.no_active .fui-cell .fui-cell-info{
+	font-size: 0.75rem;
+	/*padding-left: 0.8rem;*/
+}
+.no_active .fui-cell .fui-cell-info p{
+	line-height: 1.3rem;
+}
+.no_active .fui-cell .fui-cell-info div{
+	font-size: 0.65rem;
+	line-height: 0.65rem;
+	color: #999;
+}
+.fui-cell-group.small{
+	margin-top: 0.25rem;
+}
+/*weichengtech*/

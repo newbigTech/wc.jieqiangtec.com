@@ -31,6 +31,7 @@ define(['core', 'tpl'], function (core, tpl) {
     modal.initList = function (params) {
         modal.cate = params.cate;
         modal.keyword = params.keyword;
+        modal.isrecommand = 0;
 
         if (!modal.toDetail2) {
             modal.page = 1;

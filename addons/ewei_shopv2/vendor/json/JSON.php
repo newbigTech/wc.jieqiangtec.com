@@ -1,5 +1,4 @@
 <?php
-
 define('SERVICES_JSON_SLICE', 1);
 define('SERVICES_JSON_IN_STR', 2);
 define('SERVICES_JSON_IN_ARR', 3);

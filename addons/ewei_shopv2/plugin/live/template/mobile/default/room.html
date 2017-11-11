@@ -1,6 +1,21 @@
 {template '_header'}
 <link rel="stylesheet" type="text/css" href="../addons/ewei_shopv2/plugin/live/static/css/room.css?v={php echo time()}">
-
+<style>
+    {if $fullscreen}
+    .fullscreen .block-video .video {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+    }
+    {else}
+    .block-video .video {
+        height: 100%;
+        width: 100%;
+        object-position: 0 50%;
+        object-fit: fill;
+    }
+    {/if}
+</style>
 <div class="fui-page">
     <div class="fui-content {if $fullscreen}fullscreen{/if}">
 
@@ -188,7 +203,7 @@
             {/if}
             <div class="btn-like live-info"></div>
             {if p('invitation') && !empty($room['invitation_id'])}
-            <a  href="{php echo mobileUrl('invitation',array('id'=>$room['invitation_id'],'roomid'=>$room['id'],'type'=>'live'))}" class="btn-share"></a>
+            <a  href="{php echo mobileUrl('invitation',array('id'=>$room['invitation_id'],'roomid'=>$room['id'],'type'=>'live'))}" class="btn-share external"></a>
             {/if}
         </div>
 
@@ -371,3 +386,4 @@
 </div>
 
 {template '_footer'}
+<!--weichengtech-->

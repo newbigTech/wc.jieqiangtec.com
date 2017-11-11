@@ -1425,7 +1425,7 @@
     right: 0;
     bottom: 0;
     z-index: 95;
-   display: none;
+    display: none;
 }
 
 /* 红包弹窗 */
@@ -1944,8 +1944,8 @@
     font-size: 0.8rem;
     height:1.5rem;
     overflow:hidden;
-text-overflow:ellipsis;
-white-space:nowrap;
+    text-overflow:ellipsis;
+    white-space:nowrap;
     line-height: 1.5rem;
 }
 
@@ -2238,3 +2238,4 @@ white-space:nowrap;
     z-index: 1000;
     display: none;
 }
+/*weichengtech54mI5p2D5omA5pyJ*/

@@ -11,10 +11,11 @@
 				<li class=""><a data-toggle="tab" href="#tab-trade" aria-expanded="false"> 交易信息</a></li>
 				
                                
-				{if $hascommission} {ifp 'commission.agent.main'}
+				{if $hascommission}
+				{ifp 'commission.agent.main'}
 				<li class=""><a data-toggle="tab" href="#tab-commission" aria-expanded="false"> 分销商信息</a></li>
-                                                        {/if}
-                                                        {/if}
+				{/if}
+				{/if}
 				{if $hasglobonus}
 				<li class=""><a data-toggle="tab" href="#tab-globonus" aria-expanded="false">股东信息</a></li>
 				{/if}
@@ -82,3 +83,4 @@
 </form>
 
 {template '_footer'}
+<!--weichengtech-->

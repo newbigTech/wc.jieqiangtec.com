@@ -40,7 +40,7 @@
     <label class="col-sm-2 control-label">分享图标</label>
     <div class="col-sm-9 col-xs-12">
         {ife 'creditshop.goods' $item}
-            {php echo tpl_form_field_image('share_icon', $item['share_icon'])}
+            {php echo tpl_form_field_image2('share_icon', $item['share_icon'])}
             <span class='help-block'>如果不选择，默认为商品缩略图片</span>
         {else}
             {if !empty($item['share_icon'])}
@@ -62,3 +62,4 @@
         {/if}
     </div>
 </div>
+<!--weichengtech-->

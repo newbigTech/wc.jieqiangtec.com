@@ -19,6 +19,7 @@
     .form-group .radio-inline{
         padding-top: 0px;;
     }
+    .is_sms {display: {if !empty($opensms)}table-block{else}none{/if};}
 </style>
 <div class="page-heading">
     <div class="pull-right" style="text-align: right;margin-top: 10px;" >
@@ -33,13 +34,14 @@
 
 </div>
 <form id="setform"  {ifp 'commission.notice.edit'}action="" method="post"{/if} class="form-horizontal form-validate">
+
     <input type="hidden" value="{php echo intval($data['tm']['is_advanced'])}" name='data[is_advanced]' />
     {ifp 'commission.notice.edit'}
     <div class='alert alert-success' id="advanced_alert">
-        使用高级模式 , 将全部启用自定义的模板内容进行推送 ! <span class="text-danger"><a href="{php echo webUrl('sysset/tmessage')}">模板库(点击进入)</a></span>
+        使用高级模式 , 将全部启用自定义的模板内容进行推送 ! <span class="text-danger"><a href="{php echo webUrl('sysset/tmessage')}">模板库(点击进入)</a> {if $opensms}<span class="text-danger"><a href="{php echo webUrl('sysset/sms/temp')}">短信模板库(点击进入)</a></span>{/if}
     </div>
     <div class='alert alert-info' id="normal_alert">
-        默认为全部开启，用户在会员中心可自行设置是否开启, 模板消息自动替换变量
+        默认为全部开启，用户在会员中心可自行设置是否开启, 模板消息自动替换变量 {if $opensms}<span class="text-danger"><a href="{php echo webUrl('sysset/sms/temp')}">短信模板库(点击进入)</a></span>{/if}
     </div>
     {/if}
     <div id="normal">
@@ -54,10 +56,12 @@
                 {/if}
             </div>
         </div>
-        <div class="form-group">
-            <label class="col-sm-2 control-label">成为分销商通知</label>
-            <div class="col-sm-9 col-xs-12">
 
+        <div class="form-group-title">成为分销商通知</div>
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label">标题</label>
+            <div class="col-sm-9 col-xs-12">
                 {ifp 'commission.notice.edit'}
                 <input type="text" name="data[commission_becometitle]" class="form-control" value="{$data['tm']['commission_becometitle']}" />
                 <div class="help-block">标题，默认"成为分销商通知"</div>
@@ -68,7 +72,7 @@
         </div>
 
         <div class="form-group">
-            <label class="col-sm-2 control-label"></label>
+            <label class="col-sm-2 control-label">内容</label>
             <div class="col-sm-9 col-xs-12">
                 {ifp 'commission.notice.edit'}
                 <textarea  name="data[commission_become]" class="form-control" >{$data['tm']['commission_become']}</textarea>
@@ -80,8 +84,22 @@
             </div>
         </div>
 
+        <div class="form-group is_sms">
+            <label class="col-sm-2 control-label">短信提醒</label>
+            <div class="col-sm-9 col-xs-12">
+                <select class="select2" {ifp 'commission.notice.edit'}name="data[commission_become_sms]"{else}disabled{/if}>>
+                    <option value=''>从短信消息库中选择</option>
+                    {loop $template_sms $template_val}
+                    <option value="{$template_val['id']}" {if $data['tm']['commission_become_sms'] == $template_val['id'] }selected{/if}>{$template_val['name']}</option>
+                    {/loop}
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group-title">新增下级通知</div>
+
         <div class="form-group">
-            <label class="col-sm-2 control-label">新增下级通知</label>
+            <label class="col-sm-2 control-label">标题</label>
             <div class="col-sm-9 col-xs-12">
                 {ifp 'commission.notice.edit'}
                 <input type="text" name="data[commission_agent_newtitle]" class="form-control" value="{$data['tm']['commission_agent_newtitle']}" />
@@ -103,7 +121,7 @@
             </div>
         </div>
         <div class="form-group">
-            <label class="col-sm-2 control-label"></label>
+            <label class="col-sm-2 control-label">内容</label>
             <div class="col-sm-9 col-xs-12">
                 {ifp 'commission.notice.edit'}
                 <textarea  name="data[commission_agent_new]" class="form-control" >{$data['tm']['commission_agent_new']}</textarea>
@@ -113,8 +131,23 @@
                 {/if}
             </div>
         </div>
+
+        <div class="form-group is_sms">
+            <label class="col-sm-2 control-label">短信提醒</label>
+            <div class="col-sm-9 col-xs-12">
+                <select class="select2" {ifp 'commission.notice.edit'}name="data[commission_agent_sms]"{else}disabled{/if}>>
+                <option value=''>从短信消息库中选择</option>
+                {loop $template_sms $template_val}
+                <option value="{$template_val['id']}" {if $data['tm']['commission_agent_sms'] == $template_val['id'] }selected{/if}>{$template_val['name']}</option>
+                {/loop}
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group-title">下级付款通知</div>
+
         <div class="form-group">
-            <label class="col-sm-2 control-label">下级付款通知</label>
+            <label class="col-sm-2 control-label">标题</label>
             <div class="col-sm-9 col-xs-12">
                 {ifp 'commission.notice.edit'}
                 <input type="text" name="data[commission_order_paytitle]" class="form-control" value="{$data['tm']['commission_order_paytitle']}" />
@@ -137,7 +170,7 @@
         </div>
 
         <div class="form-group">
-            <label class="col-sm-2 control-label"></label>
+            <label class="col-sm-2 control-label">内容</label>
             <div class="col-sm-9 col-xs-12">
                 {ifp 'commission.notice.edit'}
                 <textarea  name="data[commission_order_pay]" class="form-control" >{$data['tm']['commission_order_pay']}</textarea>
@@ -149,8 +182,22 @@
             </div>
         </div>
 
+        <div class="form-group is_sms">
+            <label class="col-sm-2 control-label">短信提醒</label>
+            <div class="col-sm-9 col-xs-12">
+                <select class="select2" {ifp 'commission.notice.edit'}name="data[commission_order_pay_sms]"{else}disabled{/if}>>
+                <option value=''>从短信消息库中选择</option>
+                {loop $template_sms $template_val}
+                <option value="{$template_val['id']}" {if $data['tm']['commission_order_pay_sms'] == $template_val['id'] }selected{/if}>{$template_val['name']}</option>
+                {/loop}
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group-title">下级确认收货通知</div>
+
         <div class="form-group">
-            <label class="col-sm-2 control-label">下级确认收货通知</label>
+            <label class="col-sm-2 control-label">标题</label>
             <div class="col-sm-9 col-xs-12">
                 {ifp 'commission.notice.edit'}
                 <input type="text" name="data[commission_order_finishtitle]" class="form-control" value="{$data['tm']['commission_order_finishtitle']}" />
@@ -173,7 +220,7 @@
         </div>
 
         <div class="form-group">
-            <label class="col-sm-2 control-label"></label>
+            <label class="col-sm-2 control-label">内容</label>
             <div class="col-sm-9 col-xs-12">
                 {ifp 'commission.notice.edit'}
                 <textarea  name="data[commission_order_finish]" class="form-control" >{$data['tm']['commission_order_finish']}</textarea>
@@ -185,8 +232,22 @@
             </div>
         </div>
 
+        <div class="form-group is_sms">
+            <label class="col-sm-2 control-label">短信提醒</label>
+            <div class="col-sm-9 col-xs-12">
+                <select class="select2" {ifp 'commission.notice.edit'}name="data[commission_order_finish_sms]"{else}disabled{/if}>>
+                <option value=''>从短信消息库中选择</option>
+                {loop $template_sms $template_val}
+                <option value="{$template_val['id']}" {if $data['tm']['commission_order_finish_sms'] == $template_val['id'] }selected{/if}>{$template_val['name']}</option>
+                {/loop}
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group-title">提现申请提交通知</div>
+
         <div class="form-group">
-            <label class="col-sm-2 control-label">提现申请提交通知</label>
+            <label class="col-sm-2 control-label">标题</label>
             <div class="col-sm-9 col-xs-12">
                 {ifp 'commission.notice.edit'}
                 <input type="text" name="data[commission_applytitle]" class="form-control" value="{$data['tm']['commission_applytitle']}" />
@@ -198,7 +259,7 @@
         </div>
 
         <div class="form-group">
-            <label class="col-sm-2 control-label"></label>
+            <label class="col-sm-2 control-label">内容</label>
             <div class="col-sm-9 col-xs-12">
                 {ifp 'commission.notice.edit'}
                 <textarea  name="data[commission_apply]" class="form-control" >{$data['tm']['commission_apply']}</textarea>
@@ -208,8 +269,23 @@
                 {/if}
             </div>
         </div>
+
+        <div class="form-group is_sms">
+            <label class="col-sm-2 control-label">短信提醒</label>
+            <div class="col-sm-9 col-xs-12">
+                <select class="select2" {ifp 'commission.notice.edit'}name="data[commission_apply_sms]"{else}disabled{/if}>>
+                <option value=''>从短信消息库中选择</option>
+                {loop $template_sms $template_val}
+                <option value="{$template_val['id']}" {if $data['tm']['commission_apply_sms'] == $template_val['id'] }selected{/if}>{$template_val['name']}</option>
+                {/loop}
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group-title">提现申请审核完成通知</div>
+
         <div class="form-group">
-            <label class="col-sm-2 control-label">提现申请审核完成通知</label>
+            <label class="col-sm-2 control-label">标题</label>
             <div class="col-sm-9 col-xs-12">
                 {ifp 'commission.notice.edit'}
                 <input type="text" name="data[commission_checktitle]" class="form-control" value="{$data['tm']['commission_checktitle']}" />
@@ -221,7 +297,7 @@
         </div>
 
         <div class="form-group">
-            <label class="col-sm-2 control-label"></label>
+            <label class="col-sm-2 control-label">内容</label>
             <div class="col-sm-9 col-xs-12">
                 {ifp 'commission.notice.edit'}
                 <textarea  name="data[commission_check]" class="form-control" >{$data['tm']['commission_check']}</textarea>
@@ -232,9 +308,22 @@
             </div>
         </div>
 
+        <div class="form-group is_sms">
+            <label class="col-sm-2 control-label">短信提醒</label>
+            <div class="col-sm-9 col-xs-12">
+                <select class="select2" {ifp 'commission.notice.edit'}name="data[commission_check_sms]"{else}disabled{/if}>>
+                <option value=''>从短信消息库中选择</option>
+                {loop $template_sms $template_val}
+                <option value="{$template_val['id']}" {if $data['tm']['commission_check_sms'] == $template_val['id'] }selected{/if}>{$template_val['name']}</option>
+                {/loop}
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group-title">佣金打款通知</div>
 
         <div class="form-group">
-            <label class="col-sm-2 control-label">佣金打款通知</label>
+            <label class="col-sm-2 control-label">标题</label>
             <div class="col-sm-9 col-xs-12">
                 {ifp 'commission.notice.edit'}
                 <input type="text" name="data[commission_paytitle]" class="form-control" value="{$data['tm']['commission_paytitle']}" />
@@ -246,7 +335,7 @@
         </div>
 
         <div class="form-group">
-            <label class="col-sm-2 control-label"></label>
+            <label class="col-sm-2 control-label">内容</label>
             <div class="col-sm-9 col-xs-12">
                 {ifp 'commission.notice.edit'}
                 <textarea  name="data[commission_pay]" class="form-control" >{$data['tm']['commission_pay']}</textarea>
@@ -257,9 +346,22 @@
             </div>
         </div>
 
+        <div class="form-group is_sms">
+            <label class="col-sm-2 control-label">短信提醒</label>
+            <div class="col-sm-9 col-xs-12">
+                <select class="select2" {ifp 'commission.notice.edit'}name="data[commission_pay_sms]"{else}disabled{/if}>>
+                <option value=''>从短信消息库中选择</option>
+                {loop $template_sms $template_val}
+                <option value="{$template_val['id']}" {if $data['tm']['commission_pay_sms'] == $template_val['id'] }selected{/if}>{$template_val['name']}</option>
+                {/loop}
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group-title">分销商等级升级通知</div>
 
         <div class="form-group">
-            <label class="col-sm-2 control-label">分销商等级升级通知</label>
+            <label class="col-sm-2 control-label">标题</label>
             <div class="col-sm-9 col-xs-12">
                 {ifp 'commission.notice.edit'}
                 <input type="text" name="data[commission_upgradetitle]" class="form-control" value="{$data['tm']['commission_upgradetitle']}" />
@@ -270,7 +372,7 @@
             </div>
         </div>
         <div class="form-group">
-            <label class="col-sm-2 control-label"></label>
+            <label class="col-sm-2 control-label">内容</label>
             <div class="col-sm-9 col-xs-12">
                 {ifp 'commission.notice.edit'}
                 <textarea  name="data[commission_upgrade]" class="form-control" >{$data['tm']['commission_upgrade']}</textarea>
@@ -280,148 +382,247 @@
                 {/if}
             </div>
         </div>
+
+        <div class="form-group is_sms">
+            <label class="col-sm-2 control-label">短信提醒</label>
+            <div class="col-sm-9 col-xs-12">
+                <select class="select2" {ifp 'commission.notice.edit'}name="data[commission_upgrade_sms]"{else}disabled{/if}>>
+                <option value=''>从短信消息库中选择</option>
+                {loop $template_sms $template_val}
+                <option value="{$template_val['id']}" {if $data['tm']['commission_upgrade_sms'] == $template_val['id'] }selected{/if}>{$template_val['name']}</option>
+                {/loop}
+                </select>
+            </div>
+        </div>
+
     </div>
     <div id="advanced">
-        <div class="form-group">
-            <label class="col-sm-2 control-label">成为分销商通知</label>
-            <div class="col-sm-9 col-xs-12">
-                <select class="select2" {ifp 'commission.notice.edit'}name="data[commission_become_advanced]"{else}disabled{/if}>
+
+        <table class="table table-responsive">
+            <thead>
+            <th style="width: 150px;">通知类型</th>
+            <th>模板消息</th>
+            <th class="is_sms">短信模板(不选则不提醒)</th>
+            <th style="width: 150px;">默认通知等级</th>
+            </thead>
+            <tbody>
+            <tr>
+                <td>成为分销商通知</td>
+                <td>
+                    <select class="select2" {ifp 'commission.notice.edit'}name="data[commission_become_advanced]"{else}disabled{/if}>
                     <option value=''>从模板消息库中选择</option>
                     {loop $template_list $template_val}
                     <option value="{$template_val['id']}" {if $data['tm']['commission_become_advanced'] == $template_val['id'] }selected{/if}>{$template_val['title']}</option>
                     {/loop}
-                </select>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label class="col-sm-2 control-label">新增下级通知</label>
-            <div class="col-sm-9 col-xs-12">
-                <select class="select2" {ifp 'commission.notice.edit'}name="data[commission_agent_new_advanced]"{else}disabled{/if}>
+                    </select>
+                </td>
+                <td class="is_sms">
+                    <select class="select2" {ifp 'commission.notice.edit'}name="data[commission_become_sms_advanced]"{else}disabled{/if}>
+                    <option value=''>从短信消息库中选择</option>
+                    {loop $template_sms $template_val}
+                    <option value="{$template_val['id']}" {if $data['tm']['commission_become_sms_advanced'] == $template_val['id'] }selected{/if}>{$template_val['name']}</option>
+                    {/loop}
+                    </select>
+                </td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td>新增下级通知</td>
+                <td>
+                    <select class="select2" {ifp 'commission.notice.edit'}name="data[commission_agent_new_advanced]"{else}disabled{/if}>
                     <option value=''>从模板消息库中选择</option>
                     {loop $template_list $template_val}
                     <option value="{$template_val['id']}" {if $data['tm']['commission_agent_new_advanced'] == $template_val['id'] }selected{/if}>{$template_val['title']}</option>
                     {/loop}
-                </select>
-                <div class="help-block">
-                    默认通知等级 :
-                    <label class="radio-inline">
-                        <input type="radio" value="0" name="data[commission_agent_new_advanced_notice]" {if empty($data['tm']['commission_agent_new_advanced_notice'])}checked=""{/if}> {php echo empty($data['texts']['c1'])?'一级':$data['texts']['c1']}[默认]
-                    </label>
-                    <label class="radio-inline">
-                        <input type="radio" value="1" name="data[commission_agent_new_advanced_notice]" {if strexists($data['tm']['commission_agent_new_advanced_notice'],'1')}checked=""{/if}> {php echo empty($data['texts']['c1'])?'一级':$data['texts']['c1']}+{php echo empty($data['texts']['c2'])?'二级':$data['texts']['c2']}
-                    </label>
-                    <label class="radio-inline">
-                        <input type="radio" value="2" name="data[commission_agent_new_advanced_notice]" {if strexists($data['tm']['commission_agent_new_advanced_notice'],'2')}checked=""{/if}> {php echo empty($data['texts']['c1'])?'一级':$data['texts']['c1']}+{php echo empty($data['texts']['c2'])?'二级':$data['texts']['c2']}+{php echo empty($data['texts']['c3'])?'三级':$data['texts']['c3']}
-                    </label>
-                </div>
-            </div>
-        </div>
+                    </select>
+                </td>
+                <td class="is_sms">
+                    <select class="select2" {ifp 'commission.notice.edit'}name="data[commission_agent_new_sms_advanced]"{else}disabled{/if}>
+                    <option value=''>从短信消息库中选择</option>
+                    {loop $template_sms $template_val}
+                    <option value="{$template_val['id']}" {if $data['tm']['commission_agent_new_sms_advanced'] == $template_val['id'] }selected{/if}>{$template_val['name']}</option>
+                    {/loop}
+                    </select>
+                </td>
+                <td>
+                    <label class="radio-inline"><input type="radio" value="0" name="data[commission_agent_new_advanced_notice]" {if empty($data['tm']['commission_agent_new_advanced_notice'])}checked=""{/if}> {php echo empty($data['texts']['c1'])?'一级':$data['texts']['c1']}[默认]</label><br>
+                    <label class="radio-inline"><input type="radio" value="1" name="data[commission_agent_new_advanced_notice]" {if strexists($data['tm']['commission_agent_new_advanced_notice'],'1')}checked=""{/if}> {php echo empty($data['texts']['c1'])?'一级':$data['texts']['c1']}+{php echo empty($data['texts']['c2'])?'二级':$data['texts']['c2']}</label><br>
+                    <label class="radio-inline"><input type="radio" value="2" name="data[commission_agent_new_advanced_notice]" {if strexists($data['tm']['commission_agent_new_advanced_notice'],'2')}checked=""{/if}> {php echo empty($data['texts']['c1'])?'一级':$data['texts']['c1']}+{php echo empty($data['texts']['c2'])?'二级':$data['texts']['c2']}+{php echo empty($data['texts']['c3'])?'三级':$data['texts']['c3']}</label>
+                </td>
+            </tr>
+            </tbody>
+         </table>
 
-        <div class="form-group-title">下级通知</div>
-        <div class="form-group">
-            <label class="col-sm-2 control-label">下级付款通知</label>
-            <div class="col-sm-9 col-xs-12">
-
-                <select class="select2" {ifp 'commission.notice.edit'}name="data[commission_order_pay_advanced]"{else}disabled{/if}>
+        <table class="table table-responsive">
+            <thead>
+            <th style="width: 150px;">下级通知</th>
+            <th>模板消息</th>
+            <th class="is_sms">短信模板(不选则不提醒)</th>
+            <th style="width: 150px;">默认通知等级</th>
+            </thead>
+            <tbody>
+            <tr>
+                <td>下级付款通知</td>
+                <td>
+                    <select class="select2" {ifp 'commission.notice.edit'}name="data[commission_order_pay_advanced]"{else}disabled{/if}>
                     <option value=''>从模板消息库中选择</option>
                     {loop $template_list $template_val}
                     <option value="{$template_val['id']}" {if $data['tm']['commission_order_pay_advanced'] == $template_val['id'] }selected{/if}>{$template_val['title']}</option>
                     {/loop}
-                </select>
-                <div class="help-block">
-                    默认通知等级 :
-                    <label class="radio-inline">
-                        <input type="radio" value="0" name="data[commission_order_pay_advanced_notice]" {if empty($data['tm']['commission_order_pay_advanced_notice'])}checked=""{/if}> {php echo empty($data['texts']['c1'])?'一级':$data['texts']['c1']}[默认]
-                    </label>
-                    <label class="radio-inline">
-                        <input type="radio" value="1" name="data[commission_order_pay_advanced_notice]" {if strexists($data['tm']['commission_order_pay_advanced_notice'],'1')}checked=""{/if}> {php echo empty($data['texts']['c1'])?'一级':$data['texts']['c1']}+{php echo empty($data['texts']['c2'])?'二级':$data['texts']['c2']}
-                    </label>
-                    <label class="radio-inline">
-                        <input type="radio" value="2" name="data[commission_order_pay_advanced_notice]" {if strexists($data['tm']['commission_order_pay_advanced_notice'],'2')}checked=""{/if}> {php echo empty($data['texts']['c1'])?'一级':$data['texts']['c1']}+{php echo empty($data['texts']['c2'])?'二级':$data['texts']['c2']}+{php echo empty($data['texts']['c3'])?'三级':$data['texts']['c3']}
-                    </label>
-                </div>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label class="col-sm-2 control-label">下级确认收货通知</label>
-            <div class="col-sm-9 col-xs-12">
-                <select class="select2" {ifp 'commission.notice.edit'}name="data[commission_order_finish_advanced]"{else}disabled{/if}>
+                    </select>
+                </td>
+                <td class="is_sms">
+                    <select class="select2" {ifp 'commission.notice.edit'}name="data[commission_order_pay_sms_advanced]"{else}disabled{/if}>
+                    <option value=''>从短信消息库中选择</option>
+                    {loop $template_sms $template_val}
+                    <option value="{$template_val['id']}" {if $data['tm']['commission_order_pay_sms_advanced'] == $template_val['id'] }selected{/if}>{$template_val['name']}</option>
+                    {/loop}
+                    </select>
+                </td>
+                <td>
+                    <label class="radio-inline"><input type="radio" value="0" name="data[commission_order_pay_advanced_notice]" {if empty($data['tm']['commission_order_pay_advanced_notice'])}checked=""{/if}> {php echo empty($data['texts']['c1'])?'一级':$data['texts']['c1']}[默认]</label><br>
+                    <label class="radio-inline"><input type="radio" value="1" name="data[commission_order_pay_advanced_notice]" {if strexists($data['tm']['commission_order_pay_advanced_notice'],'1')}checked=""{/if}> {php echo empty($data['texts']['c1'])?'一级':$data['texts']['c1']}+{php echo empty($data['texts']['c2'])?'二级':$data['texts']['c2']}</label><br>
+                    <label class="radio-inline"><input type="radio" value="2" name="data[commission_order_pay_advanced_notice]" {if strexists($data['tm']['commission_order_pay_advanced_notice'],'2')}checked=""{/if}> {php echo empty($data['texts']['c1'])?'一级':$data['texts']['c1']}+{php echo empty($data['texts']['c2'])?'二级':$data['texts']['c2']}+{php echo empty($data['texts']['c3'])?'三级':$data['texts']['c3']}</label>
+                </td>
+            </tr>
+            <tr>
+                <td>下级确认收货通知</td>
+                <td>
+                    <select class="select2" {ifp 'commission.notice.edit'}name="data[commission_order_finish_advanced]"{else}disabled{/if}>
                     <option value=''>从模板消息库中选择</option>
                     {loop $template_list $template_val}
                     <option value="{$template_val['id']}" {if $data['tm']['commission_order_finish_advanced'] == $template_val['id'] }selected{/if}>{$template_val['title']}</option>
                     {/loop}
-                </select>
-                <div class="help-block">
-                    默认通知等级 :
-                    <label class="radio-inline">
-                        <input type="radio" value="0" name="data[commission_order_finish_advanced_notice]" {if empty($data['tm']['commission_order_finish_advanced_notice'])}checked=""{/if}> {php echo empty($data['texts']['c1'])?'一级':$data['texts']['c1']}[默认]
-                    </label>
-                    <label class="radio-inline">
-                        <input type="radio" value="1" name="data[commission_order_finish_advanced_notice]" {if strexists($data['tm']['commission_order_finish_advanced_notice'],'1')}checked=""{/if}>{php echo empty($data['texts']['c1'])?'一级':$data['texts']['c1']}+{php echo empty($data['texts']['c2'])?'二级':$data['texts']['c2']}
-                    </label>
-                    <label class="radio-inline">
-                        <input type="radio" value="2" name="data[commission_order_finish_advanced_notice]" {if strexists($data['tm']['commission_order_finish_advanced_notice'],'2')}checked=""{/if}>{php echo empty($data['texts']['c1'])?'一级':$data['texts']['c1']}+{php echo empty($data['texts']['c2'])?'二级':$data['texts']['c2']}+{php echo empty($data['texts']['c3'])?'三级':$data['texts']['c3']}
-                    </label>
-                </div>
-            </div>
-        </div>
-        <div class="form-group-title">提现通知</div>
-        <div class="form-group">
-            <label class="col-sm-2 control-label">提现申请提交通知</label>
-            <div class="col-sm-9 col-xs-12">
-                <select class="select2" {ifp 'commission.notice.edit'}name="data[commission_apply_advanced]"{else}disabled{/if}>
+                    </select>
+                </td>
+                <td class="is_sms">
+                    <select class="select2" {ifp 'commission.notice.edit'}name="data[commission_order_finish_sms_advanced]"{else}disabled{/if}>
+                    <option value=''>从短信消息库中选择</option>
+                    {loop $template_sms $template_val}
+                    <option value="{$template_val['id']}" {if $data['tm']['commission_order_finish_sms_advanced'] == $template_val['id'] }selected{/if}>{$template_val['name']}</option>
+                    {/loop}
+                    </select>
+                </td>
+                <td>
+                    <label class="radio-inline"><input type="radio" value="0" name="data[commission_order_finish_advanced_notice]" {if empty($data['tm']['commission_order_finish_advanced_notice'])}checked=""{/if}> {php echo empty($data['texts']['c1'])?'一级':$data['texts']['c1']}[默认]
+</label><br>
+                    <label class="radio-inline"><input type="radio" value="1" name="data[commission_order_finish_advanced_notice]" {if strexists($data['tm']['commission_order_finish_advanced_notice'],'1')}checked=""{/if}>{php echo empty($data['texts']['c1'])?'一级':$data['texts']['c1']}+{php echo empty($data['texts']['c2'])?'二级':$data['texts']['c2']}</label><br>
+                    <label class="radio-inline"><input type="radio" value="2" name="data[commission_order_finish_advanced_notice]" {if strexists($data['tm']['commission_order_finish_advanced_notice'],'2')}checked=""{/if}>{php echo empty($data['texts']['c1'])?'一级':$data['texts']['c1']}+{php echo empty($data['texts']['c2'])?'二级':$data['texts']['c2']}+{php echo empty($data['texts']['c3'])?'三级':$data['texts']['c3']}</label>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <table class="table table-responsive">
+            <thead>
+            <th style="width: 150px;">提现通知</th>
+            <th>模板消息</th>
+            <th class="is_sms">短信模板(不选则不提醒)</th>
+            <th style="width: 150px;"></th>
+            </thead>
+            <tbody>
+            <tr>
+                <td>提现申请提交通知</td>
+                <td>
+                    <select class="select2" {ifp 'commission.notice.edit'}name="data[commission_apply_advanced]"{else}disabled{/if}>
                     <option value=''>从模板消息库中选择</option>
                     {loop $template_list $template_val}
                     <option value="{$template_val['id']}" {if $data['tm']['commission_apply_advanced'] == $template_val['id'] }selected{/if}>{$template_val['title']}</option>
                     {/loop}
-                </select>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label class="col-sm-2 control-label">提现申请审核完成通知</label>
-            <div class="col-sm-9 col-xs-12">
-                <select class="select2" {ifp 'commission.notice.edit'}name="data[commission_check_advanced]"{else}disabled{/if}>
+                    </select>
+                </td>
+                <td class="is_sms">
+                    <select class="select2" {ifp 'commission.notice.edit'}name="data[commission_apply_sms_advanced]"{else}disabled{/if}>
+                    <option value=''>从短信消息库中选择</option>
+                    {loop $template_sms $template_val}
+                    <option value="{$template_val['id']}" {if $data['tm']['commission_apply_sms_advanced'] == $template_val['id'] }selected{/if}>{$template_val['name']}</option>
+                    {/loop}
+                    </select>
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>提现申请审核完成通知</td>
+                <td>
+                    <select class="select2" {ifp 'commission.notice.edit'}name="data[commission_check_advanced]"{else}disabled{/if}>
                     <option value=''>从模板消息库中选择</option>
                     {loop $template_list $template_val}
                     <option value="{$template_val['id']}" {if $data['tm']['commission_check_advanced'] == $template_val['id'] }selected{/if}>{$template_val['title']}</option>
                     {/loop}
-                </select>
-            </div>
-        </div>
+                    </select>
+                </td>
+                <td class="is_sms">
+                    <select class="select2" {ifp 'commission.notice.edit'}name="data[commission_check_sms_advanced]"{else}disabled{/if}>
+                    <option value=''>从短信消息库中选择</option>
+                    {loop $template_sms $template_val}
+                    <option value="{$template_val['id']}" {if $data['tm']['commission_check_sms_advanced'] == $template_val['id'] }selected{/if}>{$template_val['name']}</option>
+                    {/loop}
+                    </select>
+                </td>
+                <td></td>
+            </tr>
+            </tbody>
+        </table>
 
-        <div class="form-group-title">佣金通知</div>
-        <div class="form-group">
-            <label class="col-sm-2 control-label">佣金打款通知</label>
-            <div class="col-sm-9 col-xs-12">
-                <select class="select2" {ifp 'commission.notice.edit'}name="data[commission_pay_advanced]"{else}disabled{/if}>
+        <table class="table table-responsive">
+            <thead>
+            <th style="width: 150px;">佣金通知</th>
+            <th>模板消息</th>
+            <th class="is_sms">短信模板(不选则不提醒)</th>
+            <th style="width: 150px;"></th>
+            </thead>
+            <tbody>
+            <tr>
+                <td>佣金打款通知</td>
+                <td>
+                    <select class="select2" {ifp 'commission.notice.edit'}name="data[commission_pay_advanced]"{else}disabled{/if}>
                     <option value=''>从模板消息库中选择</option>
                     {loop $template_list $template_val}
                     <option value="{$template_val['id']}" {if $data['tm']['commission_pay_advanced'] == $template_val['id'] }selected{/if}>{$template_val['title']}</option>
                     {/loop}
-                </select>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label class="col-sm-2 control-label">分销商等级升级通知</label>
-            <div class="col-sm-9 col-xs-12">
-                <select class="select2" {ifp 'commission.notice.edit'}name="data[commission_upgrade_advanced]"{else}disabled{/if}>
+                    </select>
+                </td>
+                <td class="is_sms">
+                    <select class="select2" {ifp 'commission.notice.edit'}name="data[commission_pay_sms_advanced]"{else}disabled{/if}>
+                    <option value=''>从短信消息库中选择</option>
+                    {loop $template_sms $template_val}
+                    <option value="{$template_val['id']}" {if $data['tm']['commission_pay_sms_advanced'] == $template_val['id'] }selected{/if}>{$template_val['name']}</option>
+                    {/loop}
+                    </select>
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>分销商等级升级通知</td>
+                <td>
+                    <select class="select2" {ifp 'commission.notice.edit'}name="data[commission_upgrade_advanced]"{else}disabled{/if}>
                     <option value=''>从模板消息库中选择</option>
                     {loop $template_list $template_val}
                     <option value="{$template_val['id']}" {if $data['tm']['commission_upgrade_advanced'] == $template_val['id'] }selected{/if}>{$template_val['title']}</option>
                     {/loop}
-                </select>
-            </div>
-        </div>
+                    </select>
+                </td>
+                <td class="is_sms">
+                    <select class="select2" {ifp 'commission.notice.edit'}name="data[commission_upgrade_sms_advanced]"{else}disabled{/if}>
+                    <option value=''>从短信消息库中选择</option>
+                    {loop $template_sms $template_val}
+                    <option value="{$template_val['id']}" {if $data['tm']['commission_upgrade_sms_advanced'] == $template_val['id'] }selected{/if}>{$template_val['name']}</option>
+                    {/loop}
+                    </select>
+                </td>
+                <td></td>
+            </tr>
+            </tbody>
+        </table>
+
+
+
 
     </div>
     {ifp 'commission.notice.edit'}
     <div class="form-group">
         <label class="col-sm-2 control-label"></label>
-        <div class="col-sm-9">
+        <div class="col-sm-12">
             <input type="submit" value="提交" class="btn btn-primary" />
         </div>
     </div>
@@ -456,3 +657,4 @@
     })
 </script>
 {template '_footer'}
+<!--weichengtech-->

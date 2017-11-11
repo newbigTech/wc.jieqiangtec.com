@@ -11,7 +11,7 @@ class CashierModel extends PluginModel
 	const PAY = 'pay';
 	const PAY_CASHIER = 'pay_cashier';
 	const PAY_CASHIER_USER = 'pay_cashier_user';
-	static public $paytype = array(0 => '微信', 1 => '支付宝', 2 => '商城余额', 3 => '现金收款', 101 => '系统微信', 102 => '系统支付宝');
+	static public $paytype = array(0 => '微信', 1 => '支付宝', 2 => '商城余额', 3 => '现金收款', 101 => '系统微信');
 	public $setmeal = array('标准套餐', '豪华套餐');
 	static public $UserSet = array();
 	static public function perm() 
@@ -232,29 +232,28 @@ class CashierModel extends PluginModel
 		{
 			case self: $datas = array('[联系人]' => $params['name'], '[联系电话]' => $params['mobile'], '[申请时间]' => date('Y-m-d H:i:s', $params['createtime']));
 			break;
-			default: switch ($type) 
+			switch ($type) 
 			{
 				case self: $datas = array('[联系人]' => $params['name'], '[联系电话]' => $params['mobile'], '[审核状态]' => $params['status'], '[审核时间]' => $params['createtime'], '[驳回原因]' => $params['reason']);
 				break;
-				default: switch ($type) 
+				switch ($type) 
 				{
 					case self: $datas = array('[联系人]' => $params['name'], '[联系电话]' => $params['mobile'], '[申请时间]' => $params['createtime'], '[申请金额]' => $params['money']);
 					break;
-					default: switch ($type) 
+					switch ($type) 
 					{
 						case self: $datas = array('[联系人]' => $params['name'], '[联系电话]' => $params['mobile'], '[申请时间]' => $params['createtime'], '[打款时间]' => $params['paytime'], '[申请金额]' => $params['money'], '[打款金额]' => $params['realmoney']);
 						break;
-						default: switch ($type) 
+						switch ($type) 
 						{
 							case self: $datas = array('[订单编号]' => $params['logno'], '[付款金额]' => $params['money'], '[余额抵扣]' => $params['deduction'], '[付款时间]' => $params['paytime'], '[收银台名称]' => $params['cashier_title']);
 							break;
-							default: switch ($type) 
+							switch ($type) 
 							{
 								case self: $datas = array('[订单编号]' => $params['logno'], '[付款金额]' => $params['money'], '[余额抵扣]' => $params['deduction'], '[付款时间]' => $params['paytime'], '[收银台名称]' => $params['cashier_title']);
 								break;
 								break;
 								$datas = ((isset($datas) ? $datas : array()));
-								$notice['openid'] = ((is_null($openid) ? $notice['openid'] : $openid));
 							}
 						}
 					}
@@ -321,12 +320,45 @@ class CashierModel extends PluginModel
 	{
 		global $_W;
 		$wechat = $this->wechayPayInfo($_W['cashieruser']);
-		$params['old'] = true;
 		return m('common')->wechat_micropay_build($params, $wechat, 13);
 	}
 	public function wechatpay_101($params) 
 	{
-		return m('common')->wechat_micropay_build($params, array(), 13);
+		global $_W;
+		$set = m('common')->getSysset(array('shop', 'pay'));
+		if (isset($set['pay']) && ($set['pay']['weixin'] == 1)) 
+		{
+			load()->model('payment');
+			$setting = uni_setting($_W['uniacid'], array('payment'));
+			$account = pdo_get('account_wechats', array('uniacid' => $_W['uniacid']), array('key', 'secret'));
+			if (is_array($setting['payment'])) 
+			{
+				$options = $setting['payment']['wechat'];
+				$options['appid'] = $account['key'];
+				$options['secret'] = $account['secret'];
+				$wechat = array('appid' => $options['appid'], 'mch_id' => $options['mchid'], 'apikey' => $options['signkey']);
+			}
+		}
+		else if (isset($set['pay']) && ($set['pay']['weixin_sub'] == 1)) 
+		{
+			$sec = m('common')->getSec();
+			$sec = iunserializer($sec['sec']);
+			$wechat = array('appid' => $sec['appid_sub'], 'mch_id' => $sec['mchid_sub'], 'sub_appid' => (!(empty($sec['sub_appid_sub'])) ? $sec['sub_appid_sub'] : ''), 'sub_mch_id' => $sec['sub_mchid_sub'], 'apikey' => $sec['apikey_sub']);
+		}
+		if (empty($wechat)) 
+		{
+			$sec = m('common')->getSec();
+			$sec = iunserializer($sec['sec']);
+			if (isset($set['pay']) && ($set['pay']['weixin_jie'] == 1)) 
+			{
+				$wechat = array('appid' => $sec['appid'], 'mch_id' => $sec['mchid'], 'apikey' => $sec['apikey']);
+			}
+			else if (isset($set['pay']) && ($set['pay']['weixin_jie_sub'] == 1)) 
+			{
+				$wechat = array('appid' => $sec['appid_jie_sub'], 'mch_id' => $sec['mchid_jie_sub'], 'sub_appid' => (!(empty($sec['sub_appid_jie_sub'])) ? $sec['sub_appid_jie_sub'] : ''), 'sub_mch_id' => $sec['sub_mchid_jie_sub'], 'apikey' => $sec['apikey_jie_sub']);
+			}
+		}
+		return (isset($wechat) ? m('common')->wechat_micropay_build($params, $wechat, 13) : error(-1, '$wechat' . '参数错误'));
 	}
 	public function alipay($params) 
 	{
@@ -454,56 +486,6 @@ class CashierModel extends PluginModel
 		}
 		return $array;
 	}
-	public function refund($id) 
-	{
-		global $_W;
-		$id = (int) $id;
-		$pay_log = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_cashier_pay_log') . ' WHERE uniacid=:uniacid AND id=:id', array(':uniacid' => $_W['uniacid'], ':id' => $id));
-		if ($pay_log['status'] != 1) 
-		{
-			return error(-1, '未支付或者已退款!');
-		}
-		$out_trade_no = 'CST' . date('YmdHis') . mt_rand(1000, 9999);
-		$res = array();
-		switch ($pay_log['paytype']) 
-		{
-			case '0': $res = $this->refundWechat($pay_log['openid'], $pay_log['logno'], $out_trade_no, $pay_log['money'] * 100, $pay_log['money'] * 100, false);
-			break;
-			case '1': $res = m('finance')->newAlipayRefund(array('out_trade_no' => $pay_log['logno'], 'refund_amount' => $pay_log['money'], 'refund_reason' => $_W['cashieruser']['title'] . ' 收银台退款! 退款订单号: ' . $out_trade_no), json_decode($_W['cashieruser']['alipay'], true));
-			break;
-			case '2': m('member')->setCredit($pay_log['openid'], 'credit2', $pay_log['money'] + $pay_log['deduction'], $_W['cashieruser']['title'] . ' 收银台退款! 退款订单号' . $out_trade_no);
-			break;
-			case '3': $res = true;
-			break;
-			case '101': $res = m('finance')->refund($pay_log['openid'], $pay_log['logno'], $out_trade_no, $pay_log['money'] * 100, $pay_log['money'] * 100, false);
-			break;
-			case '102': $res = m('finance')->refund($pay_log['openid'], $pay_log['logno'], $out_trade_no, $pay_log['money'] * 100, $pay_log['money'] * 100, false);
-			break;
-		}
-		if (is_error($res)) 
-		{
-			return $res;
-		}
-		$refunduser = 0;
-		if (isset($_W['cashieruser']['operator'])) 
-		{
-			$refunduser = $_W['cashieruser']['operator']['id'];
-		}
-		pdo_update('ewei_shop_cashier_pay_log', array('status' => -1, 'refundsn' => $out_trade_no, 'refunduser' => $refunduser), array('uniacid' => $_W['uniacid'], 'id' => $id));
-		if (com('coupon') && !(empty($pay_log['usecoupon']))) 
-		{
-			com('coupon')->returnConsumeCoupon($pay_log['usecoupon']);
-		}
-		if (!(empty($pay_log['present_credit1']))) 
-		{
-			m('member')->setCredit($pay_log['openid'], 'credit1', -$pay_log['present_credit1'], $_W['cashieruser']['title'] . ' 收银台退款收回赠送的积分! 退款订单号' . $out_trade_no);
-		}
-		if (!(empty($pay_log['orderid']))) 
-		{
-			pdo_update('ewei_shop_order', array('status' => -1), array('uniacid' => $_W['uniacid'], 'id' => $pay_log['orderid']));
-		}
-		return $res;
-	}
 	public function updateOrder($log) 
 	{
 		global $_W;
@@ -513,7 +495,7 @@ class CashierModel extends PluginModel
 		}
 		$realmoney = floatval($log['money']);
 		$user = $this->userInfo($log['cashierid']);
-		if (($log['paytype'] != '101') && ($log['paytype'] != '102')) 
+		if ($log['paytype'] != '101') 
 		{
 			if (empty($log['paytype'])) 
 			{
@@ -528,75 +510,50 @@ class CashierModel extends PluginModel
 		}
 		else 
 		{
-			list($set, $payment) = m('common')->public_build();
-			if ($payment['is_new'] == 1) 
+			$set = m('common')->getSysset(array('shop', 'pay'));
+			if (isset($set['pay']) && ($set['pay']['weixin'] == 1)) 
 			{
-				if ($payment['type'] == 4) 
+				load()->model('payment');
+				$setting = uni_setting($_W['uniacid'], array('payment'));
+				$account = pdo_get('account_wechats', array('uniacid' => $_W['uniacid']), array('key', 'secret'));
+				if (is_array($setting['payment'])) 
 				{
-					$res = m('pay')->query($log['logno'], $payment);
-				}
-				else 
-				{
-					if (($payment['type'] == 0) || ($payment['type'] == 2)) 
+					$options = $setting['payment']['wechat'];
+					$options['appid'] = $account['key'];
+					$options['secret'] = $account['secret'];
+					if (IMS_VERSION <= 0.80000000000000004) 
 					{
-						$payment['appid'] = $payment['sub_appid'];
-						$payment['mch_id'] = $payment['sub_mch_id'];
-						unset($payment['sub_mch_id']);
+						$options['apikey'] = $options['signkey'];
 					}
-					$res = m('common')->wechat_order_query($log['logno'], 0, $payment);
-				}
-			}
-			else 
-			{
-				if (isset($set) && ($set['weixin'] == 1)) 
-				{
-					load()->model('payment');
-					$setting = uni_setting($_W['uniacid'], array('payment'));
-					$account = pdo_get('account_wechats', array('uniacid' => $_W['uniacid']), array('key', 'secret'));
-					if (is_array($setting['payment'])) 
-					{
-						$options = $setting['payment']['wechat'];
-						$options['appid'] = $account['key'];
-						$options['secret'] = $account['secret'];
-						if (IMS_VERSION <= 0.80000000000000004) 
-						{
-							$options['apikey'] = $options['signkey'];
-						}
-						$wechat = array('appid' => $options['appid'], 'mch_id' => $options['mchid'], 'apikey' => $options['apikey']);
-						$res = m('common')->wechat_order_query($log['logno'], 0, $wechat);
-					}
-				}
-				else if (isset($set) && ($set['weixin_sub'] == 1)) 
-				{
-					$sec = m('common')->getSec();
-					$sec = iunserializer($sec['sec']);
-					$wechat = array('appid' => $sec['appid_sub'], 'mch_id' => $sec['mchid_sub'], 'sub_appid' => (!(empty($sec['sub_appid_sub'])) ? $sec['sub_appid_sub'] : ''), 'sub_mch_id' => $sec['sub_mchid_sub'], 'apikey' => $sec['apikey_sub']);
+					$wechat = array('appid' => $options['appid'], 'mch_id' => $options['mchid'], 'apikey' => $options['apikey']);
 					$res = m('common')->wechat_order_query($log['logno'], 0, $wechat);
 				}
-				if (empty($res)) 
+			}
+			else if (isset($set['pay']) && ($set['pay']['weixin_sub'] == 1)) 
+			{
+				$sec = m('common')->getSec();
+				$sec = iunserializer($sec['sec']);
+				$wechat = array('appid' => $sec['appid_sub'], 'mch_id' => $sec['mchid_sub'], 'sub_appid' => (!(empty($sec['sub_appid_sub'])) ? $sec['sub_appid_sub'] : ''), 'sub_mch_id' => $sec['sub_mchid_sub'], 'apikey' => $sec['apikey_sub']);
+				$res = m('common')->wechat_order_query($log['logno'], 0, $wechat);
+			}
+			if (empty($res)) 
+			{
+				$sec = m('common')->getSec();
+				$sec = iunserializer($sec['sec']);
+				if (isset($set['pay']) && ($set['pay']['weixin_jie'] == 1)) 
 				{
-					$sec = m('common')->getSec();
-					$sec = iunserializer($sec['sec']);
-					if (isset($set) && ($set['weixin_jie'] == 1)) 
-					{
-						$wechat = array('appid' => $sec['appid'], 'mch_id' => $sec['mchid'], 'apikey' => $sec['apikey']);
-						$res = m('common')->wechat_order_query($log['logno'], 0, $wechat);
-					}
-					else if (isset($set) && ($set['weixin_jie_sub'] == 1)) 
-					{
-						$wechat = array('appid' => $sec['appid_jie_sub'], 'mch_id' => $sec['mchid_jie_sub'], 'sub_appid' => (!(empty($sec['sub_appid_jie_sub'])) ? $sec['sub_appid_jie_sub'] : ''), 'sub_mch_id' => $sec['sub_mchid_jie_sub'], 'apikey' => $sec['apikey_jie_sub']);
-						$res = m('common')->wechat_order_query($log['logno'], 0, $wechat);
-					}
+					$wechat = array('appid' => $sec['appid'], 'mch_id' => $sec['mchid'], 'apikey' => $sec['apikey']);
+					$res = m('common')->wechat_order_query($log['logno'], 0, $wechat);
+				}
+				else if (isset($set['pay']) && ($set['pay']['weixin_jie_sub'] == 1)) 
+				{
+					$wechat = array('appid' => $sec['appid_jie_sub'], 'mch_id' => $sec['mchid_jie_sub'], 'sub_appid' => (!(empty($sec['sub_appid_jie_sub'])) ? $sec['sub_appid_jie_sub'] : ''), 'sub_mch_id' => $sec['sub_mchid_jie_sub'], 'apikey' => $sec['apikey_jie_sub']);
+					$res = m('common')->wechat_order_query($log['logno'], 0, $wechat);
 				}
 			}
 		}
 		if (empty($res)) 
 		{
-			return false;
-		}
-		if (($res['trade_state'] == 'REFUND') || ($res['message'] == '该订单已经关闭或者已经退款')) 
-		{
-			pdo_update('ewei_shop_cashier_pay_log', array('status' => -1), array('uniacid' => $_W['uniacid'], 'id' => $log['id']));
 			return false;
 		}
 		if (($res['total_fee'] == round($realmoney * 100, 2)) || ($res['total_amount'] == round($realmoney, 2))) 
@@ -626,7 +583,7 @@ class CashierModel extends PluginModel
 		}
 		pdo_update('ewei_shop_cashier_pay_log', array('openid' => $log['openid'], 'payopenid' => $log['openid'], 'money' => $log['money'], 'status' => 1, 'paytime' => (0 < $log['paytime'] ? $log['paytime'] : time()), 'coupon' => $coupon), array('id' => $log['id']));
 		$log['deduction'] = (double) $log['deduction'];
-		if (!(empty($log['deduction'])) && ($log['paytype'] != 2)) 
+		if (!(empty($log['deduction']))) 
 		{
 			$userinfo = m('member')->getMobileMember($log['mobile']);
 			m('member')->setCredit($userinfo['openid'], 'credit2', -$log['deduction'], array(0, '收银台 ' . $_W['cashieruser']['title'], '收款'));
@@ -691,25 +648,18 @@ class CashierModel extends PluginModel
 		}
 		if (($paytype == -1) && ($auto_code !== NULL)) 
 		{
-			$wechat = array(10, 11, 12, 13, 14, 15);
-			$alipay = array(28);
 			$type = substr($auto_code, 0, 2);
-			if (in_array($type, $alipay)) 
+			if ($type == '13') 
 			{
-				list(, $payment) = m('common')->public_build();
-				if (($payment['is_new'] == 1) && ($payment['type'] == 4)) 
-				{
-					$paytype = 102;
-				}
-				if (empty($_W['cashieruser']['alipay_status']) && ($paytype != 102)) 
+				$paytype = 0;
+			}
+			else if ($type == '28') 
+			{
+				if (empty($_W['cashieruser']['alipay_status'])) 
 				{
 					return error(-101, '暂时不支持支付宝支付!');
 				}
 				$paytype = 1;
-			}
-			else if (in_array($type, $wechat)) 
-			{
-				$paytype = 0;
 			}
 		}
 		if (empty($paytype) && !(empty($_W['cashieruser']['wechat_status']))) 
@@ -727,10 +677,6 @@ class CashierModel extends PluginModel
 		else if ($paytype == '3') 
 		{
 			$paytype = 3;
-		}
-		else if ($paytype == '102') 
-		{
-			$paytype = 102;
 		}
 		else 
 		{
@@ -1042,25 +988,7 @@ class CashierModel extends PluginModel
 		$order['transid'] = '';
 		pdo_insert('ewei_shop_order', $order);
 		$orderid = pdo_insertid();
-
-        					        //         TODO jieqiang 通知商城
-        $_SESSION['prom_cps']['m'] = 'desk';
-        $_SESSION['prom_cps']['a'] = 'buy';
-//        $_SESSION['prom_cps']['item_id'] = $order_goods['goodsid'];
-        $_SESSION['prom_cps']['order_id'] = $orderid;
-//        $_SESSION['prom_cps']['shop_id'] = '11';
-        $_SESSION['prom_cps']['status'] = '1';
-        unset($_SESSION['prom_cps']['id']);
-        // WeUtility::logging('TODO debug23',  array('file'=>'D:\www\users\wd2.jieqiangtec.com\addons\ewei_shop\core\mobile\order\confirm.php ','sql2'=>$sql2,'prom'=>$_SESSION['prom_cps']));
-
-        if ($_SESSION['prom_cps']['sid'] && $_SESSION['prom_cps']['item_id'] && $_SESSION['prom_cps']['shop_id'] && $_SESSION['prom_cps']['bank_subid'] && $_SESSION['prom_cps']['bank_id']  ){
-            $res = http_request(CPS_API,$_SESSION['prom_cps']);
-        }
-
-        $curl = CPS_API . '?' . http_build_query($_SESSION['prom_cps']);
-        WeUtility::logging('TODO debug2345',  array('file'=>'D:\www\users\wd2.jieqiangtec.com\addons\ewei_shop\core\mobile\order\confirm.php ','res'=>$res,'curl'=>$curl,'prom'=>$_SESSION['prom_cps']));
-
-        foreach ($allgoods as $goods )
+		foreach ($allgoods as $goods ) 
 		{
 			$order_goods = array();
 			$order_goods['merchid'] = $goods['merchid'];
@@ -1341,152 +1269,6 @@ class CashierModel extends PluginModel
 		$price = $price * $credit1_double;
 		$credit1 = com_run('sale::getCredit1', $log['openid'], $price, 37, 1, 0, $log['title'] . '收银订单号 : ' . $log['logno'] . '  收银台消费送积分');
 		return $credit1;
-	}
-	public function upload_cert($fileinput) 
-	{
-		global $_W;
-		$filename = $_FILES[$fileinput]['name'];
-		$tmp_name = $_FILES[$fileinput]['tmp_name'];
-		if (!(empty($filename)) && !(empty($tmp_name))) 
-		{
-			$ext = strtolower(substr($filename, strrpos($filename, '.')));
-			if ($ext != '.pem') 
-			{
-				$errinput = '';
-				if ($fileinput == 'cert_file') 
-				{
-					$errinput = 'CERT文件格式错误';
-				}
-				else if ($fileinput == 'key_file') 
-				{
-					$errinput = 'KEY文件格式错误';
-				}
-				else if ($fileinput == 'root_file') 
-				{
-					$errinput = 'ROOT文件格式错误';
-				}
-				show_json(0, $errinput . ',请重新上传!');
-			}
-			return file_get_contents($tmp_name);
-		}
-		return '';
-	}
-	public function refundWechat($openid, $out_trade_no, $out_refund_no, $totalmoney, $refundmoney = 0, $app = false, $refund_account = false) 
-	{
-		global $_W;
-		global $_GPC;
-		if (empty($openid)) 
-		{
-			return error(-1, 'openid不能为空');
-		}
-		$wechatpay = json_decode($_W['cashieruser']['wechatpay'], true);
-		if (!(is_array($wechatpay))) 
-		{
-			return error(1, '没有设定支付参数');
-		}
-		$certs = array('cert' => $wechatpay['cert'], 'key' => $wechatpay['key'], 'root' => $wechatpay['root']);
-		if (empty($wechatpay['appid']) && empty($wechatpay['mch_id']) && !(empty($wechatpay['sub_appid']))) 
-		{
-			$wechatpay['appid'] = $wechatpay['sub_appid'];
-			$wechatpay['mch_id'] = $wechatpay['sub_mch_id'];
-			unset($wechatpay['sub_mch_id']);
-			unset($wechatpay['sub_appid']);
-		}
-		$url = 'https://api.mch.weixin.qq.com/secapi/pay/refund';
-		$pars = array();
-		$pars['appid'] = $wechatpay['appid'];
-		$pars['mch_id'] = $wechatpay['mch_id'];
-		if (!(empty($wechatpay['sub_mch_id']))) 
-		{
-			$pars['sub_mch_id'] = $wechatpay['sub_mch_id'];
-		}
-		$pars['nonce_str'] = random(8);
-		$pars['out_trade_no'] = $out_trade_no;
-		$pars['out_refund_no'] = $out_refund_no;
-		$pars['total_fee'] = $totalmoney;
-		$pars['refund_fee'] = $refundmoney;
-		$pars['op_user_id'] = $wechatpay['mch_id'];
-		if ($refund_account) 
-		{
-			$pars['refund_account'] = $refund_account;
-		}
-		if (!(empty($wechatpay['sub_appid']))) 
-		{
-			$pars['sub_appid'] = $wechatpay['sub_appid'];
-		}
-		ksort($pars, SORT_STRING);
-		$string1 = '';
-		foreach ($pars as $k => $v ) 
-		{
-			$string1 .= $k . '=' . $v . '&';
-		}
-		$string1 .= 'key=' . $wechatpay['apikey'];
-		$pars['sign'] = strtoupper(md5($string1));
-		$xml = array2xml($pars);
-		$extras = array();
-		$errmsg = '未上传完整的微信支付证书，请到【系统设置】->【支付方式】中上传!';
-		if (is_array($certs)) 
-		{
-			if (empty($certs['cert']) || empty($certs['key']) || empty($certs['root'])) 
-			{
-				if ($_W['ispost']) 
-				{
-					show_json(0, array('message' => $errmsg));
-				}
-				show_message($errmsg, '', 'error');
-			}
-			$certfile = IA_ROOT . '/addons/ewei_shopv2/cert/' . random(128);
-			file_put_contents($certfile, $certs['cert']);
-			$keyfile = IA_ROOT . '/addons/ewei_shopv2/cert/' . random(128);
-			file_put_contents($keyfile, $certs['key']);
-			$rootfile = IA_ROOT . '/addons/ewei_shopv2/cert/' . random(128);
-			file_put_contents($rootfile, $certs['root']);
-			$extras['CURLOPT_SSLCERT'] = $certfile;
-			$extras['CURLOPT_SSLKEY'] = $keyfile;
-			$extras['CURLOPT_CAINFO'] = $rootfile;
-		}
-		else 
-		{
-			if ($_W['ispost']) 
-			{
-				show_json(0, array('message' => $errmsg));
-			}
-			show_message($errmsg, '', 'error');
-		}
-		load()->func('communication');
-		$resp = ihttp_request($url, $xml, $extras);
-		@unlink($certfile);
-		@unlink($keyfile);
-		@unlink($rootfile);
-		if (is_error($resp)) 
-		{
-			return error(-2, $resp['message']);
-		}
-		if (empty($resp['content'])) 
-		{
-			return error(-2, '网络错误');
-		}
-		$arr = json_decode(json_encode(simplexml_load_string($resp['content'], 'SimpleXMLElement', LIBXML_NOCDATA)), true);
-		if (($arr['return_code'] == 'SUCCESS') && ($arr['result_code'] == 'SUCCESS')) 
-		{
-			return true;
-		}
-		if (($arr['return_code'] == 'SUCCESS') && ($arr['result_code'] == 'FAIL') && ($arr['return_msg'] == 'OK') && !($refund_account)) 
-		{
-			if ($arr['err_code'] == 'NOTENOUGH') 
-			{
-				return $this->refundWechat($openid, $out_trade_no, $out_refund_no, $totalmoney, $refundmoney, $app, 'REFUND_SOURCE_RECHARGE_FUNDS');
-			}
-		}
-		if ($arr['return_msg'] == $arr['err_code_des']) 
-		{
-			$error = $arr['return_msg'];
-		}
-		else 
-		{
-			$error = $arr['return_msg'] . ' | ' . $arr['err_code_des'];
-		}
-		return error(-2, $error);
 	}
 }
 function sort_cashier($a, $b) 

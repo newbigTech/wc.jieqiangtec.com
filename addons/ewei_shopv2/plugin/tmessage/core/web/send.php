@@ -1,6 +1,5 @@
 <?php
-
-if (!defined('IN_IA')) {
+if (!(defined('IN_IA'))) {
 	exit('Access Denied');
 }
 
@@ -12,7 +11,7 @@ class Send_EweiShopV2Page extends PluginWebPage
 		global $_GPC;
 		$id = intval($_GPC['id']);
 
-		if (!empty($id)) {
+		if (!(empty($id))) {
 			$send = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_member_message_template') . ' WHERE id=:id and uniacid=:uniacid ', array(':id' => $id, ':uniacid' => $_W['uniacid']));
 		}
 
@@ -28,14 +27,14 @@ class Send_EweiShopV2Page extends PluginWebPage
 		global $_W;
 		global $_GPC;
 
-		if (!cv('tmessage.send')) {
+		if (!(cv('tmessage.send'))) {
 			show_json(0, '您没有权限!');
 		}
 
 
 		$id = intval($_GPC['id']);
 
-		if (!empty($id)) {
+		if (!(empty($id))) {
 			$send = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_member_message_template') . ' WHERE id=:id and uniacid=:uniacid ', array(':id' => $id, ':uniacid' => $_W['uniacid']));
 		}
 
@@ -72,7 +71,7 @@ class Send_EweiShopV2Page extends PluginWebPage
 
 			$member = pdo_fetchall('SELECT openid FROM ' . tablename('ewei_shop_member') . ' WHERE uniacid = \'' . $_W['uniacid'] . '\'' . $where, array(), 'openid');
 
-			if (!empty($value1)) {
+			if (!(empty($value1))) {
 				$levelname = pdo_fetchcolumn('select levelname from ' . tablename('ewei_shop_member_level') . ' where id=:id limit 1', array(':id' => $value1));
 			}
 			 else {
@@ -91,7 +90,7 @@ class Send_EweiShopV2Page extends PluginWebPage
 
 			$member = pdo_fetchall('SELECT openid FROM ' . tablename('ewei_shop_member') . ' WHERE uniacid = \'' . $_W['uniacid'] . '\'' . $where, array(), 'openid');
 
-			if (!empty($value1)) {
+			if (!(empty($value1))) {
 				$groupname = pdo_fetchcolumn('select groupname from ' . tablename('ewei_shop_member_group') . ' where id=:id limit 1', array(':id' => $value1));
 			}
 			 else {
@@ -114,7 +113,7 @@ class Send_EweiShopV2Page extends PluginWebPage
 
 			$member = pdo_fetchall('SELECT openid FROM ' . tablename('ewei_shop_member') . ' WHERE uniacid = \'' . $_W['uniacid'] . '\' and isagent=1 and status=1 ' . $where, array(), 'openid');
 
-			if (!empty($value1)) {
+			if (!(empty($value1))) {
 				$levelname = pdo_fetchcolumn('select levelname from ' . tablename('ewei_shop_commission_level') . ' where id=:id limit 1', array(':id' => $value1));
 			}
 			 else {
@@ -160,7 +159,7 @@ class Send_EweiShopV2Page extends PluginWebPage
 
 		$data = iunserializer($template['data']);
 
-		if (!is_array($data)) {
+		if (!(is_array($data))) {
 			exit(json_encode(array('result' => 0, 'mesage' => '模板有错误!', 'openid' => $openid)));
 		}
 

@@ -1,5 +1,4 @@
 <?php
-//weichengtech
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -14,7 +13,6 @@ class Pay_EweiShopV2Page extends MobileLoginPage
 		$uniacid = $_W['uniacid'];
 		$member = m('member')->getMember($openid, true);
 		$orderid = intval($_GPC['id']);
-		$order = pdo_fetch('select * from ' . tablename('ewei_shop_order') . ' where id=:id and uniacid=:uniacid and openid=:openid limit 1', array(':id' => $orderid, ':uniacid' => $uniacid, ':openid' => $openid));
 		$peerPaySwi = m('common')->getPluginset('sale');
 		$peerPaySwi = $peerPaySwi['peerpay']['open'];
 		$ispeerpay = m('order')->checkpeerpay($orderid);
@@ -40,6 +38,7 @@ class Pay_EweiShopV2Page extends MobileLoginPage
 			}
 		}
 
+		$order = pdo_fetch('select * from ' . tablename('ewei_shop_order') . ' where id=:id and uniacid=:uniacid and openid=:openid limit 1', array(':id' => $orderid, ':uniacid' => $uniacid, ':openid' => $openid));
 		$og_array = m('order')->checkOrderGoods($orderid);
 
 		if (!empty($og_array['flag'])) {
@@ -371,6 +370,9 @@ class Pay_EweiShopV2Page extends MobileLoginPage
 				$ordersns = explode('GJ', $gpc_ordersn);
 				$ordersn = $ordersns[0];
 			}
+			else {
+				$ordersn = $gpc_ordersn;
+			}
 
 			$ordersn = rtrim($ordersn, 'TR');
 			$orderid = pdo_fetchcolumn('select id from ' . tablename('ewei_shop_order') . ' where ordersn=:ordersn and uniacid=:uniacid and openid=:openid limit 1', array(':ordersn' => $ordersn, ':uniacid' => $uniacid, ':openid' => $openid));
@@ -465,35 +467,166 @@ class Pay_EweiShopV2Page extends MobileLoginPage
 			}
 		}
 
-		$order_goods = pdo_fetchall('select og.id,g.title, og.goodsid,og.optionid,g.total as stock,og.total as buycount,g.status,g.deleted,g.maxbuy,g.usermaxbuy,g.istime,g.timestart,g.timeend,g.buylevels,g.buygroups,g.totalcnf,og.seckill from  ' . tablename('ewei_shop_order_goods') . ' og ' . ' left join ' . tablename('ewei_shop_goods') . ' g on og.goodsid = g.id ' . ' where og.orderid=:orderid and og.uniacid=:uniacid ', array(':uniacid' => $_W['uniacid'], ':orderid' => $orderid));
+		if ((empty($order['isnewstore']) || empty($order['storeid'])) && empty($order['istrade'])) {
+			$order_goods = pdo_fetchall('select og.id,g.title, og.goodsid,og.optionid,g.total as stock,og.total as buycount,g.status,g.deleted,g.maxbuy,g.usermaxbuy,g.istime,g.timestart,g.timeend,g.buylevels,g.buygroups,g.totalcnf,og.seckill from  ' . tablename('ewei_shop_order_goods') . ' og ' . ' left join ' . tablename('ewei_shop_goods') . ' g on og.goodsid = g.id ' . ' where og.orderid=:orderid and og.uniacid=:uniacid ', array(':uniacid' => $_W['uniacid'], ':orderid' => $orderid));
 
-		foreach ($order_goods as $data) {
-			if (empty($data['status']) || !empty($data['deleted'])) {
-				if ($_W['ispost']) {
-					show_json(0, $data['title'] . '<br/> 已下架!');
-				}
-				else {
-					$this->message($data['title'] . '<br/> 已下架!', mobileUrl('order'));
-				}
-			}
-
-			$unit = (empty($data['unit']) ? '件' : $data['unit']);
-			$seckillinfo = plugin_run('seckill::getSeckill', $data['goodsid'], $data['optionid'], true, $_W['openid']);
-
-			if ($data['seckill']) {
-				if (empty($seckillinfo) || ($seckillinfo['status'] != 0) || ($seckillinfo['endtime'] < time())) {
+			foreach ($order_goods as $data) {
+				if (empty($data['status']) || !empty($data['deleted'])) {
 					if ($_W['ispost']) {
-						show_json(0, $data['title'] . '<br/> 秒杀已结束，无法支付!');
+						show_json(0, $data['title'] . '<br/> 已下架!');
 					}
 					else {
-						$this->message($data['title'] . '<br/> 秒杀已结束，无法支付!', mobileUrl('order'));
+						$this->message($data['title'] . '<br/> 已下架!', mobileUrl('order'));
+					}
+				}
+
+				$unit = (empty($data['unit']) ? '件' : $data['unit']);
+				$seckillinfo = plugin_run('seckill::getSeckill', $data['goodsid'], $data['optionid'], true, $_W['openid']);
+
+				if ($data['seckill']) {
+					if (empty($seckillinfo) || ($seckillinfo['status'] != 0) || ($seckillinfo['endtime'] < time())) {
+						if ($_W['ispost']) {
+							show_json(0, $data['title'] . '<br/> 秒杀已结束，无法支付!');
+						}
+						else {
+							$this->message($data['title'] . '<br/> 秒杀已结束，无法支付!', mobileUrl('order'));
+						}
+					}
+				}
+
+				if (($seckillinfo && ($seckillinfo['status'] == 0)) || !empty($ispeerpay)) {
+				}
+				else {
+					if (0 < $data['minbuy']) {
+						if ($data['buycount'] < $data['minbuy']) {
+							if ($_W['ispost']) {
+								show_json(0, $data['title'] . '<br/> ' . $data['min'] . $unit . '起售!', mobileUrl('order'));
+							}
+							else {
+								$this->message($data['title'] . '<br/> ' . $data['min'] . $unit . '起售!', mobileUrl('order'));
+							}
+						}
+					}
+
+					if (0 < $data['maxbuy']) {
+						if ($data['maxbuy'] < $data['buycount']) {
+							if ($_W['ispost']) {
+								show_json(0, $data['title'] . '<br/> 一次限购 ' . $data['maxbuy'] . $unit . '!');
+							}
+							else {
+								$this->message($data['title'] . '<br/> 一次限购 ' . $data['maxbuy'] . $unit . '!', mobileUrl('order'));
+							}
+						}
+					}
+
+					if (0 < $data['usermaxbuy']) {
+						$order_goodscount = pdo_fetchcolumn('select ifnull(sum(og.total),0)  from ' . tablename('ewei_shop_order_goods') . ' og ' . ' left join ' . tablename('ewei_shop_order') . ' o on og.orderid=o.id ' . ' where og.goodsid=:goodsid and  o.status>=1 and o.openid=:openid  and og.uniacid=:uniacid ', array(':goodsid' => $data['goodsid'], ':uniacid' => $uniacid, ':openid' => $openid));
+
+						if ($data['usermaxbuy'] <= $order_goodscount) {
+							if ($_W['ispost']) {
+								show_json(0, $data['title'] . '<br/> 最多限购 ' . $data['usermaxbuy'] . $unit);
+							}
+							else {
+								$this->message($data['title'] . '<br/> 最多限购 ' . $data['usermaxbuy'] . $unit, mobileUrl('order'));
+							}
+						}
+					}
+
+					if ($data['istime'] == 1) {
+						if (time() < $data['timestart']) {
+							if ($_W['ispost']) {
+								show_json(0, $data['title'] . '<br/> 限购时间未到!');
+							}
+							else {
+								$this->message($data['title'] . '<br/> 限购时间未到!', mobileUrl('order'));
+							}
+						}
+
+						if ($data['timeend'] < time()) {
+							if ($_W['ispost']) {
+								show_json(0, $data['title'] . '<br/> 限购时间已过!');
+							}
+							else {
+								$this->message($data['title'] . '<br/> 限购时间已过!', mobileUrl('order'));
+							}
+						}
+					}
+
+					if ($data['buylevels'] != '') {
+						$buylevels = explode(',', $data['buylevels']);
+
+						if (!in_array($member['level'], $buylevels)) {
+							if ($_W['ispost']) {
+								show_json(0, '您的会员等级无法购买<br/>' . $data['title'] . '!');
+							}
+							else {
+								$this->message('您的会员等级无法购买<br/>' . $data['title'] . '!', mobileUrl('order'));
+							}
+						}
+					}
+
+					if ($data['buygroups'] != '') {
+						$buygroups = explode(',', $data['buygroups']);
+
+						if (!in_array($member['groupid'], $buygroups)) {
+							if ($_W['ispost']) {
+								show_json(0, '您所在会员组无法购买<br/>' . $data['title'] . '!');
+							}
+							else {
+								$this->message('您所在会员组无法购买<br/>' . $data['title'] . '!', mobileUrl('order'));
+							}
+						}
+					}
+				}
+
+				if ($data['totalcnf'] == 1) {
+					if (!empty($data['optionid'])) {
+						$option = pdo_fetch('select id,title,marketprice,goodssn,productsn,stock,`virtual` from ' . tablename('ewei_shop_goods_option') . ' where id=:id and goodsid=:goodsid and uniacid=:uniacid  limit 1', array(':uniacid' => $uniacid, ':goodsid' => $data['goodsid'], ':id' => $data['optionid']));
+
+						if (!empty($option)) {
+							if ($option['stock'] != -1) {
+								if (empty($option['stock'])) {
+									if ($_W['ispost']) {
+										show_json(0, $data['title'] . '<br/>' . $option['title'] . ' 库存不足!');
+									}
+									else {
+										$this->message($data['title'] . '<br/>' . $option['title'] . ' 库存不足!', mobileUrl('order'));
+									}
+								}
+							}
+						}
+					}
+					else {
+						if ($data['stock'] != -1) {
+							if (empty($data['stock'])) {
+								if ($_W['ispost']) {
+									show_json(0, $data['title'] . '<br/>库存不足!');
+								}
+								else {
+									$this->message($data['title'] . '<br/>库存不足!', mobileUrl('order'));
+								}
+							}
+						}
 					}
 				}
 			}
+		}
+		else if (p('newstore')) {
+			$sql = 'select og.id,g.title, og.goodsid,og.optionid,ng.stotal as stock,og.total as buycount,ng.gstatus as status,ng.deleted,g.maxbuy,g.usermaxbuy,g.istime,g.timestart,g.timeend,g.buylevels,g.buygroups,g.totalcnf,og.seckill,og.storeid ' . ' from ' . tablename('ewei_shop_order_goods') . ' og left join  ' . tablename('ewei_shop_goods') . ' g  on g.id=og.goodsid and g.uniacid=og.uniacid' . ' inner join ' . tablename('ewei_shop_newstore_goods') . ' ng on g.id=ng.goodsid   ' . ' where og.orderid=:orderid and og.uniacid=:uniacid and ng.storeid=:storeid';
+			$order_goods = pdo_fetchall($sql, array(':uniacid' => $uniacid, ':orderid' => $orderid, ':storeid' => $order['storeid']));
 
-			if (($seckillinfo && ($seckillinfo['status'] == 0)) || !empty($ispeerpay)) {
-			}
-			else {
+			foreach ($order_goods as $data) {
+				if (empty($data['status']) || !empty($data['deleted'])) {
+					if ($_W['ispost']) {
+						show_json(0, $data['title'] . '<br/> 已下架!');
+					}
+					else {
+						$this->message($data['title'] . '<br/> 已下架!', mobileUrl('order'));
+					}
+				}
+
+				$unit = (empty($data['unit']) ? '件' : $data['unit']);
+
 				if (0 < $data['minbuy']) {
 					if ($data['buycount'] < $data['minbuy']) {
 						if ($_W['ispost']) {
@@ -529,26 +662,6 @@ class Pay_EweiShopV2Page extends MobileLoginPage
 					}
 				}
 
-				if ($data['istime'] == 1) {
-					if (time() < $data['timestart']) {
-						if ($_W['ispost']) {
-							show_json(0, $data['title'] . '<br/> 限购时间未到!');
-						}
-						else {
-							$this->message($data['title'] . '<br/> 限购时间未到!', mobileUrl('order'));
-						}
-					}
-
-					if ($data['timeend'] < time()) {
-						if ($_W['ispost']) {
-							show_json(0, $data['title'] . '<br/> 限购时间已过!');
-						}
-						else {
-							$this->message($data['title'] . '<br/> 限购时间已过!', mobileUrl('order'));
-						}
-					}
-				}
-
 				if ($data['buylevels'] != '') {
 					$buylevels = explode(',', $data['buylevels']);
 
@@ -574,38 +687,44 @@ class Pay_EweiShopV2Page extends MobileLoginPage
 						}
 					}
 				}
-			}
 
-			if ($data['totalcnf'] == 1) {
-				if (!empty($data['optionid'])) {
-					$option = pdo_fetch('select id,title,marketprice,goodssn,productsn,stock,`virtual` from ' . tablename('ewei_shop_goods_option') . ' where id=:id and goodsid=:goodsid and uniacid=:uniacid  limit 1', array(':uniacid' => $uniacid, ':goodsid' => $data['goodsid'], ':id' => $data['optionid']));
+				if ($data['totalcnf'] == 1) {
+					if (!empty($data['optionid'])) {
+						$option = pdo_fetch('select id,marketprice,stock from ' . tablename('ewei_shop_newstore_goods_option') . ' where optionid=:optionid and goodsid=:goodsid and uniacid=:uniacid and storeid=:storeid  limit 1', array(':uniacid' => $uniacid, ':goodsid' => $data['goodsid'], ':optionid' => $data['optionid'], ':storeid' => $data['storeid']));
 
-					if (!empty($option)) {
-						if ($option['stock'] != -1) {
-							if (empty($option['stock'])) {
+						if (!empty($option)) {
+							if ($option['stock'] != -1) {
+								if (empty($option['stock'])) {
+									if ($_W['ispost']) {
+										show_json(0, $data['title'] . '<br/>' . $option['title'] . ' 库存不足!');
+									}
+									else {
+										$this->message($data['title'] . '<br/>' . $option['title'] . ' 库存不足!', mobileUrl('order'));
+									}
+								}
+							}
+						}
+					}
+					else {
+						if ($data['stock'] != -1) {
+							if (empty($data['stock'])) {
 								if ($_W['ispost']) {
-									show_json(0, $data['title'] . '<br/>' . $option['title'] . ' 库存不足!');
+									show_json(0, $data['title'] . '<br/>库存不足!');
 								}
 								else {
-									$this->message($data['title'] . '<br/>' . $option['title'] . ' 库存不足!', mobileUrl('order'));
+									$this->message($data['title'] . '<br/>库存不足!', mobileUrl('order'));
 								}
 							}
 						}
 					}
 				}
-				else {
-					if ($data['stock'] != -1) {
-						if (empty($data['stock'])) {
-							if ($_W['ispost']) {
-								show_json(0, $data['title'] . '<br/>库存不足!');
-							}
-							else {
-								$this->message($data['title'] . '<br/>库存不足!', mobileUrl('order'));
-							}
-						}
-					}
-				}
 			}
+		}
+		else if ($_W['ispost']) {
+			show_json(0, '门店歇业,不能付款!');
+		}
+		else {
+			$this->message('门店歇业,不能付款!', mobileUrl('order'));
 		}
 
 		if (($type == 'cash') && empty($ispeerpay)) {
@@ -803,26 +922,6 @@ class Pay_EweiShopV2Page extends MobileLoginPage
 					$ret['uniacid'] = $log['uniacid'];
 					$ret['deduct'] = intval($_GPC['deduct']) == 1;
 					$pay_result = m('order')->payResult($ret);
-
-
-					        //         TODO jieqiang 通知商城
-        $_SESSION['prom_cps']['m'] = 'desk';
-        $_SESSION['prom_cps']['a'] = 'buy';
-//        $_SESSION['prom_cps']['item_id'] = $order_goods['goodsid'];
-        $_SESSION['prom_cps']['order_id'] = $orderid;
-//        $_SESSION['prom_cps']['shop_id'] = '11';
-        $_SESSION['prom_cps']['status'] = '1';
-        unset($_SESSION['prom_cps']['id']);
-        // WeUtility::logging('TODO debug23',  array('file'=>'D:\www\users\wd2.jieqiangtec.com\addons\ewei_shop\core\mobile\order\confirm.php ','sql2'=>$sql2,'prom'=>$_SESSION['prom_cps']));
-
-        if ($_SESSION['prom_cps']['sid'] && $_SESSION['prom_cps']['item_id'] && $_SESSION['prom_cps']['shop_id'] && $_SESSION['prom_cps']['bank_subid'] && $_SESSION['prom_cps']['bank_id']  ){
-            $res = http_request(CPS_API,$_SESSION['prom_cps']);
-        }
-
-        $curl = CPS_API . '?' . http_build_query($_SESSION['prom_cps']);
-        WeUtility::logging('TODO debug2345',  array('file'=>'D:\www\users\wd2.jieqiangtec.com\addons\ewei_shop\core\mobile\order\confirm.php ','res'=>$res,'curl'=>$curl,'prom'=>$_SESSION['prom_cps']));
-
-
 					@session_start();
 					$_SESSION[EWEI_SHOPV2_PREFIX . '_order_pay_complete'] = 1;
 
@@ -884,7 +983,7 @@ class Pay_EweiShopV2Page extends MobileLoginPage
 			$order['price'] = $ispeerpay['realprice'];
 			$peerpayuid = m('member')->getInfo($_W['openid']);
 			$peerprice = pdo_fetch('SELECT `price` FROM ' . tablename('ewei_shop_order_peerpay_payinfo') . ' WHERE uid = :uid ORDER BY id DESC LIMIT 1', array(':uid' => $peerpayuid['id']));
-			$activity = com('sendticket')->activity($peerprice);
+			$activity = com('coupon')->activity($peerprice);
 
 			if ($activity) {
 				$share = true;
@@ -975,6 +1074,11 @@ class Pay_EweiShopV2Page extends MobileLoginPage
 			else {
 				$share = false;
 			}
+		}
+
+		if (!empty($order['virtual']) && !empty($order['virtual_str'])) {
+			$ordervirtual = m('order')->getOrderVirtual($order);
+			$virtualtemp = pdo_fetch('SELECT linktext, linkurl FROM ' . tablename('ewei_shop_virtual_type') . ' WHERE id=:id AND uniacid=:uniacid LIMIT 1', array(':id' => $order['virtual'], ':uniacid' => $_W['uniacid']));
 		}
 
 		include $this->template();

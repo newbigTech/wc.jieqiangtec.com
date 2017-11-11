@@ -56,7 +56,7 @@
         </div>
         <div class="fui-goods-group white block">
             {loop $lotterydraws $item}
-            <a class="fui-goods-item" href="{php echo mobileUrl('creditshop/detail',array('id'=>$item['id']))}" data-nocache="true">
+            <a class="fui-goods-item external" href="{php echo mobileUrl('creditshop/detail',array('id'=>$item['id']))}" data-nocache="true">
                 <div class="image" data-lazyloaded="true" style="background-image: url('{php echo tomedia($item['thumb'])}');"></div>
                 <div class="detail">
                     <div class="name">
@@ -76,7 +76,7 @@
                              + <span style="font-size: 0.8rem;font-weight: bold;padding-right: 0.1rem;">&yen;{$item['money']}</span>
                             {/if}
                         </span>
-                        <span class="fui-text text-danger" style="float:right;">抽奖</span>
+                        <span class="fui-text text-danger2" style="float:right;">抽奖</span>
                     </div>
                 </div>
             </a>
@@ -93,7 +93,7 @@
         </div>
         <div class="fui-goods-group white block">
             {loop $exchanges $item}
-            <a class="fui-goods-item" href="{php echo mobileUrl('creditshop/detail',array('id'=>$item['id']))}" data-nocache="true">
+            <a class="fui-goods-item external" href="{php echo mobileUrl('creditshop/detail',array('id'=>$item['id']))}" data-nocache="true">
                 <div class="image" data-lazyloaded="true" style="background-image: url('{php echo tomedia($item['thumb'])}');"></div>
                 <div class="detail">
                     <div class="name">
@@ -107,7 +107,7 @@
                              + <span style="font-size: 0.8rem;font-weight: bold;padding-right: 0.1rem;">&yen;{$item['money']}</span>
                             {/if}
                         </span>
-                        <span class="fui-text text-danger" style="float:right;">兑换</span>
+                        <span class="fui-text text-danger2" style="float:right;">兑换</span>
                     </div>
                 </div>
             </a>
@@ -125,7 +125,7 @@
         </div>
         <div class="fui-goods-group white block">
             {loop $redbags $item}
-            <a class="fui-goods-item" href="{php echo mobileUrl('creditshop/detail',array('id'=>$item['id']))}" data-nocache="true">
+            <a class="fui-goods-item external" href="{php echo mobileUrl('creditshop/detail',array('id'=>$item['id']))}" data-nocache="true">
                 <div class="image" data-lazyloaded="true" style="background-image: url('{php echo tomedia($item['thumb'])}');"></div>
                 <div class="detail">
                     <div class="name">{$item['title']}</div>
@@ -137,7 +137,7 @@
                              + <span style="font-size: 0.8rem;font-weight: bold;padding-right: 0.1rem;">&yen;{$item['money']}</span>
                             {/if}
                         </span>
-                        <span class="fui-text text-danger" style="float:right;">兑换</span>
+                        <span class="fui-text text-danger2" style="float:right;">兑换</span>
                     </div>
                 </div>
             </a>
@@ -155,7 +155,7 @@
         </div>
         <div class="fui-goods-group">
             {loop $coupons $item}
-            <a class="fui-goods-item" href="{php echo mobileUrl('creditshop/detail',array('id'=>$item['id']))}" data-nocache="true">
+            <a class="fui-goods-item external" href="{php echo mobileUrl('creditshop/detail',array('id'=>$item['id']))}" data-nocache="true">
                 <div class="image" data-lazyloaded="true" style="background-image: url('{php echo tomedia($item['thumb'])}');"></div>
                 <div class="detail">
                     <div class="name">{$item['title']}</div>
@@ -167,7 +167,7 @@
                              + <span style="font-size: 0.8rem;font-weight: bold;padding-right: 0.1rem;">&yen;{$item['money']}</span>
                             {/if}
                         </span>
-                        <span class="fui-text text-danger" style="float:right;">兑换</span>
+                        <span class="fui-text text-danger2" style="float:right;">兑换</span>
                     </div>
                 </div>
             </a>
@@ -184,7 +184,7 @@
         </div>
         <div class="fui-goods-group white block">
             {loop $balances $item}
-            <a class="fui-goods-item" href="{php echo mobileUrl('creditshop/detail',array('id'=>$item['id']))}" data-nocache="true">
+            <a class="fui-goods-item external" href="{php echo mobileUrl('creditshop/detail',array('id'=>$item['id']))}" data-nocache="true">
                 <div class="image" data-lazyloaded="true" style="background-image: url('{php echo tomedia($item['thumb'])}');"></div>
                 <div class="detail">
                     <div class="name">{$item['title']}</div>
@@ -196,7 +196,7 @@
                              + <span style="font-size: 0.8rem;font-weight: bold;padding-right: 0.1rem;">&yen;{$item['money']}</span>
                             {/if}
                         </span>
-                        <span class="fui-text text-danger" style="float:right;">兑换</span>
+                        <span class="fui-text text-danger2" style="float:right;">兑换</span>
                     </div>
                 </div>
             </a>
@@ -211,3 +211,4 @@
 {php $this->footerMenus()}
 
 {template '_footer'}
+<!--weichengtech-->

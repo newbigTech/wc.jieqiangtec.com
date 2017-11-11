@@ -21,7 +21,7 @@
         <ul class="list-news-ul">
             {loop $articles $index $item}
             <li onclick="javascript:window.open('{php echo webUrl(array('news/detail','id'=>$item['id']))}','','')">
-                <div class="col-lg-1 list-news-li-left"><strong>09</strong><span>2016-08</span></div>
+                <div class="col-lg-1 list-news-li-left"><strong>{php echo date('d', $item['createtime'])}</strong><span>{php echo date('Y-m', $item['createtime'])}</span></div>
                 <div class="col-lg-11 list-news-li-right">
                     <h3>{$item['title']}</h3>
                     <p>{php echo mb_substr(strip_tags(htmlspecialchars_decode($item['content'])),0,140,'utf-8')}...</p>

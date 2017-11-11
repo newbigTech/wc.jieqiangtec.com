@@ -1,5 +1,4 @@
 <?php
-
 $GLOBALS['_transient']['static']['nusoap_base']['globalDebugLevel'] = 9;
 class nusoap_base
 {
@@ -206,7 +205,7 @@ class nusoap_base
 	* @return   debug data
 	* @access   public
 	*/
-	public function getDebug()
+	public function &getDebug()
 	{
 		return $this->debug_str;
 	}
@@ -218,7 +217,7 @@ class nusoap_base
 	* @return   debug data as an XML comment
 	* @access   public
 	*/
-	public function getDebugAsXMLComment()
+	public function &getDebugAsXMLComment()
 	{
 		while (strpos($this->debug_str, '--')) {
 			$this->debug_str = str_replace('--', '- -', $this->debug_str);
@@ -287,10 +286,9 @@ class nusoap_base
 		$keyList = array_keys($val);
 
 		foreach ($keyList as $keyListValue ) {
-			if (is_int($keyListValue)) {
-				continue;
+			if (!(is_int($keyListValue))) {
+				return 'arrayStruct';
 			}
-			return 'arrayStruct';
 		}
 
 		return 'arraySimple';
@@ -316,7 +314,7 @@ class nusoap_base
 		$this->debug('in serialize_val: name=' . $name . ', type=' . $type . ', name_ns=' . $name_ns . ', type_ns=' . $type_ns . ', use=' . $use . ', soapval=' . $soapval);
 		$this->appendDebug('value=' . $this->varDump($val));
 		$this->appendDebug('attributes=' . $this->varDump($attributes));
-		if (is_object($val) && (get_class($val) == 'soapval') && !$soapval) {
+		if (is_object($val) && (get_class($val) == 'soapval') && !($soapval)) {
 			$this->debug('serialize_val: serialize soapval');
 			$xml = $val->serialize($use);
 			$this->appendDebug($val->getDebug());
@@ -329,7 +327,7 @@ class nusoap_base
 		if (is_numeric($name)) {
 			$name = '__numeric_' . $name;
 		}
-		 else if (!$name) {
+		 else if (!($name)) {
 			$name = 'noname';
 		}
 
@@ -391,7 +389,7 @@ class nusoap_base
 				if ($type == 'boolean') {
 					$val = (($val ? 'true' : 'false'));
 				}
-				 else if (!$val) {
+				 else if (!($val)) {
 					$val = 0;
 				}
 
@@ -422,7 +420,7 @@ class nusoap_base
 			if ($type == 'boolean') {
 				$val = (($val ? 'true' : 'false'));
 			}
-			 else if (!$val) {
+			 else if (!($val)) {
 				$val = 0;
 			}
 
@@ -491,7 +489,7 @@ class nusoap_base
 								$val->clearDebug();
 							}
 							 else {
-								if (!$name) {
+								if (!($name)) {
 									$name = get_class($val);
 									$this->debug('In serialize_val, used class name ' . $name . ' as element name');
 								}
@@ -744,7 +742,7 @@ class nusoap_base
 	*/
 	public function expandQname($qname)
 	{
-		if (strpos($qname, ':') && !preg_match('/^http:\\/\\//', $qname)) {
+		if (strpos($qname, ':') && !(preg_match('/^http:\\/\\//', $qname))) {
 			$name = substr(strstr($qname, ':'), 1);
 			$prefix = substr($qname, 0, strpos($qname, ':'));
 
@@ -824,9 +822,12 @@ class nusoap_base
 	public function getPrefixFromNamespace($ns)
 	{
 		foreach ($this->namespaces as $p => $n ) {
-			$this->usedNamespaces[$p] = $n;
+			if (($ns == $n) || ($ns == $p)) {
+				$this->usedNamespaces[$p] = $n;
 
-			return $p;
+				return $p;
+			}
+
 		}
 
 		return false;

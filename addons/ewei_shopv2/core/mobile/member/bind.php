@@ -1,5 +1,5 @@
 <?php
-if (!(defined('IN_IA'))) {
+if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
 
@@ -23,15 +23,13 @@ class Bind_EweiShopV2Page extends MobileLoginPage
 		$wapset = m('common')->getSysset('wap');
 		$appset = m('common')->getSysset('app');
 
-		if (!(p('threen'))) {
-			if (empty($wapset['open']) && !(empty($appset['isclose']))) {
+		if (!p('threen')) {
+			if (empty($wapset['open']) && !empty($appset['isclose'])) {
 				$this->message('未开启绑定设置');
 			}
-
 		}
 
-
-		$bind = ((!(empty($member['mobile'])) && !(empty($member['mobileverify'])) ? 1 : 0));
+		$bind = (!empty($member['mobile']) && !empty($member['mobileverify']) ? 1 : 0);
 
 		if ($_W['ispost']) {
 			$mobile = trim($_GPC['mobile']);
@@ -39,10 +37,9 @@ class Bind_EweiShopV2Page extends MobileLoginPage
 			$pwd = trim($_GPC['pwd']);
 			$confirm = intval($_GPC['confirm']);
 			$key = '__ewei_shopv2_member_verifycodesession_' . $_W['uniacid'] . '_' . $mobile;
-			if (!(isset($_SESSION[$key])) || ($_SESSION[$key] !== $verifycode) || !(isset($_SESSION['verifycodesendtime'])) || (($_SESSION['verifycodesendtime'] + 600) < time())) {
+			if (!isset($_SESSION[$key]) || ($_SESSION[$key] !== $verifycode) || !isset($_SESSION['verifycodesendtime']) || (($_SESSION['verifycodesendtime'] + 600) < time())) {
 				show_json(0, '验证码错误或已过期');
 			}
-
 
 			$member2 = pdo_fetch('select * from ' . tablename('ewei_shop_member') . ' where mobile=:mobile and uniacid=:uniacid and mobileverify=1 limit 1', array(':mobile' => $mobile, ':uniacid' => $_W['uniacid']));
 
@@ -56,15 +53,12 @@ class Bind_EweiShopV2Page extends MobileLoginPage
 					p('task')->checkTaskReward('member_info', 1, $_W['openid']);
 				}
 
-
 				show_json(1, 'bind success (0)');
 			}
-
 
 			if ($member['id'] == $member2['id']) {
 				show_json(0, '此手机号已与当前账号绑定');
 			}
-
 
 			if (m('bind')->iswxm($member) && m('bind')->iswxm($member2)) {
 				if ($confirm) {
@@ -78,23 +72,20 @@ class Bind_EweiShopV2Page extends MobileLoginPage
 						p('task')->checkTaskReward('member_info', 1, $_W['openid']);
 					}
 
-
 					show_json(1, 'bind success (1)');
 				}
-				 else {
+				else {
 					show_json(-1, '<center>此手机号已与其他帐号绑定<br>如果继续将会解绑之前帐号<br>确定继续吗？</center>');
 				}
 			}
 
-
-			if (!(m('bind')->iswxm($member2))) {
+			if (!m('bind')->iswxm($member2)) {
 				if ($confirm) {
 					$result = m('bind')->merge($member2, $member);
 
 					if (empty($result['errno'])) {
 						show_json(0, $result['message']);
 					}
-
 
 					$salt = m('account')->getSalt();
 					m('bind')->update($member['id'], array('mobile' => $mobile, 'pwd' => md5($pwd . $salt), 'salt' => $salt, 'mobileverify' => 1));
@@ -105,23 +96,20 @@ class Bind_EweiShopV2Page extends MobileLoginPage
 						p('task')->checkTaskReward('member_info', 1, $_W['openid']);
 					}
 
-
 					show_json(1, 'bind success (2)');
 				}
-				 else {
+				else {
 					show_json(-1, '<center>此手机号已通过其他方式注册<br>如果继续将会合并账号信息<br>确定继续吗？</center>');
 				}
 			}
 
-
-			if (!(m('bind')->iswxm($member))) {
+			if (!m('bind')->iswxm($member)) {
 				if ($confirm) {
 					$result = m('bind')->merge($member, $member2);
 
 					if (empty($result['errno'])) {
 						show_json(0, $result['message']);
 					}
-
 
 					$salt = m('account')->getSalt();
 					m('bind')->update($member2['id'], array('mobile' => $mobile, 'pwd' => md5($pwd . $salt), 'salt' => $salt, 'mobileverify' => 1));
@@ -132,28 +120,24 @@ class Bind_EweiShopV2Page extends MobileLoginPage
 						p('task')->checkTaskReward('member_info', 1, $_W['openid']);
 					}
 
-
 					show_json(1, 'bind success (3)');
 				}
-				 else {
+				else {
 					show_json(-1, '<center>此手机号已通过其他方式注册<br>如果继续将会合并账号信息<br>确定继续吗？</center>');
 				}
 			}
-
 		}
-
 
 		$sendtime = $_SESSION['verifycodesendtime'];
 		if (empty($sendtime) || (($sendtime + 60) < time())) {
 			$endtime = 0;
 		}
-		 else {
+		else {
 			$endtime = 60 - time() - $sendtime;
 		}
 
 		include $this->template();
 	}
 }
-
 
 ?>

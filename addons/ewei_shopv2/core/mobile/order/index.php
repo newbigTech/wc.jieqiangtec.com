@@ -1,5 +1,4 @@
 <?php
-//weichengtech
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -675,6 +674,7 @@ class Index_EweiShopV2Page extends MobileLoginPage
 			}
 			else {
 				if (strlen($order['verifycode']) == 9) {
+					$verifycode = substr($order['verifycode'], 0, 3) . ' ' . substr($order['verifycode'], 3, 3) . ' ' . substr($order['verifycode'], 6, 3);
 				}
 			}
 		}
@@ -686,6 +686,11 @@ class Index_EweiShopV2Page extends MobileLoginPage
 		}
 
 		$activity = com('coupon')->activity($order['price']);
+		if (!empty($order['virtual']) && !empty($order['virtual_str'])) {
+			$ordervirtual = m('order')->getOrderVirtual($order);
+			$virtualtemp = pdo_fetch('SELECT linktext, linkurl FROM ' . tablename('ewei_shop_virtual_type') . ' WHERE id=:id AND uniacid=:uniacid LIMIT 1', array(':id' => $order['virtual'], ':uniacid' => $_W['uniacid']));
+		}
+
 		include $this->template();
 	}
 

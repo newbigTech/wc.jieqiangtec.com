@@ -83,7 +83,7 @@ class Clearing_EweiShopV2Page extends PluginWebPage
 		$params = array(':uniacid' => $_W['uniacid']);
 		$pindex = max(1, intval($_GPC['page']));
 		$psize = 20;
-		$condition = 'AND status=1 AND (paytype = 101 OR paytype = 102 OR paytype = 2)';
+		$condition = 'AND status=1 AND paytype = 101';
 		if (!($id)) 
 		{
 			$this->message('参数错误!', '', 'error');
@@ -145,11 +145,11 @@ class Clearing_EweiShopV2Page extends PluginWebPage
 		$total = (int) pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_cashier_pay_log') . ' where uniacid=:uniacid ' . $condition, $params);
 		if (!(empty($clearing['merchid']))) 
 		{
-			$total_money = (double) pdo_fetchcolumn('select sum(money-orderprice+deduction) from ' . tablename('ewei_shop_cashier_pay_log') . ' where uniacid=:uniacid ' . $condition, $params);
+			$total_money = (double) pdo_fetchcolumn('select sum(money-orderprice) from ' . tablename('ewei_shop_cashier_pay_log') . ' where uniacid=:uniacid ' . $condition, $params);
 		}
 		else 
 		{
-			$total_money = (double) pdo_fetchcolumn('select sum(money+deduction) from ' . tablename('ewei_shop_cashier_pay_log') . ' where uniacid=:uniacid ' . $condition, $params);
+			$total_money = (double) pdo_fetchcolumn('select sum(money) from ' . tablename('ewei_shop_cashier_pay_log') . ' where uniacid=:uniacid ' . $condition, $params);
 		}
 		$pager = pagination($total, $pindex, $psize);
 		include $this->template();

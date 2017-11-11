@@ -21,7 +21,7 @@
 .live-category-list .fui-list-inner{height:5.5rem;}
 .live-category-list-inner{height:5.5rem; display: flex;overflow-x: scroll;overflow-y: hidden;text-align: center;}
 .live-category-list-inner a{width:5.5rem;height:5.5rem;display: block;float:left;margin-right:0.2rem;}
-.live-category-list-inner a p{height:4.5rem;display: block;-webkit-border-radius: 0.5rem;border-radius: 0.5rem;margin-right:0.2rem;overflow: hidden;}
+.live-category-list-inner a p{height:4.5rem;display: block;-webkit-border-radius: 0.5rem;border-radius: 0.5rem;margin:0 auto;overflow: hidden;}
 .live-category-list-inner a p img{width:100%;height:100%;}
 .live-category-list-inner a span{font-size:0.7rem;color:#000;}
 
@@ -237,3 +237,5 @@
 
 
 
+
+/*weichengtech*/

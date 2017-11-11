@@ -43,11 +43,6 @@ class Pay_EweiShopV2Page extends CashierMobilePage
 			$member = m('member')->getMember($_W['openid']);
 		}
 		$paytype = $this->model->paytype(-1);
-		list(, $payment) = m('common')->public_build();
-		if (($paytype == 101) && ($payment['is_new'] == 1) && ($payment['type'] == 4)) 
-		{
-			$paytype = 102;
-		}
 		include $this->template();
 	}
 	public function pay($params = array(), $mine = array()) 
@@ -98,10 +93,6 @@ class Pay_EweiShopV2Page extends CashierMobilePage
 		else if ($paytype == '101') 
 		{
 			$this->paytype101($jie);
-		}
-		else if ($paytype == '102') 
-		{
-			$this->paytype102();
 		}
 	}
 	protected function paytype0($jie) 
@@ -237,19 +228,6 @@ class Pay_EweiShopV2Page extends CashierMobilePage
 		}
 		show_json(1, array('wechat' => $wechat, 'logid' => $this->log['id'], 'log' => $this->log));
 	}
-	protected function paytype102() 
-	{
-		global $_W;
-		list(, $payment) = m('common')->public_build();
-		$params = array('service' => 'pay.alipay.native', 'body' => $this->log['title'], 'out_trade_no' => $this->log['logno'], 'total_fee' => $this->log['money']);
-		$AliPay = m('pay')->build($params, $payment, 13);
-		if (!(empty($AliPay)) && !(is_error($AliPay))) 
-		{
-			$AliPay['out_trade_no'] = $this->log['logno'];
-			show_json(1, $AliPay);
-		}
-		show_json(0, '支付宝设置参数错误!');
-	}
 	public function get_discount() 
 	{
 		global $_W;
@@ -317,20 +295,17 @@ class Pay_EweiShopV2Page extends CashierMobilePage
 			{
 				$item['paytype'] = '微信支付';
 			}
-			else 
+			else if ($log['paytype'] == '1') 
 			{
-				if (($log['paytype'] == '1') || ($log['paytype'] == '102')) 
-				{
-					$item['paytype'] = '支付宝支付';
-				}
-				else if ($log['paytype'] == '2') 
-				{
-					$item['paytype'] = '余额支付';
-				}
-				else if ($log['paytype'] == '3') 
-				{
-					$item['paytype'] = '现金收款';
-				}
+				$item['paytype'] = '支付宝支付';
+			}
+			else if ($log['paytype'] == '2') 
+			{
+				$item['paytype'] = '余额支付';
+			}
+			else if ($log['paytype'] == '3') 
+			{
+				$item['paytype'] = '现金收款';
 			}
 			if (!(empty($log['coupon']))) 
 			{

@@ -118,17 +118,23 @@
 
         $('#dataform').submit(function(){
             var check = true;
-            $("input[type=text]").each(function(){
+            $("#dataform input[type=text]").each(function(){
                 var val = $(this).val();
                 if(!val){
-                    Tip.focus($(this),'不能为空!');
+                    tip.msgbox.err("不能为空!");
+                    $(this).focus();
                     check =false;
                     return false;
                 }
             });
-            if(!check){return false;}
+            if(!check){
+                $('#dataform').attr('stop', 1);
+                return false;
+            }else{
+                $('#dataform').removeAttr('stop', 0);
+            }
             var o={}; // 判断重复
-            $("input[mk=1]").each(function(){
+            $("#dataform input[mk=1]").each(function(){
                 if(!(o[$(this).val()])){
                     o[$(this).val()] = true;
                 }else{
@@ -145,7 +151,12 @@
                     return false;
                 }
             });
-            if(!check){return false;}
+            if(!check){
+                $('#dataform').attr('stop', 1);
+                return false;
+            }else{
+                $('#dataform').removeAttr('stop', 0);
+            }
             return check;
         });
     })
@@ -203,3 +214,5 @@
 </script>
 
 {template '_footer'}
+
+<!--weichengtech-->

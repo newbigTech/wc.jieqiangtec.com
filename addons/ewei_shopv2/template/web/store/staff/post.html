@@ -4,9 +4,9 @@
 <div class="page-heading">
     <span class='pull-right'>
         <a class="btn btn-default" href="{php echo webUrl('store/staff');}">返回列表</a>
-        <a class="btn btn-primary">添加商品分组</a>
+        <a class="btn btn-primary">添加服务人员</a>
 	</span>
-    <h2>添加商品分组</h2>
+    <h2>添加服务人员</h2>
 </div>
 <form action="" method="post" class="form-validate form-horizontal ">
 
@@ -14,8 +14,7 @@
         <label class="col-sm-2 control-label">排序</label>
         <div class="col-sm-9">
             {ife 'store.saler' $item}
-            <input type="text" class="form-control valid" name="displayorder" value="{$item['displayorder']}"
-                   data-rule-required="true"  />
+            <input type="text" class="form-control valid" name="displayorder" value="{$item['displayorder']}"/>
             {else}
             <div class='form-control-static'>{$item['displayorder']}</div>
             {/if}
@@ -34,7 +33,7 @@
         </div>
     </div>
     <div class="form-group">
-        <label class="col-sm-2 control-label">昵称</label>
+        <label class="col-sm-2 control-label must">昵称</label>
         <div class="col-sm-4">
             {ife 'store.saler' $item}
             <input type="text" class="form-control valid" name="nickname" value="{$item['nickname']}"
@@ -45,7 +44,7 @@
         </div>
     </div>
     <div class="form-group">
-        <label class="col-sm-2 control-label">姓名</label>
+        <label class="col-sm-2 control-label must">姓名</label>
         <div class="col-sm-4">
             {ife 'store.saler' $item}
             <input type="text" class="form-control valid" name="realname" value="{$item['realname']}"
@@ -60,7 +59,7 @@
         <label class="col-sm-2 control-label">所属门店</label>
         <div class="col-sm-9 col-xs-12">
             {ife 'store.saler' $item}
-                {php echo tpl_selector('storeid',array('text'=>'storename','preview'=>true,'type'=>'text',  'thumb'=>'','placeholder'=>'门店名称','buttontext'=>'选择门店 ', 'items'=>$store,'url'=>webUrl('store/query')))}
+                {php echo tpl_selector('storeid',array('text'=>'storename','preview'=>true,'type'=>'text',  'thumb'=>'','placeholder'=>'门店名称','buttontext'=>'选择门店 ', 'items'=>$store,'url'=>webUrl('store/query').'&limittype=1'))}
             {else}
             <div class='form-control-static'>{$item['storeid']}</div>
             {/if}
@@ -92,7 +91,7 @@
         </div>
     </div>
     <div class="form-group">
-        <label class="col-sm-2 control-label">手机号</label>
+        <label class="col-sm-2 control-label must">手机号</label>
         <div class="col-sm-4">
             {ife 'store.saler' $item}
             <input type="text" class="form-control valid" name="mobile" value="{$item['mobile']}"
@@ -148,3 +147,4 @@
     </table>
 </form>
 {template '_footer'}
+<!--weichengtech-->

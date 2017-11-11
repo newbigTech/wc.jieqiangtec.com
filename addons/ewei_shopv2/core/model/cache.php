@@ -1,8 +1,4 @@
 <?php
-if (!(defined('IN_IA'))) {
-	exit('Access Denied');
-}
-
 class Cache_EweiShopV2Model
 {
 	public function get_key($key = '', $uniacid = '')
@@ -18,15 +14,13 @@ class Cache_EweiShopV2Model
 			$account_key = $_W['account']['key'];
 		}
 
-
 		if (function_exists('redis')) {
 			$redis = redis();
 
-			if (!(is_error($redis))) {
+			if (!is_error($redis)) {
 				if (stripos($uniacid, 'global') !== false) {
 					return 'ewei_shopv2_syscache_' . $_W['setting']['site']['key'] . '_global_' . $key;
 				}
-
 
 				if (empty($account_key)) {
 					if ($isme) {
@@ -35,20 +29,16 @@ class Cache_EweiShopV2Model
 							$APPID = pdo_fetchcolumn('SELECT `key` FROM ' . tablename('account_wechats') . ' WHERE uniacid=:uniacid', array(':uniacid' => $uniacid));
 						}
 
-
 						$account_key = $APPID;
 					}
-					 else {
+					else {
 						$account_key = pdo_fetchcolumn('SELECT `key` FROM ' . tablename('account_wechats') . ' WHERE uniacid=:uniacid', array(':uniacid' => $uniacid));
 					}
 				}
 
-
 				return 'ewei_shopv2_syscache_' . $_W['setting']['site']['key'] . '_' . $uniacid . '_' . $account_key . '_' . $key;
 			}
-
 		}
-
 
 		return EWEI_SHOPV2_PREFIX . md5($uniacid . '_new_' . $key);
 	}
@@ -70,7 +60,7 @@ class Cache_EweiShopV2Model
 		if (function_exists('redis')) {
 			$redis = redis();
 
-			if (!(is_error($redis))) {
+			if (!is_error($redis)) {
 				$prefix = '__iserializer__format__::';
 				$value = $redis->get($this->get_key($key, $uniacid));
 
@@ -78,38 +68,31 @@ class Cache_EweiShopV2Model
 					return false;
 				}
 
-
 				if (stripos($value, $prefix) === 0) {
 					$ret = iunserializer(substr($value, strlen($prefix)));
 
-					foreach ($ret as $k => &$v ) {
+					foreach ($ret as $k => &$v) {
 						if (is_serialized($v)) {
 							$v = iunserializer($v);
 						}
 
-
 						if (is_array($v)) {
-							foreach ($v as $k1 => &$v1 ) {
+							foreach ($v as $k1 => &$v1) {
 								if (is_serialized($v1)) {
 									$v1 = iunserializer($v1);
 								}
-
 							}
 
 							unset($v1);
 						}
-
 					}
 
 					return $ret;
 				}
 
-
 				return $value;
 			}
-
 		}
-
 
 		return cache_read($this->get_key($key, $uniacid));
 	}
@@ -119,28 +102,24 @@ class Cache_EweiShopV2Model
 		if (function_exists('redis')) {
 			$redis = redis();
 
-			if (!(is_error($redis))) {
+			if (!is_error($redis)) {
 				$prefix = '__iserializer__format__::';
 
 				if (is_array($value)) {
-					foreach ($value as $k => &$v ) {
+					foreach ($value as $k => &$v) {
 						if (is_serialized($v)) {
 							$v = iunserializer($v);
 						}
-
 					}
 
 					unset($v);
 					$value = $prefix . iserializer($value);
 				}
 
-
 				$redis->set($this->get_key($key, $uniacid), $value);
-				return;
+				return NULL;
 			}
-
 		}
-
 
 		cache_write($this->get_key($key, $uniacid), $value);
 	}
@@ -150,17 +129,18 @@ class Cache_EweiShopV2Model
 		if (function_exists('redis')) {
 			$redis = redis();
 
-			if (!(is_error($redis))) {
+			if (!is_error($redis)) {
 				$redis->del($this->get_key($key, $uniacid));
-				return;
+				return NULL;
 			}
-
 		}
-
 
 		cache_delete($this->get_key($key, $uniacid));
 	}
 }
 
+if (!defined('IN_IA')) {
+	exit('Access Denied');
+}
 
 ?>

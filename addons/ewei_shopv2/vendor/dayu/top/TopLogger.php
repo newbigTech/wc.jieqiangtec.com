@@ -1,5 +1,4 @@
 <?php
-
 class TopLogger
 {
 	public $conf = array('separator' => "\t", 'log_file' => '');
@@ -15,7 +14,7 @@ class TopLogger
 
 			$logDir = dirname($this->conf['log_file']);
 
-			if (!is_dir($logDir)) {
+			if (!(is_dir($logDir))) {
 				mkdir($logDir, 511, true);
 			}
 

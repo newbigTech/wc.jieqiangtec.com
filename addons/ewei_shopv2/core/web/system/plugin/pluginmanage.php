@@ -1,5 +1,4 @@
 <?php
-//weichengtech
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -32,7 +31,7 @@ class Pluginmanage_EweiShopV2Page extends SystemPage
 		}
 
 		$total = pdo_fetchcolumn('SELECT COUNT(1) FROM ' . tablename('ewei_shop_system_plugingrant_plugin') . " as gp\n                left join " . tablename('ewei_shop_plugin') . " as p on p.id = gp.pluginid\n                WHERE 1 " . $condition . ' ', $params);
-		$pager = pagination($total, $pindex, $psize);
+		$pager = pagination2($total, $pindex, $psize);
 		include $this->template();
 	}
 
@@ -163,7 +162,7 @@ class Pluginmanage_EweiShopV2Page extends SystemPage
 
 		$plugins = pdo_fetchall('select id,`name` as title,thumb,`desc` from ' . tablename('ewei_shop_plugin') . ' where 1 ' . $condition . ' order by displayorder asc LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize, $params);
 		$total = pdo_fetchcolumn('SELECT COUNT(1) FROM ' . tablename('ewei_shop_plugin') . ' WHERE 1 ' . $condition . ' ', $params);
-		$pager = pagination($total, $pindex, $psize, '', array('before' => 5, 'after' => 4, 'ajaxcallback' => 'select_page', 'callbackfuncname' => 'select_page'));
+		$pager = pagination2($total, $pindex, $psize, '', array('before' => 5, 'after' => 4, 'ajaxcallback' => 'select_page', 'callbackfuncname' => 'select_page'));
 		include $this->template();
 	}
 }

@@ -32,11 +32,12 @@
 			<a class="back" href="{php echo mobileUrl('order')}"></a>
 		</div>
 		<div class="title">团详情</div>
-		<div class="fui-header-right" onclick="location.href='{php echo mobileUrl('groups/team')}'">
-			<span class="icon icon-group" style="font-size:1.1rem;"></span>
+		<div class="fui-header-right">
+			<span class="icon icon-group" onclick="location.href='{php echo mobileUrl('groups/team')}'" style="font-size:1.1rem;"></span>
 		</div>
 	</div>
 	<div class='fui-content' style="padding-bottom:0;top:2.2rem;">
+		{if !empty($thumb)}
 		<div class="lynn_team_detail_head">
 			<div class="fui-swipe lynn_swipe" data-speed="5000" data-gap="5">
 				<div class="fui-swipe-wrapper">
@@ -60,9 +61,10 @@
 			<input type="hidden" name="title" value="{$goods['title']}" id="gname">
 			<h2 class="lynn_team_detail_title">{$goods['title']}</h2>
 			<p class="lynn_team_detail_goods_info">
-				拼团价：¥<strong>{$goods['groupsprice']}</strong>/{if $goods['units']}{$goods['goodsnum']}{$goods['units']}{else}1件{/if}<del>{$goods['price']}</del>
+				拼团价：&yen<strong>{$goods['groupsprice']}</strong>/{if $goods['units']}{$goods['goodsnum']}{$goods['units']}{else}1件{/if}<del>{$goods['price']}</del>
 			</p>
 		</div>
+		{/if}
 		<div class="pp">
 			{if $lasttime2 > 0 && $n > 0 }
 			<div class="fui-cell">
@@ -260,3 +262,4 @@
 	})
 </script>
 {template '_footer'}
+<!--weichengtech-->

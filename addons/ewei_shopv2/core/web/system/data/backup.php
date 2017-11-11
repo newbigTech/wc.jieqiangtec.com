@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -9,21 +8,21 @@ class Backup_EweiShopV2Page extends SystemPage
 	protected function table2sql($table)
 	{
 		global $db;
-		$tabledump = 'DROP TABLE IF EXISTS ' . $table . ';' . "\r\n";
+		$tabledump = 'DROP TABLE IF EXISTS ' . $table . ";\r\n";
 		$createtable = pdo_fetch('SHOW CREATE TABLE ' . $table);
-		$tabledump .= $createtable['Create Table'] . ';' . "\r\n";
+		$tabledump .= $createtable['Create Table'] . ";\r\n";
 		$rows = pdo_fetchall('SELECT * FROM ' . $table);
 
-		foreach ($rows as $row ) {
+		foreach ($rows as $row) {
 			$comma = '';
 			$tabledump .= 'INSERT INTO ' . $table . ' VALUES(';
 
-			foreach ($row as $k => $v ) {
+			foreach ($row as $k => $v) {
 				$tabledump .= $comma . '\'' . addslashes($v) . '\'';
 				$comma = ',';
 			}
 
-			$tabledump .= ');' . "\r\n";
+			$tabledump .= ");\r\n";
 		}
 
 		return $tabledump;
@@ -39,7 +38,7 @@ class Backup_EweiShopV2Page extends SystemPage
 			$sql = 'SHOW TABLES LIKE \'%ewei_shop_%\'';
 			$tables = pdo_fetchall($sql);
 
-			foreach ($tables as $k => $t ) {
+			foreach ($tables as $k => $t) {
 				$table = array_values($t);
 				$tablename = $table[0];
 				$sqls .= $this->table2sql($tablename) . "\r\n\r\n";
@@ -57,12 +56,10 @@ class Backup_EweiShopV2Page extends SystemPage
 			exit($sqls);
 		}
 
-
 		$lasttime = m('cache')->getString('systembackuptime', 'global');
 		load()->func('tpl');
 		include $this->template('system/data/backup');
 	}
 }
-
 
 ?>

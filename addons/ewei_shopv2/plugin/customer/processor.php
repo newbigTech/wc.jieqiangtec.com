@@ -1,6 +1,5 @@
 <?php
-
-if (!defined('IN_IA')) {
+if (!(defined('IN_IA'))) {
 	exit('Access Denied');
 }
 
@@ -30,7 +29,7 @@ class CreditshopProcessor extends PluginProcessor
 			}
 
 
-			if (!$obj->inContext) {
+			if (!($obj->inContext)) {
 				$obj->beginContext();
 				return $obj->respText('请输入兑换码:');
 			}
@@ -75,7 +74,7 @@ class CreditshopProcessor extends PluginProcessor
 				}
 
 
-				if (!empty($goods['type'])) {
+				if (!(empty($goods['type']))) {
 					if ($log['status'] <= 1) {
 						return $obj->respText('未中奖，不能兑换!');
 					}
@@ -95,9 +94,9 @@ class CreditshopProcessor extends PluginProcessor
 
 				$stores = explode(',', $goods['storeids']);
 
-				if (!empty($storeids)) {
-					if (!empty($saler['storeid'])) {
-						if (!in_array($saler['storeid'], $storeids)) {
+				if (!(empty($storeids))) {
+					if (!(empty($saler['storeid']))) {
+						if (!(in_array($saler['storeid'], $storeids))) {
 							return $obj->respText('您无此门店的兑换权限!');
 						}
 

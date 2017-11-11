@@ -72,7 +72,7 @@
         <div class="form-group">
             <label class="col-sm-2 control-label">评价人头像</label>
             <div class="col-sm-9 col-xs-12">
-                {php echo tpl_form_field_image('headimg',$item['headimg'])}
+                {php echo tpl_form_field_image2('headimg',$item['headimg'])}
                 <span class="help-block">用户头像，如果不选择，默认从粉丝表中随机读取</span>
             </div>
         </div>
@@ -125,7 +125,7 @@
         <div class="form-group">
             <label class="col-sm-2 control-label"></label>
             <div class="col-sm-9 col-xs-12">
-                {php echo tpl_form_field_multi_image('images',iunserializer($item['images']))}
+                {php echo tpl_form_field_multi_image2('images',iunserializer($item['images']))}
             </div>
         </div>
     {/if}
@@ -163,7 +163,7 @@
     <div class="form-group">
         <label class="col-sm-2 control-label"></label>
         <div class="col-sm-9 col-xs-12">
-            {php echo tpl_form_field_multi_image('reply_images',iunserializer($item['reply_images']))}
+            {php echo tpl_form_field_multi_image2('reply_images',iunserializer($item['reply_images']))}
         </div>
     </div>
 
@@ -196,7 +196,7 @@
         <div class="form-group">
             <label class="col-sm-2 control-label"></label>
             <div class="col-sm-9 col-xs-12">
-                {php echo tpl_form_field_multi_image('append_images',iunserializer($item['append_images']))}
+                {php echo tpl_form_field_multi_image2('append_images',iunserializer($item['append_images']))}
             </div>
         </div>
     {/if}
@@ -234,7 +234,7 @@
     <div class="form-group">
         <label class="col-sm-2 control-label"></label>
         <div class="col-sm-9 col-xs-12">
-            {php echo tpl_form_field_multi_image('append_reply_images',iunserializer($item['append_reply_images']))}
+            {php echo tpl_form_field_multi_image2('append_reply_images',iunserializer($item['append_reply_images']))}
         </div>
     </div>
 {/if}
@@ -249,3 +249,4 @@
 </form>
 
 {template '_footer'}
+<!--weichengtech-->

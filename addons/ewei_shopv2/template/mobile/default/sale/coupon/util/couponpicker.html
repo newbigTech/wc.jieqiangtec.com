@@ -9,7 +9,7 @@
 						<i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
 					</div>
 					<div class="coupon-left">
-						<div class="single"><%if coupon.backpre%><span class="subtitle">￥</span><%/if%><%coupon.backmoney%></div>
+						<div class="single"><%if coupon.backpre%><span class="subtitle">￥</span><%/if%><%coupon.backmoney%><%if coupon.backtype==1%><span class="subtitle">折</span><%/if%></div>
 					</div>
 					<div class="coupon-right">
 						<div class="title"><%coupon.couponname%></div>
@@ -31,3 +31,4 @@
 		</div>
 	</div>
 </script>
+<!--weichengtech-->

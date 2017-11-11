@@ -1,5 +1,4 @@
 <?php
-//weichengtech
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -11,11 +10,16 @@ class Index_EweiShopV2Page extends WebPage
 		global $_W;
 		global $_GPC;
 
-		if (empty($_W['shopset']['template']['style_v3'])) {
+		if (empty($_W['shopversion'])) {
 			$goodsfrom = strtolower(trim($_GPC['goodsfrom']));
 
 			if (empty($goodsfrom)) {
 				header('location: ' . webUrl('goods', array('goodsfrom' => 'sale')));
+			}
+		}
+		else {
+			if (!empty($_GPC['goodsfrom'])) {
+				header('location: ' . webUrl('goods/' . $_GPC['goodsfrom']));
 			}
 		}
 
@@ -60,6 +64,7 @@ class Index_EweiShopV2Page extends WebPage
 		}
 
 		empty($goodsfrom) && $_GPC['goodsfrom'] = $goodsfrom = 'sale';
+		$_GPC['goodsfrom'] = $goodsfrom;
 
 		if ($goodsfrom == 'sale') {
 			$condition .= ' AND g.`status` > 0 and g.`checked`=0 and g.`total`>0 and g.`deleted`=0';

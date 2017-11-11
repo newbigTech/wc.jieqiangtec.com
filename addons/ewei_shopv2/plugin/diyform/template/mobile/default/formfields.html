@@ -13,7 +13,7 @@
     data-itemid="field_data{php echo $i}"
     data-key="{$k1}"
     >
-    <div class='fui-cell-label' style="width: auto;padding-right: 15px;">
+    <div class='fui-cell-label' style="padding-right: 15px;">
         {php echo $v1['tp_name']}
         {if $v1['data_type'] == 10}
         <br>
@@ -30,17 +30,18 @@
         <textarea class="" id='field_data{php echo $i}' name='field_data{php echo $i}' placeholder="{if !empty($v1['placeholder'])}{$v1['placeholder']}{else}请输入{$v1['tp_name']}{/if}" >{php echo $f_data[$k1]}</textarea>
 
         {else if $v1['data_type'] == 2}
-        <select id='field_data{php echo $i}' name='field_data{php echo $i}' >
-            <option value=''>请选择{$v1['tp_name']}</option>
-            {loop $v1['tp_text'] $k2 $v2}
-            <option value="{php echo $v2}" {if $f_data[$k1] == $v2}selected{/if}>{php echo $v2}</option>
-            {/loop}
-        </select>
-
+        <div class="diyform-pulldown">
+            <select id='field_data{php echo $i}' name='field_data{php echo $i}'  class="form-select">
+                <option value=''>请选择{$v1['tp_name']}</option>
+                {loop $v1['tp_text'] $k2 $v2}
+                <option value="{php echo $v2}" {if $f_data[$k1] == $v2}selected{/if}>{php echo $v2}</option>
+                {/loop}
+            </select>
+        </div>
         {else if $v1['data_type'] == 3}
         {loop $v1['tp_text'] $k2 $v2}
         <label class="checkbox-inline">
-            <input type="checkbox" class='fui-checkbox fui-checkbox-success' name='field_data{php echo $i}[]' {if is_array($f_data[$k1]) &&  in_array($v2, $f_data[$k1])}checked{/if} value="{php echo $v2}"/> {php echo $v2}
+            <input type="checkbox" class='fui-checkbox fui-checkbox-danger' name='field_data{php echo $i}[]' {if is_array($f_data[$k1]) &&  in_array($v2, $f_data[$k1])}checked{/if} value="{php echo $v2}"/> {php echo $v2}
         </label>
         {/loop}
 
@@ -68,32 +69,43 @@
     <input type="text" class='fui-input' id='field_data{php echo $i}' name='field_data{php echo $i}' placeholder="请输入{$v1['tp_name']}" maxlength="18" value="{php echo $f_data[$k1]}" />
 
     {else if $v1['data_type'] == 7}
-    <input type="text" class='fui-input datepicker' id="field_data{php echo $i}" name='field_data{php echo $i}' placeholder="请输入{$v1['tp_name']}" value='{if !empty($f_data[$k1])}{php echo $f_data[$k1]}{/if}' readonly/>
+    <div class="diyform-pulldown">
+        <input type="text" class='fui-input datepicker' id="field_data{php echo $i}" name='field_data{php echo $i}' placeholder="请输入{$v1['tp_name']}" value='{if !empty($f_data[$k1])}{php echo $f_data[$k1]}{/if}' readonly/>
+    </div>
 
     {else if $v1['data_type'] == 8}
-
-    <input type="text" class='fui-input datepicker'  id="field_data{php echo $i}_0" name='field_data{php echo $i}' placeholder="开始日期" value='{if !empty($f_data[$k1][0])}{php echo $f_data[$k1][0]}{/if}' style='width:40%;float:left;' readonly/>
-
-    <input type="text" class='fui-input datepicker'  id="field_data{php echo $i}_1" name='field_data{php echo $i}' placeholder="结束日期" value='{if !empty($f_data[$k1][1])}{php echo $f_data[$k1][1]}{/if}' style='width:40%;float:left;margin-left:5px;' readonly/>
+    <div class="diyform-pulldown2">
+        <input type="text" class='fui-input datepicker'  id="field_data{php echo $i}_0" name='field_data{php echo $i}' placeholder="开始日期" value='{if !empty($f_data[$k1][0])}{php echo $f_data[$k1][0]}{/if}' style='width:100%;float:left;background: #f3f3f3;text-indent: .5rem;;border-radius: .1rem' readonly/>
+    </div>
+    <span style="float: left;display: inline-block;margin: 0 .5rem;color: #000;">至</span>
+    <div class="diyform-pulldown2" style="margin-right: 1.5rem">
+        <input type="text" class='fui-input datepicker'  id="field_data{php echo $i}_1" name='field_data{php echo $i}' placeholder="结束日期" value='{if !empty($f_data[$k1][1])}{php echo $f_data[$k1][1]}{/if}' style='width:100%;float:left;background: #f3f3f3; text-indent: .5rem;;border-radius: .1rem;' readonly/>
+    </div>
 
     {else if $v1['data_type'] == 9}
+<div class="diyform-pulldown">
     <input type="text" class='fui-input citypicker' id="field_data{php echo $i}" name='field_data{php echo $i}' placeholder="请选择{$v1['tp_name']}"
            value="{if !empty($f_data[$k1]['province'])}{$f_data[$k1]['province']}{/if}{if !empty($f_data[$k1]['city'])}{$f_data[$k1]['city']}{/if}{if !empty($f_data[$k1]['area'])}{$f_data[$k1]['area']}{/if}"
            data-value="{if !empty($f_data[$k1]['value'])}{$f_data[$k1]['value']}{/if}"
            data-area="{php echo intval($v1['tp_area'])}" readonly/>
-
+</div>
     {else if $v1['data_type'] == 10}
     <input type="text" class='fui-input' id='field_data{php echo $i}' name='field_data{php echo $i}' placeholder="请输入{$v1['tp_name']}"  value="{php echo $f_data[$k1]['name1']}" />
     <br/>
     <input type="text" class='fui-input' id='field_data{php echo $i}_2' name='field_data{php echo $i}_2' placeholder="请输入{$v1['tp_name2']}"  value="{php echo $f_data[$k1]['name2']}" />
 
     {else if $v1['data_type'] == 11}
-    <input type="text" class='fui-input timepicker' id="field_data{php echo $i}" name='field_data{php echo $i}' placeholder="请选择{$v1['tp_name']}"  readonly value='{if !empty($f_data[$k1])}{php echo $f_data[$k1]}{/if}'/>
-
+    <div class="diyform-pulldown">
+        <input type="text" class='fui-input timepicker' id="field_data{php echo $i}" name='field_data{php echo $i}' placeholder="请选择{$v1['tp_name']}"  readonly value='{if !empty($f_data[$k1])}{php echo $f_data[$k1]}{/if}'/>
+    </div>
     {else if $v1['data_type'] == 12}
-    <input type="text" class='fui-input timepicker'  id="field_data{php echo $i}_0" name='field_data{php echo $i}' placeholder="开始时间" value='{if !empty($f_data[$k1][0])}{php echo $f_data[$k1][0]}{/if}' style='width:40%;float:left;' readonly/>
-
-    <input type="text" class='fui-input timepicker'  id="field_data{php echo $i}_1" name='field_data{php echo $i}' placeholder="结束时间" value='{if !empty($f_data[$k1][1])}{php echo $f_data[$k1][1]}{/if}' style='width:40%;float:left;margin-left:5px;' readonly/>
+    <div class="diyform-pulldown2">
+        <input type="text" class='fui-input timepicker'  id="field_data{php echo $i}_0" name='field_data{php echo $i}' placeholder="开始时间" value='{if !empty($f_data[$k1][0])}{php echo $f_data[$k1][0]}{/if}' style='width:100%;float:left;background: #f3f3f3; text-indent: .5rem;;border-radius: .1rem;' readonly/>
+    </div>
+    <span style="float: left;display: inline-block;margin: 0 .5rem;color: #000;">至</span>
+    <div class="diyform-pulldown2" style="margin-right: 4rem">
+        <input type="text" class='fui-input timepicker'  id="field_data{php echo $i}_1" name='field_data{php echo $i}' placeholder="结束时间" value='{if !empty($f_data[$k1][1])}{php echo $f_data[$k1][1]}{/if}' style='width:100%;float:left;background: #f3f3f3; text-indent: .5rem;;border-radius: .1rem;' readonly/>
+    </div>
     {else if $v1['data_type'] == 13}
         {$v1['tp_text']}
     {/if}
@@ -153,3 +165,5 @@
     })
 </script>
 </div>
+
+<!--weichengtech54mI5p2D5omA5pyJ-->

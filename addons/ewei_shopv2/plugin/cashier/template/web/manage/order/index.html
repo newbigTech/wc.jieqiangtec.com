@@ -43,6 +43,7 @@
                             <option value=''>付款状态</option>
                             <option value='0' {if $_GPC['status']=='0'}selected{/if}>未支付</option>
                             <option value='1' {if $_GPC['status']=='1'}selected{/if}>已支付</option>
+                            <option value='-1' {if $_GPC['status']=='-1'}selected{/if}>已退款</option>
 
                         </select>
 
@@ -53,6 +54,9 @@
                             <input type="text" class="form-control input-sm" value="{$total_money}元" placeholder="" disabled/>
                             <span class="input-group-btn">
                                                     <button class="btn btn-sm" type="submit"> 查询</button>
+                                                </span>
+                            <span class="input-group-btn">
+                                                    <button class="btn btn-sm" type="submit" name="export" value="1"> 导出</button>
                                                 </span>
                         </div>
                     </div>
@@ -79,8 +83,8 @@
             {loop $list $key $value}
             <tr data-status="{$value['status']}">
                 <td id="{$value['id']}">{if $value['status'] == '1'}<span class="label label-primary">已支付</span>{elseif $value['status'] == '-1'}<span class="label label-warning">已退款</span>{else}<span class="label label-default">未支付</span>{/if}</td>
-                <td >{$value['logno']}</td>
-                <td>{php echo date('Y-m-d H:i',$value['createtime'])}</td>
+                <td title="{$value['logno']}">{$value['logno']}</td>
+                <td title="{php echo date('Y-m-d H:i',$value['createtime'])}">{php echo date('Y-m-d',$value['createtime'])}<br>{php echo date('H:i',$value['createtime'])}</td>
                 <td>{if empty($value['operatorid'])}管理员{else}{php echo isset($operator[$value['operatorid']]) ? $operator[$value['operatorid']]['title'] : ''}{/if}</td>
                 <td>{php echo CashierModel::$paytype[$value['paytype']]}</td>
                 <td>{php echo $value['money'] + $value['deduction']}</td>
@@ -114,7 +118,7 @@
                 </td>
             </tr>
             {/loop}
-            <tr><td colspan="9">{$pager}</td></tr>
+            <tr><td colspan="11">{$pager}</td></tr>
             </tbody>
         </table>
     </div>
@@ -140,3 +144,5 @@
     });
 </script>
 {template '_footer'}
+
+<!--weichengtech-->

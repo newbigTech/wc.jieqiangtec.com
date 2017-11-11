@@ -1,5 +1,4 @@
 <?php
-
 error_reporting(0);
 define('IN_MOBILE', true);
 require '../../../../framework/bootstrap.inc.php';
@@ -8,7 +7,7 @@ $_W['uniacid'] = $_W['weid'] = $strs[0];
 $type = $strs[1];
 $setting = uni_setting($_W['uniacid'], array('payment'));
 
-if (!is_array($setting['payment'])) {
+if (!(is_array($setting['payment']))) {
 	exit('没有设定支付参数.');
 }
 
@@ -16,7 +15,7 @@ if (!is_array($setting['payment'])) {
 $payment = $setting['payment']['unionpay'];
 require '__init.php';
 
-if (!empty($_POST) && verify($_POST) && ($_POST['respMsg'] == 'success')) {
+if (!(empty($_POST)) && verify($_POST) && ($_POST['respMsg'] == 'success')) {
 	if ($type == '0') {
 		$tid = substr($_POST['orderId'], 8);
 		$sql = 'SELECT * FROM ' . tablename('core_paylog') . ' WHERE `tid`=:tid and `module`=:module limit 1';
@@ -25,7 +24,7 @@ if (!empty($_POST) && verify($_POST) && ($_POST['respMsg'] == 'success')) {
 		$params[':module'] = 'ewei_shopv2';
 		$log = pdo_fetch($sql, $params);
 
-		if (!empty($log) && ($log['status'] == '0')) {
+		if (!(empty($log)) && ($log['status'] == '0')) {
 			$log['tag'] = iunserializer($log['tag']);
 			$log['tag']['queryId'] = $_POST['queryId'];
 			$record = array();
@@ -33,7 +32,7 @@ if (!empty($_POST) && verify($_POST) && ($_POST['respMsg'] == 'success')) {
 			$record['tag'] = iserializer($log['tag']);
 			pdo_update('core_paylog', $record, array('plid' => $log['plid']));
 
-			if (($log['is_usecard'] == 1) && ($log['card_type'] == 1) && !empty($log['encrypt_code']) && $log['acid']) {
+			if (($log['is_usecard'] == 1) && ($log['card_type'] == 1) && !(empty($log['encrypt_code'])) && $log['acid']) {
 				load()->classs('coupon');
 				$acc = new coupon($log['acid']);
 				$codearr['encrypt_code'] = $log['encrypt_code'];
@@ -60,7 +59,7 @@ if (!empty($_POST) && verify($_POST) && ($_POST['respMsg'] == 'success')) {
 
 			$site = WeUtility::createModuleSite($log['module']);
 
-			if (!is_error($site)) {
+			if (!(is_error($site))) {
 				$method = 'payResult';
 
 				if (method_exists($site, $method)) {
@@ -100,7 +99,7 @@ if (!empty($_POST) && verify($_POST) && ($_POST['respMsg'] == 'success')) {
 
 		$log = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_member_log') . ' WHERE `uniacid`=:uniacid and `id`=:id limit 1', array(':uniacid' => $_W['uniacid'], ':id' => $logid));
 
-		if (!empty($log) && empty($log['status'])) {
+		if (!(empty($log)) && empty($log['status'])) {
 			pdo_update('ewei_shop_member_log', array('status' => 1, 'rechargetype' => 'alipay', 'logno' => $log['openid']), array('id' => $logid));
 			$shopset = m('common')->getSysset('shop');
 			m('member')->setCredit($log['openid'], 'credit2', $log['money'], array(0, $shopset['name'] . '会员充值:credit2:' . $log['money']));

@@ -14,7 +14,8 @@ require.config({
         'jquery.qrcode':'../dist/jquery/jquery.qrcode.min',
         'ydb':'../dist/Ydb/YdbOnline',
         'swiper':'../dist/swiper/swiper.min',
-        'jquery.fly': '../dist/jquery/jquery.fly'
+        'jquery.fly': '../dist/jquery/jquery.fly',
+
     },
     shim: {
         'foxui':{

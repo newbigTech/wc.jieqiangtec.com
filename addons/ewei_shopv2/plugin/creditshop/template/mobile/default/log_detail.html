@@ -108,8 +108,8 @@
                         <div class='text'><span>快递公司:{$log['expresscom']}</span></div>
                         <div class='text'><span>快递单号:{$log['expresssn']}</span></div>
                         {else}
-                        <div class='text'><span {if $express && strexists($express['step'],'已签收')}class='text-danger'{/if}>{$express['step']}</span></div>
-                        <div class='text'><span {if $express && strexists($express['step'],'已签收')}class='text-danger'{/if}>{$express['time']}</span></div>
+                        <div class='text'><span {if $express && strexists($express['step'],'已签收')}class='text-danger2'{/if}>{$express['step']}</span></div>
+                        <div class='text'><span {if $express && strexists($express['step'],'已签收')}class='text-danger2'{/if}>{$express['time']}</span></div>
                         {/if}
                     </div>
                     <div class='fui-list-angle'><span class='angle'></span></div>
@@ -324,7 +324,7 @@
             <div class="fui-cell">
                 <div class="fui-cell-label">运费</div>
                 <div class="fui-cell-info"></div>
-                <div class="fui-cell-remark noremark">{if $goods['dispatch'] > 0}¥ {$goods['dispatch']}{else}免运费{/if}</div>
+                <div class="fui-cell-remark noremark">{if $goods['dispatch'] > 0}yen {$goods['dispatch']}{else}免运费{/if}</div>
             </div>
             {/if}
             <div class="fui-cell">
@@ -333,7 +333,7 @@
                 </div>
                 <div class="fui-cell-info"></div>
                 <div class="fui-cell-remark noremark">
-                    <span class='text-danger'>
+                    <span class='text-danger2'>
                         {$goods['credit']}{$_W['shopset']['trade']['credittext']}{if ($goods['money'] + $goods['dispatch']) >0} + &yen; {php echo number_format($goods['money'] + $goods['dispatch'],2)}{/if}
                     </span>
                 </div>
@@ -420,3 +420,4 @@
     {/if}
 </div>
 {template '_footer'}
+<!--weichengtech-->

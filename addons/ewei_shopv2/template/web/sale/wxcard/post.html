@@ -75,7 +75,7 @@
     </div>
 </div>
 
-<form {ife 'sale.wxcard' $item}action="" method='post'{/if} class='form-horizontal form-validate'>
+<form style="width: 450px;float: left;margin-left: 30px" {ife 'sale.wxcard' $item}action="" method='post'{/if} class='form-horizontal form-validate'>
     <input type="hidden" name="id" value="{$item['id']}">
     <input type="hidden" name="tab" id='tab' value="{$_GPC['tab']}" />
 
@@ -267,10 +267,10 @@
                 var fixed_term = $("#fixed_term").val();
                 var nowdate = new Date();
                 nowdate=new Date(nowdate.getTime()+fixed_begin_term*86400*1000);
-                var showdate =nowdate.getFullYear() + "." + (nowdate.getMonth()+1) + "." + nowdate.getDate();
+                var showdate =nowdate.getFullYear() + "." + (nowdate.getMonth()+1) + "." + nowdate.getDate();
 
                 nowdate=new Date(nowdate.getTime()+(fixed_term-1)*86400*1000);
-                var showdate =showdate+"-"+nowdate.getFullYear() + "." + (nowdate.getMonth()+1) + "." + nowdate.getDate();
+                var showdate =showdate+"-"+nowdate.getFullYear() + "." + (nowdate.getMonth()+1) + "." + nowdate.getDate();
                 $("#showbeginendtime").html(showdate);
             }
 
@@ -411,3 +411,4 @@
 </script>
 
 {template '_footer'}
+<!--weichengtech-->

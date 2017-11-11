@@ -42,7 +42,7 @@
                 <label class="col-sm-2 control-label">封面图片</label>
                 <div class="col-sm-9 col-xs-12">
                     {ifp 'abonus.cover.edit'}
-                     	{php echo tpl_form_field_image('cover[thumb]',$cover['thumb'])}
+                     	{php echo tpl_form_field_image2('cover[thumb]',$cover['thumb'])}
                     {else}
                     	<div class="form-control-static">
                     		<img src="{php echo tomedia($cover['thumb'])}" onerror="this.src='./resource/images/nopic.jpg'; this.title='图片未找到.'" class="img-responsive img-thumbnail" width="150">
@@ -87,3 +87,4 @@
  {/if}
 </form>
 {template '_footer'}
+<!--weichengtech-->

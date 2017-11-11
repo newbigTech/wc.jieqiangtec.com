@@ -1,5 +1,4 @@
 <?php
-//weichengtech
 class Route_EweiShopV2Model
 {
 	public function run($isweb = true)

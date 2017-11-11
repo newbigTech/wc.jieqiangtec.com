@@ -1,9 +1,7 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
-
 
 require IA_ROOT . '/addons/ewei_shopv2/defines.php';
 require EWEI_SHOPV2_INC . '/plugin_processor.php';
@@ -28,7 +26,6 @@ class ArticleProcessor extends PluginProcessor
 				return $this->responseEmpty();
 			}
 
-
 			$r_title = $page['article_title'];
 			$r_desc = $page['resp_desc'];
 			$r_img = $page['resp_img'];
@@ -38,7 +35,6 @@ class ArticleProcessor extends PluginProcessor
 				);
 			return $obj->respNews($news);
 		}
-
 
 		return $this->responseEmpty();
 	}
@@ -53,6 +49,5 @@ class ArticleProcessor extends PluginProcessor
 		exit(0);
 	}
 }
-
 
 ?>

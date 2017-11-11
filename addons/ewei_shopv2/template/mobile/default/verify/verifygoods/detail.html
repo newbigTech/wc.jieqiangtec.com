@@ -18,11 +18,11 @@
 					<div class="fui-list_title"><i class="iconfont icon-dianpu" style="margin-right: 0.25rem;">{$_W['shopset']['shop']['name']}</i></div>
 					<div class="fui-list">
 						<div class="fui-list-media">
-							<img src="{php echo tomedia($verifygood['thumb']);}"/>
+							<img src="{php echo tomedia($item['thumb']);}"/>
 						</div>
 						<div class="fui-list-inner">
-							<div class="title">{$verifygood['title']}</div>
-							<div class="subtitle">{$verifygood['subtitle']}</div>
+							<div class="title">{$item['title']}</div>
+							<div class="subtitle">{$item['subtitle']}</div>
 						</div>
 						<div class="fui-list-angle">
 							<div></div>
@@ -91,12 +91,12 @@
 	    					使用次数
 	    				</div>
 	                    <div class="fui-cell-info" style="text-align: right;padding-right: 0.5rem;">
-	                    	<span class="text-danger">剩余次数:{if !empty($verifygood['limitnum'])}{$lastverifys}{else}不限{/if}</span>
+	                    	<span class="text-danger">剩余次数:{if !empty($item['limitnum'])}{$lastverifys}{else}不限{/if}</span>
 	                    </div>
 	                    <div class="fui-cell-remark noremark">
 							<div class="fui-number"
 								 data-value='1'
-								 {if !empty($verifygood['limitnum'])}
+								 {if !empty($item['limitnum'])}
 								data-max="{$lastverifys}"
 								{/if}
 								data-min="1">
@@ -110,7 +110,7 @@
 
 			</div>
 			<div class="fui-navbar" style="background: #ff5555;">
-				<a class="nav-item order-verify" data-verifygoodid="{$verifygood['id']}"
+				<a class="nav-item order-verify" data-verifygoodid="{$item['id']}"
 				   data-verifycode="{$verifycode}" href="javascript:;" style="color: #fff;">确认核销</a>
 			</div>
 		</div>
@@ -120,3 +120,4 @@
 	});</script>
 </div>
 {template '_footer'}
+<!--weichengtech54mI5p2D5omA5pyJ-->

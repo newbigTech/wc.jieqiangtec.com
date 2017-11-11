@@ -1,8 +1,10 @@
-.fui-notice {
-    border-top: 1px solid #e2e2e2;
-    border-bottom: 1px solid #e2e2e2;
+/*.fui-notice {*/
+    /*border-top: 1px solid #e2e2e2;*/
+    /*border-bottom: 1px solid #e2e2e2;*/
+/*}*/
+.fui-notice{
+    margin-bottom: 0.5rem;
 }
-
 .fui-notice:before,
 .fui-notice:after {
     border: 0;
@@ -55,31 +57,79 @@
 }
 
 .fui-goods-item .image {
-    height: 4rem;
-    width: 4rem;
+    height: 5.75rem;
+    width: 5.75rem;
     float:left;
     background-size:100%;
     position: relative;
+    overflow: hidden;
 }
 
-.fui-goods-item .detail .price .buy {
-    display:block;
-    text-align: center;
-    line-height: 20px;
-    color: #fff; font-size: 12px;
-    background: #fe5455;
-    border-radius: 20px;
-    display: block;
-    font-size: 12px;
-    height: 20px;
-    width: 20px;
-    padding: 0;
+/*.fui-goods-item .detail .price .buy {*/
+    /*display:block;*/
+    /*text-align: center;*/
+    /*line-height: 20px;*/
+    /*color: #fff; font-size: 12px;*/
+    /*background: #fe5455;*/
+    /*border-radius: 20px;*/
+    /*display: block;*/
+    /*font-size: 12px;*/
+    /*height: 20px;*/
+    /*width: 20px;*/
+    /*padding: 0;*/
+/*}*/
+.fui-goods-item .detail .price .buy i{
+    font-size:0.7rem;
 }
-
-.fui-goods-item .detail .price .buy.buybtn-3 {
+.fui-goods-item .detail .price .buy{
+    display: inline-block;
+    height: 1.1rem;
+    color: #ff5555;
+    line-height: 1rem;
+    border-radius: 0;
+    background: #fff;
+    padding: 0rem 0.35rem;
     width: auto;
-    padding: 0 5px;
-    border-radius: 3px;
+    border-radius: 0.1rem;
+    border:1px solid transparent;
+}
+
+.fui-goods-item .detail .price .buy.buybtn-2{
+    background: #ff5555;
+    color: #fff;
+}
+.fui-goods-item .detail .price .buy.buybtn-3{
+    background: #ff5555;
+    color: #fff;
+    vertical-align: middle;
+    width: 1.1rem;
+    padding: 0;
+    text-align: center;
+    line-height: 1.1rem;
+}
+.fui-goods-item .detail .price .buy.buybtn-4,.fui-goods-item .detail .price .buy.buybtn-5{
+    vertical-align: middle;
+    width: 1.1rem;
+    padding: 0.01rem 0.01rem 0 0.02rem;
+    /*padding: 0.04rem 0 0 0.02rem;*/
+    /*text-align: center;*/
+    line-height: 1rem;
+    border-radius: 50%;
+    background: #fff;
+    border: 1px solid #ff5555;
+    text-align: center;
+}
+.fui-goods-item .detail .price .buy.buybtn-4 i,.fui-goods-item .detail .price .buy.buybtn-5 i{
+    color: #ff5555;
+}
+.fui-goods-item .detail .price .buy.buybtn-6{
+    vertical-align: middle;
+    width: 1.1rem;
+    padding: 0.01rem 0 0;
+    text-align: center;
+    line-height: 1rem;
+    border-radius: 50%;
+    color: #fff;
 }
 
 .fui-goods-item .image .goodsicon {
@@ -89,7 +139,112 @@
     display: block;
     overflow: hidden;
 }
-
+.fui-goods-group .image.triangle{
+    position: relative;
+    overflow: hidden;
+}
+.fui-goods-group .image.triangle:before{
+    content: attr(data-text);
+    position: absolute;
+    width: 3.39rem;
+    height:2.4rem;
+    background: #ff5555;
+    z-index: 10;
+    transform-origin: left bottom;
+    transform:rotate(-45deg);
+    -ms-transform:rotate(-45deg);
+    -moz-transform:rotate(-45deg);
+    -webkit-transform:rotate(-45deg);
+    -o-transform:rotate(-45deg);
+    color: #fff;
+    line-height: 3.7rem;
+    font-size:0.6rem;
+    text-align: center;
+}
+.fui-goods-group .image.rectangle{
+    position: relative;
+}
+.fui-goods-group .image.rectangle:before{
+    content: attr(data-text);
+    position: absolute;
+    width: 2.25rem;
+    height: 1rem;
+    background: #04a6f8;
+    z-index: 10;
+    text-align: center;
+    color: #fff;
+    font-size: 0.6rem;
+    line-height: 1rem;
+}
+.fui-goods-group .image.circle{
+    position: relative;
+}
+.fui-goods-group .image.circle:before{
+    content: attr(data-text);
+    position: absolute;
+    width:1.6rem;
+    height: 1.6rem;
+    background: #ffb805;
+    z-index: 10;
+    text-align: center;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 0.6rem;
+    line-height: 0.6rem;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    align-items: center;
+    -webkit-align-items: center;
+    -webkit-justify-content: center;
+    justify-content: center;
+}
+.fui-goods-group .image.square{
+    position: relative;
+}
+.fui-goods-group .image.square:before{
+    content: attr(data-text);
+    position: absolute;
+    width:1.6rem;
+    height: 1.6rem;
+    background: #19dbab;
+    z-index: 10;
+    text-align: center;
+    color: #fff;
+    font-size: 0.6rem;
+    line-height: 0.6rem;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    align-items: center;
+    -webkit-align-items: center;
+    -webkit-justify-content: center;
+    justify-content: center;
+}
+.fui-goods-group .image.echelon{
+    position: relative;
+}
+.fui-goods-group .image.echelon:before{
+    content: attr(data-text);
+    position: absolute;
+    height: 1rem;
+    width: 3.4rem;
+    background: #ff7104;
+    top: 1.4rem;
+    color: #fff;
+    font-size: 0.6rem;
+    line-height: 1rem;
+    text-align: center;
+    transform:rotate(-45deg);
+    -ms-transform:rotate(-45deg);
+    -moz-transform:rotate(-45deg);
+    -webkit-transform:rotate(-45deg);
+    -o-transform:rotate(-45deg);
+    -webkit-transform-origin:left bottom;
+    transform-origin: left bottom;
+}
 .fui-goods-item .image .goodsicon img {
     display: inline-block;
     max-width: 100%;
@@ -212,9 +367,13 @@
     line-height: 1rem;
     color: #fff;
     padding: 0.4rem 0.15rem 1px;
-    font-size: 0.65rem;
-    background:-webkit-gradient(linear, 0% 0%, 0% 100%, from(rgba(0,0,0,0)), to(rgba(0,0,0,0.7)));
-    background: -webkit-linear-gradient(top, rgba(0,0,0,0), rgba(0,0,0,0.7));
+    font-size: 0.7rem;
+    background: -moz-linear-gradient(bottom, rgba(0,0,0,0.6) 0%,rgba(0,0,0,0) 100%);
+    background: -webkit-linear-gradient(bottom, rgba(0,0,0,0.6) 0%,rgba(0,0,0,0) 100%);
+    background: -o-linear-gradient(bottom, rgba(0,0,0,0.6) 0%,rgba(0,0,0,0) 100%);
+    background: -ms-linear-gradient(bottom, rgba(0,0,0,0.6) 0%,rgba(0,0,0,0) 100%);
+    background: linear-gradient(to top, rgba(0,0,0,0.6) 0%,rgba(0,0,0,0) 100%);
+    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#00000000, endColorstr=#99000000,gradientType='0') ;
     display:block;
     white-space:nowrap;
     overflow:hidden;
@@ -222,13 +381,14 @@
 }
 
 .fui-picturew .item .text {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     height: 1rem;
     line-height: 1.2rem;
     display:block;
     white-space:nowrap;
     overflow:hidden;
     text-overflow:ellipsis;
+    padding-left: 0.15rem;
 }
 
 .fui-picturew.row-2 .item {
@@ -611,7 +771,21 @@
     vertical-align: top;
     z-index: 100;
 }
-
+.fui-remark:after {
+    content: " ";
+    display: inline-block;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+    height: 0.4rem;
+    width: 0.4rem;
+    border-width: 1px 1px 0 0;
+    border-color: #b2b2b2;
+    border-style: solid;
+    position: relative;
+    top: -1px;
+    margin-left: .1em;
+}
 /* 方块组 */
 .fui-block-group {background: #fff; border-bottom: 1px solid #ececec; position: relative; margin-top:.5rem}
 .fui-block-group .fui-block-child {
@@ -785,7 +959,10 @@
 .page-commission-index .headinfo {
     border: 0;
 }
-
+/*swiper*/
+/*.swiper-button-next, .swiper-button-prev{*/
+    /*top:1.725rem;*/
+/*}*/
 .swiper-pagination-bullet-active {
     background: #000;
     opacity: 0.5;
@@ -853,12 +1030,17 @@
 }
 
 .diy-coupon .diy-coupon-item .inner {
-    height: auto;
-    border: 1px solid #f01;
+
+    height: 100%;
+    border-radius: 0;
+    border: none;
+    background: #fd5454;
+    color: #fff;
+    font-size: 0.55rem;
+    line-height: 0.6rem;
+    position: relative;
     margin: 0.3rem;
-    border-radius: 0.4rem;
     text-align: center;
-    padding: 0.2rem;
 }
 
 .diy-coupon.col-2 .diy-coupon-item {
@@ -870,13 +1052,31 @@
 }
 
 .diy-coupon .diy-coupon-item .name {
-    font-size: 0.8rem;
+    font-size: 1rem;
+    line-height: 1.75rem;
+    position: relative;
 }
 
 .diy-coupon .diy-coupon-item .desc {
     font-size: 0.6rem;
+    line-height: 1.6rem;
 }
-
+.diy-coupon .diy-coupon-item .receive {
+    width: 3.3rem;
+    border-radius: 1rem;
+    border: 1px solid #fff;
+    height: 1rem;
+    line-height: 1rem;
+    margin: 0 auto 0.4rem;
+}
+.diy-coupon .diy-coupon-item i{
+    position: absolute;
+    height: 0.7rem;
+    width: 0.7rem;
+    border-radius: 50%;
+    top: 50%;
+    margin-top: -0.35rem;
+}
 .diy-fixedsearch {
     height: 44px;
     overflow: hidden;
@@ -959,6 +1159,9 @@
     padding: 0 6px;
     font-size: 14px;
     color: #666;
+    float: left;
+    line-height: 28px;
+    padding-top: 1px;
 }
 
 .diy-fixedsearch .inner .center.round input {
@@ -975,3 +1178,23 @@
 .fui-header ~ .diy-fixedsearch {
     top: 44px;
 }
+
+.fui-goods-group .fui-goods-item .salez.diy{
+    background-size: 100%;
+    background-position: top center;
+    z-index: 11;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    width:5.75rem;
+}
+.fui-goods-group.block .fui-goods-item .salez.diy {
+    background-size: 100%;
+    background-position: top center;
+    z-index: 11;
+    top: 5px;
+    left: 5px;
+    right: 5px;
+    width:auto;
+}
+/*weichengtech*/

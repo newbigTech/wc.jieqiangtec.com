@@ -59,10 +59,11 @@
         <%each goods as g%>
         <div class='fui-list align-start'>
             <div class='fui-list-media'>
-                <img src="<%g.thumb%>" />
+                <a href="{php echo mobileUrl('goods/detail')}&id=<%g.goodsid%>"><img src="<%g.thumb%>" /></a>
             </div>
+
             <div class='fui-list-inner'>
-                <div class='text' style="color:{$diypage['seckill_list']['style']['titlecolor']}"><%g.title%></div>
+                <a href="{php echo mobileUrl('goods/detail')}&id=<%g.goodsid%>" class='text' style="color:{$diypage['seckill_list']['style']['titlecolor']}"><%g.title%></a>
                 <div class="info">
                      <span class="button">
                          <%if time.status==1%>
@@ -100,3 +101,4 @@
     });
 </script>
 {template '_footer'}
+<!--weichengtech-->

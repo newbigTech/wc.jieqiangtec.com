@@ -1,5 +1,4 @@
 <?php
-//weichengtech
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -352,7 +351,7 @@ class List_EweiShopV2Page extends WebPage
 				$isonlyverifygoods = m('order')->checkisonlyverifygoods($value['id']);
 
 				if ($isonlyverifygoods) {
-					$value['dispatchname'] = '核销商品';
+					$value['dispatchname'] = '记次/时商品';
 				}
 
 				if ($pt == 3) {
@@ -880,7 +879,7 @@ class List_EweiShopV2Page extends WebPage
 			}
 
 			unset($r);
-			m('excel')->export($exportlist, array('title' => '订单数据-' . date('Y-m-d-H-i', time()), 'columns' => $columns));
+			m('excel')->export($exportlist, array('title' => '订单数据', 'columns' => $columns));
 		}
 
 		if (($condition != ' o.uniacid = :uniacid and o.ismr=0 and o.deleted=0 and o.isparent=0') || !empty($sqlcondition)) {

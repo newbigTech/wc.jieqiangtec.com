@@ -1,5 +1,4 @@
 <?php
-//weichengtech
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -201,7 +200,7 @@ class MobilePage extends Page
 		global $_W;
 		global $_GPC;
 		$params = array(':uniacid' => $_W['uniacid'], ':openid' => $_W['openid']);
-		$cartcount = pdo_fetchcolumn('select ifnull(sum(total),0) from ' . tablename('ewei_shop_member_cart') . ' where uniacid=:uniacid and openid=:openid and deleted=0 and selected =1', $params);
+		$cartcount = pdo_fetchcolumn('select ifnull(sum(total),0) from ' . tablename('ewei_shop_member_cart') . ' where uniacid=:uniacid and openid=:openid and deleted=0 and isnewstore=0  and selected =1', $params);
 		$commission = array();
 		if (p('commission') && intval(0 < $_W['shopset']['commission']['level'])) {
 			$member = m('member')->getMember($_W['openid']);

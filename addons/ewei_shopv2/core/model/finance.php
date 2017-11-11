@@ -1,5 +1,4 @@
 <?php
-//weichengtech
 class Finance_EweiShopV2Model
 {
 	/**
@@ -854,7 +853,7 @@ class Finance_EweiShopV2Model
      * @param type $type ALL，返回当日所有订单信息，默认值 SUCCESS，返回当日成功支付的订单 REFUND，返回当日退款订单 REVOKED，已撤销的订单
      * @param type $money
      */
-	public function downloadbill($starttime, $endtime, $type = 'ALL')
+	public function downloadbill($starttime, $endtime, $type = 'ALL', $datatype = 0)
 	{
 		global $_W;
 		global $_GPC;
@@ -922,6 +921,10 @@ class Finance_EweiShopV2Model
 		foreach ($dates as $date) {
 			$dc = $this->downloadday($date, $wechat, $type);
 			if (is_error($dc) || strexists($dc, 'CDATA[FAIL]')) {
+				continue;
+			}
+
+			if ($datatype && !strexists($dc, 'ewei_shopv2')) {
 				continue;
 			}
 

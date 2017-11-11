@@ -1,8 +1,4 @@
 <?php
-if (!(defined('IN_IA'))) {
-	exit('Access Denied');
-}
-
 class PluginModel
 {
 	private $pluginname;
@@ -16,7 +12,11 @@ class PluginModel
 
 	public function getSet()
 	{
-		return m('common')->getPluginset($this->pluginname);
+		if (empty($GLOBALS['_S'][$this->pluginname])) {
+			return m('common')->getPluginset($this->pluginname);
+		}
+
+		return $GLOBALS['_S'][$this->pluginname];
 	}
 
 	public function updateSet($data = array())
@@ -32,7 +32,7 @@ class PluginModel
 	public function checkSubmit($key, $time = 2, $message = '操作频繁，请稍后再试!')
 	{
 		global $_W;
-		$open_redis = function_exists('redis') && !(is_error(redis()));
+		$open_redis = function_exists('redis') && !is_error(redis());
 
 		if ($open_redis) {
 			$redis_key = $_W['setting']['site']['key'] . '_' . $_W['account']['key'] . '_' . $_W['uniacid'] . '_' . $_W['openid'] . '_mobilesubmit_' . $key;
@@ -41,11 +41,10 @@ class PluginModel
 			if ($redis->setnx($redis_key, time())) {
 				$redis->expireAt($redis_key, time() + $time);
 			}
-			 else {
+			else {
 				return error(-1, $message);
 			}
 		}
-
 
 		return true;
 	}
@@ -53,7 +52,7 @@ class PluginModel
 	public function checkSubmitGlobal($key, $time = 2, $message = '操作频繁，请稍后再试!')
 	{
 		global $_W;
-		$open_redis = function_exists('redis') && !(is_error(redis()));
+		$open_redis = function_exists('redis') && !is_error(redis());
 
 		if ($open_redis) {
 			$redis_key = $_W['setting']['site']['key'] . '_' . $_W['account']['key'] . '_' . $_W['uniacid'] . '_mobilesubmit_' . $key;
@@ -62,15 +61,17 @@ class PluginModel
 			if ($redis->setnx($redis_key, time())) {
 				$redis->expireAt($redis_key, time() + $time);
 			}
-			 else {
+			else {
 				return error(-1, $message);
 			}
 		}
-
 
 		return true;
 	}
 }
 
+if (!defined('IN_IA')) {
+	exit('Access Denied');
+}
 
 ?>

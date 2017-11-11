@@ -20,18 +20,7 @@
         <div class="form-group iscoupon" {if empty($item['iscoupon'])}style="display:none;"{/if}>
             <div class="col-sm-12 col-xs-12">
                 {ife 'live.room' $item}
-                <?php echo tpl_selector('couponid',array(
-                                'readonly'=>true,
-                                'multi'=>1,
-                                'autosearch'=>1,
-                                'type'=>'coupon',
-                                'url'=>webUrl('sale/coupon/query'),
-                                'text'=>'couponname',
-                                'items'=>$coupon,
-                                'buttontext'=>'选择优惠券',
-                                'placeholder'=>'请选择优惠券')
-                                )
-                ?>
+                {php echo tpl_selector('couponid',array('required'=>false,'multi'=>1,'type'=>'coupon','autosearch'=>1, 'preview'=>true,'url'=>webUrl('sale/coupon/query'),'text'=>'couponname','items'=>$coupon,'readonly'=>true,'buttontext'=>'选择优惠券','placeholder'=>'请选择优惠券'))}
                 {else}
                 {if !empty($goods)}
                 <table class="table">
@@ -106,3 +95,4 @@
         }
     }
 </script>
+<!--weichengtech-->

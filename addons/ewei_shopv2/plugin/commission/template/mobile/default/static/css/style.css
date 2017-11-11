@@ -1,6 +1,6 @@
 .page-commission-index {background: #fafafa; margin: 0;}
 .page-commission-index .headinfo {height: auto; background: #FE5455; border-top: 1px #b94749 solid; border-bottom: 1px #fa9d9d solid; }
-.page-commission-index .headinfo .userinfo {height: 4rem; padding: 0.3rem 0.6rem; border-bottom: 1px solid #fe9292; position: relative}
+.page-commission-index .headinfo .userinfo {min-height: 4rem; padding: 0.3rem 0.6rem; border-bottom: 1px solid #fe9292; position: relative}
 .page-commission-index .headinfo .userinfo .fui-list { padding:0rem; padding-top:.2rem;}
 .page-commission-index .headinfo .userinfo .fui-list:active { background: transparent}
 .page-commission-index .headinfo .userinfo .fui-list-media img {  height:  2.5rem; width:  2.5rem; border-radius: 2.5rem; border:2px solid #fff; }
@@ -158,3 +158,4 @@
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
 }
+/*weichengtech*/

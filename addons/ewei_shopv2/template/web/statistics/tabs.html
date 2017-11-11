@@ -25,7 +25,7 @@
     {ifp 'statistics.goods_trans'}
     	<li {if $_W['action'] == 'statistics.goods_trans'}class="active"{/if}><a href="{php echo webUrl('statistics/goods_trans')}">销售转化率</a></li>
     {/if}
-</ul>  
+</ul>
 {/if}
 {ifp 'statistics.member_cost|statistics.member_increase'}
 <div class='menu-header'>会员统计</div>
@@ -38,3 +38,17 @@
     {/if}
 </ul>
 {/if}
+
+{if p('newstore')}
+<div class='menu-header'>O2O统计</div>
+<ul>
+    <li {if $_W['action'] == 'statistics.o2o_moonorders'}class="active"{/if}><a href="{php echo webUrl('statistics/o2o_monthorders')}"> 月度订单数</a></li>
+   <!-- <li {if $_W['action'] == 'statistics.o2o_salestatistics'}class="active"{/if}><a href="{php echo webUrl('statistics/o2o_salestatistics')}">销售额统计</a></li>
+    <li {if $_W['action'] == 'statistics.o2o_averageprice'}class="active"{/if}><a href="{php echo webUrl('statistics/o2o_averageprice')}">订单平均单价</a></li>-->
+    <li {if $_W['action'] == 'statistics.o2o_orderusers'}class="active"{/if}><a href="{php echo webUrl('statistics/o2o_orderusers')}">用户下单统计</a></li>
+    <!--<li {if $_W['action'] == 'statistics.o2o_avguserconsume'}class="active"{/if}><a href="{php echo webUrl('statistics/o2o_avguserconsume')}">客户平均消费额</a></li>-->
+    <li {if $_W['action'] == 'statistics.o2o_verifynum'}class="active"{/if}><a href="{php echo webUrl('statistics/o2o_verifynum')}">门店核销统计</a></li>
+
+</ul>
+{/if}
+<!--weichengtech-->

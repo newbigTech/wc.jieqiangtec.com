@@ -4,7 +4,7 @@ if (!(defined('IN_IA'))) {
 }
 
 
-define('EWEI_SHOPV2_DEBUG', true);
+define('EWEI_SHOPV2_DEBUG', false);
 !(defined('EWEI_SHOPV2_PATH')) && define('EWEI_SHOPV2_PATH', IA_ROOT . '/addons/ewei_shopv2/');
 !(defined('EWEI_SHOPV2_CORE')) && define('EWEI_SHOPV2_CORE', EWEI_SHOPV2_PATH . 'core/');
 !(defined('EWEI_SHOPV2_DATA')) && define('EWEI_SHOPV2_DATA', EWEI_SHOPV2_PATH . 'data/');
@@ -21,11 +21,5 @@ define('EWEI_SHOPV2_DEBUG', true);
 !(defined('EWEI_SHOPV2_STATIC')) && define('EWEI_SHOPV2_STATIC', EWEI_SHOPV2_URL . 'static/');
 !(defined('EWEI_SHOPV2_PREFIX')) && define('EWEI_SHOPV2_PREFIX', 'ewei_shop_');
 define('EWEI_SHOPV2_PLACEHOLDER', '../addons/ewei_shopv2/static/images/placeholder.png');
-
-// 请求接口
-//!defined('CPS_API') && define('CPS_API', 'http://cps.adjyc.com?m=desk&a=buy');
-// 请求接口
-//!defined('CPS_API') && define('CPS_API', 'http://cps.adjyc.com');
-!(defined('CPS_API')) && define('CPS_API', 'http://cps.adjyc.com');
 
 ?>

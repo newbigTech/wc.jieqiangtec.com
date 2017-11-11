@@ -171,6 +171,47 @@
                     </div>
                 </div>
 
+                <!--卡券是否显示余额设置-->
+                <div class="control-group">
+                    <div class="frm_label pull-left">
+                        是否显示余额
+                    </div>
+                    {ifp 'member.card'}
+                        {if empty($card)}
+                            <div class="frm_controls">
+                                <input type="radio" name="card_supply_balance" value="0" {if empty($card['card_supply_balance'])}checked="true"{/if} />
+                                <span>不使用</span>
+                            </div>
+                            <div class="frm_controls">
+                                <input type="radio" name="card_supply_balance" value="1" {if !empty($card['card_supply_balance'])}checked="true"{/if} />
+                                <span>使用</span>
+                            </div>
+                        {else}
+                            <input type="hidden" name="card_supply_balance" value="{$card['card_supply_balance']}">
+                            <div class='frm_controls'>
+                                {if empty($card['card_supply_balance'])}
+                                不使用
+                                {else}
+                                使用
+                                {/if}
+                            </div>
+                        {/if}
+                    {else}
+                    <input type="hidden" name="card_supply_balance" value="{$card['card_supply_balance']}">
+                    <div class='frm_controls'>
+                        {if empty($card['card_supply_balance'])}
+                            不使用
+                        {else}
+                            使用
+                        {/if}
+                    </div>
+                    {/if}
+                    <div class="frm_controls">
+                        <p class='frm_tip'>使用微信卡券余额（具体为在会员卡中使用“余额/supply_balance”字段）需提交《单用途预付卡备案》。 操作指引详见： <a href="https://mp.weixin.qq.com/cgi-bin/readtemplate?token=1091016770&t=cardticket/faq_tmpl&type=info&token=1494071418&lang=zh_CN#3dot2">卡券储值功能权限开通</a>。</p>
+                    </div>
+
+                </div>
+
                 <!--卡券背景设置-->
                 <div class="control-group">
                     <div class="frm_label pull-left">
@@ -485,3 +526,5 @@
 </script>
 
 {template '_footer'}
+
+<!--weichengtech-->

@@ -802,10 +802,10 @@
         </thead>
         <tbody>
         <tr>
-            <td>核销商品核销通知</td>
+            <td>记次时商品核销通知</td>
             <td>
                 <select class="select2 is_advanced" name="data[o2o_sverify_template]">
-                    <option value=''>[默认]核销商品核销通知</option>
+                    <option value=''>[默认]记次时商品核销通知</option>
                     {loop $template_group['o2o_sverify'] $template_val}
                     <option value="{$template_val['id']}" {if $data['o2o_sverify_template'] == $template_val['id'] }selected{/if}>{$template_val['title']}</option>
                     {/loop}
@@ -883,10 +883,10 @@
         </thead>
         <tbody>
         <tr>
-            <td>核销商品核销通知</td>
+            <td>记次时商品核销通知</td>
             <td>
                 <select class="select2 is_advanced" name="data[o2o_bverify_template]">
-                    <option value=''>[默认]核销商品核销通知</option>
+                    <option value=''>[默认]记次时商品核销通知</option>
                     {loop $template_group['o2o_bverify'] $template_val}
                     <option value="{$template_val['id']}" {if $data['o2o_bverify_template'] == $template_val['id'] }selected{/if}>{$template_val['title']}</option>
                     {/loop}
@@ -1122,3 +1122,4 @@
 </script>
 
 {template '_footer'}     
+<!--weichengtech-->

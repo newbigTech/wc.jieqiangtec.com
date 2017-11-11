@@ -46,7 +46,7 @@
         <label class="col-sm-2 control-label">封面图片</label>
         <div class="col-sm-9 col-xs-12">
             {ifp 'creditshop.cover.edit'}
-                {php echo tpl_form_field_image('cover[thumb]',$cover['thumb'])}
+                {php echo tpl_form_field_image2('cover[thumb]',$cover['thumb'])}
              {else}
                 {if !empty($cover['thumb'])}
                     <div class='form-control-static'>
@@ -98,3 +98,4 @@
     {/if}
 </form>
 {template '_footer'}
+<!--weichengtech-->

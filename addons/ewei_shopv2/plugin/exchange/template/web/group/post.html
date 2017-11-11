@@ -49,7 +49,7 @@
                                                 <td>
                                                     <img src="{$value['thumb']}" style="width:30px;height:30px;padding1px;border:1px solid #ccc"> {$value['title']} </td>
                                                 <td>{if $value['hasoption']==0}无规格{/if}{if $value['hasoption']==1}有规格{/if}</td>
-                                                <td>¥{$value['marketprice']}</td>
+                                                <td>yen{$value['marketprice']}</td>
                                                 <td>
                                                     <a href="javascript:;" data-toggle="ajaxEdit" data-href="{php echo webUrl('exchange/goods/stock',array('goodsid'=>$value['id']));}" style="display: inline;">{$value['exchange_stock']}</a>
                                                 </td>
@@ -89,7 +89,7 @@
                                                 <td>
                                                     <img src="{$option[$i][0]['pic']}" style="width:30px;height:30px;padding1px;border:1px solid #ccc">{$option[$i][0]['gt']}</td>
                                                 <td> {$value['title']}</td>
-                                                <td>¥{$value['marketprice']}</td>
+                                                <td>yen{$value['marketprice']}</td>
                                                 <td>
                                                     <a href="javascript:;" data-toggle="ajaxEdit" data-href="{php echo webUrl('exchange/goods/stock',array('optionid'=>$value['id']));}" style="display: inline;">{$value['exchange_stock']}</a>
                                                 </td>
@@ -263,3 +263,5 @@
     </div>
     </div>
 </form>
+
+<!--weichengtech-->

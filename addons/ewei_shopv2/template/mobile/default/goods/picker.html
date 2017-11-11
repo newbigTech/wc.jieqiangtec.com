@@ -2,11 +2,11 @@
     <div class="option-picker">
 	<div class="option-picker-inner">
 	<div class="option-picker-cell goodinfo">
-	    <div class="closebtn"><i class="icon icon-roundclose"></i></div>
+	    <div class="closebtn"><i class="icon icon-guanbi1"></i></div>
 	    <div class="img"><img class='thumb' src="<%goods.thumb%>" /></div>
 	    <div class="info info-price text-danger">
 			{if $threen &&(!empty($threenprice['price'])||!empty($threenprice['discount']))}
-			<span>￥<span class=''>
+			<span>&yen<span class=''>
 			{if !empty($threenprice['price'])}
 			{php echo $threenprice['price'];}
 			{elseif !empty($threenprice['discount'])}
@@ -14,7 +14,6 @@
 			{/if}
 			{else}
 			<span>
-
 				￥
 				<span class='price'>
 				{if $taskGoodsInfo}
@@ -33,7 +32,7 @@
 		</div>
 	    <div class="info info-total">
 			<%if seckillinfo==false || ( seckillinfo && seckillinfo.status==1) %>
-	    		<%if goods.showtotal != 0%><%if goods.unite_total != 0%>总<%/if%>库存 <span class='total text-danger'><%goods.total%></span> 件<%/if%>
+	    		<%if goods.showtotal != 0%><%if goods.unite_total != 0%>总<%/if%>库存 <span class='total'><%goods.total%></span> 件<%/if%>
 			<%/if%>
 	    </div>
 	    <div class="info info-titles"><%if specs.length>0%>请选择规格<%/if%></div>
@@ -52,7 +51,7 @@
 	<%=diyformhtml%>
 
 	 <%if seckillinfo==false || ( seckillinfo && seckillinfo.status==1) %>
-		<div class="fui-cell-group">
+		<div class="fui-cell-group" style="margin-top:0">
 			<div class="fui-cell">
 			<div class="fui-cell-label">数量</div>
 			<div class="fui-cell-info"></div>
@@ -79,3 +78,4 @@
     </div>
     </div>
 </script>
+<!--weichengtech-->

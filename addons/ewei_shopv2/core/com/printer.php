@@ -1,5 +1,4 @@
 <?php
-//weichengtech
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -11,6 +10,7 @@ class Printer_EweiShopV2ComModel extends ComModel
 	const PRINTRT_YILIANYUN = 2;
 	const PRINTRT_365_S1 = 3;
 	const PRINTRT_YILIANYUN_NEW = 4;
+	const PRINTRT_FEIE_NEW = 5;
 	const CONTENT_DEFAULT = 0;
 	const CONTENT_BOLD = 1;
 	const CONTENT_CENTER = 2;
@@ -31,7 +31,7 @@ class Printer_EweiShopV2ComModel extends ComModel
 
 	public function printer_list()
 	{
-		return array(self::PRINTRT_365_S1 => '365云打印(编号kdt1)', self::PRINTRT_365 => '365云打印(编号kdt2)', self::PRINTRT_YILIANYUN => '易联云K1、K2、K3', self::PRINTRT_YILIANYUN_NEW => '易联云K2S、K3S、K4、M1', self::PRINTRT_FEIE => '飞鹅打印机');
+		return array(self::PRINTRT_365_S1 => '365云打印(编号kdt1)', self::PRINTRT_365 => '365云打印(编号kdt2)', self::PRINTRT_YILIANYUN => '易联云K1、K2、K3', self::PRINTRT_YILIANYUN_NEW => '易联云K2S、K3S、K4、M1', self::PRINTRT_FEIE => '飞鹅打印机', self::PRINTRT_FEIE_NEW => '飞鹅打印机(新接口)');
 	}
 
 	public function style_list()
@@ -304,6 +304,7 @@ class Printer_EweiShopV2ComModel extends ComModel
 
 			unset($value);
 			$template['print_data'] = $print_data;
+			$template['qrcode'] = $this->replace($params, $template['qrcode']);
 		}
 
 		$this->printer = $printer;
@@ -326,6 +327,10 @@ class Printer_EweiShopV2ComModel extends ComModel
 
 		case self::PRINTRT_365_S1:
 			$res = $this->printer365s1();
+			break;
+
+		case self::PRINTRT_FEIE_NEW:
+			$res = $this->printerFeieNew();
 			break;
 
 		default:
@@ -442,6 +447,26 @@ class Printer_EweiShopV2ComModel extends ComModel
 		return $res['content'];
 	}
 
+	/**
+     * 新版飞蛾打印机接口
+     * @return array
+     */
+	public function printerFeieNew()
+	{
+		$print = json_decode($this->printer['print_data'], true);
+
+		if (empty($print['printer_feie_new'])) {
+			return error(-1, '小票打印机配置不正确');
+		}
+
+		$content = $this->buildContent($this->template, self::PRINTRT_FEIE);
+		$selfMessage = array('user' => $print['printer_feie_new']['user'], 'stime' => time(), 'apiname' => 'Open_printMsg', 'debug' => 1, 'sn' => $print['printer_feie_new']['sn'], 'content' => $content, 'times' => $print['printer_feie_new']['times']);
+		$sig = sha1($selfMessage['user'] . $print['printer_feie_new']['ukey'] . $selfMessage['stime']);
+		$selfMessage['sig'] = $sig;
+		$res = ihttp_post('http://api.feieyun.cn/Api/Open/', $selfMessage);
+		return $res['content'];
+	}
+
 	public function printerYilianyun()
 	{
 		$print = json_decode($this->printer['print_data'], true);
@@ -535,7 +560,7 @@ class Printer_EweiShopV2ComModel extends ComModel
 			break;
 
 		default:
-			$datas = array('[商品名称]' => isset($params['shorttitle']) ? $params['shorttitle'] : '', '[商品价格]' => isset($params['goodsprice']) ? $params['goodsprice'] : '', '[商品数量]' => isset($params['goodstotal']) ? $params['goodstotal'] : '', '[单商品合计]' => isset($params['goodstotalprice']) ? $params['goodstotalprice'] : '', '[商品规格]' => isset($params['optiontitle']) ? $params['optiontitle'] : '', '[订单编号]' => isset($params['ordersn']) ? $params['ordersn'] : '', '[订单金额]' => isset($params['price']) ? $params['price'] : '', '[优惠金额]' => isset($params['discount']) ? $params['discount'] : '', '[收货人]' => isset($params['realname']) ? $params['realname'] : '', '[收货地址]' => isset($params['address']) ? $params['address'] : '', '[收货电话]' => isset($params['mobile']) ? $params['mobile'] : '', '[备注]' => isset($params['remark']) ? $params['remark'] : '', '[运费]' => isset($params['dispatchprice']) ? $params['dispatchprice'] : '', '[订单时间标题]' => isset($params['order_time_title']) ? $params['order_time_title'] : '', '[订单时间]' => isset($params['order_time']) ? $params['order_time'] : '', '[订单状态]' => isset($params['order_status']) ? $params['order_status'] : '', '[门店名称]' => isset($params['storename']) ? $params['storename'] : '', '[门店地址]' => isset($params['storeaddress']) ? $params['storeaddress'] : '', '[门店联系方式]' => isset($params['storemobile']) ? $params['storemobile'] : '', '[门店联系人]' => isset($params['storerealname']) ? $params['storerealname'] : '');
+			$datas = array('[商品名称]' => isset($params['shorttitle']) ? $params['shorttitle'] : '', '[商品价格]' => isset($params['goodsprice']) ? $params['goodsprice'] : '', '[商品数量]' => isset($params['goodstotal']) ? $params['goodstotal'] : '', '[单商品合计]' => isset($params['goodstotalprice']) ? $params['goodstotalprice'] : '', '[商品规格]' => isset($params['optiontitle']) ? $params['optiontitle'] : '', '[订单编号]' => isset($params['ordersn']) ? $params['ordersn'] : '', '[订单金额]' => isset($params['price']) ? $params['price'] : '', '[优惠金额]' => isset($params['discount']) ? $params['discount'] : '', '[收货人]' => isset($params['realname']) ? $params['realname'] : '', '[收货地址]' => isset($params['address']) ? $params['address'] : '', '[收货电话]' => isset($params['mobile']) ? $params['mobile'] : '', '[备注]' => isset($params['remark']) ? $params['remark'] : '', '[运费]' => isset($params['dispatchprice']) ? $params['dispatchprice'] : '', '[订单时间标题]' => isset($params['order_time_title']) ? $params['order_time_title'] : '', '[订单时间]' => isset($params['order_time']) ? $params['order_time'] : '', '[订单状态]' => isset($params['order_status']) ? $params['order_status'] : '', '[门店名称]' => isset($params['storename']) ? $params['storename'] : '', '[门店地址]' => isset($params['storeaddress']) ? $params['storeaddress'] : '', '[门店联系方式]' => isset($params['storemobile']) ? $params['storemobile'] : '', '[门店联系人]' => isset($params['storerealname']) ? $params['storerealname'] : '', '[付款地址]' => isset($params['id']) ? $this->getUrl('order/pay', array('id' => $params['id'])) : '', '[订单详情地址]' => isset($params['id']) ? $this->getUrl('order/detail', array('id' => $params['id'])) : '');
 			break;
 		}
 
@@ -715,7 +740,7 @@ class Printer_EweiShopV2ComModel extends ComModel
 			}
 		}
 
-		$params = array('goodsprice' => (double) $order['goodsprice'], 'dispatchprice' => (double) $order['dispatchprice'], 'discountprice' => (double) $order['discountprice'], 'deductprice' => (double) $order['deductprice'], 'deductcredit2' => (double) $order['deductcredit2'], 'deductenough' => (double) $order['deductenough'], 'merchdeductenough' => (double) $order['merchdeductenough'], 'couponprice' => (double) $order['couponprice'], 'isdiscountprice' => (double) $order['isdiscountprice'], 'changeprice' => (double) $order['changeprice'], 'changedispatchprice' => (double) $order['changedispatchprice'], 'price' => (double) $order['price'], 'data' => $goods, 'discount' => (double) $order['goodsprice'] - $order['price'], 'ordersn' => $order['ordersn'], 'remark' => $order['remark'], 'address' => $addressinfo, 'realname' => $buyerinfo_name, 'mobile' => $buyerinfo_mobile, 'expresscom' => $order['expresscom'], 'expresssn' => $order['expresssn'], 'createtime' => date('Y-m-d H:i', $order['createtime']), 'paytime' => date('Y-m-d H:i', $order['paytime']), 'sendtime' => date('Y-m-d H:i', $order['sendtime']), 'finishtime' => date('Y-m-d H:i', $order['finishtime']), 'storename' => !empty($store) ? $store['storename'] : '', 'storeaddress' => !empty($store) ? $store['address'] : '', 'storemobile' => !empty($store) ? $store['mobile'] : '', 'storerealname' => !empty($store) ? $store['realname'] : '', 'order_time_title' => $order_time_title, 'order_time' => $order_time, 'order_status' => $order_status);
+		$params = array('id' => $order['id'], 'goodsprice' => (double) $order['goodsprice'], 'dispatchprice' => (double) $order['dispatchprice'], 'discountprice' => (double) $order['discountprice'], 'deductprice' => (double) $order['deductprice'], 'deductcredit2' => (double) $order['deductcredit2'], 'deductenough' => (double) $order['deductenough'], 'merchdeductenough' => (double) $order['merchdeductenough'], 'couponprice' => (double) $order['couponprice'], 'isdiscountprice' => (double) $order['isdiscountprice'], 'changeprice' => (double) $order['changeprice'], 'changedispatchprice' => (double) $order['changedispatchprice'], 'price' => (double) $order['price'], 'data' => $goods, 'discount' => (double) $order['goodsprice'] - $order['price'], 'ordersn' => $order['ordersn'], 'remark' => $order['remark'], 'address' => $addressinfo, 'realname' => $buyerinfo_name, 'mobile' => $buyerinfo_mobile, 'expresscom' => $order['expresscom'], 'expresssn' => $order['expresssn'], 'createtime' => date('Y-m-d H:i', $order['createtime']), 'paytime' => date('Y-m-d H:i', $order['paytime']), 'sendtime' => date('Y-m-d H:i', $order['sendtime']), 'finishtime' => date('Y-m-d H:i', $order['finishtime']), 'storename' => !empty($store) ? $store['storename'] : '', 'storeaddress' => !empty($store) ? $store['address'] : '', 'storemobile' => !empty($store) ? $store['mobile'] : '', 'storerealname' => !empty($store) ? $store['realname'] : '', 'order_time_title' => $order_time_title, 'order_time' => $order_time, 'order_status' => $order_status);
 		$PrinterSet = $this->getPrinterSet();
 		$res = array();
 		if (!empty($PrinterSet['printer_merch']) || (empty($PrinterSet['printer_merch']) && ($order['merchid'] == 0))) {
@@ -806,6 +831,31 @@ class Printer_EweiShopV2ComModel extends ComModel
 		}
 
 		return true;
+	}
+
+	/**
+     * 生成手机端付款地址
+     * @param $do
+     * @param null $query
+     * @return mixed|string
+     */
+	public function getUrl($do, $query = NULL)
+	{
+		$url = mobileUrl($do, $query, true);
+
+		if (strexists($url, '/addons/ewei_shopv2/')) {
+			$url = str_replace('/addons/ewei_shopv2/', '/', $url);
+		}
+
+		if (strexists($url, '/core/mobile/order/')) {
+			$url = str_replace('/core/mobile/order/', '/', $url);
+		}
+
+		if (strexists($url, '/core/task/order/')) {
+			$url = str_replace('/core/task/order/', '/', $url);
+		}
+
+		return $url;
 	}
 }
 

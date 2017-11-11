@@ -1,5 +1,5 @@
 <?php
-if (!(defined('IN_IA'))) {
+if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
 
@@ -27,25 +27,22 @@ class Jingdong_EweiShopV2Page extends PluginWebPage
 		if (is_numeric($url)) {
 			$itemid = $url;
 		}
-		 else {
+		else {
 			preg_match('/(\\d+).html/i', $url, $matches);
 
 			if (isset($matches[1])) {
 				$itemid = $matches[1];
 			}
-
 		}
 
 		if (empty($itemid)) {
 			exit(json_encode(array('result' => 0, 'error' => '未获取到 itemid!')));
 		}
 
-
 		$ret = $this->model->get_item_jingdong($itemid, $_GPC['url'], $cates);
 		plog('jingdong.main', '京东抓取宝贝 京东id:' . $itemid);
 		exit(json_encode($ret));
 	}
 }
-
 
 ?>

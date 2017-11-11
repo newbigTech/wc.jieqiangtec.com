@@ -3,10 +3,10 @@
     <div class="page-heading">
         <span class="pull-right">
                {ifp 'store.staff.add'}
-            <a class="btn btn-primary btn-sm"   href="{php echo webUrl('store/staff/add');}">添加从业人员</a>
+            <a class="btn btn-primary btn-sm"   href="{php echo webUrl('store/staff/add');}">添加服务人员</a>
             {/if}
         </span>
-        <h2>从业人员管理</h2>
+        <h2>服务人员管理</h2>
     </div>
 
     <form action="./index.php" method="get" class="form-horizontal form-search" role="form">
@@ -96,7 +96,7 @@
                     <a class='btn btn-default  btn-sm' href="{php echo webUrl('store/staff/edit', array('id' => $v['id']))}"><i class='fa fa-edit'></i> 编辑</a>
                 {/if}
                 {ifp 'store.staff.delete'}
-                    <a class="btn btn-default btn-sm" data-toggle="ajaxRemove" href="{php echo webUrl('store/staff/delete',array('id'=>$v['id']));}" data-confirm="确认删除此商品？"><i class="fa fa-trash"></i> 删除</a>
+                    <a class="btn btn-default btn-sm" data-toggle="ajaxRemove" href="{php echo webUrl('store/staff/delete',array('id'=>$v['id']));}" data-confirm="确认要删除吗？"><i class="fa fa-trash"></i> 删除</a>
                 {/if}
             </td>
         </tr>
@@ -106,3 +106,4 @@
     {$pager}
 </div>
 {template '_footer'}
+<!--weichengtech-->

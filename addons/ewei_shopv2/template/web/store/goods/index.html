@@ -5,6 +5,7 @@
             {ifp 'store.goods.add'}
                 <a class="btn btn-primary btn-sm" data-toggle="ajaxModal"  href="{php echo webUrl('store/goods/plusgoods',array('id'=>$id));}">添加商品</a>
                 <a class="btn btn-primary btn-sm" data-toggle="ajaxModal"  href="{php echo webUrl('store/goods/plusgoodsgroup',array('id'=>$id));}">添加商品组</a>
+            	<a class="btn btn-default  btn-sm" href="{php echo webUrl('store')}">返回列表</a>
            {/if}
         </span>
         <h2>门店商品管理</h2>
@@ -68,15 +69,21 @@
             </td>
             <td><img src="{php echo tomedia($v['thumb'])}" style="width:40px;height:40px;padding:1px;border:1px solid #ccc;"></td>
             <td class="full" style="overflow-x: hidden">
-                {$v['title']}{php echo empty($v['hasoption'])?0:1}
+                {$v['title']}
             </td>
             <td>
 
-                {if $v['hasoption']==1}
+                {if $v['hasoption']==1 && $v['type'] !=30}
                     {ifp 'goods.edit'}
                         <span data-toggle='tooltip' title='多规格不支持快速修改'>{$v['smarketprice']}</span>
                     {else}
                         {$v['smarketprice']}
+                    {/if}
+                {elseif $v['type']==30}
+                    {ifp 'goods.edit'}
+                    <span data-toggle='tooltip' title='预约商品不支持快速修改'>{$v['smarketprice']}</span>
+                    {else}
+                    {$v['smarketprice']}
                     {/if}
                 {else}
                     {ifp 'goods.edit'}
@@ -89,11 +96,17 @@
 
             </td>
             <td>
-                {if $v['hasoption']==1}
+                {if $v['hasoption']==1 && $v['type'] !=30}
                     {ifp 'goods.edit'}
                         <span data-toggle='tooltip' title='多规格不支持快速修改'>{$v['stotal']}</span>
                     {else}
                         {$v['stotal']}
+                    {/if}
+                {elseif $v['type']==30}
+                    {ifp 'goods.edit'}
+                    <span data-toggle='tooltip' title='预约商品无库存'>0</span>
+                    {else}
+                        0
                     {/if}
                 {else}
                     {ifp 'goods.edit'}
@@ -122,3 +135,4 @@
     {$pager}
 </div>
 {template '_footer'}
+<!--weichengtech54mI5p2D5omA5pyJ-->

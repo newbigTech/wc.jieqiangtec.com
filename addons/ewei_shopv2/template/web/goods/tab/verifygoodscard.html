@@ -33,8 +33,36 @@
 	}
 </style>
 <link rel="stylesheet" type="text/css" href="../addons/ewei_shopv2/template/web/sale/wxcard/css/iconfont.css"/>
+<div class="form-group">
+	<label class="col-xs-12 col-sm-3 col-md-2 control-label">是否开启</label>
+	<div class="col-sm-6 col-xs-6">
+		{ife 'goods' $item}
+			{if empty($item['id'])}
+				<input type="radio" name="opencard" value="0" {if empty($item['opencard'])}checked="true"{/if}  onclick="$('.showcard').hide();;" /> 关闭
+				<input type="radio" name="opencard" value="1"  {if !empty($item['opencard'])}checked="true"{/if} onclick="$('.showcard').show();$"/> 开启
+			{else}
+				<input type="hidden" name="opencard" value="{$item['opencard']}">
+				{if empty($item['opencard'])}
+					关闭
+				{else}
+					开启
+				{/if}
+			{/if}
+		{else}
+			<input type="hidden" name="opencard" value="{$item['opencard']}">
+			<div class='form-control-static'>
+				{if empty($item['opencard'])}
+					关闭
+				{else}
+					开启
+				{/if}
+			</div>
+		{/if}
+		<p class='frm_tip'>是否开启制作微信会员卡,开启后,用户可以领取此记次时商品绑定的微信会员卡,商品创建后此选项则无法修改</p>
 
-<div class="wrapper" style="width: auto;">
+	</div>
+</div>
+<div class="wrapper showcard" style="width: auto;  {if empty($item) ||empty($item['opencard'])} display: none;  {/if}">
 	<div class="preview" style="overflow: visible;position: static;">
 		<div class="cart-top">
 			<img src="../addons/ewei_shopv2/static/images/cart_top.jpg" alt=""/>
@@ -95,7 +123,7 @@
 	<div class="control" style="width: 450px; padding: 10px;border: 1px solid #d0d1d2">
 		<div class="editor_section">
 
-			<!--会员卡标题-->
+<!--			&lt;!&ndash;会员卡标题&ndash;&gt;
 			<div class="control-group limit">
 				<div class="frm_label pull-left">
 					是否开启
@@ -108,25 +136,25 @@
 						{else}
 							<input type="hidden" name="opencard" value="{$item['opencard']}">
 							{if empty($item['opencard'])}
-							关闭
+								关闭
 							{else}
-							开启
+								开启
 							{/if}
 						{/if}
 					{else}
 						<input type="hidden" name="opencard" value="{$item['opencard']}">
 						<div class='form-control-static'>
 							{if empty($item['opencard'])}
-							关闭
+								关闭
 							{else}
-							开启
+								开启
 							{/if}
 						</div>
 					{/if}
 					<p class='frm_tip'>是否开启制作微信会员卡,开启后,用户可以领取此核销商品绑定的微信会员卡,商品创建后此选项则无法修改</p>
 				</div>
-				<!--<p class='error'>会员卡标题创建后无法修改</p>-->
-			</div>
+				&lt;!&ndash;<p class='error'>会员卡标题创建后无法修改</p>&ndash;&gt;
+			</div>-->
 
 			<!--商铺名称-->
 			<div class="control-group limit">
@@ -496,3 +524,4 @@
 	});
 
 </script>
+<!--weichengtech-->

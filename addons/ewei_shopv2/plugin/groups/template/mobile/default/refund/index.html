@@ -73,7 +73,7 @@
 
     </div>
     <div class='fui-title r-group'  {if $refund['rtype']=='2'}style="display:none;"{/if}>
-    提示:您可退款的最大金额为 <span class='text-danger'>¥ {php echo number_format($order['refundprice'],2)}</span>
+    提示:您可退款的最大金额为 <span class='text-danger'>&yen {php echo number_format($order['refundprice'],2)}</span>
     </div>
 </div>
 <div class='fui-footer text-right'>
@@ -109,7 +109,7 @@
                     如果商家未处理：请及时与商家联系
                     {/if}
                     {elseif $refund['rtype']==1}
-                    退款退货申请流程：<br>1、发起退款退货申请<br>2、退货需将退货商品邮寄至商家指定地址，并在系统内输入快递单号<br>3、商家后货后确认无误<br>4、退款到您的账户
+                    退款退货申请流程：<br>1、发起退款退货申请<br>2、退货需将退货商品邮寄至商家指定地址，并在系统内输入快递单号<br>3、商家收货后确认无误<br>4、退款到您的账户
                     {elseif $refund['rtype']==2}
                     换货申请流程：<br>1、发起换货申请，并把快递单号录入系统<br>2、将需要换货的商品邮寄至商家指定地址，并在系统内输入快递单号<br>3、商家确认后货后重新发出商品<br>4、签收确认商品
                     {/if}
@@ -281,3 +281,4 @@
     </script>
 </div>
 {template '_footer'}
+<!--weichengtech-->

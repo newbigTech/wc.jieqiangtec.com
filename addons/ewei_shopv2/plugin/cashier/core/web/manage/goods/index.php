@@ -31,7 +31,7 @@ class Index_EweiShopV2Page extends CashierWebPage
 				if ($res['res']['errno'] == -2) 
 				{
 					$message = explode(':', $res['res']['message']);
-					if (($message[0] != 'USERPAYING') && ($message[0] != 'need_query')) 
+					if ($message[0] != 'USERPAYING') 
 					{
 						show_json(-101, $res['res']);
 					}

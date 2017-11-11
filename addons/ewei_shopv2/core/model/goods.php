@@ -1,5 +1,4 @@
 <?php
-//weichengtech
 class Goods_EweiShopV2Model
 {
 	/**
@@ -435,7 +434,16 @@ class Goods_EweiShopV2Model
 	{
 		global $_W;
 		global $_GPC;
-		$count = pdo_fetchcolumn('select sum(total) from ' . tablename('ewei_shop_member_cart') . ' where uniacid=:uniacid and openid=:openid and isnewstore=:isnewstore and deleted=0 limit 1', array(':openid' => $_W['openid'], ':uniacid' => $_W['uniacid'], ':isnewstore' => $isnewstore));
+		$paras = array(':uniacid' => $_W['uniacid']);
+		$paras[':openid'] = $_W['openid'];
+		$sqlcondition = '';
+
+		if ($isnewstore != 0) {
+			$sqlcondition = ' and isnewstore=:isnewstore';
+			$paras[':isnewstore'] = $isnewstore;
+		}
+
+		$count = pdo_fetchcolumn('select sum(total) from ' . tablename('ewei_shop_member_cart') . ' where uniacid=:uniacid and openid=:openid ' . $sqlcondition . ' and deleted=0 limit 1', $paras);
 		return $count;
 	}
 
@@ -863,6 +871,161 @@ class Goods_EweiShopV2Model
 		}
 
 		return $goods;
+	}
+
+	public function createcode($parameter)
+	{
+		global $_W;
+		$path = IA_ROOT . '/addons/ewei_shopv2/data/goodscode/' . $_W['uniacid'] . '/';
+		$goodsid = $parameter['goodsid'];
+		$qrcode = $parameter['qrcode'];
+		$data = $parameter['codedata'];
+		$mid = $parameter['mid'];
+		$codeshare = $parameter['codeshare'];
+
+		if (!is_dir($path)) {
+			load()->func('file');
+			mkdirs($path);
+		}
+
+		$md5 = md5(json_encode(array('uniacid' => $_W['uniacid'], 'goodsid' => $goodsid, 'title' => $data['title']['text'], 'price' => $data['price']['text'], 'codeshare' => $parameter['codeshare'], 'mid' => $mid)));
+		$file = $md5 . '.jpg';
+
+		if (!is_file($path . $file)) {
+			set_time_limit(0);
+			@ini_set('memory_limit', '256M');
+
+			if ($codeshare == 1) {
+				$target = imagecreatetruecolor(640, 1060);
+				$color = imagecolorAllocate($target, 255, 255, 255);
+				imagefill($target, 0, 0, $color);
+				imagecopy($target, $target, 0, 0, 0, 0, 640, 1060);
+				$target = $this->mergeText($target, $data['shopname'], $data['shopname']['text']);
+				$thumb = preg_replace('/\\/0$/i', '/96', $data['portrait']['thumb']);
+				$target = $this->mergeImage($target, $data['portrait'], $thumb);
+				$thumb = preg_replace('/\\/0$/i', '/96', $data['thumb']['thumb']);
+				$target = $this->mergeImage($target, $data['thumb'], $thumb);
+				$qrcode = preg_replace('/\\/0$/i', '/96', $data['qrcode']['thumb']);
+				$target = $this->mergeImage($target, $data['qrcode'], $qrcode);
+				$target = $this->mergeText($target, $data['title'], $data['title']['text']);
+				$target = $this->mergeText($target, $data['price'], $data['price']['text']);
+				$target = $this->mergeText($target, $data['desc'], $data['desc']['text']);
+				imagepng($target, $path . $file);
+				imagedestroy($target);
+			}
+
+			if ($codeshare == 2) {
+				$target = imagecreatetruecolor(640, 640);
+				$color = imagecolorAllocate($target, 255, 255, 255);
+				imagefill($target, 0, 0, $color);
+				$colorline = imagecolorallocate($target, 0, 0, 0);
+				imageline($target, 0, 190, 640, 190, $colorline);
+				$red = imagecolorallocate($target, 254, 155, 68);
+				imagefilledrectangle($target, 0, 560, 640, 640, $red);
+				imagecopy($target, $target, 0, 0, 0, 0, 640, 640);
+				$thumb = preg_replace('/\\/0$/i', '/96', $data['thumb']['thumb']);
+				$target = $this->mergeImage($target, $data['thumb'], $thumb);
+				$target = $this->mergeText($target, $data['title'], $data['title']['text']);
+				$target = $this->mergeText($target, $data['price'], $data['price']['text']);
+				$qrcode = preg_replace('/\\/0$/i', '/96', $data['qrcode']['thumb']);
+				$target = $this->mergeImage($target, $data['qrcode'], $qrcode);
+				$target = $this->mergeText($target, $data['desc'], $data['desc']['text']);
+				$target = $this->mergeText($target, $data['shopname'], $data['shopname']['text'], true);
+				imagepng($target, $path . $file);
+				imagedestroy($target);
+			}
+			else {
+				if ($codeshare == 3) {
+					$target = imagecreatetruecolor(640, 1060);
+					$color = imagecolorAllocate($target, 245, 244, 249);
+					imagefill($target, 0, 0, $color);
+					imagecopy($target, $target, 0, 0, 0, 0, 640, 1008);
+					$target = $this->mergeText($target, $data['title'], $data['title']['text']);
+					$target = $this->mergeText($target, $data['price'], $data['price']['text']);
+					$target = $this->mergeText($target, $data['desc'], $data['desc']['text']);
+					$thumb = preg_replace('/\\/0$/i', '/96', $data['thumb']['thumb']);
+					$target = $this->mergeImage($target, $data['thumb'], $thumb);
+					$qrcode = preg_replace('/\\/0$/i', '/96', $data['qrcode']['thumb']);
+					$target = $this->mergeImage($target, $data['qrcode'], $qrcode);
+					imagepng($target, $path . $file);
+					imagedestroy($target);
+				}
+			}
+		}
+
+		$img = $_W['siteroot'] . 'addons/ewei_shopv2/data/goodscode/' . $_W['uniacid'] . '/' . $file;
+		return $img;
+	}
+
+	public function createImage($imgurl)
+	{
+		load()->func('communication');
+		$resp = ihttp_request($imgurl);
+		if (($resp['code'] == 200) && !empty($resp['content'])) {
+			return imagecreatefromstring($resp['content']);
+		}
+
+		$i = 0;
+
+		while ($i < 3) {
+			$resp = ihttp_request($imgurl);
+			if (($resp['code'] == 200) && !empty($resp['content'])) {
+				return imagecreatefromstring($resp['content']);
+			}
+
+			++$i;
+		}
+
+		return '';
+	}
+
+	public function mergeImage($target, $data, $imgurl)
+	{
+		$img = $this->createImage($imgurl);
+		$w = imagesx($img);
+		$h = imagesy($img);
+		imagecopyresized($target, $img, $data['left'], $data['top'], 0, 0, $data['width'], $data['height'], $w, $h);
+		imagedestroy($img);
+		return $target;
+	}
+
+	public function mergeText($target, $data, $text, $center = false)
+	{
+		$font = IA_ROOT . '/addons/ewei_shopv2/static/fonts/msyh.ttf';
+		$colors = $this->hex2rgb($data['color']);
+		$color = imagecolorallocate($target, $colors['red'], $colors['green'], $colors['blue']);
+
+		if ($center) {
+			$fontBox = imagettfbbox($data['size'], 0, $font, $data['text']);
+			imagettftext($target, $data['size'], 0, ceil(($data['width'] - $fontBox[2]) / 2), $data['top'] + $data['size'], $color, $font, $text);
+		}
+		else {
+			imagettftext($target, $data['size'], 0, $data['left'], $data['top'] + $data['size'], $color, $font, $text);
+		}
+
+		return $target;
+	}
+
+	public function hex2rgb($colour)
+	{
+		if ($colour[0] == '#') {
+			$colour = substr($colour, 1);
+		}
+
+		if (strlen($colour) == 6) {
+			list($r, $g, $b) = array($colour[0] . $colour[1], $colour[2] . $colour[3], $colour[4] . $colour[5]);
+		}
+		else if (strlen($colour) == 3) {
+			list($r, $g, $b) = array($colour[0] . $colour[0], $colour[1] . $colour[1], $colour[2] . $colour[2]);
+		}
+		else {
+			return false;
+		}
+
+		$r = hexdec($r);
+		$g = hexdec($g);
+		$b = hexdec($b);
+		return array('red' => $r, 'green' => $g, 'blue' => $b);
 	}
 }
 

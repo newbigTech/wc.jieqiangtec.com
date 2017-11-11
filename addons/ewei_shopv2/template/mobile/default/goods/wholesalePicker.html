@@ -1,6 +1,9 @@
 
 
 <style type="text/css">
+	.option-picker{
+		padding-bottom:2.25rem
+	}
 	.picker-bulk .header {
 		height: 4.5rem;
 		padding: 0 0.6rem 0.3rem 0.6rem;
@@ -43,14 +46,14 @@
 	.picker-bulk .header .inner .price small {
 		font-size: 0.5rem;
 	}
-	.picker-bulk .header .icon-roundclose {
+	.picker-bulk .header .icon-guanbi1 {
 		color: #5d5d5d;
 		font-size: 1.4rem;
 		position: absolute;
 		top: 0.1rem;
 		right: 0.5rem;
 	}
-	.picker-bulk .header .icon-roundclose:before {
+	.picker-bulk .header .icon-guanbi1:before {
 		font-weight: 100;
 	}
 	.picker-bulk .specs {
@@ -275,7 +278,7 @@
 					<div class="title"><%goods.title%></div>
 					<div class="price"><%if goods.minprice>0%><small>￥</small><%goods.minprice%>-<%/if%><small>￥</small><%goods.maxprice%></div>
 				</div>
-				<i class="icon icon-roundclose"></i>
+				<i class="icon icon-guanbi1"></i>
 			</div>
 			<%if hasoption==2%>
 				<div class="specs ">
@@ -369,3 +372,4 @@
 		</div>
 	</div>
 </script>
+<!--weichengtech-->

@@ -1,5 +1,4 @@
 <?php
-
 class nusoap_wsdlcache
 {
 	/**
@@ -33,7 +32,7 @@ class nusoap_wsdlcache
 	public function nusoap_wsdlcache($cache_dir = '.', $cache_lifetime = 0)
 	{
 		$this->fplock = array();
-		$this->cache_dir = ($cache_dir != '' ? $cache_dir : '.');
+		$this->cache_dir = (($cache_dir != '' ? $cache_dir : '.'));
 		$this->cache_lifetime = $cache_lifetime;
 	}
 
@@ -77,16 +76,16 @@ class nusoap_wsdlcache
 					unlink($filename);
 					$this->debug('Expired ' . $wsdl . ' (' . $filename . ') from cache');
 					$this->releaseMutex($filename);
-					return NULL;
+					return;
 				}
 
 			}
 
 
-			if (!file_exists($filename)) {
+			if (!(file_exists($filename))) {
 				$this->debug($wsdl . ' (' . $filename . ') not in cache (1)');
 				$this->releaseMutex($filename);
-				return NULL;
+				return;
 			}
 
 
@@ -103,7 +102,7 @@ class nusoap_wsdlcache
 			}
 
 			$this->releaseMutex($filename);
-			return (!is_null($s) ? unserialize($s) : NULL);
+			return (!(is_null($s)) ? unserialize($s) : NULL);
 		}
 
 
@@ -151,7 +150,7 @@ class nusoap_wsdlcache
 		if ($this->obtainMutex($filename, 'w')) {
 			$fp = fopen($filename, 'w');
 
-			if (!$fp) {
+			if (!($fp)) {
 				$this->debug('Cannot write ' . $wsdl_instance->wsdl . ' (' . $filename . ') in cache');
 				$this->releaseMutex($filename);
 				return false;
@@ -183,7 +182,7 @@ class nusoap_wsdlcache
 		fclose($this->fplock[md5($filename)]);
 		unset($this->fplock[md5($filename)]);
 
-		if (!$ret) {
+		if (!($ret)) {
 			$this->debug('Not able to release lock for ' . $filename);
 		}
 
@@ -202,7 +201,7 @@ class nusoap_wsdlcache
 	{
 		$filename = $this->createFilename($wsdl);
 
-		if (!file_exists($filename)) {
+		if (!(file_exists($filename))) {
 			$this->debug($wsdl . ' (' . $filename . ') not in cache to be removed');
 			return false;
 		}
@@ -238,97 +237,97 @@ class wsdlcache extends nusoap_wsdlcache
 	public function nusoap_wsdlcache($cache_dir, $cache_lifetime)
 	{
 
-Notice: Undefined offset: -1 in dephp on line 1338
+Notice: Undefined offset: -1 in dephp on line 1463
 
-Notice: Undefined offset: -1 in dephp on line 1343
+Notice: Undefined offset: -1 in dephp on line 1468
 
-Notice: Undefined offset: -1 in dephp on line 1344
+Notice: Undefined offset: -1 in dephp on line 1469
 
-Notice: Undefined offset: -1 in dephp on line 1345
+Notice: Undefined offset: -1 in dephp on line 1470
 	}
 
 	public function createFilename($wsdl)
 	{
 
-Notice: Undefined offset: -1 in dephp on line 1338
+Notice: Undefined offset: -1 in dephp on line 1463
 
-Notice: Undefined offset: -1 in dephp on line 1343
+Notice: Undefined offset: -1 in dephp on line 1468
 
-Notice: Undefined offset: -1 in dephp on line 1344
+Notice: Undefined offset: -1 in dephp on line 1469
 
-Notice: Undefined offset: -1 in dephp on line 1345
+Notice: Undefined offset: -1 in dephp on line 1470
 	}
 
 	public function debug($string)
 	{
 
-Notice: Undefined offset: -1 in dephp on line 1338
+Notice: Undefined offset: -1 in dephp on line 1463
 
-Notice: Undefined offset: -1 in dephp on line 1343
+Notice: Undefined offset: -1 in dephp on line 1468
 
-Notice: Undefined offset: -1 in dephp on line 1344
+Notice: Undefined offset: -1 in dephp on line 1469
 
-Notice: Undefined offset: -1 in dephp on line 1345
+Notice: Undefined offset: -1 in dephp on line 1470
 	}
 
 	public function get($wsdl)
 	{
 
-Notice: Undefined offset: -1 in dephp on line 1338
+Notice: Undefined offset: -1 in dephp on line 1463
 
-Notice: Undefined offset: -1 in dephp on line 1343
+Notice: Undefined offset: -1 in dephp on line 1468
 
-Notice: Undefined offset: -1 in dephp on line 1344
+Notice: Undefined offset: -1 in dephp on line 1469
 
-Notice: Undefined offset: -1 in dephp on line 1345
+Notice: Undefined offset: -1 in dephp on line 1470
 	}
 
 	public function obtainMutex($filename, $mode)
 	{
 
-Notice: Undefined offset: -1 in dephp on line 1338
+Notice: Undefined offset: -1 in dephp on line 1463
 
-Notice: Undefined offset: -1 in dephp on line 1343
+Notice: Undefined offset: -1 in dephp on line 1468
 
-Notice: Undefined offset: -1 in dephp on line 1344
+Notice: Undefined offset: -1 in dephp on line 1469
 
-Notice: Undefined offset: -1 in dephp on line 1345
+Notice: Undefined offset: -1 in dephp on line 1470
 	}
 
 	public function put($wsdl_instance)
 	{
 
-Notice: Undefined offset: -1 in dephp on line 1338
+Notice: Undefined offset: -1 in dephp on line 1463
 
-Notice: Undefined offset: -1 in dephp on line 1343
+Notice: Undefined offset: -1 in dephp on line 1468
 
-Notice: Undefined offset: -1 in dephp on line 1344
+Notice: Undefined offset: -1 in dephp on line 1469
 
-Notice: Undefined offset: -1 in dephp on line 1345
+Notice: Undefined offset: -1 in dephp on line 1470
 	}
 
 	public function releaseMutex($filename)
 	{
 
-Notice: Undefined offset: -1 in dephp on line 1338
+Notice: Undefined offset: -1 in dephp on line 1463
 
-Notice: Undefined offset: -1 in dephp on line 1343
+Notice: Undefined offset: -1 in dephp on line 1468
 
-Notice: Undefined offset: -1 in dephp on line 1344
+Notice: Undefined offset: -1 in dephp on line 1469
 
-Notice: Undefined offset: -1 in dephp on line 1345
+Notice: Undefined offset: -1 in dephp on line 1470
 	}
 
 	public function remove($wsdl)
 	{
 
-Notice: Undefined offset: -1 in dephp on line 1338
+Notice: Undefined offset: -1 in dephp on line 1463
 
-Notice: Undefined offset: -1 in dephp on line 1343
+Notice: Undefined offset: -1 in dephp on line 1468
 
-Notice: Undefined offset: -1 in dephp on line 1344
+Notice: Undefined offset: -1 in dephp on line 1469
 
-Notice: Undefined offset: -1 in dephp on line 1345
+Notice: Undefined offset: -1 in dephp on line 1470
 	}
 }
 

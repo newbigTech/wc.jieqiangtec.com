@@ -133,6 +133,20 @@
 
         </div>
     </div>
+    {if p('live')}
+    <div class="form-group task-mode">
+        <label class="col-sm-2 control-label">直播间消息通知</label>
+        <div class="col-sm-9 col-xs-12">
+
+            <div class="input-group">
+                <input type="text" name="status_receive_time" id="liveroom_receive_time" class="form-control" value="{$liveroom_receive_time}" />
+                <div class="input-group-addon">分钟</div>
+            </div>
+            <span class='help-block'>直播间消息通知间隔时间，如果为空默认为 10分钟 </span>
+
+        </div>
+    </div>
+    {/if}
  
 
     <div class="form-group">
@@ -201,3 +215,5 @@
     </script>
 
     {template '_footer'}
+
+<!--weichengtech-->

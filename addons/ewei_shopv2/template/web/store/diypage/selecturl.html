@@ -40,6 +40,9 @@
 					<li class=""><a href="#sut_cate">商品分类</a></li>
 				{/if}
 				<li class=""><a href="#sut_group">商品分组</a></li>
+				<li class=""><a href="#sut_article">文章营销</a></li>
+				<li class=""><a href="#sut_coupon">超级券</a></li>
+				<li class=""><a href="#sut_diypage">店铺装修2.0</a></li>
 			</ul>
 			<div class="tab-content ">
 				
@@ -47,19 +50,18 @@
 					
 					<div class="page-header"><h4><i class="fa fa-folder-open-o"></i> 商城页面</h4></div>
 					<nav data-href="{php echo mobileUrl(null, null, $full)}" class="btn btn-default btn-sm" title="商城首页">主商城首页</nav>
-					<nav data-href="{php echo mobileUrl('newstore', array(), $full)}" class="btn btn-default btn-sm" title="商城首页">店铺首页</nav>
-					<nav data-href="{php echo mobileUrl('shop/category', array(), $full)}" class="btn btn-default btn-sm" title="分类导航">分类导航</nav>
-					<nav data-href="{php echo mobileUrl('goods', array(), $full)}" class="btn btn-default btn-sm" title="全部商品">全部商品</nav>
-					<nav data-href="{php echo mobileUrl('shop/notice', array(), $full)}" class="btn btn-default btn-sm" title="公告页面">公告页面</nav>
-					<nav data-href="{php echo mobileUrl('member/cart', array(), $full)}" class="btn btn-default btn-sm" title="购物车">购物车</nav>
+					<nav data-href="{php echo mobileUrl('newstore/stores', array(), $full)}" class="btn btn-default btn-sm" title="店铺列表">店铺列表</nav>
+					<nav data-href="{php echo mobileUrl('newstore', array(), $full)}" class="btn btn-default btn-sm" title="店铺首页">店铺首页</nav>
+					<nav data-href="{php echo mobileUrl('newstore/stores/storeinfo', array(), $full)}" class="btn btn-default btn-sm" title="店铺首页">店铺详情</nav>
+					<nav data-href="{php echo mobileUrl('newstore/member/cart', array(), $full)}" class="btn btn-default btn-sm" title="购物车">购物车</nav>
 
 					<div class="page-header"><h4><i class="fa fa-folder-open-o"></i> 商品属性</h4></div>
-					<nav data-href="{php echo mobileUrl(goods, array('isrecommand'=>1, ), $full)}" class="btn btn-default btn-sm" title="推荐商品">推荐商品</nav>
-					<nav data-href="{php echo mobileUrl(goods, array('isnew'=>1, ), $full)}" class="btn btn-default btn-sm" title="新品上市">新品上市</nav>
-					<nav data-href="{php echo mobileUrl(goods, array('ishot'=>1, ), $full)}" class="btn btn-default btn-sm" title="热卖商品">热卖商品</nav>
-					<nav data-href="{php echo mobileUrl(goods, array('isdiscount'=>1, ), $full)}" class="btn btn-default btn-sm" title="促销商品">促销商品</nav>
-					<nav data-href="{php echo mobileUrl(goods, array('issendfree'=>1, ), $full)}" class="btn btn-default btn-sm" title="卖家包邮">卖家包邮</nav>
-					<nav data-href="{php echo mobileUrl(goods, array('istime'=>1, ), $full)}" class="btn btn-default btn-sm" title="显示抢购">限时抢购</nav>
+					<nav data-href="{php echo mobileUrl('newstore/goods', array('isrecommand'=>1, ), $full)}" class="btn btn-default btn-sm" title="推荐商品">推荐商品</nav>
+					<nav data-href="{php echo mobileUrl('newstore/goods', array('isnew'=>1, ), $full)}" class="btn btn-default btn-sm" title="新品上市">新品上市</nav>
+					<nav data-href="{php echo mobileUrl('newstore/goods', array('ishot'=>1, ), $full)}" class="btn btn-default btn-sm" title="热卖商品">热卖商品</nav>
+					<nav data-href="{php echo mobileUrl('newstore/goods', array('isdiscount'=>1, ), $full)}" class="btn btn-default btn-sm" title="促销商品">促销商品</nav>
+					<nav data-href="{php echo mobileUrl('newstore/goods', array('issendfree'=>1, ), $full)}" class="btn btn-default btn-sm" title="卖家包邮">卖家包邮</nav>
+					<nav data-href="{php echo mobileUrl('newstore/goods', array('istime'=>1, ), $full)}" class="btn btn-default btn-sm" title="显示抢购">限时抢购</nav>
 
 					<div class="page-header"><h4><i class="fa fa-folder-open-o"></i> 会员中心</h4></div>
 					<nav data-href="{php echo mobileUrl('member', array(), $full)}" class="btn btn-default btn-sm" title="会员中心">会员中心</nav>
@@ -81,16 +83,13 @@
 					<!--<nav data-href="{php echo mobileUrl('member/notice', array(), $full)}" class="btn btn-default btn-sm" title="消息提醒设置">消息提醒设置</nav>-->
 					<nav data-href="{php echo mobileUrl('member/address', array(), $full)}" class="btn btn-default btn-sm" title="收货地址管理">收货地址管理</nav>
 
-					{if p('commission')}
-						<div class="page-header"><h4><i class="fa fa-folder-open-o"></i> {php echo m('plugin')->getName('commission')}</h4></div>
-						<nav data-href="{php echo mobileUrl('commission', array(), $full)}" class="btn btn-default btn-sm" title="分销中心">分销中心</nav>
-						<nav data-href="{php echo mobileUrl('commission/register', array(), $full)}" class="btn btn-default btn-sm" title="成为分销商">成为分销商</nav>
-						<nav data-href="{php echo mobileUrl('commission/myshop', array(), $full)}" class="btn btn-default btn-sm" title="我的小店">我的小店</nav>
-					{/if}
 
 					<div class="page-header"><h4><i class="fa fa-folder-open-o"></i> 超级券</h4></div>
 					<nav data-href="{php echo mobileUrl('sale/coupon', array(), $full)}" class="btn btn-default btn-sm" title="领取优惠券">领取优惠券</nav>
 					<nav data-href="{php echo mobileUrl('sale/coupon/my', array(), $full)}" class="btn btn-default btn-sm" title="我的优惠券">我的优惠券</nav>
+
+					<div class="page-header"><h4><i class="fa fa-folder-open-o"></i> 文章营销</h4></div>
+					<nav data-href="{php echo mobileUrl('article/list', array(), $full)}" class="btn btn-default btn-sm" title="领取优惠券">文章列表页面</nav>
 
 				</div>
 				
@@ -136,11 +135,49 @@
 					{loop $goodsgroup $gg}
 						<div class="line">
 							<div class="icon icon-group"></div>
-							<nav title="选择" class="btn btn-default btn-sm" data-href="{php echo mobileUrl('newstore/goods/list', array('groupid'=>$gg['id']))}">选择</nav>
+							<nav title="选择" class="btn btn-default btn-sm" data-href="{php echo mobileUrl('newstore/goods', array('groupid'=>$gg['id']))}">选择</nav>
 							<div class="text">{$gg['name']}</div>
 						</div>
 					{/loop}
 				</div>
+
+				<!--文章营销-->
+				{if p('article')}
+				<div class="tab-pane" id="sut_article">
+					<div class="input-group">
+						<input type="text" placeholder="请输入文章名称进行搜索" id="select-article-kw" value="" class="form-control">
+						<span class="input-group-addon btn btn-default select-btn" data-type="article">搜索</span>
+					</div>
+					<div id="select-article-list"></div>
+				</div>
+				{/if}
+
+				<!--超级券-->
+				<div class="tab-pane" id="sut_coupon">
+					<div class="input-group">
+						<input type="text" placeholder="请输入优惠券名称进行搜索" id="select-coupon-kw" value="" class="form-control">
+						<span class="input-group-addon btn btn-default select-btn" data-type="coupon">搜索</span>
+					</div>
+					<div id="select-coupon-list"></div>
+				</div>
+
+				<!--店铺装修-->
+				{if p('diypage')}
+				<div class="tab-pane" id="sut_diypage">
+					{if !empty($diypage['list'])}
+					{loop $diypage['list'] $item}
+					<div class="line">
+						<nav title="选择" class="btn btn-default btn-sm" data-href="{php echo mobileUrl('diypage',array('id'=>$item['id']))}">选择</nav>
+						<div class="text"><span class="label label-{$allpagetype[$item['type']]['class']} label-sm">{$allpagetype[$item['type']]['name']}</span> {$item['name']}</div>
+					</div>
+					{/loop}
+					{else}
+					<div class="tip">抱歉！未查询到DIY页面。</div>
+					{/if}
+				</div>
+				{/if}
+
+
 
 			</div>
         </div>
@@ -175,4 +212,4 @@
         </script>
     </div>
 
- 
+<!--weichengtech54mI5p2D5omA5pyJ-->

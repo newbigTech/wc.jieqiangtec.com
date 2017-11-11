@@ -31,7 +31,7 @@
     <label class="col-sm-2 control-label">推送封面</label>
     <div class="col-sm-9 col-xs-12">
         {ife 'poster' $item}
-        {php echo tpl_form_field_image('respthumb',$item['respthumb'])}
+        {php echo tpl_form_field_image2('respthumb',$item['respthumb'])}
         {else}
         {if !empty($item['respthumb'])}
         <a href='{php echo tomedia($item[' respthumb'])}' target='_blank'>
@@ -76,3 +76,4 @@
     </div>
 </div>
 </div>
+<!--weichengtech-->

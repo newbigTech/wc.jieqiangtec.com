@@ -238,9 +238,9 @@
     <label class="col-sm-2 control-label"></label>
     <div class="col-sm-9 col-xs-12">
         <div class="input-group">
-            <div class="input-group-addon">扣除个人所得税</div>
+            <div class="input-group-addon">扣除提现手续费</div>
             {ifp 'commission.set.edit'}
-            <input type="text" name="texts[commission_charge]" class="form-control" value="{php echo empty($data['texts']['commission_charge'])?'扣除个人所得税':$data['texts']['commission_charge']}"  />
+            <input type="text" name="texts[commission_charge]" class="form-control" value="{php echo empty($data['texts']['commission_charge'])?'扣除提现手续费':$data['texts']['commission_charge']}"  />
             {else}
             <div class="form-control valid">{php echo empty($data['texts']['commission_charge'])?'成功提现佣金':$data['texts']['commission_charge']}</div>
             {/if}
@@ -345,3 +345,4 @@
 		</div>
 	</div>
 </div>
+<!--weichengtech-->

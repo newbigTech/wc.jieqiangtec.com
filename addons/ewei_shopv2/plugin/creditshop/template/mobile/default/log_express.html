@@ -18,7 +18,7 @@
 		<div class="title state">物流状态 
 		    {if !empty($expresslist)}
 		       {if strexists($expresslist[0]['step'],'已签收')}
-			  <span class="text-danger">已签收</span></div>
+			  <span class="text-danger2">已签收</span></div>
 		       {elseif count($expresslist)<=2}
 			  <span class="text-primary">备货中</span></div>
 		       {else}
@@ -54,3 +54,4 @@
          </div>
 </div>
 {template '_footer'}
+<!--weichengtech-->

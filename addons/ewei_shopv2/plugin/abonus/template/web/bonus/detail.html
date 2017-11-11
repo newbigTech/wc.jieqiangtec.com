@@ -4,7 +4,7 @@
 		{ifp 'abonus.bonus.build'}
 			<a class="btn btn-primary btn-sm" href="{php echo webUrl('abonus/bonus/build')}">创建结算单</a>
 		{/if}
-		<a class="btn btn-default  btn-sm" href="{php echo webUrl('abonus/bonus/status2')}">返回列表</a>
+		<a class="btn btn-default  btn-sm" href="{php echo webUrl('abonus/bonus/status'.$data['status'])}">返回列表</a>
 	</span>
     <h2>结算单信息
         <small>
@@ -494,3 +494,4 @@
 
 
 {template '_footer'}
+<!--weichengtech-->

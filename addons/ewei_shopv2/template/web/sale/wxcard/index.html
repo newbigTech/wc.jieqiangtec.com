@@ -29,11 +29,11 @@
 
 			<select name='card_type' class='form-control  input-sm select-md'   style="width:100px;"  >
 				<option value=''>类型</option>
-				<option value='CASH' {if $_GPC['type']=='CASH'}selected{/if}>代金券</option>
-				<option value='DISCOUNT' {if $_GPC['type']=='DISCOUNT'}selected{/if}>折扣券</option>
+				<option value='CASH' {if $_GPC['card_type']=='CASH'}selected{/if}>代金券</option>
+				<option value='DISCOUNT' {if $_GPC['card_type']=='DISCOUNT'}selected{/if}>折扣券</option>
 			</select>
 			<div class="input-group">
-				<input type="text" class="input-sm form-control" name='keyword' value="{$_GPC['keyword']}" placeholder="卡券名称/卡券ID"> <span class="input-group-btn">
+				<input type="text" class="input-sm form-control" name='keyword' value="{$_GPC['keyword']}" placeholder="卡券名称"> <span class="input-group-btn">
 
                                      <button class="btn btn-sm btn-primary" type="submit"> 搜索</button> </span>
 			</div>
@@ -78,10 +78,10 @@
 				<ul class="dropdown-menu dropdown-menu-left" role="menu" style='z-index: 9999'>
 
 					{ifp 'sale.wxcard.edit'}
-					<li><a  href="{php echo webUrl('sale/wxcard/edit',array('id' => $row['id']));}"><i class='fa fa-edit'></i> {ifp 'sale.wxcard.edit'}编辑{else}查看{/if}</a></li>
+						<li><a  href="{php echo webUrl('sale/wxcard/edit',array('id' => $row['id']));}"><i class='fa fa-edit'></i> {ifp 'sale.wxcard.edit'}编辑{else}查看{/if}</a></li>
 					{/if}
 					{ifp 'sale.wxcard.delete'}
-					<li><a  data-toggle='ajaxRemove' href="{php echo webUrl('sale/wxcard/delete',array('id' => $row['id']));}" data-confirm="确定要删除该微信卡券吗？"><i class='fa fa-trash'></i> 删除</a></li>
+						<li><a  data-toggle='ajaxRemove' href="{php echo webUrl('sale/wxcard/delete',array('id' => $row['id']));}" data-confirm="确定要删除该微信卡券吗？"><i class='fa fa-trash'></i> 删除</a></li>
 					{/if}
 
 					{ifp 'sale.wxcard.stock'}<li><a data-toggle="ajaxModal" href="{php echo webUrl('sale/wxcard/stock', array('id'=>$row['id'],'card_id'=>$row['card_id']))}" title='修改库存'><i class='fa fa-credit-card'></i> 修改库存</a></li>{/if}
@@ -104,3 +104,4 @@
 {/if}
 </form>
 {template '_footer'}
+<!--weichengtech-->

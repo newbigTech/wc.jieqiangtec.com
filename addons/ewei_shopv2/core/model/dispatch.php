@@ -1,5 +1,4 @@
 <?php
-//weichengtech
 class Dispatch_EweiShopV2Model
 {
 	/**

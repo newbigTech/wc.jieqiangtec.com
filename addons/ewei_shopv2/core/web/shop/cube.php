@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -17,11 +16,10 @@ class Cube_EweiShopV2Page extends WebPage
 			$cubes = array();
 
 			if (is_array($imgs)) {
-				foreach ($imgs as $key => $img ) {
+				foreach ($imgs as $key => $img) {
 					$cubes[] = array('img' => save_media($img), 'url' => trim($urls[$key]));
 				}
 			}
-
 
 			$shop = $_W['shopset']['shop'];
 			$shop['cubes'] = $cubes;
@@ -30,11 +28,9 @@ class Cube_EweiShopV2Page extends WebPage
 			show_json(1);
 		}
 
-
-		$cubes = ((isset($_W['shopset']['shop']['cubes']) ? $_W['shopset']['shop']['cubes'] : array()));
+		$cubes = (isset($_W['shopset']['shop']['cubes']) ? $_W['shopset']['shop']['cubes'] : array());
 		include $this->template();
 	}
 }
-
 
 ?>

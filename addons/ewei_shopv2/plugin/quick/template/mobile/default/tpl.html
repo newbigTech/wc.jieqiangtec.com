@@ -43,7 +43,7 @@
         <div class="sale"> 最少购买<%item.minbuy%><%item.unit%></div>
         <%/if%>
         <%/if%>
-        <div class="price">￥<%calculate(item.marketprice*item.total)%></div>
+        <div class="price">￥<%item.marketprice * item.total%></div>
         <div class="num">
             <div class="quick-num open" data-num="0">
                 <div class="minus icon <%if item.dismin==1%>disabled<%/if%>"></div>
@@ -117,3 +117,4 @@
         </div>
     </div>
 </script>
+<!--weichengtech-->

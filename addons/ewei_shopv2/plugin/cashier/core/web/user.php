@@ -98,24 +98,7 @@ class User_EweiShopV2Page extends PluginWebPage
 		}
 		if ($_W['ispost']) 
 		{
-			$wechatpay = '';
-			if (is_array($_GPC['wechatpay'])) 
-			{
-				$wechatpay = $_GPC['wechatpay'];
-				if ($_FILES['cert_file']['name']) 
-				{
-					$wechatpay['cert'] = $this->model->upload_cert('cert_file');
-				}
-				if ($_FILES['key_file']['name']) 
-				{
-					$wechatpay['key'] = $this->model->upload_cert('key_file');
-				}
-				if ($_FILES['root_file']['name']) 
-				{
-					$wechatpay['root'] = $this->model->upload_cert('root_file');
-				}
-				$wechatpay = json_encode($wechatpay);
-			}
+			$wechatpay = ((is_array($_GPC['wechatpay']) ? json_encode($_GPC['wechatpay']) : ''));
 			if (!(empty($item))) 
 			{
 				$alipay_yuan = json_decode($item['alipay'], true);
@@ -172,7 +155,7 @@ class User_EweiShopV2Page extends PluginWebPage
 					$this->model->sendMessage(array('name' => $params['name'], 'mobile' => $params['mobile'], 'status' => $message, 'createtime' => time()), 'checked', $params['manageopenid']);
 				}
 			}
-			/*if ($user_totle) 
+			if ($user_totle) 
 			{
 				show_json(0, '该登录用户名称,已经存在!请更换!');
 			}
@@ -186,7 +169,7 @@ class User_EweiShopV2Page extends PluginWebPage
 				{
 					show_json(0, '该门店收银台,已经存在!请更换!');
 				}
-			}*/
+			}
 			$res = $this->model->savaUser($params);
 			if (isset($res['createtime'])) 
 			{
@@ -214,7 +197,7 @@ class User_EweiShopV2Page extends PluginWebPage
 		}
 		$wechatpay = json_decode($item['wechatpay'], true);
 		$alipay = json_decode($item['alipay'], true);
-		$order_template = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_member_printer_template') . ' WHERE uniacid=:uniacid  AND merchid=0', array(':uniacid' => $_W['uniacid']));
+		$order_template = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_member_printer_template') . ' WHERE uniacid=:uniacid ', array(':uniacid' => $_W['uniacid']));
 		$order_printer_array = array();
 		if (!(empty($userset['printer']))) 
 		{

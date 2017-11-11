@@ -7,6 +7,10 @@
     .fui-swipe-page.rectangle .fui-swipe-bullet {height: 12px; width: 20px; border-radius: 0;}
 </style>
 <div class='fui-swipe goods-swipe'>
+    {if !empty($islive)}
+        <a class="external isliving" href="{php echo mobileUrl('live/room', array('id'=>$liveid))}">直播中</a>
+    {/if}
+
     <div class='fui-swipe-wrapper'>
         {loop $thumbs $thumb}
         <div class='fui-swipe-item'><img src="{EWEI_SHOPV2_PLACEHOLDER}"  data-lazy="{php echo tomedia($thumb)}" /></div>
@@ -19,3 +23,4 @@
     </div>
     {/if}
 </div>
+<!--weichengtech-->

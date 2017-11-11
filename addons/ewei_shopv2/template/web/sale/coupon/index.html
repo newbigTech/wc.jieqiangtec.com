@@ -174,10 +174,15 @@
 
 				{/if}
 
-			<!--	{ifp 'sale.coupon.send'}
-				<a  class='btn btn-primary  btn-sm' href="{php echo webUrl('sale/coupon/send',array('couponid' => $row['id']));}"><i class='fa fa-send'></i> 发放优惠券</a>
-
-				{/if}-->
+				{if !empty($row['quickget'])}
+				<a href="javascript:;" data-url="{php echo mobileUrl('sale/coupon/quickget', array('id' => $row['id']),true)}"  class="btn btn-default btn-sm js-clip">
+					<i class="fa fa-link"></i> 复制直接领取链接
+				</a>
+				<a href="javascript:void(0);" class="btn btn-default btn-sm" data-toggle="popover" data-trigger="hover" data-html="true"
+				   data-content="<img src='{$row['quickqrcode']}' width='130' alt='链接二维码'>" data-placement="auto right">
+					<i class="glyphicon glyphicon-qrcode"></i>
+				</a>
+				{/if}
 
 			</div>
 
@@ -198,3 +203,4 @@
 {/if}
 </form>
 {template '_footer'}
+<!--weichengtech-->

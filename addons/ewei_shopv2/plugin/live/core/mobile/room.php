@@ -1,5 +1,4 @@
 <?php
-//weichengtech
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -12,11 +11,12 @@ class Room_EweiShopV2Page extends PluginMobileLoginPage
 		global $_GPC;
 		$uniacid = intval($_W['uniacid']);
 		$openid = trim($_W['openid']);
-		$invitation_id = intval($_GPC['invitation_id']);
+		$invitation_id = intval($_GPC['invitationid']);
 		if (p('invitation') && (0 < $invitation_id)) {
 			$invitation_openid = trim($_GPC['invitation_openid']);
-			$invitation_data = array('uniacid' => $uniacid, 'invitation_id' => $invitation_id, 'invitation_openid' => $invitation_openid, 'openid' => $openid, 'scanning_time' => time());
-			pdo_insert('ewei_shop_invitation_scanning', $invitation_data);
+			$invitation_data = array('uniacid' => $uniacid, 'invitation_id' => $invitation_id, 'invitation_openid' => $invitation_openid, 'openid' => $openid, 'scan_time' => time());
+			pdo_insert('ewei_shop_invitation_log', $invitation_data);
+			pdo_query('update ' . tablename('ewei_shop_invitation') . ' set scan = scan+1 where id = ' . $invitation_id . ' and uniacid = ' . $uniacid . ' ');
 		}
 
 		$roomid = intval($_GPC['id']);

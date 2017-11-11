@@ -1,9 +1,7 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
-
 
 require IA_ROOT . '/addons/ewei_shopv2/defines.php';
 require EWEI_SHOPV2_INC . '/plugin_processor.php';
@@ -32,7 +30,6 @@ class GroupsProcessor extends PluginProcessor
 				return $this->responseEmpty();
 			}
 
-
 			if (!$obj->inContext) {
 				unset($_SESSION[$this->sessionkey]);
 				unset($_SESSION[$this->codekey]);
@@ -40,18 +37,16 @@ class GroupsProcessor extends PluginProcessor
 				return $obj->respText('请输入8位数字拼团订单核销码:');
 			}
 
-
 			if ($obj->inContext) {
 				if (is_numeric($content)) {
 					if (8 <= strlen($content)) {
 						$_SESSION[$this->codekey] = $verifycode = trim($content);
-						$order = pdo_fetch('select id,orderno,price,goodid from ' . tablename('ewei_shop_groups_order') . "\n\t\t\t\t\t\t\t" . 'where uniacid=:uniacid and verifycode = :verifycode limit 1 ', array(':uniacid' => $_W['uniacid'], ':verifycode' => 'PT' . $verifycode));
+						$order = pdo_fetch('select id,orderno,price,goodid from ' . tablename('ewei_shop_groups_order') . "\r\n\t\t\t\t\t\t\twhere uniacid=:uniacid and verifycode = :verifycode limit 1 ", array(':uniacid' => $_W['uniacid'], ':verifycode' => 'PT' . $verifycode));
 
 						if (empty($order)) {
 							unset($_SESSION[$this->sessionkey]);
 							return $obj->respText('未找到订单，请继续输入，退出请回复 n。');
 						}
-
 
 						$allow = p('groups')->allow($order['id'], 0, $openid);
 
@@ -60,29 +55,28 @@ class GroupsProcessor extends PluginProcessor
 							return $obj->respText($allow['message'] . ' 请输入其他核销码，退出请回复 n。');
 						}
 
-
 						extract($allow);
 						$_SESSION[$this->sessionkey] = json_encode(array('orderid' => $allow['order']['id'], 'verifytype' => $allow['order']['verifytype'], 'lastverifys' => $allow['lastverifys']));
 						$str = '';
-						$str .= '订单：' . $order['orderno'] . "\r\n" . '金额：' . $order['price'] . ' 元' . "\r\n";
-						$str .= '商品：' . "\r\n";
+						$str .= '订单：' . $order['orderno'] . "\r\n金额：" . $order['price'] . " 元\r\n";
+						$str .= "商品：\r\n";
 						$str .= 1 . '、' . $goods['title'] . "\r\n";
 
 						if ($order['dispatchtype'] == 1) {
-							$str .= "\r\n" . '信息正确请回复 y 进行自提确认，回复 n 退出。';
+							$str .= "\r\n信息正确请回复 y 进行自提确认，回复 n 退出。";
 						}
-						 else if ($order['verifytype'] == 0) {
-							$str .= "\r\n" . '正确请回复 y 进行订单核销，回复 n 退出。';
+						else if ($order['verifytype'] == 0) {
+							$str .= "\r\n正确请回复 y 进行订单核销，回复 n 退出。";
 						}
-						 else if ($order['verifytype'] == 1) {
-							$str .= "\r\n" . '信息正确请输入核销次数进行核销（可核销剩余 ' . $lastverifys . ' 次），回复 n 退出。';
-							return $obj->respText($str);
+						else {
+							if ($order['verifytype'] == 1) {
+								$str .= "\r\n信息正确请输入核销次数进行核销（可核销剩余 " . $lastverifys . ' 次），回复 n 退出。';
+								return $obj->respText($str);
+							}
 						}
-
 
 						return $obj->respText($str);
 					}
-
 
 					if (isset($_SESSION[$this->sessionkey])) {
 						$session = json_decode($_SESSION[$this->sessionkey], true);
@@ -92,11 +86,9 @@ class GroupsProcessor extends PluginProcessor
 								return $obj->respText('订单最少核销 1 次!');
 							}
 
-
 							if ($session['lastverifys'] < intval($content)) {
 								return $obj->respText('此订单最多核销 ' . $session['lastverifys'] . ' 次!');
 							}
-
 
 							$result = p('groups')->verify($session['orderid'], intval($content), '', $openid);
 
@@ -105,17 +97,13 @@ class GroupsProcessor extends PluginProcessor
 								return $obj->respText($allow['message'] . ' 请输入其他核销码，退出请回复 n。');
 							}
 
-
 							$obj->endContext();
 							return $obj->respText('核销成功!');
 						}
-
 					}
-
 
 					return $obj->respText('请输入8位数字拼团订单核销码:');
 				}
-
 
 				if (strtolower($content) == 'y') {
 					if (isset($_SESSION[$this->sessionkey])) {
@@ -125,7 +113,6 @@ class GroupsProcessor extends PluginProcessor
 							return $obj->respText('请输入核销次数:');
 						}
 
-
 						$result = p('groups')->verify($session['orderid'], 0, $session[$this->codekey], $openid);
 
 						if (is_error($result)) {
@@ -133,15 +120,12 @@ class GroupsProcessor extends PluginProcessor
 							return $obj->respText($result['message'] . ' 请输入其他核销码，退出请回复 n。');
 						}
 
-
 						$obj->endContext();
 						return $obj->respText('核销成功!');
 					}
 
-
 					return $obj->respText('请输入8位数字拼团订单核销码:');
 				}
-
 
 				@session_start();
 				unset($_SESSION[$this->sessionkey]);
@@ -149,9 +133,7 @@ class GroupsProcessor extends PluginProcessor
 				$obj->endContext();
 				return $obj->respText('退出成功.');
 			}
-
 		}
-
 	}
 
 	private function responseEmpty()
@@ -164,6 +146,5 @@ class GroupsProcessor extends PluginProcessor
 		exit(0);
 	}
 }
-
 
 ?>

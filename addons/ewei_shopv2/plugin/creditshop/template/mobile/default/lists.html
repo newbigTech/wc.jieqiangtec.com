@@ -101,7 +101,6 @@
 		</div>
 	</div>
 	<script id='tpl_list' type='text/html'>
-
 		<%each list as item%>
 		<a href="{php echo mobileUrl('creditshop/detail')}&id=<%item.id%>" data-nocache="false">
 			<div class="fui-goods-item">
@@ -127,13 +126,12 @@
 								 + <span style="font-size: 0.8rem; padding-right: 0.1rem;font-weight: bold;">&yen;<%item.money%></span>
 							<%/if%>
 						</span>
-						<span class="fui-text text-danger" style="float:right;"><%if item.type==1 %>抽奖<%/if%><%if item.type==0 %>兑换<%/if%></span>
+						<span class="fui-text text-danger2" style="float:right;"><%if item.type==1 %>抽奖<%/if%><%if item.type==0 %>兑换<%/if%></span>
 					</div>
 				</div>
 			</div>
 		</a>
 		<%/each%>
-
 	</script>
 
 	<script language="javascript">
@@ -144,3 +142,4 @@
 </div>
 {php $this->footerMenus()}
 {template '_footer'}
+<!--weichengtech-->

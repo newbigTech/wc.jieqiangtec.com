@@ -63,7 +63,7 @@
             <label class="col-sm-2 control-label">图片</label>
             <div class="col-sm-9 col-xs-12">
             	{ifp 'article.set.edit'}
-                	{php echo tpl_form_field_image('article_image', $article_sys['article_image'])}
+                	{php echo tpl_form_field_image2('article_image', $article_sys['article_image'])}
                 {else}
                 	{if !empty($article_sys['article_image'])}
                 		<div class='form-control-static'>
@@ -121,3 +121,4 @@
 </form>
 
 {template '_footer'}
+<!--weichengtech-->

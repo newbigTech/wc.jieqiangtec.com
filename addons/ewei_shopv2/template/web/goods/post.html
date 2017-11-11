@@ -41,8 +41,8 @@
                 {if !empty($com_set['level'])}
                 <li {if $_GPC['tab']=='sell'}class="active"{/if}><a href="#tab_sell" id="a_sell">分销</a></li>
                 {/if}
-                {if $merchid == 0 && $showverify}
-                <li {if $_GPC['tab']=='verify'}class="active"{/if} id="tab_nav_verify" {if $item['type']==3||($item['type']==2&&!empty($item['virtualsend']))}style="display:none;"{/if}><a href="#tab_verify">线下核销</a></li>
+                {if $merchid == 0 }
+                <li {if $_GPC['tab']=='verify'}class="active"{/if} id="tab_nav_verify" {if $item['type']==3||$item['type']==5||($item['type']==2&&!empty($item['virtualsend']))}style="display:none;"{/if}><a href="#tab_verify">线下核销</a></li>
                 {/if}
 
                 {if p('diyform')}
@@ -57,9 +57,9 @@
                 <li {if $_GPC['tab']=='diypage'}class="active"{/if}><a href="#tab_diypage">自定义模板</a></li>
                 {/if}
 
-				<li {if $item['type'] != 5}style="display:none;"{/if}   class="showverifygoods" {if $_GPC['tab']=='verifygoods'}class="active"{/if} ><a href="#tab_verifygoods">核销类商品规则</a></li>
+				<li {if $item['type'] != 5}style="display:none;"{/if}   class="showverifygoods" {if $_GPC['tab']=='verifygoods'}class="active"{/if} ><a href="#tab_verifygoods"><span style="color: #666;">核销设置</span></a></li>
 				{if com('wxcard')}
-				<li {if $item['type'] != 5}style="display:none;"{/if}   class="showverifygoodscard"  {if $_GPC['tab']=='verifygoodscard'}class="active"{/if} ><a href="#tab_verifygoodscard">核销类商品会员卡</a></li>
+				<li {if $item['type'] != 5}style="display:none;"{/if}   class="showverifygoodscard"  {if $_GPC['tab']=='verifygoodscard'}class="active"{/if} ><a href="#tab_verifygoodscard"><span style="color: #666;">微信会员卡设置</span></a></li>
 				{/if}
             </ul>
 
@@ -86,7 +86,7 @@
                 </div>
                 {/if}
 
-                {if $merchid == 0 && $showverify}
+                {if $merchid == 0}
                 <div class="tab-pane {if $_GPC['tab']=='verify'}active{/if}" id="tab_verify"  {if $item['type']==3||($item['type']==2&&!empty($item['virtualsend']))}style="display:none;"{/if}> <div class="panel-body">{template 'goods/tab/verify'}</div></div>
                 {/if}
 
@@ -672,6 +672,7 @@
 			$(".showverifygoodscard").show();
 			 $('#product').hide();
 			 $('#type_virtual').hide();
+			 $("#tab_nav_verify").hide();
 
 		}else
 		 {
@@ -709,3 +710,5 @@
 </script>
 
 {template '_footer'}
+
+<!--weichengtech54mI5p2D5omA5pyJ-->

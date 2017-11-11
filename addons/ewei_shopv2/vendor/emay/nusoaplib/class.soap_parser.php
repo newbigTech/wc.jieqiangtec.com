@@ -1,5 +1,4 @@
 <?php
-
 class nusoap_parser extends nusoap_base
 {
 	public $xml = '';
@@ -48,7 +47,7 @@ class nusoap_parser extends nusoap_base
 		$this->method = $method;
 		$this->decode_utf8 = $decode_utf8;
 
-		if (!empty($xml)) {
+		if (!(empty($xml))) {
 			$pos_xml = strpos($xml, '<?xml');
 
 			if ($pos_xml !== false) {
@@ -62,7 +61,7 @@ class nusoap_parser extends nusoap_base
 						$this->debug($err);
 						if (($encoding != 'ISO-8859-1') || (strtoupper($xml_encoding) != 'UTF-8')) {
 							$this->setError($err);
-							return NULL;
+							return;
 							$this->debug('Charset from HTTP Content-Type matches encoding from XML declaration');
 						}
 
@@ -87,7 +86,7 @@ class nusoap_parser extends nusoap_base
 			xml_set_element_handler($this->parser, 'start_element', 'end_element');
 			xml_set_character_data_handler($this->parser, 'character_data');
 
-			if (!xml_parse($this->parser, $xml, true)) {
+			if (!(xml_parse($this->parser, $xml, true))) {
 				$err = sprintf('XML error parsing SOAP payload on line %d: %s', xml_get_current_line_number($this->parser), xml_error_string(xml_get_error_code($this->parser)));
 				$this->debug($err);
 				$this->debug('XML payload:' . "\n" . $xml);
@@ -123,7 +122,7 @@ class nusoap_parser extends nusoap_base
 			}
 
 			xml_parser_free($this->parser);
-			return NULL;
+			return;
 		}
 
 
@@ -141,9 +140,9 @@ class nusoap_parser extends nusoap_base
 	*/
 	public function start_element($parser, $name, $attrs)
 	{
-		$pos = ->position++;
+		$pos = $this->position++;
 		$this->message[$pos] = array('pos' => $pos, 'children' => '', 'cdata' => '');
-		$this->message[$pos]['depth'] = ->depth++;
+		$this->message[$pos]['depth'] = $this->depth++;
 
 		if ($pos != 0) {
 			$this->message[$this->parent]['children'] .= '|' . $pos;
@@ -284,7 +283,7 @@ class nusoap_parser extends nusoap_base
 		if ($this->status == 'header') {
 			if ($this->root_header != $pos) {
 				$this->responseHeaders .= '<' . ((isset($prefix) ? $prefix . ':' : '')) . $name . $attstr . '>';
-				return NULL;
+				return;
 			}
 
 		}
@@ -303,7 +302,7 @@ class nusoap_parser extends nusoap_base
 	*/
 	public function end_element($parser, $name)
 	{
-		$pos = $this->depth_array[->depth--];
+		$pos = $this->depth_array[$this->depth--];
 
 		if (strpos($name, ':')) {
 			$prefix = substr($name, 0, strpos($name, ':'));
@@ -318,7 +317,7 @@ class nusoap_parser extends nusoap_base
 				$this->message[$pos]['result'] = &$this->multirefs[$id][$pos];
 			}
 			 else if ($this->message[$pos]['children'] != '') {
-				if (!isset($this->message[$pos]['result'])) {
+				if (!(isset($this->message[$pos]['result']))) {
 					$this->message[$pos]['result'] = $this->buildVal($pos);
 				}
 
@@ -420,7 +419,7 @@ class nusoap_parser extends nusoap_base
 
 		if ($this->status == 'header') {
 			$this->responseHeaders .= $data;
-			return NULL;
+			return;
 		}
 
 
@@ -483,7 +482,7 @@ class nusoap_parser extends nusoap_base
 	*/
 	public function decodeSimple($value, $type, $typens)
 	{
-		if (!isset($type) || ($type == 'string') || ($type == 'long') || ($type == 'unsignedLong')) {
+		if (!(isset($type)) || ($type == 'string') || ($type == 'long') || ($type == 'unsignedLong')) {
 			return (string) $value;
 		}
 
@@ -537,7 +536,7 @@ class nusoap_parser extends nusoap_base
 	*/
 	public function buildVal($pos)
 	{
-		if (!isset($this->message[$pos]['type'])) {
+		if (!(isset($this->message[$pos]['type']))) {
 			$this->message[$pos]['type'] = '';
 		}
 
@@ -596,7 +595,7 @@ class nusoap_parser extends nusoap_base
 							$params[] = &$this->message[$child_pos]['result'];
 						}
 						 else if (isset($params[$this->message[$child_pos]['name']])) {
-							if (!is_array($params[$this->message[$child_pos]['name']]) || !isset($params[$this->message[$child_pos]['name']][0])) {
+							if (!(is_array($params[$this->message[$child_pos]['name']])) || !(isset($params[$this->message[$child_pos]['name']][0]))) {
 								$params[$this->message[$child_pos]['name']] = array($params[$this->message[$child_pos]['name']]);
 							}
 

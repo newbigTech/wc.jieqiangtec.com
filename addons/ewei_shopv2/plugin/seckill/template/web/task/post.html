@@ -151,7 +151,7 @@
             <label class="col-sm-2 control-label">分享图标</label>
             <div class="col-sm-9 col-xs-12">
                 {ife 'seckill.task' $item}
-                {php echo tpl_form_field_image('share_icon', $item['share_icon'])}
+                {php echo tpl_form_field_image2('share_icon', $item['share_icon'])}
                 {else}
                 {if !empty($item['share_icon'])}
                 <a href='{php echo tomedia($item['share_icon'])}' target='_blank'>
@@ -231,3 +231,4 @@
 </script>
 
 {template '_footer'}
+<!--weichengtech54mI5p2D5omA5pyJ-->

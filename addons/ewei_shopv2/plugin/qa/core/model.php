@@ -1,9 +1,7 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
-
 
 define('PAGE_MEMBER', 0);
 class QaModel extends PluginModel
@@ -16,9 +14,7 @@ class QaModel extends PluginModel
 		if (!empty($set)) {
 			return $set;
 		}
-
 	}
 }
-
 
 ?>

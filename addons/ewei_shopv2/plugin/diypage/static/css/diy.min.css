@@ -71,19 +71,19 @@ html {
 }
 
 .diy-banner .dots.rectangle span {
-    height: 12px;
-    width: 20px;
+    height: 10px;
+    width: 16px;
 }
 
 .diy-banner .dots.square span {
-    height: 12px;
-    width: 12px;
+    height: 10px;
+    width: 10px;
 }
 
 .diy-banner .dots.round span {
-    height: 12px;
-    width: 12px;
-    border-radius: 12px;
+    height: 10px;
+    width: 10px;
+    border-radius: 10px;
 }
 
 .diy-banner .dots span {
@@ -107,6 +107,7 @@ html {
     transition: background-color 300ms;
     -webkit-transition: background-color 300ms;
     float: left;
+    border:none !important;
 }
 
 .fui-icon-group .fui-icon-col:active {
@@ -282,17 +283,20 @@ html {
 }
 
 .fui-notice .image {
-    height: 20px;
+    display: inline-block;
+    height: 1rem;
     width: auto;
     position: relative;
     float: left;
-    padding-right: 4px;
+    padding-right: 0.5rem;
+    vertical-align: middle;
 }
 
 .fui-notice .image img {
-    height: 100%;
-    max-width: 100px;
-    display: block;
+    height: 70%;
+    width: auto;
+    float: left;
+    margin-top: 0.15rem;
 }
 
 .fui-notice .image:before {
@@ -373,6 +377,7 @@ html {
     height: 60px;
     font-size: 14px;
     color: #262626;
+    overflow: hidden;
 }
 
 .fui-goods-item .detail .price {
@@ -397,11 +402,16 @@ html {
     flex: 1;
     color: #ed2822;
 }
-
 .fui-goods-item .detail .price .minprice {
     font-size: 15px;
 }
-
+.fui-goods-group.block.three .fui-goods-item .detail .price .minprice{
+    font-size:12px
+}
+.fui-goods-group.block.three .fui-goods-item .detail .price .buy{
+    font-size:12px;
+    padding: 0 0.2rem;
+}
 .fui-goods-item .detail .price .productprice {
     color: #777;
     font-size: 11px;
@@ -420,7 +430,7 @@ html {
     float: left;
     border-bottom: 0;
     background: none;
-    padding: 5px;
+    padding: 5px 3px;
     display: block;
 }
 
@@ -473,7 +483,15 @@ html {
 .fui-goods-group.block.three .fui-goods-item {
     width: 33.33%;
 }
-
+.fui-goods-group .fui-goods-item .detail .productprice{
+    overflow: hidden;
+    text-overflow:ellipsis;
+    white-space: nowrap;
+    height:1.1rem;
+}
+.fui-goods-group.block .fui-goods-item .detail .productprice.noheight{
+    display: none;
+}
 /**/
 
 .fui-cube {
@@ -692,7 +710,35 @@ html {
     -ms-transform: scaleY(0.5);
     transform: scaleY(0.5);
 }
-
+.fui-cell-group.transparent{
+    background: transparent;
+}
+.fui-cell-group.transparent:before,.fui-cell-group.transparent:after{
+    display: none;
+}
+.fui-cell.btn-logout:before{
+    display: none;
+}
+.fui-cell-group .fui-cell.btn-logout,.fui-cell-group .fui-cell.changepwd{
+    padding:  0 0.5rem;
+}
+.fui-cell-group .fui-cell.btn-logout .fui-cell-text,.fui-cell-group .fui-cell.changepwd .fui-cell-text{
+    line-height: 30px;
+    border-radius:0.25rem;
+    border:1px solid transparent;
+    margin: 5px 0;
+}
+.fui-cell-group .fui-cell.btn-logout .fui-cell-text{
+    text-align: center;
+    border-color: #ff5555;
+    color: #ff5555;
+    background: #ffffff;
+}
+.fui-cell-group .fui-cell.changepwd .fui-cell-text{
+    text-align: center;
+    color: #ffffff;
+    background: #ff5555;
+}
 .fui-cell-group .fui-cell {
     position: relative;
     padding: 8px;
@@ -710,7 +756,9 @@ html {
     -webkit-transition-property: background-color;
     transition-property: background-color;
 }
-
+/*.fui-cell-group .fui-cell.changepwd{*/
+    /*padding:0;*/
+/*}*/
 .fui-cell-group .fui-cell:before {
     content: " ";
     position: absolute;
@@ -789,9 +837,15 @@ html {
 .fui-cell-group .fui-cell .fui-cell-label {
     position: relative;
     display: block;
-    width: 80px;
+    width: 56px;
     padding: 0 4px;
-    font-size: 15px;
+    font-size: 13px;
+}
+
+.fui-cell-group .fui-cell .fui-cell-label.top {
+    -webkit-align-self: flex-start;
+    align-self: flex-start;
+    padding-top: 4px;
 }
 
 .fui-cell-group .fui-cell .fui-cell-label.big {
@@ -799,6 +853,55 @@ html {
     width: 90px;
     padding: 0 4px;
     font-size: 16px;
+}
+
+.fui-cell-group .fui-cell .sale-line {
+    height: 24px;
+    line-height: 24px;
+    vertical-align: middle;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 12px;
+}
+
+.fui-cell-group .fui-cell .sale-line span:not(.text-danger) {
+    vertical-align: middle;
+}
+
+.fui-cell-group .fui-cell .sale-tip {
+    height: 18px;
+    line-height: 16px;
+    padding: 0 4px;
+    border: 1px solid #ff5555;
+    color: #ff5555;
+    display: inline-block;
+    vertical-align: middle;
+    border-radius: 4px;
+    font-size: 11px;
+    margin-right: 2px;
+}
+
+.fui-cell-group .fui-cell .coupon-mini {
+    background: #ff5555;
+    color: #fff;
+    padding: 4px;
+    position: relative;
+}
+
+.fui-cell-group .fui-cell .coupon-mini:before,
+.fui-cell-group .fui-cell .coupon-mini:after {
+    content: '';
+    position: relative;
+    top: 0;
+    left: -4px;
+    bottom: 0;
+    border-left: 1px dotted #fff;
+}
+
+.fui-cell-group .fui-cell .coupon-mini:after {
+    left: auto;
+    right: -4px;
 }
 
 .fui-cell-group .fui-cell .fui-cell-info select {
@@ -842,7 +945,7 @@ html {
 .fui-cell-group .fui-cell .fui-cell-remark {
     color: #888;
     text-align: right;
-    font-size: 13px;
+    font-size: 12px;
     margin-right: 4px;
 }
 
@@ -852,9 +955,9 @@ html {
     -webkit-transform: rotate(45deg);
     -ms-transform: rotate(45deg);
     transform: rotate(45deg);
-    height: 6px;
-    width: 6px;
-    border-width: 2px 2px 0 0;
+    height: 8px;
+    width: 8px;
+    border-width: 1px 1px 0 0;
     border-color: #C8C8CD;
     border-style: solid;
     position: relative;
@@ -874,7 +977,6 @@ html {
 .headinfo {
     position: relative;
     height: auto;
-    background: #fe5455;
     padding-top: 20px;
     border-top: 1px #b2423f solid;
     border-bottom: 1px #fa9d9d solid;
@@ -1380,8 +1482,6 @@ html {
     font-size: 1rem;
     color: #fd5454;
     line-height: 1.4rem;
-    font-weight: 100;
-    font-weight: bold;
 }
 
 .fui-detail-group .fui-cell .price .original {
@@ -1404,13 +1504,6 @@ html {
     text-align: center;
 }
 
-.fui-detail-group .fui-cell .share:before {
-    content: " ";
-    border-left: 1px solid #C0C0C0;
-    height: 100%;
-    left: 0rem;
-    position: absolute;
-}
 
 .fui-detail-group .fui-cell .share:after {
     display: none;
@@ -1450,7 +1543,7 @@ html {
 }
 
 .fui-cell-group .fui-cell .fui-labeltext .text .number {
-    font-weight: bold;
+
 }
 
 .fui-cell-group .fui-cell .fui-labeltext .text .time {
@@ -1504,6 +1597,7 @@ html {
     float:left;
     height:1.5rem; line-height:1.5rem;
     padding:0 .2rem;
+    color: #000;
 }
 
 /* 店铺信息 */
@@ -1609,6 +1703,8 @@ html {
 .fui-comment-group .fui-cell .comment .info {
     color: #7C7C7C;
     font-size: 0.6rem;
+    line-height: 0.9rem;
+    margin-bottom: 0.3rem;
     width: 100%;
 }
 
@@ -1644,18 +1740,18 @@ html {
 
 .fui-comment-group .fui-cell .comment .info .star .shine {
     color: #fd5454;
+    float: left;
 }
 
 .fui-comment-group .fui-cell .comment .info .star.star1 {
     clear: both
 }
-
 .fui-comment-group .fui-cell .comment .info .date {
     text-align: right;
 }
 
 .fui-comment-group .fui-cell .comment .remark {
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     display: -webkit-box;
     display: -webkit-flex;
     display: -ms-flexbox;
@@ -1676,6 +1772,7 @@ html {
     text-align: right;
     background: none;
     font-weight: 100;
+    color: #ff5555;
 }
 
 .fui-comment-group .fui-cell .desc.label span {
@@ -1683,8 +1780,8 @@ html {
 }
 
 .fui-comment-group .fui-cell .desc {
-    font-size: 0.6rem;
-    color: #7c7c7c;
+    font-size: 0.7rem;
+    color: #000;
     line-height: 1.5rem;
     padding: .2rem 0
 }
@@ -1698,7 +1795,19 @@ html {
     font-size: .65rem;
 }
 
-
+.fui-comment-group .show-allshop{
+    text-align: center;
+}
+.fui-comment-group .show-allshop .btn{
+    padding: 6px 16px;
+    display: inline-block;
+    border:1px solid #ff5555;
+    color: #ff5555;
+    -webkit-border-radius:1rem;
+    -moz-border-radius:1rem;
+    border-radius:1rem;
+    margin: 5px 0 15px;
+}
 /**  According **/
 
 .fui-according-group {
@@ -1952,8 +2061,8 @@ html {
 .fui-list-group {
     background-color: #fff;
     position: relative;
+    display: block;
 }
-
 .fui-list-group.fui-list-group-o {
     margin: 0 .5rem;
     border-radius: .5rem;
@@ -2056,6 +2165,8 @@ html {
     -webkit-align-items: center;
     align-items: center;
     margin-right:.5rem;
+    padding-left: 0;
+    border:none;
 }
 
 .fui-list-media img {
@@ -2097,14 +2208,13 @@ html {
     display: flex;
     -webkit-box-flex: 1;
     -ms-flex: 1;
-
-
+    text-align: left;
     display: block;
 }
 
 .fui-list-inner .subtitle {
     position: relative;
-    font-size: 0.7rem;
+    font-size: 0.6rem;
     color: #666;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -2122,7 +2232,7 @@ html {
 
 .fui-list-inner .title {
     position: relative;
-    font-size: 0.85rem;
+    font-size: 0.7rem;
     color: #333;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -2289,9 +2399,9 @@ html {
     -webkit-transform: rotate(45deg);
     -ms-transform: rotate(45deg);
     transform: rotate(45deg);
-    height: 0.3rem;
-    width: 0.3rem;
-    border-width: 2px 2px 0 0;
+    height: 0.4rem;
+    width: 0.4rem;
+    border-width: 1px 1px 0 0;
     border-color: #C8C8CD;
     border-style: solid;
     position: relative;
@@ -2390,7 +2500,6 @@ html {
     text-align: center;
     font-size: 0.8rem;
     line-height: 1.2rem;
-    font-weight: bold;
 }
 
 .seckill-group .seckill-goods .item .productprice {
@@ -2412,11 +2521,11 @@ html {
 }
 
 .seckill-group  img {
-    height: 0.9rem;
+    height: 0.7rem;
     max-width: 5rem;
-    margin-right: 0.2rem
+    margin-right: 0.2rem;
+    line-height: 0.7rem;
 }
-
 .seckill-group .title {
     font-size: 0.7rem;
     color: #444;
@@ -3277,7 +3386,7 @@ float:left;
     top: 0;
     right: 0;
     bottom: 0;
-    z-index:  10000;
+    z-index: 200;
 }
 .fui-startadv:before {
     content: "";
@@ -3296,7 +3405,7 @@ float:left;
     right: 0;
     bottom: 0;
     background: #fff;
-    z-index: 10001;
+    z-index: 201;
 }
 .fui-startadv .inner img {
     display: none;
@@ -3442,3 +3551,153 @@ float:left;
     border-color: #ef4f4f;
     z-index: 2;
 }
+
+
+.fui-icon-group.selecter {
+    border-top: 0;
+}
+.banner-ul{
+    width: 1000px;
+    padding: 14px 10px;
+    overflow: hidden;
+}
+.banner-ul li{
+    border:2px solid #77cd44;
+    position: relative;
+    overflow: hidden;
+    width: 160px;
+    border-radius: 4px;
+    text-align: center;
+    margin-left: 5px;
+    float: left;
+}
+.banner-ul li:first-child{
+    margin-left: 0;
+}
+.banner-ul li div{
+    width: 100px;
+    height: 33px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: #77cd44;
+    transform:rotate(-25deg);
+    transform-origin:left bottom;
+}
+.banner-ul li span{
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    font-size: 10px;
+    color:#fff;
+}
+.banner-ul li img{
+    margin: 8px 0 4px;
+    width: 21px;
+    height: 21px;
+    vertical-align: middle;
+    border-radius: 21px;
+}
+.banner-ul li p{
+    overflow: hidden;
+    text-overflow:ellipsis;
+    white-space: nowrap;
+    font-size: 14px;
+    padding:0 14px !important;
+    line-height: 1;
+    padding-bottom: 8px !important;
+}
+
+.banner-ul.style2 li {
+    background: #77cd44;
+    border: 0;
+    padding: 2px;
+}
+
+.banner-ul.style2 li div {
+    width: 40px;
+    height: 18px;
+    transform:rotate(0deg);
+    background: rgba(0, 0, 0, 0.3);
+    position: absolute;
+    left: 0;
+    top: 8px;
+}
+
+.banner-ul.style2 li span {
+    width: 40px;
+    height: 18px;
+    line-height: 18px;
+    text-align: center;
+    top:8px;
+    left: 0;
+}
+.banner-ul.style2 .banner-li-blue{
+    background: #68bfe7;
+}
+
+
+
+.banner-ul .banner-li-blue{
+    border:2px solid #68bfe7;
+}
+.banner-ul .banner-li-blue div{
+    background:#68bfe7 ;
+}
+
+
+
+.banner-ul a {
+    color: #000 !important;
+}
+.fui-icon-group::-webkit-scrollbar {
+    display:none
+}
+
+.fui-goods-group .fui-goods-item .salez {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    background-repeat: no-repeat;
+    background-position: bottom right;
+}
+
+.fui-swipe .salez {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    height: auto;
+    width: auto;
+    z-index: 10;
+}
+
+.fui-swipe .salez img {
+    height: auto;
+    width: auto;
+    display: block;
+}
+.badge{
+    background: #ff5555;
+}
+/*会员中心样式*/
+.member_header {
+    position: absolute;
+    width: 7rem;
+    height: 3rem;
+    background: #ff5555;
+    z-index: 80;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+    bottom: 0;
+    left: 50%;
+    margin-left: -3.5rem;
+    overflow: hidden;
+    transform: scale(10,10);
+    transform-origin: center bottom;
+    border: 2px solid #ff5555;
+}
+/*weichengtech*/

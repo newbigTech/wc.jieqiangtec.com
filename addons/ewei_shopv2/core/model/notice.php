@@ -1,5 +1,4 @@
 <?php
-//weichengtech
 class Notice_EweiShopV2Model
 {
 	protected function getUrl($do, $query = NULL)
@@ -53,8 +52,8 @@ class Notice_EweiShopV2Model
 		$order_goods = pdo_fetch('select * from ' . tablename('ewei_shop_groups_goods') . ' where uniacid=:uniacid and id=:id ', array(':uniacid' => $_W['uniacid'], ':id' => intval($order['goodid'])));
 		$goodsprice = (!empty($order['is_team']) ? number_format($order_goods['groupsprice'], 2) : number_format($order_goods['singleprice'], 2));
 		$price = number_format(($order['price'] - $order['creditmoney']) + $order['freight'], 2);
-		$goods = ' (单价: yen' . $goodsprice . '元 数量: 1 总价: yen' . $order['price'] . '元); ';
-		$orderpricestr = ' yen' . $price . '元 (包含运费: yen' . $order['freight'] . '元，积分抵扣: yen' . $order['creditmoney'] . '元)';
+		$goods = ' (单价: ¥' . $goodsprice . '元 数量: 1 总价: ¥' . $order['price'] . '元); ';
+		$orderpricestr = ' ¥' . $price . '元 (包含运费: ¥' . $order['freight'] . '元，积分抵扣: ¥' . $order['creditmoney'] . '元)';
 		$member = m('member')->getMember($openid);
 		$datas = array(
 			array('name' => '商城名称', 'value' => $_W['shopset']['shop']['name']),
@@ -103,10 +102,10 @@ class Notice_EweiShopV2Model
 
 			$msg = array(
 				'first'    => array('value' => '您的订单已经完成退款！', 'color' => '#000000'),
-				'keyword1' => array('title' => '退款金额', 'value' => 'yen' . $price . '元', 'color' => '#000000'),
+				'keyword1' => array('title' => '退款金额', 'value' => '¥' . $price . '元', 'color' => '#000000'),
 				'keyword2' => array('title' => '商品详情', 'value' => $goods . $orderpricestr, 'color' => '#000000'),
 				'keyword3' => array('title' => '订单编号', 'value' => $order['orderno'], 'color' => '#000000'),
-				'remark'   => array('value' => '退款金额 yen' . $price . $refundtype . "\r\n 【" . $shopname . '】期待您再次购物！', 'color' => '#000000')
+				'remark'   => array('value' => '退款金额 ¥' . $price . $refundtype . "\r\n 【" . $shopname . '】期待您再次购物！', 'color' => '#000000')
 				);
 			$this->sendGroupsNotice(array('openid' => $openid, 'tag' => 'groups_refund', 'default' => $msg, 'datas' => $datas));
 		}
@@ -640,10 +639,21 @@ class Notice_EweiShopV2Model
 				}
 				else if ($refund['status'] == 3) {
 					if (($refund['rtype'] == 2) || ($refund['rtype'] == 1)) {
-						$salerefund = pdo_fetch('select * from ' . tablename('ewei_shop_refund_address') . ' where uniacid=:uniacid and isdefault=1 limit 1', array(':uniacid' => $_W['uniacid']));
-						$datas[] = array('name' => '卖家收货地址', 'value' => $salerefund['province'] . $salerefund['city'] . $salerefund['area'] . ' ' . $salerefund['address']);
-						$datas[] = array('name' => '卖家联系电话', 'value' => $salerefund['mobile']);
-						$datas[] = array('name' => '卖家收货人', 'value' => $salerefund['name']);
+						if (0 < $order['merchid']) {
+							$raddress = iunserializer($refund['refundaddress']);
+
+							if (!empty($raddress)) {
+								$datas[] = array('name' => '卖家收货地址', 'value' => $raddress['province'] . $raddress['city'] . $raddress['area'] . ' ' . $raddress['address']);
+								$datas[] = array('name' => '卖家联系电话', 'value' => $raddress['mobile']);
+								$datas[] = array('name' => '卖家收货人', 'value' => $raddress['name']);
+							}
+						}
+						else {
+							$salerefund = pdo_fetch('select * from ' . tablename('ewei_shop_refund_address') . ' where uniacid=:uniacid and isdefault=1 limit 1', array(':uniacid' => $_W['uniacid']));
+							$datas[] = array('name' => '卖家收货地址', 'value' => $salerefund['province'] . $salerefund['city'] . $salerefund['area'] . ' ' . $salerefund['address']);
+							$datas[] = array('name' => '卖家联系电话', 'value' => $salerefund['mobile']);
+							$datas[] = array('name' => '卖家收货人', 'value' => $salerefund['name']);
+						}
 
 						if (!empty($usernotice['refund3'])) {
 							return NULL;
@@ -1114,13 +1124,13 @@ class Notice_EweiShopV2Model
 
 								if (!empty($is_send)) {
 									$msg = array(
-										'first'    => array('value' => '您有新的核销商品订单于' . date('Y-m-d H:i', $order['paytime']) . "已付款！\n请登录后台查看详情。", 'color' => '#ff0000'),
+										'first'    => array('value' => '您有新的记次时商品订单于' . date('Y-m-d H:i', $order['paytime']) . "已付款！\n请登录后台查看详情。", 'color' => '#ff0000'),
 										'keyword1' => array('title' => '订单编号', 'value' => $order['ordersn'], 'color' => '#000000'),
 										'keyword2' => array('title' => '商品名称', 'value' => $goods, 'color' => '#000000'),
 										'keyword3' => array('title' => '商品数量', 'value' => $goodsnum, 'color' => '#000000'),
 										'keyword4' => array('title' => '支付金额', 'value' => $order['price'], 'color' => '#000000')
 										);
-									$text = "您有新的已付款核销商品订单！\n请登录后台查看详情。\n\n订单号：\n[订单号]\n订单金额：[订单金额]\n支付时间：[支付时间]\n---------------------\n购买商品信息：[商品详情]\n备注信息：[备注信息]";
+									$text = "您有新的已付款记次时商品订单！\n请登录后台查看详情。\n\n订单号：\n[订单号]\n订单金额：[订单金额]\n支付时间：[支付时间]\n---------------------\n购买商品信息：[商品详情]\n备注信息：[备注信息]";
 									$account = m('common')->getAccount();
 
 									if (!empty($tm['openid'])) {
@@ -1163,10 +1173,10 @@ class Notice_EweiShopV2Model
 											}
 
 											$goodstr .= ' 单价: ' . ($og['price'] / $og['total']) . ' 数量: ' . $og['total'] . ' 总价: ' . $og['price'] . '); ';
-											$text = "您有新的已付款核销商品订单！！\n请及时安排发货。\n\n订单号：\n[订单号]\n订单金额：[订单金额]\n支付时间：[支付时间]\n---------------------\n购买商品信息：[单品详情]\n备注信息：[备注信息]";
+											$text = "您有新的已付款记次时商品订单！！\n请及时安排发货。\n\n订单号：\n[订单号]\n订单金额：[订单金额]\n支付时间：[支付时间]\n---------------------\n购买商品信息：[单品详情]\n备注信息：[备注信息]";
 											$remark = "订单号：\n" . $order['ordersn'] . "\n商品详情：" . $goodstr;
 											$msg = array(
-												'first'    => array('value' => '您有新的核销商品订单于' . date('Y-m-d H:i', $order['paytime']) . "已付款！！\n请登录后台查看详情。\n", 'color' => '#ff0000'),
+												'first'    => array('value' => '您有新的记次时商品订单于' . date('Y-m-d H:i', $order['paytime']) . "已付款！！\n请登录后台查看详情。\n", 'color' => '#ff0000'),
 												'keyword1' => array('title' => '任务名称', 'value' => '商品付款通知', 'color' => '#000000'),
 												'keyword2' => array('title' => '通知类型', 'value' => '已付款', 'color' => '#000000'),
 												'remark'   => array('value' => $remark, 'color' => '#000000')
@@ -1187,12 +1197,12 @@ class Notice_EweiShopV2Model
 								$pv = com('virtual');
 								if ($pv && !empty($order['virtual'])) {
 									if (empty($usernotice['virtualsend'])) {
-										$text = "您的商品已购买成功，以下为您的购物信息。\n\n商品名称:" . str_replace("\n", '', $goodsname) . "\n订单金额：[订单金额]\n卡密信息：<a href='" . $url . '\'> 点击查看</a>';
+										$text = "您的商品已购买成功，以下为您的购物信息。\n\n商品名称:" . str_replace("\n", '', $goodsname) . "\n订单金额：[订单金额]\n卡密信息：<a href='" . $url . '\'>请点击查看</a>';
 										$msg = array(
 											'first'    => array('value' => '您的商品已购买成功，以下为您的购物信息。', 'color' => '#4b9528'),
 											'keyword1' => array('title' => '商品名称', 'value' => str_replace("\n", '', $goodsname), 'color' => '#000000'),
 											'keyword2' => array('title' => '订单号', 'value' => $order['ordersn'], 'color' => '#000000'),
-											'keyword3' => array('title' => '订单金额', 'value' => 'yen' . $order['price'] . '元', 'color' => '#000000'),
+											'keyword3' => array('title' => '订单金额', 'value' => '¥' . $order['price'] . '元', 'color' => '#000000'),
 											'keyword4' => array('title' => '卡密信息', 'value' => '点击查看详情', 'color' => '#ff0000')
 											);
 										$this->sendNotice(array('openid' => $openid, 'tag' => 'virtualsend', 'default' => $msg, 'cusdefault' => $text, 'url' => $url, 'datas' => $datas, 'appurl' => $appurl));
@@ -1284,7 +1294,7 @@ class Notice_EweiShopV2Model
 											'first'    => array('value' => '您的商品已购买成功，以下为您的购物信息。', 'color' => '#4b9528'),
 											'keyword1' => array('title' => '商品名称', 'value' => str_replace("\n", '', $goodsname), 'color' => '#000000'),
 											'keyword2' => array('title' => '订单号', 'value' => $order['ordersn'], 'color' => '#000000'),
-											'keyword3' => array('title' => '订单金额', 'value' => 'yen' . $order['price'] . '元', 'color' => '#000000'),
+											'keyword3' => array('title' => '订单金额', 'value' => '¥' . $order['price'] . '元', 'color' => '#000000'),
 											'keyword4' => array('title' => '卡密信息', 'value' => '点击查看详情', 'color' => '#ff0000')
 											);
 										$this->sendNotice(array('openid' => $openid, 'tag' => 'virtualsend', 'default' => $msg, 'cusdefault' => $text, 'url' => $url, 'datas' => $datas, 'appurl' => $appurl));
@@ -1527,7 +1537,7 @@ class Notice_EweiShopV2Model
 	 * @param type $level
 	 * @return type
 	 */
-	public function sendMemberPointChange($openid, $pointchange = 0, $changetype = 0)
+	public function sendMemberPointChange($openid, $pointchange = 0, $changetype = 0, $from = 0)
 	{
 		global $_W;
 		global $_GPC;
@@ -1565,6 +1575,15 @@ class Notice_EweiShopV2Model
 			}
 		}
 
+		if (empty($from)) {
+			$fromstr = '管理员后台手动处理';
+		}
+		else {
+			if ($from == 1) {
+				$fromstr = '收银台积分变动提醒';
+			}
+		}
+
 		$datas = array(
 			array('name' => '商城名称', 'value' => $_W['shopset']['shop']['name']),
 			array('name' => '粉丝昵称', 'value' => $member['nickname']),
@@ -1573,12 +1592,12 @@ class Notice_EweiShopV2Model
 			array('name' => '积分余额', 'value' => (double) $member['credit1'] . $credittext)
 			);
 		$remark = "\n[商城名称]感谢您的支持，如有疑问请联系在线客服。";
-		$text = '亲爱的[粉丝昵称]， 您的' . $credittext . "发生变动，具体内容如下：\n\n积分变动：[积分变动]\n变动时间：[赠送时间]\n充值方式：管理员后台处理\n当前积分余额：[积分余额] \n" . $remark;
+		$text = '亲爱的[粉丝昵称]， 您的' . $credittext . "发生变动，具体内容如下：\n\n积分变动：[积分变动]\n变动时间：[赠送时间]\n充值方式：" . $fromstr . "\n当前积分余额：[积分余额] \n" . $remark;
 		$message = array(
 			'first'    => array('value' => '亲爱的' . $member['nickname'] . '，您的' . $credittext . '发生变动，具体如下:', 'color' => '#ff0000'),
 			'keyword1' => array('title' => '获得时间', 'value' => date('Y-m-d H:i', time()), 'color' => '#000000'),
 			'keyword2' => array('title' => '获得积分', 'value' => $pointtext, 'color' => $pointcolor),
-			'keyword3' => array('title' => '获得原因', 'value' => '管理员后台手动处理', 'color' => '#000000'),
+			'keyword3' => array('title' => '获得原因', 'value' => $fromstr, 'color' => '#000000'),
 			'keyword4' => array('title' => '当前积分', 'value' => (double) $member['credit1'] . $credittext, 'color' => '#ff0000'),
 			'remark'   => array('value' => "\n" . $_W['shopset']['shop']['name'] . '感谢您的支持，如有疑问请联系在线客服。', 'color' => '#000000')
 			);
@@ -2211,8 +2230,8 @@ class Notice_EweiShopV2Model
 		$result['threen_withdrawal'] = array('id' => 33, 'name' => '打款完成通知', 'typegroup' => 'threen', 'groupname' => '3N营销通知', 'typecode' => 'threen_withdrawal', 'templatecode' => 'OPENTM200605630', 'templatename' => '任务处理通知', 'content' => '{{first.DATA}}任务名称：{{keyword1.DATA}}通知类型：{{keyword2.DATA}}{{remark.DATA}}');
 		$result['threen_refuse'] = array('id' => 34, 'name' => '申请驳回通知', 'typegroup' => 'threen', 'groupname' => '3N营销通知', 'typecode' => 'threen_refuse', 'templatecode' => 'OPENTM200605630', 'templatename' => '任务处理通知', 'content' => '{{first.DATA}}任务名称：{{keyword1.DATA}}通知类型：{{keyword2.DATA}}{{remark.DATA}}');
 		$result['saler_stockwarn'] = array('id' => 35, 'name' => '库存预警通知', 'typegroup' => 'sys', 'groupname' => '系统消息通知', 'typecode' => 'saler_stockwarn', 'templatecode' => 'OPENTM200605630', 'templatename' => '任务处理通知', 'content' => '{{first.DATA}}任务名称：{{keyword1.DATA}}通知类型：{{keyword2.DATA}}{{remark.DATA}}');
-		$result['o2o_sverify'] = array('id' => 36, 'name' => '卖家核销商品核销通知', 'typegroup' => 'o2o', 'groupname' => 'O2O消息通知', 'typecode' => 'o2o_sverify', 'templatecode' => 'OPENTM409521536', 'templatename' => '核销成功提醒', 'content' => '{{first.DATA}}核销项目：{{keyword1.DATA}}核销时间：{{keyword2.DATA}}核销门店：{{keyword3.DATA}}{{remark.DATA}}');
-		$result['o2o_bverify'] = array('id' => 37, 'name' => '核销商品核销通知', 'typegroup' => 'o2o', 'groupname' => 'O2O消息通知', 'typecode' => 'o2o_bverify', 'templatecode' => 'OPENTM409521536', 'templatename' => '核销成功提醒', 'content' => '{{first.DATA}}核销项目：{{keyword1.DATA}}核销时间：{{keyword2.DATA}}核销门店：{{keyword3.DATA}}{{remark.DATA}}');
+		$result['o2o_sverify'] = array('id' => 36, 'name' => '卖家记次时商品核销通知', 'typegroup' => 'o2o', 'groupname' => 'O2O消息通知', 'typecode' => 'o2o_sverify', 'templatecode' => 'OPENTM409521536', 'templatename' => '核销成功提醒', 'content' => '{{first.DATA}}核销项目：{{keyword1.DATA}}核销时间：{{keyword2.DATA}}核销门店：{{keyword3.DATA}}{{remark.DATA}}');
+		$result['o2o_bverify'] = array('id' => 37, 'name' => '记次时商品核销通知', 'typegroup' => 'o2o', 'groupname' => 'O2O消息通知', 'typecode' => 'o2o_bverify', 'templatecode' => 'OPENTM409521536', 'templatename' => '核销成功提醒', 'content' => '{{first.DATA}}核销项目：{{keyword1.DATA}}核销时间：{{keyword2.DATA}}核销门店：{{keyword3.DATA}}{{remark.DATA}}');
 		$result['o2o_snorder'] = array('id' => 38, 'name' => '卖家商品预约通知', 'typegroup' => 'o2o', 'groupname' => 'O2O消息通知', 'typecode' => 'o2o_snorder', 'templatecode' => 'OPENTM202447657', 'templatename' => '预约成功提醒', 'content' => '{{first.DATA}}预约项目：{{keyword1.DATA}}预约时间：{{keyword2.DATA}}{{remark.DATA}}');
 		$result['o2o_bnorder'] = array('id' => 39, 'name' => '商品预约成功通知', 'typegroup' => 'o2o', 'groupname' => 'O2O消息通知', 'typecode' => 'o2o_bnorder', 'templatecode' => 'OPENTM202447657', 'templatename' => '预约成功提醒', 'content' => '{{first.DATA}}预约项目：{{keyword1.DATA}}预约时间：{{keyword2.DATA}}{{remark.DATA}}');
 		return $result;

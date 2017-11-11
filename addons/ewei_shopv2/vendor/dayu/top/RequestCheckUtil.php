@@ -1,5 +1,4 @@
 <?php
-
 class RequestCheckUtil
 {
 	/**
@@ -20,7 +19,7 @@ class RequestCheckUtil
 	 **/
 	static public function checkMaxLength($value, $maxLength, $fieldName)
 	{
-		if (!self::checkEmpty($value) && ($maxLength < mb_strlen($value, 'UTF-8'))) {
+		if (!(self::checkEmpty($value)) && ($maxLength < mb_strlen($value, 'UTF-8'))) {
 			throw new Exception('client-check-error:Invalid Arguments:the length of ' . $fieldName . ' can not be larger than ' . $maxLength . '.', 41);
 		}
 
@@ -33,7 +32,7 @@ class RequestCheckUtil
 	static public function checkMaxListSize($value, $maxSize, $fieldName)
 	{
 		if (self::checkEmpty($value)) {
-			return NULL;
+			return;
 		}
 
 
@@ -52,7 +51,7 @@ class RequestCheckUtil
 	static public function checkMaxValue($value, $maxValue, $fieldName)
 	{
 		if (self::checkEmpty($value)) {
-			return NULL;
+			return;
 		}
 
 
@@ -71,7 +70,7 @@ class RequestCheckUtil
 	static public function checkMinValue($value, $minValue, $fieldName)
 	{
 		if (self::checkEmpty($value)) {
-			return NULL;
+			return;
 		}
 
 
@@ -89,7 +88,7 @@ class RequestCheckUtil
 	 **/
 	static protected function checkNumeric($value, $fieldName)
 	{
-		if (!is_numeric($value)) {
+		if (!(is_numeric($value))) {
 			throw new Exception('client-check-error:Invalid Arguments:the value of ' . $fieldName . ' is not number : ' . $value . ' .', 41);
 		}
 
@@ -104,7 +103,7 @@ class RequestCheckUtil
 	 **/
 	static public function checkEmpty($value)
 	{
-		if (!isset($value)) {
+		if (!(isset($value))) {
 			return true;
 		}
 

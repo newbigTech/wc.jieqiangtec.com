@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -27,7 +26,6 @@ class Category_EweiShopV2Page extends PluginWebPage
 			plog('groups.category.delete', '修改分类排序 ID: ' . $item['id'] . ' 标题: ' . $item['name'] . ' 排序: ' . $displayorder . ' ');
 		}
 
-
 		show_json(1);
 	}
 
@@ -54,7 +52,7 @@ class Category_EweiShopV2Page extends PluginWebPage
 				pdo_update('ewei_shop_groups_category', $data, array('id' => $id));
 				plog('groups.category.edit', '修改积分商城分类 ID: ' . $id);
 			}
-			 else {
+			else {
 				pdo_insert('ewei_shop_groups_category', $data);
 				$id = pdo_insertid();
 				plog('groups.category.add', '添加积分商城分类 ID: ' . $id);
@@ -62,7 +60,6 @@ class Category_EweiShopV2Page extends PluginWebPage
 
 			show_json(1, array('url' => webUrl('groups/category', array('op' => 'display'))));
 		}
-
 
 		$item = pdo_fetch('select * from ' . tablename('ewei_shop_groups_category') . ' where id=:id and uniacid=:uniacid limit 1', array(':id' => $id, ':uniacid' => $_W['uniacid']));
 		include $this->template();
@@ -79,7 +76,6 @@ class Category_EweiShopV2Page extends PluginWebPage
 			message('抱歉，分类不存在或是已经被删除！', webUrl('groups/category', array('op' => 'display')), 'error');
 		}
 
-
 		pdo_delete('ewei_shop_groups_category', array('id' => $id));
 		plog('groups.category.delete', '删除积分商城分类 ID: ' . $id . ' 标题: ' . $item['name'] . ' ');
 		show_json(1);
@@ -92,20 +88,18 @@ class Category_EweiShopV2Page extends PluginWebPage
 		$id = intval($_GPC['id']);
 
 		if (empty($id)) {
-			$id = ((is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0));
+			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
 		}
-
 
 		$items = pdo_fetchall('SELECT id,name FROM ' . tablename('ewei_shop_groups_category') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
 
-		foreach ($items as $item ) {
+		foreach ($items as $item) {
 			pdo_update('ewei_shop_groups_category', array('enabled' => intval($_GPC['enabled'])), array('id' => $item['id']));
-			plog('groups.category.edit', (('修改商品分类<br/>ID: ' . $item['id'] . '<br/>标题: ' . $item['name'] . '<br/>状态: ' . $_GPC['enabled']) == 1 ? '显示' : '隐藏'));
+			plog('groups.category.edit', ('修改商品分类<br/>ID: ' . $item['id'] . '<br/>标题: ' . $item['name'] . '<br/>状态: ' . $_GPC['enabled']) == 1 ? '显示' : '隐藏');
 		}
 
 		show_json(1, array('url' => referer()));
 	}
 }
-
 
 ?>
