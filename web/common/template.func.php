@@ -11,14 +11,14 @@ function template($filename, $flag = TEMPLATE_DISPLAY) {
 	global $_W;
 	$source = IA_ROOT . "/web/themes/{$_W['template']}/{$filename}.html";
 	$compile = IA_ROOT . "/data/tpl/web/{$_W['template']}/{$filename}.tpl.php";
-    // var_dump('TODO jieqiangtest template=='.$_W['template'].'==$source=='.$source.'==$compile=='.$compile);
+//     var_dump('TODO jieqiangtest=模板=template=='.$_W['template'].'==$source=='.$source.'==$compile=='.$compile);exit;
 
 	if(!is_file($source)) {
 		$source = IA_ROOT . "/web/themes/default/{$filename}.html";
 		$compile = IA_ROOT . "/data/tpl/web/default/{$filename}.tpl.php";
 	}
 
-    // var_dump('TODO jieqiangtest template=='.$_W['template'].'==$source2=='.$source.'==$compile2=='.$compile);
+//     var_dump('TODO jieqiangtest template=='.$_W['template'].'==$source2=='.$source.'==$compile2=='.$compile);exit;
     
 
 	if(!is_file($source)) {

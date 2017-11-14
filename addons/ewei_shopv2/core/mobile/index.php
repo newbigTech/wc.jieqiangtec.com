@@ -9,6 +9,8 @@ class Index_EweiShopV2Page extends MobilePage
 	{
 		global $_W;
 		global $_GPC;
+		// var_dump('jieqiangtest==',$_W,$_GPC);exit;
+
 		$_SESSION['newstoreid'] = 0;
 		$this->diypage('home');
 		$uniacid = $_W['uniacid'];

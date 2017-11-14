@@ -112,9 +112,14 @@ if(!in_array($action, $actions)) {
 if(!in_array($action, $actions)) {
 	$action = $actions[0];
 }
+
+//var_dump($controller, $action);exit;
+/*string 'entry' (length=5)
+string 'site' (length=4)*/
 require _forward($controller, $action);
 
 function _forward($c, $a) {
 	$file = IA_ROOT . '/app/source/' . $c . '/' . $a . '.ctrl.php';
+//    var_dump($file);exit;
 	return $file;
 }

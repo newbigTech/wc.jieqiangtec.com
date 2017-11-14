@@ -3,8 +3,10 @@ if (!(defined('IN_IA'))) {
 	exit('Access Denied');
 }
 
+// 调试模式
+//define('EWEI_SHOPV2_DEBUG', false);
+define('EWEI_SHOPV2_DEBUG', true);
 
-define('EWEI_SHOPV2_DEBUG', false);
 !(defined('EWEI_SHOPV2_PATH')) && define('EWEI_SHOPV2_PATH', IA_ROOT . '/addons/ewei_shopv2/');
 !(defined('EWEI_SHOPV2_CORE')) && define('EWEI_SHOPV2_CORE', EWEI_SHOPV2_PATH . 'core/');
 !(defined('EWEI_SHOPV2_DATA')) && define('EWEI_SHOPV2_DATA', EWEI_SHOPV2_PATH . 'data/');

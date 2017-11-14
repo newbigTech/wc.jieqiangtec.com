@@ -91,6 +91,8 @@ function template($filename, $flag = TEMPLATE_DISPLAY) {
 	if(DEVELOPMENT || !is_file($compile) || filemtime($source) > filemtime($compile)) {
 		template_compile($source, $compile);
 	}
+
+//	var_dump($flag,$compile);
 	switch ($flag) {
 		case TEMPLATE_DISPLAY:
 		default:

@@ -10,6 +10,7 @@ load()->model('extension');
 
 $eid = intval($_GPC['eid']);
 
+
 if (!empty($eid)) {
 	$entry = module_entry($eid);
 } else {
@@ -78,6 +79,8 @@ if (!is_error($site)) {
 		$site_urls = $site->getTabUrls();
 	}
 	$method = 'doWeb' . ucfirst($entry['do']);
+
+//    var_dump($method,$site,$site->doWebWeb());exit;
 	exit($site->$method());
 }
 itoast("访问的方法 {$method} 不存在.", referer(), 'error');

@@ -9,6 +9,8 @@ if (checksubmit() || $_W['isajax']) {
 	_login($_GPC['referer']);
 }
 $setting = $_W['setting'];
+//var_dump('jieqiangtest==首页登陆==',$_W,$_GPC);exit;
+
 template('user/login');
 
 function _login($forward = '') {
@@ -32,9 +34,10 @@ function _login($forward = '') {
 		}
 	}
 	if (empty($username)) {
-		itoast('请输入要登录的用户名', '', '');
-	}
-	$member['username'] = $username;
+        itoast('请输入要登录的用户名', '', '');
+        // var_dump('请输入要登录的用户名', '', '');exit;
+    }
+    $member['username'] = $username;
 	$member['password'] = $_GPC['password'];
 	if (empty($member['password'])) {
 		itoast('请输入密码', '', '');

@@ -10,6 +10,7 @@ class Index_EweiShopV2Page extends WebPage
 		global $_W;
 		global $_GPC;
 
+		// var_dump('jieqiangtest ===',$_W['shopversion']);exit;
 		if (empty($_W['shopversion'])) {
 			$goodsfrom = strtolower(trim($_GPC['goodsfrom']));
 
