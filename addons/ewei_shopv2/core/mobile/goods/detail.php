@@ -611,9 +611,9 @@ class Detail_EweiShopV2Page extends MobilePage
         unset($_SESSION['prom_cps']['id']);
         // WeUtility::logging('TODO debug23',  array('file'=>'D:\www\users\wd2.jieqiangtec.com\addons\ewei_shop\core\mobile\order\confirm.php ','sql2'=>$sql2,'prom'=>$_SESSION['prom_cps']));
 
-        if ($_SESSION['prom_cps']['sid'] && $_SESSION['prom_cps']['item_id'] && $_SESSION['prom_cps']['shop_id'] && $_SESSION['prom_cps']['bank_subid'] && $_SESSION['prom_cps']['bank_id']  ){
+        /*if ($_SESSION['prom_cps']['sid'] && $_SESSION['prom_cps']['item_id'] && $_SESSION['prom_cps']['shop_id'] && $_SESSION['prom_cps']['bank_subid'] && $_SESSION['prom_cps']['bank_id']  ){
             $res = http_request(CPS_API,$_SESSION['prom_cps']);
-        }
+        }*/
 
         $curl = CPS_API . '?' . http_build_query($_SESSION['prom_cps']);
         WeUtility::logging('TODO debug2345',  array('file'=>'D:\www\users\wd2.jieqiangtec.com\addons\ewei_shop\core\mobile\order\confirm.php ','res'=>$res,'curl'=>$curl,'prom'=>$_SESSION['prom_cps']));
