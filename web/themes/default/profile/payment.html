@@ -248,20 +248,21 @@
 							<div class="form-controls col-sm-10">
 								<div class="alert alert-warning">
 									你必须向微信公众平台提交企业信息以及银行账户资料，审核通过并签约后才能使用微信支付功能,
-									<a href="https://mp.weixin.qq.com/paymch/readtemplate?t=mp/business/faq_tmpl" class="color-default" target="_blank">申请及详情请查看这里</a>
+									<!-- <a href="https://mp.weixin.qq.com/paymch/readtemplate?t=mp/business/faq_tmpl" class="color-default" target="_blank">申请及详情请查看这里</a> -->
 								</div>
 								<div class="alert alert-warning">
 									<p>微信支付的接口说明如下：</p>
 									<br>
 									<h4>JS API网页支付参数</h4>
-									<p>支付授权目录: {$_W['siteroot']}payment/wechat/ 和 {$_W['siteroot']}app/</p>
-									<p>支付请求实例: {$_W['siteroot']}payment/wechat/pay.php</p>
+									<!-- <p>支付授权目录: {$_W['siteroot']}payment/wechat/ 和 {$_W['siteroot']}app/</p>
+									<p>支付请求实例: {$_W['siteroot']}payment/wechat/pay.php</p> -->
+									<p>支付授权目录:  {$_W['siteroot']}app/</p>
 									<p>共享收货地址: 选择"是"</p>
 									<br>
-									<h4>Native原生支付</h4>
+									<!-- <h4>Native原生支付</h4>
 									<p>支付回调URL: {$_W['siteroot']}payment/wechat/native.php</p>
 									<p>维权通知URL: {$_W['siteroot']}payment/wechat/rights.php</p>
-									<p>警告通知URL: {$_W['siteroot']}payment/wechat/warning.php</p>
+									<p>警告通知URL: {$_W['siteroot']}payment/wechat/warning.php</p> -->
 								</div>
 								{if $accounts[$_W['acid']]['level'] > ACCOUNT_SERVICE}
 								{if $accounts[$_W['acid']]['level'] == ACCOUNT_SERVICE_VERIFY}
