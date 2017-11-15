@@ -10,6 +10,7 @@ class Index_EweiShopV2Page extends WebPage
 		global $_W;
 		global $_GPC;
 
+//		 var_dump('TODO jieqiangtest ==$_W==',$_W['shopversion'],empty($_W['shopversion']),$_W);exit;
 		if (empty($_W['shopversion'])) {
 			header('location:' . webUrl('shop'));
 			exit();
