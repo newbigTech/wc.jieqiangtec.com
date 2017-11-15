@@ -1334,8 +1334,10 @@ class System_EweiShopV2Model
 			}
 		}
 
-		$set = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_version') . ' WHERE uid=:uid AND `type`=:type limit 1', array(':type' => $type, ':uid' => $uid));
-		$GLOBALS['_W']['shopversion'] = intval($set['version']);
+		// TODO jieqiangtest 默认为1
+		// $set = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_version') . ' WHERE uid=:uid AND `type`=:type limit 1', array(':type' => $type, ':uid' => $uid));
+        // $GLOBALS['_W']['shopversion'] = intval($set['version']);
+		$GLOBALS['_W']['shopversion'] = 1;
 	}
 }
 
