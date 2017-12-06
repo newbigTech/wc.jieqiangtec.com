@@ -4,17 +4,17 @@
 
 <div class="page-header">
     当前位置：<span class="text-primary">{if !empty($menu)}编辑{else}新建{/if}自定义菜单 {if !empty($menu)}({$menu['name']}){/if}</span>
-    <div class="pull-right">
+    <!-- <div class="pull-right">
         <span class=''>
 	    	<strong>左侧跟随</strong>
 	    	<input class="js-switch small" id="phoneposition" type="checkbox" value="1" checked />
     </span>
-    </div>
+    </div> -->
 </div>
 
 <div class="page-content">
     <div class="row relative w840">
-        <div class="diy-phone" style="position: fixed;" data-merch="{php echo intval($_W['merchid'])}">
+        <div class="diy-phone" style="position: relative;" data-merch="{php echo intval($_W['merchid'])}">
             <div class="phone-head"></div>
             <div class="phone-body">
                 <div class="phone-title" id="page">自定义菜单</div>
@@ -62,9 +62,9 @@
        $("#phoneposition").click(function () {
            var div = $(this).next();
            if(div.hasClass('checked')){
-               $(".diy-phone").css({'position': 'fixed'});
+                $(".diy-phone").css('position', 'relative');
            }else{
-               $(".diy-phone").css('position', 'relative');
+                $(".diy-phone").css({'position': 'fixed'});
            }
        });
     });
