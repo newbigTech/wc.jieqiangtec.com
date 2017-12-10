@@ -158,6 +158,8 @@ if (!function_exists('com')) {
 		$class_name = ucfirst($name) . '_EweiShopV2ComModel';
 		$_coms[$name] = new $class_name($name);
 
+//        var_dump('TODO jieqiangtest=D:\www\users\wc.jieqiangtec.com\addons\ewei_shopv2\core\inc\functions.php=$_coms==',$_coms[$name],$class_name);exit;
+
 		if ($name == 'perm') {
 			return $_coms[$name];
 		}
@@ -173,6 +175,8 @@ if (!function_exists('com')) {
 if (!function_exists('com_run')) {
 	function com_run($name = '')
 	{
+		// perm::check_perm
+        /*var_dump('TODO jieqiangtest=D:\www\users\wc.jieqiangtec.com\addons\ewei_shopv2\core\inc\functions.php=$name==',$name);exit;*/
 		$names = explode('::', $name);
 		$com = com($names[0]);
 
@@ -186,6 +190,9 @@ if (!function_exists('com_run')) {
 
 		$func_args = func_get_args();
 		$args = array_splice($func_args, 1);
+
+        /*WeUtility::logging('TODO debugfff',  array('file'=>'D:\www\users\wc.jieqiangtec.com\addons\ewei_shopv2\core\inc\functions.php com_run ','$func_args'=>$func_args,'$names'=>$names[1],'$com'=>$com));*/
+
 		return call_user_func_array(array($com, $names[1]), $args);
 	}
 }
@@ -631,6 +638,7 @@ if (!function_exists('cv')) {
 	function cv($permtypes = '')
 	{
 		$perm = com_run('perm::check_perm', $permtypes);
+        /*var_dump('TODO jieqiangtest=D:\www\users\wc.jieqiangtec.com\addons\ewei_shopv2\core\inc\functions.php=$perm==',$perm);exit;*/
 		return $perm;
 	}
 }

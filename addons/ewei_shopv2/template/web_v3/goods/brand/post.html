@@ -1,0 +1,195 @@
+{template '_header'}
+
+<div class="page-header">
+	当前位置：
+	<span class="text-primary">
+		{if !empty($item['id'])}编辑{else}添加{/if}商品品牌 <small>{if !empty($item['id'])}修改【{$item['name']}】{/if}</small>
+	</span>
+</div>
+
+<div class="page-content">
+	<div class="page-sub-toolbar">
+		<span class=''>
+			{ifp 'goods.brand.add'}
+				<a class="btn btn-primary btn-sm" href="{php echo webUrl('goods/brand/add')}">添加新品牌</a>
+				{/if}
+		</span>
+	</div>
+<form  {ife 'goods.brand' $item}action="" method="post"{/if} class="form-horizontal form-validate" enctype="multipart/form-data" >
+
+	{if !empty($item['url'])}
+	<div class="form-group">
+		<label class="col-sm-2 control-label">品牌链接(点击复制)</label>
+		<div class="col-sm-9 col-xs-12">
+			<p class='form-control-static'>
+				<a class=" js-clip" data-url="{$item['url']}" title='复制链接'>{$item['url']}</a>
+				<span style="cursor: pointer;" data-toggle="popover" data-trigger="hover" data-html="true"
+					  data-content="<img src='{$item['qrcode']}' width='130' alt='链接二维码'>" data-placement="auto right">
+					<i class="glyphicon glyphicon-qrcode"></i>
+				</span>
+			</p>
+		</div>
+	</div>
+	{/if}
+
+
+	{if !empty($parentid)}
+	<div class="form-group">
+		<label class="col-sm-2 control-label">上级品牌</label>
+		<div class="col-sm-9 col-xs-12 control-label" style="text-align:left;">
+			{if !empty($parent1)}{$parent1['name']} >> {/if}
+			{$parent['name']}</div>
+	</div>
+	{/if}
+
+	<div class="form-group">
+		<label class="col-sm-2 control-label">排序</label>
+		<div class="col-sm-9 col-xs-12">
+			{ife 'goods.brand' $item}
+			<input type="text" name="displayorder" class="form-control" value="{$item['displayorder']}" />
+			{else}
+			<div class='form-control-static'>{$item['displayorder']}</div>
+			{/if}
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-2 control-label must">品牌名称</label>
+		<div class="col-sm-9 col-xs-12">
+			{ife 'goods.brand' $item}
+			<input type="text" name="name" class="form-control" value="{$item['name']}" data-rule-required='true' />
+			{else}
+			<div class='form-control-static'>{$item['name']}</div>
+			{/if}
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label class="col-sm-2 control-label must">品牌英文名</label>
+		<div class="col-sm-9 col-xs-12">
+			{ife 'goods.brand' $item}
+			<input type="text" name="name_eng" class="form-control" value="{$item['name_eng']}" data-rule-required='true' />
+			{else}
+			<div class='form-control-static'>{$item['name_eng']}</div>
+			{/if}
+		</div>
+	</div>
+
+	{if !empty($parentid)}
+	<div class="form-group">
+		<label class="col-sm-2 control-label">品牌图片</label>
+		<div class="col-sm-9 col-xs-12">
+			{ife 'goods.brand' $item}
+			{php echo tpl_form_field_image2('thumb', $item['thumb'])}
+			<span class="help-block">建议尺寸: 100*100，或正方型图片 </span>
+			{else}
+			{if !empty($item['thumb'])}
+			<a href='{php echo tomedia($item['thumb'])}' target='_blank'>
+			   <img src="{php echo tomedia($item['thumb'])}" style='width:100px;border:1px solid #ccc;padding:1px' />
+			</a>
+			{/if}
+			{/if}
+		</div>
+	</div>
+	{/if}
+	<div class="form-group">
+		<label class="col-sm-2 control-label">品牌描述</label>
+		<div class="col-sm-9 col-xs-12">
+			{ife 'goods.brand' $item}
+			<textarea name="description" class="form-control" cols="70">{$item['description']}</textarea>
+			{else}
+			<div class='form-control-static'>{$item['description']}</div>
+			{/if}
+
+		</div>
+	</div> 
+	<div class="form-group">
+		<label class="col-sm-2 control-label">品牌图片</label>
+		<div class="col-sm-9 col-xs-12">
+			{ife 'goods.brand' $item}
+			{php echo tpl_form_field_image2('logo', $item['logo'])}
+			<!-- <span class="help-block">{if intval($_W['shopset']['brand']['level'])==1}建议尺寸: 100*100，或正方型图片 {else}建议尺寸: 640*320 {/if}</span> -->
+			{else}
+			{if !empty($item['logo'])}
+			<a href='{php echo tomedia($item['logo'])}' target='_blank'>
+			   <img src="{php echo tomedia($item['logo'])}" style='width:100px;border:1px solid #ccc;padding:1px' />
+			</a>
+			{/if}
+			{/if}
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-2 control-label">品牌广告链接</label>
+		<div class="col-sm-9 col-xs-12">
+			{ife 'goods.brand' $item}
+			<div class="input-group">
+				<input type="text" name="advurl" class="form-control" value="{$item['advurl']}" id="advurl" />
+				<!-- <span data-input="#advurl" data-toggle="selectUrl" class="input-group-addon btn btn-default">选择链接</span> -->
+			</div>
+			{else}
+			<div class='form-control-static'>{$item['advurl']}</div>
+			{/if}
+		</div>
+	</div>
+	{if !empty($parentid)}
+	<div class="form-group">
+		<label class="col-sm-2 control-label">是否推荐</label>
+		<div class="col-sm-9 col-xs-12">
+			{ife 'goods.brand' $item}
+			<label class='radio-inline'>
+				<input type='radio' name='isrecommand' value=1' {if $item['isrecommand']==1}checked{/if} /> 是
+			</label>
+			<label class='radio-inline'>
+				<input type='radio' name='isrecommand' value=0' {if $item['isrecommand']==0}checked{/if} /> 否
+			</label>
+			{else}
+			<div class='form-control-static'>{if empty($item['isrecommand'])}否{else}是{/if}</div>
+			{/if}
+		</div> 
+	</div>
+	<div class="form-group">
+		<label class="col-sm-2 control-label">首页推荐</label>
+		<div class="col-sm-9 col-xs-12">
+			{ife 'goods.brand' $item}
+			<label class='radio-inline'>
+				<input type='radio' name='ishome' value=1' {if $item['ishome']==1}checked{/if} /> 是
+			</label>
+			<label class='radio-inline'>
+				<input type='radio' name='ishome' value=0' {if $item['ishome']==0}checked{/if} /> 否
+			</label>
+			{else}
+			<div class='form-control-static'>{if empty($item['ishome'])}否{else}是{/if}</div>
+			{/if}
+		</div> 
+	</div>
+	{/if}  
+	<div class="form-group">
+		<label class="col-sm-2 control-label">是否显示</label>
+		<div class="col-sm-9 col-xs-12">
+			{ife 'goods.brand' $item}
+			<label class='radio-inline'>
+				<input type='radio' name='enabled' value=1' {if $item['enabled']==1}checked{/if} /> 是
+			</label>
+			<label class='radio-inline'>
+				<input type='radio' name='enabled' value=0' {if $item['enabled']==0}checked{/if} /> 否
+			</label>
+			{else}
+			<div class='form-control-static'>{if empty($item['enabled'])}否{else}是{/if}</div>
+			{/if}
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label class="col-sm-2 control-label"></label>
+		<div class="col-sm-9 col-xs-12">
+			{ife 'goods.brand' $item}
+			<input type="submit"  value="提交" class="btn btn-primary" />
+			{/if}
+			<input type="button" name="back" onclick='history.back()' {ifp 'goods.brand.add|goods.brand.edit'}style='margin-left:10px;'{/if} value="返回列表" class="btn btn-default" />
+		</div>
+	</div>
+</form>
+</div>
+{template '_footer'}
+
+
+<!--weichengtech-->

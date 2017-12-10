@@ -40,6 +40,29 @@ class Shop_EweiShopV2Model
 		return $allcategory;
 	}
 
+
+    // TODO 获取全部品牌
+    public function getFullBrand($fullname = false, $enabled = false)
+    {
+        global $_W;
+        $allbrand = array();
+        $sql = 'SELECT * FROM ' . tablename('ewei_shop_brand') . ' WHERE uniacid=:uniacid ';
+
+        if ($enabled) {
+            $sql .= ' AND enabled=1';
+        }
+
+        $sql .= ' ORDER BY displayorder DESC';
+        $brand = pdo_fetchall($sql, array(':uniacid' => $_W['uniacid']));
+        $brand = set_medias($brand, array('thumb', 'logo'));
+
+        if (empty($brand)) {
+            return array();
+        }
+
+        return $brand;
+    }
+
 	public function getFullCategory($fullname = false, $enabled = false)
 	{
 		global $_W;

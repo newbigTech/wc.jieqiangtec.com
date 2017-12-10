@@ -7,6 +7,10 @@ class Route_EweiShopV2Model
 		global $_W;
 		require_once IA_ROOT . '/addons/ewei_shopv2/core/inc/page.php';
 
+		// TODO
+        /*$res = cv('sysset.category');
+		var_dump('TODO jieqiangtest=D:\www\users\wc.jieqiangtec.com\addons\ewei_shopv2\core\model\route.php=$res==',$res);exit;*/
+
 		if ($isweb) {
 			require_once EWEI_SHOPV2_CORE . 'inc/page_web.php';
 			require_once EWEI_SHOPV2_CORE . 'inc/page_web_com.php';

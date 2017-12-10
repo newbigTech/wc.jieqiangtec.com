@@ -66,6 +66,7 @@ if ($ccard_plugin) {
 }
 
 $category = m('shop')->getFullCategory(true, true);
+$brand = m('shop')->getFullBrand(true);
 $levels = m('member')->getLevels();
 
 foreach ($levels as &$l) {

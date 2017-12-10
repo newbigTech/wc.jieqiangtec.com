@@ -290,6 +290,27 @@
 
 
     <div class="form-group">
+        <label class="col-sm-2 control-label">商品品牌</label>
+        <div class="col-sm-8 col-xs-12">
+            {ife 'goods' $item}
+            <select id="brands"  name='brands[]' class="form-control select2" style='width:605px;' multiple='' >
+                {loop $brand $c}
+                <option value="{$c['id']}" {if is_array($brands) &&  in_array($c['id'],$brands)}selected{/if} >{$c['name']}</option>
+                {/loop}
+            </select>
+            {else}
+            <div class='form-control-static ops'>
+                {loop $brands $c}
+                <a>{$brand[$c]['name']}</a>
+                {/loop}
+            </div>
+
+            {/if}
+        </div>
+    </div>
+
+
+    <div class="form-group">
         <label class="col-sm-2 control-label">商品属性</label>
         <div class="col-sm-9 col-xs-12" >
             {ife 'goods' $item}

@@ -266,7 +266,7 @@ class Perm_EweiShopV2ComModel extends ComModel
 	'restore'  => '恢复到仓库-log',
 	'xxx'      => array('status' => 'edit', 'property' => 'edit', 'goodsprice' => 'edit', 'change' => 'edit'),
 	'category' => array(
-		'text'   => '商品分类',
+		'text'   => '商品分类444',
 		'add'    => '添加-log',
 		'edit'   => '修改-log',
 		'delete' => '删除-log',

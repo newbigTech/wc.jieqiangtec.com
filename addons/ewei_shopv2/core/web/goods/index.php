@@ -116,7 +116,9 @@ class Index_EweiShopV2Page extends WebPage
 			}
 		}
 
-		$categorys = m('shop')->getFullCategory(true);
+        $categorys = m('shop')->getFullCategory(true);
+        $brand = m('shop')->getFullBrand(true);
+        // var_dump($brands);exit;
 		$category = array();
 
 		foreach ($categorys as $cate) {
@@ -460,6 +462,7 @@ class Index_EweiShopV2Page extends WebPage
 
 	protected function post()
 	{
+		// var_dump(dirname(__FILE__) . '/post.php');exit; // string 'D:\www\users\wc.jieqiangtec.com\addons\ewei_shopv2\core\web\goods/post.php' (length=74)
 		require dirname(__FILE__) . '/post.php';
 	}
 

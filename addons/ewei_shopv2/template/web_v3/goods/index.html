@@ -80,6 +80,17 @@
                             {/loop}
                     </select>
                 </span>
+
+                <span class="input-group-select">
+                    <select name="cate" class='form-control select2' style="width:200px;" data-placeholder="商品品牌">
+                        <option value="" {if empty($_GPC['brand'])}selected{/if} >商品品牌</option>
+                            {loop $brands $c}
+                        <option value="{$c['id']}" {if $_GPC['brand']==$c['brand_id']}selected{/if} >{$c['brand_name']}</option>
+                            {/loop}
+                    </select>
+                </span>
+
+
                 <input type="text" class="input-sm form-control" name='keyword' value="{$_GPC['keyword']}" placeholder="ID/名称/编号/条码{if $merch_plugin}/商户名称{/if}">
                 <span class="input-group-btn">
                     <button class="btn btn-primary" type="submit"> 搜索</button>

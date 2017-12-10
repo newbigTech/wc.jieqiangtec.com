@@ -611,6 +611,13 @@ class WeUtility {
 	}
 
     public static function logging($level = 'info', $message = '') {
+	    // 不记录系统sql
+	    if ( (($_GET['c']=='utility') && ($_GET['a']=='subscribe')) || (($_GET['c']=='utility') && ($_GET['a']=='sync')) || ($_GET['r'] == 'system.auth.upgrade.check') || ($_GET['r'] == 'util.task') ){
+            /*var_dump('TODO jieqiangest-==$_GPC==',$_GET);exit;
+        2017-12-10 16:35:58 TODO debug2 ：来源:
+http://shop.rongec.cn/web/index.php?c=utility&a=subscribe*/
+            return 1;
+        }
         $filename = IA_ROOT . '/data/logs/' . date('Ymd') . '.log';
         //检测日志文件大小，超过配置大小则备份日志文件重新生成  2M= 2097152b
         if(is_file($filename) && floor(2097152) <= filesize($filename) )
