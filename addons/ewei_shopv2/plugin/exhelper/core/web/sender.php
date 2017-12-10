@@ -16,7 +16,7 @@ class Sender_EweiShopV2Page extends PluginWebPage
 
 		if (!empty($_GPC['keyword'])) {
 			$_GPC['keyword'] = trim($_GPC['keyword']);
-			$condition .= ' and ( sendername like :keyword or sendertel like :keyword or sendersign like :keyword or sendercode like :keyword or senderaddress like :keyword or sendercity like :keyword)';
+			$condition .= ' and ( sendername like :keyword or sendertel like :keyword or sendersign like :keyword or sendercode like :keyword or senderaddress like :keyword or province like :keyword or city like :keyword or area like :keyword)';
 			$params[':keyword'] = '%' . $_GPC['keyword'] . '%';
 		}
 
@@ -38,7 +38,7 @@ class Sender_EweiShopV2Page extends PluginWebPage
 		}
 
 		if ($_W['ispost']) {
-			$data = array('uniacid' => $_W['uniacid'], 'merchid' => 0, 'sendername' => trim($_GPC['sendername']), 'sendertel' => trim($_GPC['sendertel']), 'sendersign' => trim($_GPC['sendersign']), 'sendercode' => trim($_GPC['sendercode']), 'senderaddress' => trim($_GPC['senderaddress']), 'sendercity' => trim($_GPC['sendercity']), 'isdefault' => intval($_GPC['isdefault']));
+			$data = array('uniacid' => $_W['uniacid'], 'merchid' => 0, 'sendername' => trim($_GPC['sendername']), 'sendertel' => trim($_GPC['sendertel']), 'sendersign' => trim($_GPC['sendersign']), 'sendercode' => trim($_GPC['sendercode']), 'senderaddress' => trim($_GPC['senderaddress']), 'province' => trim($_GPC['province']), 'city' => trim($_GPC['city']), 'area' => trim($_GPC['area']), 'isdefault' => intval($_GPC['isdefault']));
 
 			if (!empty($id)) {
 				pdo_update('ewei_shop_exhelper_senduser', $data, array('id' => $id));
@@ -97,11 +97,11 @@ class Sender_EweiShopV2Page extends PluginWebPage
 			$id = (is_array($_GPC['ids']) ? implode(',', $_GPC['ids']) : 0);
 		}
 
-		$items = pdo_fetchall('SELECT id,sendername,sendertel,sendercity,senderaddress FROM ' . tablename('ewei_shop_exhelper_senduser') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
+		$items = pdo_fetchall('SELECT id,sendername,sendertel,senderaddress FROM ' . tablename('ewei_shop_exhelper_senduser') . ' WHERE id in( ' . $id . ' ) AND uniacid=' . $_W['uniacid']);
 
 		foreach ($items as $item) {
 			pdo_delete('ewei_shop_exhelper_senduser', array('id' => $item['id'], 'uniacid' => $_W['uniacid']));
-			plog('exhelper.sender.delete', '删除 发件人模板 ID: ' . $item['id'] . '  <br/>发件人: ' . $item['title'] . '/发件人电话: ' . $item['sendertel'] . '/发件城市: ' . $item['sendercity'] . '/发件地址: ' . $item['senderaddress'] . ' ');
+			plog('exhelper.sender.delete', '删除 发件人模板 ID: ' . $item['id'] . '  <br/>发件人: ' . $item['title'] . '/发件人电话: ' . $item['sendertel'] . '/发件地址: ' . $item['senderaddress'] . ' ');
 		}
 
 		show_json(1, array('url' => referer()));

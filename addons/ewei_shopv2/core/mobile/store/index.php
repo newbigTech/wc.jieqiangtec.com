@@ -10,7 +10,15 @@ class Index_EweiShopV2Page extends MobilePage
 		global $_W;
 		global $_GPC;
 		$id = intval($_GPC['id']);
-		$item = pdo_fetch('select * from ' . tablename('ewei_shop_store') . ' where id =:id and uniacid=:uniacid', array(':id' => $id, ':uniacid' => $_W['uniacid']));
+		$merchid = intval($_GPC['merchid']);
+
+		if ($merchid) {
+			$item = pdo_fetch('select * from ' . tablename('ewei_shop_merch_store') . ' where id =:id and uniacid=:uniacid and merchid=:merchid', array(':id' => $id, ':uniacid' => $_W['uniacid'], 'merchid' => $merchid));
+		}
+		else {
+			$item = pdo_fetch('select * from ' . tablename('ewei_shop_store') . ' where id =:id and uniacid=:uniacid', array(':id' => $id, ':uniacid' => $_W['uniacid']));
+		}
+
 		$item['logo'] = tomedia($item['logo']);
 
 		if (!empty($item['tag'])) {

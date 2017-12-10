@@ -1,12 +1,29 @@
 <?php
-if (!defined('IN_IA')) {
+//weichengtech
+?>
+<?php
+if (!(defined('IN_IA'))) {
 	exit('Access Denied');
 }
 
 class index_EweiShopV2Page extends PluginMobilePage
 {
+	private $new = false;
+
+	public function __construct()
+	{
+		parent::__construct();
+		$this->new = $this->model->isnew();
+	}
+
 	public function main()
 	{
+		if ($this->new) {
+			$this->main_new();
+			exit();
+		}
+
+
 		global $_W;
 		global $_GPC;
 		$member = m('member')->getMember($_W['openid']);
@@ -28,6 +45,7 @@ class index_EweiShopV2Page extends PluginMobilePage
 			show_json(0, $res);
 		}
 
+
 		show_json(1, $res);
 	}
 
@@ -43,6 +61,12 @@ class index_EweiShopV2Page extends PluginMobilePage
 
 	public function detail()
 	{
+		if ($this->new) {
+			$this->detail_new();
+			exit();
+		}
+
+
 		global $_W;
 		global $_GPC;
 		$id = intval($_GPC['id']);
@@ -53,7 +77,7 @@ class index_EweiShopV2Page extends PluginMobilePage
 			$detail = pdo_fetch($sql, array(':id' => $id));
 			$reward_data = unserialize($detail['reward_data']);
 		}
-		else {
+		 else {
 			$sql = 'SELECT * FROM ' . tablename('ewei_shop_task') . ' WHERE id = :id';
 			$detail = pdo_fetch($sql, array(':id' => $id));
 			$reward_data = unserialize($detail['reward_data']);
@@ -75,230 +99,270 @@ class index_EweiShopV2Page extends PluginMobilePage
 		$task_sql = 'SELECT * FROM ' . tablename('ewei_shop_task_poster') . ' WHERE timestart<=' . $now_time . ' AND timeend>' . $now_time . ' AND uniacid=' . $_W['uniacid'] . ' AND `status`=1 AND `is_delete`=0 ORDER BY `createtime` DESC';
 		$task_list = pdo_fetchall($task_sql);
 
-		foreach ($task_list as $key => $val) {
+		foreach ($task_list as $key => $val ) {
 			if ($val['poster_type'] == 1) {
 				$val['reward_data'] = unserialize($val['reward_data']);
 				$recward = $val['reward_data']['rec'];
+
 				if (isset($recward['credit']) && (0 < $recward['credit'])) {
 					$task_list[$key]['is_credit'] = 1;
 				}
+
 
 				if (isset($recward['money']['num']) && (0 < $recward['money']['num'])) {
 					$task_list[$key]['is_money'] = 1;
 				}
 
+
 				if (isset($recward['bribery']) && (0 < $recward['bribery'])) {
 					$task_list[$key]['is_bribery'] = 1;
 				}
+
 
 				if (isset($recward['goods']) && count($recward['goods'])) {
 					$task_list[$key]['is_goods'] = 1;
 				}
 
+
 				if (isset($recward['coupon']['total']) && (0 < $recward['coupon']['total'])) {
 					$task_list[$key]['is_coupon'] = 1;
 				}
+
 			}
-			else {
-				if ($val['poster_type'] == 2) {
-					$val['reward_data'] = unserialize($val['reward_data']);
-					$recward = $val['reward_data']['rec'];
+			 else if ($val['poster_type'] == 2) {
+				$val['reward_data'] = unserialize($val['reward_data']);
+				$recward = $val['reward_data']['rec'];
 
-					foreach ($recward as $k => $v) {
-						if (isset($v['credit']) && (0 < $v['credit'])) {
-							$task_list[$key]['is_credit'] = 1;
-						}
-
-						if (isset($v['money']['num']) && (0 < $v['money']['num'])) {
-							$task_list[$key]['is_money'] = 1;
-						}
-
-						if (isset($v['bribery']) && (0 < $v['bribery'])) {
-							$task_list[$key]['is_bribery'] = 1;
-						}
-
-						if (isset($v['goods']) && count($v['goods'])) {
-							$task_list[$key]['is_goods'] = 1;
-						}
-
-						if (isset($v['coupon']['total']) && (0 < $v['coupon']['total'])) {
-							$task_list[$key]['is_coupon'] = 1;
-						}
+				foreach ($recward as $k => $v ) {
+					if (isset($v['credit']) && (0 < $v['credit'])) {
+						$task_list[$key]['is_credit'] = 1;
 					}
+
+
+					if (isset($v['money']['num']) && (0 < $v['money']['num'])) {
+						$task_list[$key]['is_money'] = 1;
+					}
+
+
+					if (isset($v['bribery']) && (0 < $v['bribery'])) {
+						$task_list[$key]['is_bribery'] = 1;
+					}
+
+
+					if (isset($v['goods']) && count($v['goods'])) {
+						$task_list[$key]['is_goods'] = 1;
+					}
+
+
+					if (isset($v['coupon']['total']) && (0 < $v['coupon']['total'])) {
+						$task_list[$key]['is_coupon'] = 1;
+					}
+
 				}
 			}
+
 		}
 
 		$running_sql = 'SELECT `join`.*,`task`.title,`task`.reward_data AS `poster_reward`,`task`.titleicon,`task`.poster_type FROM ' . tablename('ewei_shop_task_join') . ' AS `join` LEFT JOIN ' . tablename('ewei_shop_task_poster') . ' AS `task` ON `join`.task_id=`task`.`id` WHERE `join`.`failtime`>' . $now_time . ' AND `join`.`join_user`="' . $openid . '" AND `join`.uniacid=' . $_W['uniacid'] . ' AND `join`.`is_reward` = 0 AND `task`.`is_delete` = 0 ORDER BY `join`.`addtime` DESC LIMIT 0,15';
 		$task_running = pdo_fetchall($running_sql);
 
-		foreach ($task_running as $key => $val) {
+		foreach ($task_running as $key => $val ) {
 			if ($val['poster_type'] == 1) {
 				$val['reward_data'] = unserialize($val['poster_reward']);
 				$recward = $val['reward_data']['rec'];
+
 				if (isset($recward['credit']) && (0 < $recward['credit'])) {
 					$task_running[$key]['is_credit'] = 1;
 				}
+
 
 				if (isset($recward['money']['num']) && (0 < $recward['money']['num'])) {
 					$task_running[$key]['is_money'] = 1;
 				}
 
+
 				if (isset($recward['bribery']) && (0 < $recward['bribery'])) {
 					$task_running[$key]['is_bribery'] = 1;
 				}
+
 
 				if (isset($recward['goods']) && count($recward['goods'])) {
 					$task_running[$key]['is_goods'] = 1;
 				}
 
+
 				if (isset($recward['coupon']['total']) && (0 < $recward['coupon']['total'])) {
 					$task_running[$key]['is_coupon'] = 1;
 				}
+
 			}
-			else {
-				if ($val['poster_type'] == 2) {
-					$val['reward_data'] = unserialize($val['poster_reward']);
-					$recward = $val['reward_data']['rec'];
+			 else if ($val['poster_type'] == 2) {
+				$val['reward_data'] = unserialize($val['poster_reward']);
+				$recward = $val['reward_data']['rec'];
 
-					foreach ($recward as $k => $v) {
-						if (isset($v['credit']) && (0 < $v['credit'])) {
-							$task_running[$key]['is_credit'] = 1;
-						}
-
-						if (isset($v['money']['num']) && (0 < $v['money']['num'])) {
-							$task_running[$key]['is_money'] = 1;
-						}
-
-						if (isset($v['bribery']) && (0 < $v['bribery'])) {
-							$task_running[$key]['is_bribery'] = 1;
-						}
-
-						if (isset($v['goods']) && count($v['goods'])) {
-							$task_running[$key]['is_goods'] = 1;
-						}
-
-						if (isset($v['coupon']['total']) && (0 < $v['coupon']['total'])) {
-							$task_running[$key]['is_coupon'] = 1;
-						}
+				foreach ($recward as $k => $v ) {
+					if (isset($v['credit']) && (0 < $v['credit'])) {
+						$task_running[$key]['is_credit'] = 1;
 					}
+
+
+					if (isset($v['money']['num']) && (0 < $v['money']['num'])) {
+						$task_running[$key]['is_money'] = 1;
+					}
+
+
+					if (isset($v['bribery']) && (0 < $v['bribery'])) {
+						$task_running[$key]['is_bribery'] = 1;
+					}
+
+
+					if (isset($v['goods']) && count($v['goods'])) {
+						$task_running[$key]['is_goods'] = 1;
+					}
+
+
+					if (isset($v['coupon']['total']) && (0 < $v['coupon']['total'])) {
+						$task_running[$key]['is_coupon'] = 1;
+					}
+
 				}
 			}
+
 		}
 
 		$complete_sql = 'SELECT `join`.*,`task`.title,`task`.titleicon,`task`.poster_type FROM ' . tablename('ewei_shop_task_join') . ' AS `join` LEFT JOIN ' . tablename('ewei_shop_task_poster') . ' AS `task` ON `join`.task_id=`task`.`id` WHERE `join`.uniacid=' . $_W['uniacid'] . ' AND `join`.`join_user`="' . $openid . '" AND `join`.`is_reward`=1 AND `task`.`is_delete` = 0 ORDER BY `join`.`addtime` DESC LIMIT 0,15';
 		$task_complete = pdo_fetchall($complete_sql);
 
-		foreach ($task_complete as $key => $val) {
+		foreach ($task_complete as $key => $val ) {
 			if ($val['poster_type'] == 1) {
 				$task_complete[$key]['reward_data'] = unserialize($val['reward_data']);
 				$val['reward_data'] = unserialize($val['reward_data']);
 				$recward = $val['reward_data'];
+
 				if (isset($recward['credit']) && (0 < $recward['credit'])) {
 					$task_complete[$key]['is_credit'] = 1;
 				}
+
 
 				if (isset($recward['money']['num']) && (0 < $recward['money']['num'])) {
 					$task_complete[$key]['is_money'] = 1;
 				}
 
+
 				if (isset($recward['bribery']) && (0 < $recward['bribery'])) {
 					$task_complete[$key]['is_bribery'] = 1;
 				}
+
 
 				if (isset($recward['goods']) && count($recward['goods'])) {
 					$task_complete[$key]['is_goods'] = 1;
 				}
 
+
 				if (isset($recward['coupon']['total']) && (0 < $recward['coupon']['total'])) {
 					$task_complete[$key]['is_coupon'] = 1;
 				}
+
 			}
-			else {
-				if ($val['poster_type'] == 2) {
-					$val['reward_data'] = unserialize($val['reward_data']);
-					$recward = $val['reward_data'];
+			 else if ($val['poster_type'] == 2) {
+				$val['reward_data'] = unserialize($val['reward_data']);
+				$recward = $val['reward_data'];
 
-					foreach ($recward as $k => $v) {
-						if (isset($v['credit']) && (0 < $v['credit'])) {
-							$task_complete[$key]['is_credit'] = 1;
-						}
-
-						if (isset($v['money']['num']) && (0 < $v['money']['num'])) {
-							$task_complete[$key]['is_money'] = 1;
-						}
-
-						if (isset($v['bribery']) && (0 < $v['bribery'])) {
-							$task_complete[$key]['is_bribery'] = 1;
-						}
-
-						if (isset($v['goods']) && count($v['goods'])) {
-							$task_complete[$key]['is_goods'] = 1;
-						}
-
-						if (isset($v['coupon']['total']) && (0 < $v['coupon']['total'])) {
-							$task_complete[$key]['is_coupon'] = 1;
-						}
+				foreach ($recward as $k => $v ) {
+					if (isset($v['credit']) && (0 < $v['credit'])) {
+						$task_complete[$key]['is_credit'] = 1;
 					}
+
+
+					if (isset($v['money']['num']) && (0 < $v['money']['num'])) {
+						$task_complete[$key]['is_money'] = 1;
+					}
+
+
+					if (isset($v['bribery']) && (0 < $v['bribery'])) {
+						$task_complete[$key]['is_bribery'] = 1;
+					}
+
+
+					if (isset($v['goods']) && count($v['goods'])) {
+						$task_complete[$key]['is_goods'] = 1;
+					}
+
+
+					if (isset($v['coupon']['total']) && (0 < $v['coupon']['total'])) {
+						$task_complete[$key]['is_coupon'] = 1;
+					}
+
 				}
 			}
+
 		}
 
 		$faile_sql = 'SELECT `join`.*,`task`.title,`task`.reward_data AS `poster_reward`,`task`.titleicon,`task`.poster_type FROM ' . tablename('ewei_shop_task_join') . ' AS `join` LEFT JOIN ' . tablename('ewei_shop_task_poster') . ' AS `task` ON `join`.task_id=`task`.`id` WHERE `join`.`failtime`<=' . $now_time . ' AND `join`.`join_user`="' . $openid . '" AND `join`.uniacid=' . $_W['uniacid'] . ' AND `join`.`is_reward`=0 AND `task`.`is_delete` = 0 ORDER BY `join`.`addtime` DESC LIMIT 0,15';
 		$faile_complete = pdo_fetchall($faile_sql);
 
-		foreach ($faile_complete as $key => $val) {
+		foreach ($faile_complete as $key => $val ) {
 			if ($val['poster_type'] == 1) {
 				$val['reward_data'] = unserialize($val['poster_reward']);
 				$recward = $val['reward_data']['rec'];
+
 				if (isset($recward['credit']) && (0 < $recward['credit'])) {
 					$faile_complete[$key]['is_credit'] = 1;
 				}
+
 
 				if (isset($recward['money']['num']) && (0 < $recward['money']['num'])) {
 					$faile_complete[$key]['is_money'] = 1;
 				}
 
+
 				if (isset($recward['bribery']) && (0 < $recward['bribery'])) {
 					$faile_complete[$key]['is_bribery'] = 1;
 				}
+
 
 				if (isset($recward['goods']) && count($recward['goods'])) {
 					$faile_complete[$key]['is_goods'] = 1;
 				}
 
+
 				if (isset($recward['coupon']['total']) && (0 < $recward['coupon']['total'])) {
 					$faile_complete[$key]['is_coupon'] = 1;
 				}
+
 			}
-			else {
-				if ($val['poster_type'] == 2) {
-					$val['reward_data'] = unserialize($val['poster_reward']);
-					$recward = $val['reward_data']['rec'];
+			 else if ($val['poster_type'] == 2) {
+				$val['reward_data'] = unserialize($val['poster_reward']);
+				$recward = $val['reward_data']['rec'];
 
-					foreach ($recward as $k => $v) {
-						if (isset($v['credit']) && (0 < $v['credit'])) {
-							$faile_complete[$key]['is_credit'] = 1;
-						}
-
-						if (isset($v['money']['num']) && (0 < $v['money']['num'])) {
-							$faile_complete[$key]['is_credit'] = 1;
-						}
-
-						if (isset($v['bribery']) && (0 < $v['bribery'])) {
-							$faile_complete[$key]['is_money'] = 1;
-						}
-
-						if (isset($v['goods']) && count($v['goods'])) {
-							$faile_complete[$key]['is_goods'] = 1;
-						}
-
-						if (isset($v['coupon']['total']) && (0 < $v['coupon']['total'])) {
-							$faile_complete[$key]['is_coupon'] = 1;
-						}
+				foreach ($recward as $k => $v ) {
+					if (isset($v['credit']) && (0 < $v['credit'])) {
+						$faile_complete[$key]['is_credit'] = 1;
 					}
+
+
+					if (isset($v['money']['num']) && (0 < $v['money']['num'])) {
+						$faile_complete[$key]['is_credit'] = 1;
+					}
+
+
+					if (isset($v['bribery']) && (0 < $v['bribery'])) {
+						$faile_complete[$key]['is_money'] = 1;
+					}
+
+
+					if (isset($v['goods']) && count($v['goods'])) {
+						$faile_complete[$key]['is_goods'] = 1;
+					}
+
+
+					if (isset($v['coupon']['total']) && (0 < $v['coupon']['total'])) {
+						$faile_complete[$key]['is_coupon'] = 1;
+					}
+
 				}
 			}
+
 		}
 
 		return array($task_list, $task_running, $task_complete, $faile_complete);
@@ -320,9 +384,16 @@ class index_EweiShopV2Page extends PluginMobilePage
 		global $_W;
 		global $_GPC;
 		$id = intval($_GPC['id']);
-		$rewarded = pdo_get('ewei_shop_task_extension_join', array('uniacid' => $_W['uniacid'], 'id' => $_GPC['id']), array('rewarded'));
+		$rewarded = pdo_get('ewei_shop_task_extension_join', array('uniacid' => $_W['uniacid'], 'id' => $_GPC['id']));
+		$rewarded = $rewarded['rewarded'];
 		$rewarded = unserialize($rewarded['rewarded']);
-		$this->model->sendReward($rewarded, 1);
+
+		if (empty($rewarded)) {
+			show_json(0, '奖励发放失败');
+		}
+
+
+		$this->model->sendReward($rewarded, 1, 0, $rewarded['id']);
 		show_json(1, '奖励已发放');
 	}
 
@@ -348,6 +419,269 @@ class index_EweiShopV2Page extends PluginMobilePage
 		$arr = unserialize($data);
 		return unserialize($arr['taskinfo']);
 	}
+
+	/**
+     * 任务中心首页
+     */
+	public function main_new()
+	{
+		global $_W;
+		$my = m('member')->getInfo($_W['openid']);
+		$info = m('member')->getInfo($_W['openid']);
+		$tableList = tablename('ewei_shop_task_list');
+		$tableRecord = tablename('ewei_shop_task_record');
+		$now = date('Y-m-d H:i:s');
+		$sql = 'select li.*,re.task_demand,re.task_progress,re.id as rid from ' . $tableList . ' li left join ' . "\r\n" . '                (select *,max(id) from ' . $tableRecord . ' where (stoptime>\'' . $now . '\' or stoptime = \'0000-00-00 00:00:00\') and openid = \'' . $_W['openid'] . '\' and finishtime = 0' . "\r\n" . '                group by taskid order by id desc) re on li.id = re.taskid ' . "\r\n" . '                where li.starttime < \'' . $now . '\' and li.endtime >\'' . $now . '\' and li.uniacid = :uniacid ' . "\r\n" . '                order by li.displayorder desc,li.id desc';
+		$params = array(':uniacid' => $_W['uniacid']);
+		$list = pdo_fetchall($sql, $params);
+		$set = pdo_fetchcolumn('select bg_img from ' . tablename('ewei_shop_task_set') . ' where uniacid = ' . $_W['uniacid']);
+		include $this->template('task/index_new');
+	}
+
+	/**
+     * 奖励明细
+     */
+	public function reward()
+	{
+		global $_W;
+		$list = $this->rewardlist();
+		include $this->template();
+	}
+
+	public function rewardlist()
+	{
+		global $_W;
+		global $_GPC;
+		$page = intval($_GPC['page']);
+		$page = max(1, $page);
+		$psize = 100;
+		$pstart = ($page - 1) * $psize;
+		$sql = 'select * from ' . tablename('ewei_shop_task_reward') . ' where openid = :openid and `get` = 1 and uniacid = :uniacid order by gettime desc limit ' . $pstart . ',' . $psize;
+		$list = pdo_fetchall($sql, array(':openid' => $_W['openid'], ':uniacid' => $_W['uniacid']));
+		return $list;
+	}
+
+	/**
+     * 我的任务
+     */
+	public function mine()
+	{
+		global $_W;
+		global $_GPC;
+		$status = intval($_GPC['status']);
+		$condition = '';
+		$time0 = '\'0000-00-00 00:00:00\'';
+
+		switch ($status) {
+		case 1:
+			$condition = ' and (stoptime > "' . date('Y-m-d H:i:s') . '" or stoptime = ' . $time0 . ') and finishtime = ' . $time0;
+			break;
+
+		case 2:
+			$condition = ' and finishtime > ' . $time0 . '';
+			break;
+
+		case 3:
+			$condition = ' and stoptime != "0000-00-00 00:00:00" and stoptime < \'' . date('Y-m-d H:i:s') . '\' and finishtime = ' . $time0;
+			break;
+
+		default:
+			header('location:' . mobileUrl('task.mine', array('status' => 1)));
+			exit();
+		}
+
+		$sql = 'select * from ' . tablename('ewei_shop_task_record') . ' where openid = :openid and uniacid = :uniacid ' . $condition . ' order by id desc';
+		$list = pdo_fetchall($sql, array(':openid' => $_W['openid'], ':uniacid' => $_W['uniacid']));
+		include $this->template();
+	}
+
+	/**
+     * 任务详情
+     */
+	public function detail_new()
+	{
+		global $_W;
+		global $_GPC;
+		$id = intval($_GPC['id']);
+		$rid = intval($_GPC['rid']);
+
+		if (!(empty($rid))) {
+			$sql = 'select * from ' . tablename('ewei_shop_task_record') . ' where id = :id and uniacid = :uniacid';
+			$detail = pdo_fetch($sql, array(':id' => $rid, ':uniacid' => $_W['uniacid']));
+			$reward = json_decode($detail['reward_data'], true);
+			$reward_goods = pdo_fetchall('select * from ' . tablename('ewei_shop_task_reward') . ' where recordid = ' . $detail['id'] . ' and openid = \'' . $_W['openid'] . '\' and uniacid = ' . $_W['uniacid'] . ' and isjoiner = 0 and reward_type = \'goods\' and `level` = 0');
+			$reward1 = $reward2 = $reward3 = array();
+			$reward_goods1 = $reward_goods2 = $reward_goods3 = array();
+
+			if ($detail['tasktype'] == 'poster') {
+				if ($detail['level2'] == 0) {
+					$detail['level1'] = $detail['task_demand'];
+					$reward1 = $reward;
+					$reward_goods1 = $reward_goods;
+				}
+				 else if (($detail['level2'] < $detail['task_demand']) && ($detail['level1'] < $detail['task_demand'])) {
+					$reward1 = json_decode($detail['reward_data1'], true);
+					$reward_goods1 = pdo_fetchall('select * from ' . tablename('ewei_shop_task_reward') . ' where recordid = ' . $detail['id'] . ' and openid = \'' . $_W['openid'] . '\' and uniacid = ' . $_W['uniacid'] . ' and isjoiner = 0 and reward_type = \'goods\' and `level` = 1');
+					$reward2 = json_decode($detail['reward_data2'], true);
+					$reward_goods2 = pdo_fetchall('select * from ' . tablename('ewei_shop_task_reward') . ' where recordid = ' . $detail['id'] . ' and openid = \'' . $_W['openid'] . '\' and uniacid = ' . $_W['uniacid'] . ' and isjoiner = 0 and reward_type = \'goods\' and `level` = 2');
+					$reward3 = $reward;
+					$reward_goods3 = $reward_goods;
+					$detail['level3'] = $detail['task_demand'];
+				}
+				 else {
+					$reward1 = json_decode($detail['reward_data1'], true);
+					$reward_goods1 = pdo_fetchall('select * from ' . tablename('ewei_shop_task_reward') . ' where recordid = ' . $detail['id'] . ' and openid = \'' . $_W['openid'] . '\' and uniacid = ' . $_W['uniacid'] . ' and isjoiner = 0 and reward_type = \'goods\' and `level` = 1');
+					$reward2 = $reward;
+					$reward_goods2 = $reward_goods;
+				}
+			}
+
+
+			$followreward = json_decode($detail['followreward_data'], true);
+			$joiner = pdo_fetchall('select DISTINCT openid,headimg,nickname,gettime from ' . tablename('ewei_shop_task_reward') . ' where isjoiner = 1 and recordid = ' . $rid . ' and `get`=1 and uniacid = ' . $_W['uniacid']);
+		}
+
+
+		if (empty($detail) && !(empty($id))) {
+			$sql = 'select * from ' . tablename('ewei_shop_task_list') . ' where id = :id and uniacid = :uniacid';
+			$detail = pdo_fetch($sql, array(':id' => $id, ':uniacid' => $_W['uniacid']));
+			$reward = json_decode($detail['reward'], true);
+
+			if ($detail['type'] == 'poster') {
+				$detail['tasktype'] = 'poster';
+				$detail['level1'] = $detail['demand'];
+				$detail['demand'] = max($detail['demand'], $detail['level2'], $detail['level3']);
+
+				if ($detail['level2'] == 0) {
+					$reward1 = $reward;
+				}
+				 else if (0 < $detail['level3']) {
+					$reward1 = $reward;
+					$reward2 = json_decode($detail['reward2'], true);
+					$reward3 = json_decode($detail['reward3'], true);
+				}
+				 else if (0 < $detail['level2']) {
+					$reward1 = $reward;
+					$reward2 = json_decode($detail['reward2'], true);
+				}
+
+			}
+
+
+			$followreward = json_decode($detail['followreward'], true);
+		}
+
+
+		if (empty($detail)) {
+			$this->message('任务不存在');
+		}
+
+
+		!(empty($detail['tasktype'])) && ($type = $detail['tasktype']);
+		!(empty($detail['type'])) && ($type = $detail['type']);
+		$taskType = $this->model->getTaskType($type);
+		$desc = $taskType['verb'];
+
+		if (!(empty($taskType['unit']))) {
+			$desc .= $detail['task_demand'] . $detail['demand'] . $taskType['unit'];
+		}
+
+
+		if (isset($detail['tasktype']) && ($detail['tasktype'] == 'poster')) {
+			$poster = $this->model->create_poster(array('id' => $detail['id'], 'design_data' => $detail['design_data'], 'design_bg' => $detail['design_bg']));
+		}
+
+
+		include $this->template('task/detail_new');
+	}
+
+	/**
+     * 预览海报
+     */
+	public function viewposter()
+	{
+		global $_W;
+		global $_GPC;
+		$id = intval($_GPC['id']);
+	}
+
+	/**
+     * 接任务
+     */
+	public function picktask()
+	{
+		global $_W;
+		global $_GPC;
+
+		if ($_W['ispost']) {
+			$openid = $_W['openid'];
+			$taskid = intval($_GPC['id']);
+			empty($taskid) && show_json(0, '任务不存在');
+			$ret = $this->model->pickTask($taskid, $openid);
+
+			if (is_error($ret)) {
+				show_json(0, $ret['message']);
+			}
+
+
+			logg('id', $ret);
+			show_json(1, $ret);
+		}
+
+	}
+
+	/**
+     * 推送海报到微信
+     */
+	public function sendtowechat()
+	{
+		global $_W;
+		global $_GPC;
+		$recordid = intval($_GPC['recordid']);
+		$mediaid = pdo_fetchcolumn('select mediaid from ' . tablename('ewei_shop_task_qr') . ' where recordid = :recordid', array(':recordid' => $recordid));
+		$ret = m('message')->sendImage($_W['openid'], $mediaid);
+
+		if (is_error($ret)) {
+			show_json(0, $ret['message']);
+		}
+
+
+		show_json(1);
+	}
+
+	/**
+     * 发送红包
+     */
+	public function getred()
+	{
+		global $_W;
+		global $_GPC;
+		$rewardid = intval($_GPC['id']);
+		$money = pdo_fetchcolumn('select reward_data from ' . tablename('ewei_shop_task_reward') . ' where id = ' . $rewardid . ' and `get` = 1 and sent = 0');
+
+		if (empty($money)) {
+			show_json(0, '任务不存在');
+		}
+
+
+		$params = array('openid' => $_W['openid'], 'tid' => time(), 'send_name' => '任务中心', 'money' => floatval($money), 'wishing' => '恭喜您获得了任务奖励', 'act_name' => '任务中心', 'remark' => '任务中心完成奖励');
+		$result = m('common')->sendredpack($params);
+
+		if (is_error($result)) {
+			show_json(0, $result['message']);
+		}
+
+
+		show_json(1);
+	}
+
+	public function test()
+	{
+		global $_W;
+		global $_GPC;
+		p('task')->checkTaskProgress(1, 'pyramid_num');
+	}
 }
+
 
 ?>

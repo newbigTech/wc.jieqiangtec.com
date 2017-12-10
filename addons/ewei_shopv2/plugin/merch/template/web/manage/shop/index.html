@@ -4,10 +4,7 @@
         <div class="col-sm-10">
             <div class="contact-box">
                 <div class="col-sm-1" style="padding:0">
-
-                    <img onerror="this.src='{EWEI_SHOPV2_LOCAL}static/images/nopic100.jpg'"
-                    src="{if empty($user['logo'])}{EWEI_SHOPV2_LOCAL}static/images/nopic100.jpg{else}{php echo tomedia($user['logo'])}{/if}" style="width:65px;height:65px;border-radius:5px">
-
+                    <img onerror="this.src='{EWEI_SHOPV2_LOCAL}static/images/nopic100.jpg'" src="{if empty($user['logo'])}{EWEI_SHOPV2_LOCAL}static/images/nopic100.jpg{else}{php echo tomedia($user['logo'])}{/if}" style="width:65px;height:65px;border-radius:5px">
                 </div>
                 <div class="col-sm-7"  style="padding-left:10px">
                      <h3>{$user['merchname']}</h3>
@@ -23,14 +20,11 @@
 
                 <div class="col-sm-3"  style="padding-left:10px" id="qrcode">
                 </div>
-
                 <div class="col-sm-1" style="padding-left: 0"><a class="btn btn-primary btn-sm" href="{php echo merchUrl('sysset')}" style="color: #fff"> 点击修改</a></div>
                 <div class="clearfix"></div>
 
             </div>
         </div>
-
-
     </div>
     <div class="row">
         <div class="col-sm-10">
@@ -160,3 +154,4 @@
 
 
     {template '_footer'}
+<!--OTEzNzAyMDIzNTAzMjQyOTE0-->

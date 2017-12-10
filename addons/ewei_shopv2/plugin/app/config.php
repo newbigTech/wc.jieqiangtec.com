@@ -1,42 +1,46 @@
 <?php
-
-if (!defined('IN_IA')) {
+//haha
+?>
+<?php
+if (!(defined('IN_IA'))) {
 	exit('Access Denied');
 }
 
-return array(
-'version' => '1.0', 
-'id' => 'app', 
-'name' => '小程序',
-'v3' => true,
+
+$config = array(
+	'version' => '1.0',
+	'id'      => 'app',
+	'name'    => '小程序',
+	'v3'      => true,
 	'menu'    => array(
 		'title'     => '小程序',
 		'plugincom' => 1,
-		'icon'      => 'page',
+		'icon'      => 'xiaochengxu',
+		'iconcolor' => '#54a532',
 		'items'     => array(
-			
+			array('title' => '页面设计', 'route' => 'page'),
+			array('title' => '商品二维码', 'route' => 'goods'),
+			array('title' => '底部导航', 'route' => 'tabbar'),
+			array('title' => '小程序设置', 'route' => 'setting'),
+			array('title' => '发布与审核', 'route' => 'release'),
+          array('title' => '启动广告', 'route' => 'shop.badv'),
+          array('title' => '分销海报', 'route' => 'poster'),
 			array(
-				'title' => '页面设置',
+				'title' => '其他设置',
 				'items' => array(
-					array('title' => '幻灯片', 'route' => 'shop.adv'),
-					array('title' => '导航图标', 'route' => 'shop.nav'),
-					array('title' => '广告设置', 'route' => 'shop.banner'),
-					array('title' => '魔方推荐', 'route' => 'shop.cube'),
-					array('title' => '商品推荐', 'route' => 'shop.recommand'),
-					array('title' => '公告设置', 'route' => 'shop.notice'),
-					array('title' => '排版设置', 'route' => 'shop.sort')
-					)
-				),
-			array(
-				'title' => '支付设置',
-				'items' => array(
-					array('title' => '基本设置', 'route' => 'setting'),
-					array('title' => '支付设置', 'route' => 'pay')
+					array('title' => '模板消息', 'route' => 'tmessage')
 					)
 				)
 			)
 		)
-	
-);
+	);
+$hasSysWxapp = @is_file(IA_ROOT . '/addons/ewei_shopwxapp/wxapp.php');
+
+if ($hasSysWxapp) {
+	$config['menu']['items'][5]['items'][] = array('title' => '系统小程序', 'route' => 'syswxapp', 'perm' => 'app.setting');
+}
+
+
+return $config;
 
 ?>

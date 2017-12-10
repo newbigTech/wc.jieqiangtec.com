@@ -451,6 +451,36 @@ if (!function_exists('rc')) {
 	}
 }
 
+if (!function_exists('url_script')) {
+	function url_script()
+	{
+		$url = '';
+		$script_name = basename($_SERVER['SCRIPT_FILENAME']);
+
+		if (basename($_SERVER['SCRIPT_NAME']) === $script_name) {
+			$url = $_SERVER['SCRIPT_NAME'];
+		}
+		else if (basename($_SERVER['PHP_SELF']) === $script_name) {
+			$url = $_SERVER['PHP_SELF'];
+		}
+		else {
+			if (isset($_SERVER['ORIG_SCRIPT_NAME']) && (basename($_SERVER['ORIG_SCRIPT_NAME']) === $script_name)) {
+				$url = $_SERVER['ORIG_SCRIPT_NAME'];
+			}
+			else if (($pos = strpos($_SERVER['PHP_SELF'], '/' . $script_name)) !== false) {
+				$url = substr($_SERVER['SCRIPT_NAME'], 0, $pos) . '/' . $script_name;
+			}
+			else {
+				if (isset($_SERVER['DOCUMENT_ROOT']) && (strpos($_SERVER['SCRIPT_FILENAME'], $_SERVER['DOCUMENT_ROOT']) === 0)) {
+					$url = str_replace('\\', '/', str_replace($_SERVER['DOCUMENT_ROOT'], '', $_SERVER['SCRIPT_FILENAME']));
+				}
+			}
+		}
+
+		return $url;
+	}
+}
+
 if (!function_exists('shop_template_compile')) {
 	function shop_template_compile($from, $to, $inmodule = false)
 	{
@@ -474,7 +504,15 @@ if (!function_exists('shop_template_parse')) {
 	function shop_template_parse($str, $inmodule = false)
 	{
 		global $_W;
-		$str = template_parse($str, $inmodule);
+		$url = url_script();
+
+		if (strexists($url, 'app/index.php')) {
+			$str = template_parse_app($str, $inmodule);
+		}
+		else {
+			$str = template_parse_web($str, $inmodule);
+		}
+
 		if (strexists($_W['siteurl'], 'merchant.php') || strexists($_W['siteurl'], 'r=merch.mmanage')) {
 			if (p('merch')) {
 				$str = preg_replace('/{ifp\\s+(.+?)}/', '<?php if(mcv($1)) { ?>', $str);
@@ -497,6 +535,86 @@ if (!function_exists('shop_template_parse')) {
 		$str = preg_replace('/{ifp\\s+(.+?)}/', '<?php if(cv($1)) { ?>', $str);
 		$str = preg_replace('/{ifpp\\s+(.+?)}/', '<?php if(cp($1)) { ?>', $str);
 		$str = preg_replace('/{ife\\s+(\\S+)\\s+(\\S+)}/', '<?php if( ce($1 ,$2) ) { ?>', $str);
+		return $str;
+	}
+}
+
+if (!function_exists('template_parse_web')) {
+	function template_parse_web($str, $inmodule = false)
+	{
+		$str = preg_replace('/<!--{(.+?)}-->/s', '{$1}', $str);
+		$str = preg_replace('/{template\\s+(.+?)}/', '<?php (!empty($this) && $this instanceof WeModuleSite || ' . intval($inmodule) . ') ? (include $this->template($1, TEMPLATE_INCLUDEPATH)) : (include template($1, TEMPLATE_INCLUDEPATH));?>', $str);
+		$str = preg_replace('/{php\\s+(.+?)}/', '<?php $1?>', $str);
+		$str = preg_replace('/{if\\s+(.+?)}/', '<?php if($1) { ?>', $str);
+		$str = preg_replace('/{else}/', '<?php } else { ?>', $str);
+		$str = preg_replace('/{else ?if\\s+(.+?)}/', '<?php } else if($1) { ?>', $str);
+		$str = preg_replace('/{\\/if}/', '<?php } ?>', $str);
+		$str = preg_replace('/{loop\\s+(\\S+)\\s+(\\S+)}/', '<?php if(is_array($1)) { foreach($1 as $2) { ?>', $str);
+		$str = preg_replace('/{loop\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)}/', '<?php if(is_array($1)) { foreach($1 as $2 => $3) { ?>', $str);
+		$str = preg_replace('/{\\/loop}/', '<?php } } ?>', $str);
+		$str = preg_replace('/{(\\$[a-zA-Z_\\x7f-\\xff][a-zA-Z0-9_\\x7f-\\xff]*)}/', '<?php echo $1;?>', $str);
+		$str = preg_replace('/{(\\$[a-zA-Z_\\x7f-\\xff][a-zA-Z0-9_\\x7f-\\xff\\[\\]\'\\"\\$]*)}/', '<?php echo $1;?>', $str);
+		$str = preg_replace('/{url\\s+(\\S+)}/', '<?php echo url($1);?>', $str);
+		$str = preg_replace('/{url\\s+(\\S+)\\s+(array\\(.+?\\))}/', '<?php echo url($1, $2);?>', $str);
+		$str = preg_replace('/{media\\s+(\\S+)}/', '<?php echo tomedia($1);?>', $str);
+		$str = preg_replace_callback('/<\\?php([^\\?]+)\\?>/s', 'template_addquote', $str);
+		$str = preg_replace_callback('/{hook\\s+(.+?)}/s', 'template_modulehook_parser', $str);
+		$str = preg_replace('/{\\/hook}/', '<?php ; ?>', $str);
+		$str = preg_replace('/{([A-Z_\\x7f-\\xff][A-Z0-9_\\x7f-\\xff]*)}/s', '<?php echo $1;?>', $str);
+		$str = str_replace('{##', '{', $str);
+		$str = str_replace('##}', '}', $str);
+
+		if (!empty($GLOBALS['_W']['setting']['remote']['type'])) {
+			$str = str_replace('</body>', '<script>$(function(){$(\'img\').attr(\'onerror\', \'\').on(\'error\', function(){if (!$(this).data(\'check-src\') && (this.src.indexOf(\'http://\') > -1 || this.src.indexOf(\'https://\') > -1)) {this.src = this.src.indexOf(\'' . $GLOBALS['_W']['attachurl_local'] . '\') == -1 ? this.src.replace(\'' . $GLOBALS['_W']['attachurl_remote'] . '\', \'' . $GLOBALS['_W']['attachurl_local'] . '\') : this.src.replace(\'' . $GLOBALS['_W']['attachurl_local'] . '\', \'' . $GLOBALS['_W']['attachurl_remote'] . '\');$(this).data(\'check-src\', true);}});});</script></body>', $str);
+		}
+
+		$str = '<?php defined(\'IN_IA\') or exit(\'Access Denied\');?>' . $str;
+		return $str;
+	}
+}
+
+if (!function_exists('template_parse_app')) {
+	function template_parse_app($str)
+	{
+		$check_repeat_template = array('\'common\\/header\'', '\'common\\/footer\'');
+
+		foreach ($check_repeat_template as $template) {
+			if (1 < preg_match_all('/{template\\s+' . $template . '}/', $str, $match)) {
+				$replace = stripslashes($template);
+				$str = preg_replace('/{template\\s+' . $template . '}/i', '<?php (!empty($this) && $this instanceof WeModuleSite) ? (include $this->template(' . $replace . ', TEMPLATE_INCLUDEPATH)) : (include template(' . $replace . ', TEMPLATE_INCLUDEPATH));?>', $str, 1);
+				$str = preg_replace('/{template\\s+' . $template . '}/i', '', $str);
+			}
+		}
+
+		$str = preg_replace('/<!--{(.+?)}-->/s', '{$1}', $str);
+		$str = preg_replace('/{template\\s+(.+?)}/', '<?php (!empty($this) && $this instanceof WeModuleSite) ? (include $this->template($1, TEMPLATE_INCLUDEPATH)) : (include template($1, TEMPLATE_INCLUDEPATH));?>', $str);
+		$str = preg_replace('/{php\\s+(.+?)}/', '<?php $1?>', $str);
+		$str = preg_replace('/{if\\s+(.+?)}/', '<?php if($1) { ?>', $str);
+		$str = preg_replace('/{else}/', '<?php } else { ?>', $str);
+		$str = preg_replace('/{else ?if\\s+(.+?)}/', '<?php } else if($1) { ?>', $str);
+		$str = preg_replace('/{\\/if}/', '<?php } ?>', $str);
+		$str = preg_replace('/{loop\\s+(\\S+)\\s+(\\S+)}/', '<?php if(is_array($1)) { foreach($1 as $2) { ?>', $str);
+		$str = preg_replace('/{loop\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)}/', '<?php if(is_array($1)) { foreach($1 as $2 => $3) { ?>', $str);
+		$str = preg_replace('/{\\/loop}/', '<?php } } ?>', $str);
+		$str = preg_replace('/{(\\$[a-zA-Z_\\x7f-\\xff][a-zA-Z0-9_\\x7f-\\xff]*)}/', '<?php echo $1;?>', $str);
+		$str = preg_replace('/{(\\$[a-zA-Z_\\x7f-\\xff][a-zA-Z0-9_\\x7f-\\xff\\[\\]\'\\"\\$]*)}/', '<?php echo $1;?>', $str);
+		$str = preg_replace('/{url\\s+(\\S+)}/', '<?php echo url($1);?>', $str);
+		$str = preg_replace('/{url\\s+(\\S+)\\s+(array\\(.+?\\))}/', '<?php echo url($1, $2);?>', $str);
+		$str = preg_replace('/{media\\s+(\\S+)}/', '<?php echo tomedia($1);?>', $str);
+		$str = preg_replace_callback('/{data\\s+(.+?)}/s', 'moduledata', $str);
+		$str = preg_replace_callback('/{hook\\s+(.+?)}/s', 'template_modulehook_parser', $str);
+		$str = preg_replace('/{\\/data}/', '<?php } } ?>', $str);
+		$str = preg_replace('/{\\/hook}/', '<?php ; ?>', $str);
+		$str = preg_replace_callback('/<\\?php([^\\?]+)\\?>/s', 'template_addquote', $str);
+		$str = preg_replace('/{([A-Z_\\x7f-\\xff][A-Z0-9_\\x7f-\\xff]*)}/s', '<?php echo $1;?>', $str);
+		$str = str_replace('{##', '{', $str);
+		$str = str_replace('##}', '}', $str);
+
+		if (!empty($GLOBALS['_W']['setting']['remote']['type'])) {
+			$str = str_replace('</body>', '<script>var imgs = document.getElementsByTagName(\'img\');for(var i=0, len=imgs.length; i < len; i++){imgs[i].onerror = function() {if (!this.getAttribute(\'check-src\') && (this.src.indexOf(\'http://\') > -1 || this.src.indexOf(\'https://\') > -1)) {this.src = this.src.indexOf(\'' . $GLOBALS['_W']['attachurl_local'] . '\') == -1 ? this.src.replace(\'' . $GLOBALS['_W']['attachurl_remote'] . '\', \'' . $GLOBALS['_W']['attachurl_local'] . '\') : this.src.replace(\'' . $GLOBALS['_W']['attachurl_local'] . '\', \'' . $GLOBALS['_W']['attachurl_remote'] . '\');this.setAttribute(\'check-src\', true);}}}</script></body>', $str);
+		}
+
+		$str = '<?php defined(\'IN_IA\') or exit(\'Access Denied\');?>' . $str;
 		return $str;
 	}
 }
@@ -1470,8 +1588,37 @@ if (!function_exists('tpl_form_field_multi_image2')) {
 	}
 }
 
+if (!function_exists('tpl_form_field_video2')) {
+	function tpl_form_field_video2($name, $value = '', $options = array())
+	{
+		if (!is_array($options)) {
+			$options = array();
+		}
+
+		$options['direct'] = true;
+		$options['multi'] = false;
+		$options['type'] = 'video';
+		$options['fileSizeLimit'] = intval($GLOBALS['_W']['setting']['upload']['audio']['limit']) * 1024;
+		$html = '';
+
+		if (!defined('TPL_INIT_VIDEO')) {
+			$html = "\r\n            <script type=\"text/javascript\">\r\n                function showVideoDialog(elm, options) {\r\n                    require([\"util\"], function(util){\r\n                        var btn = \$(elm);\r\n                        var ipt = btn.parent().prev();\r\n                        var val = ipt.val();\r\n                        util.audio(val, function(url){\r\n                            if(url && url.attachment && url.url){\r\n                                btn.prev().show();\r\n                                ipt.val(url.attachment);\r\n                                ipt.attr(\"data-filename\",url.filename);\r\n                                ipt.attr(\"data-url\",url.url);\r\n                            }\r\n                            if(url && url.media_id){\r\n                                ipt.val(url.media_id);\r\n                            }\r\n                            btn.closest(\".input-group\").next().find(\".multi-item\").show();\r\n                        }, " . json_encode($options) . ");\r\n                    });\r\n                }\r\n                function previewVideo(elm){\r\n                    var url = \$(elm).closest(\".input-group\").prev().find(\"input\").data(\"url\");\r\n                    if(url==\"\"){\r\n                        tip.msgbox.err(\"未选择视频\");\r\n                        return;\r\n                    }\r\n                    \$(\"#previewVideo video\").attr(\"src\", url);\r\n                    \$(\"#previewVideo\").modal();\r\n                    \$(\"#previewVideo\").on(\"hidden.bs.modal\", function () {\r\n                        \$(this).find(\"video\")[0].pause();\r\n                    });\r\n                }\r\n                function removeVideo(elm){\r\n                    \$(elm).closest(\".input-group\").prev().find(\"input\").val(\"\")\r\n                    \$(elm).closest(\".multi-item\").hide();\r\n                }\r\n            </script>";
+			$html .= '<div class="modal fade" id="previewVideo"><div class="modal-dialog" style="min-width: 400px !important;"><div class="modal-content"><div class="modal-header"><button data-dismiss="modal" class="close" type="button">×</button><h4 class="modal-title">视频预览</h4></div><div class="modal-body" style="padding: 0; background: #000;"><video src="" style="height: 450px; width: 100%; display: block;" controls="controls"></video></div></div></div></div>';
+			echo $html;
+			define('TPL_INIT_VIDEO', true);
+		}
+
+		$display = (!empty($value) ? 'block' : 'none');
+		$display_input = (!$options['disabled'] ? '' : 'none');
+		$video_url = (!empty($value) ? tomedia($value) : '');
+		$html = '<div class="input-group" style="display: ' . $display_input . ";\">\r\n                                <input type=\"text\" value=\"" . $value . '" name="' . $name . '" class="form-control" autocomplete="off" ' . ($options['extras']['text'] ? $options['extras']['text'] : '') . ' placeholder="请选择视频" data-url="' . $video_url . "\">\r\n                                <span class=\"input-group-btn\">\r\n\t\t\t                        <button class=\"btn btn-primary\" type=\"button\" onclick=\"showVideoDialog(this," . str_replace('"', '\'', json_encode($options)) . ");\">选择视频</button>\r\n\t\t\t                    </span>\r\n\t\t\t                </div>";
+		$html .= "<div class=\"input-group\">\r\n                            <div class=\"multi-item\" style=\"display: " . $display . "\" title=\"预览视频\">\r\n                                <div class=\"img-responsive img-thumbnail img-video\" style=\"width: 100px; height: 100px; position: relative; text-align: center; cursor: pointer;\" onclick=\"previewVideo(this)\" src=\"\">\r\n                                    <i class=\"fa fa-play-circle\" style=\"font-size: 60px; line-height: 90px;\"></i>\r\n                                </div>\r\n                                <em class=\"close\" title=\"移除视频\" onclick=\"removeVideo(this)\" style=\"display: " . $display_input . ";\">×</em>\r\n                            </div>\r\n                        </div>";
+		return $html;
+	}
+}
+
 if (!function_exists('pagination2')) {
-	function pagination2($total, $pageIndex, $pageSize = 15, $url = '', $context = array('before' => 5, 'after' => 4, 'ajaxcallback' => '', 'callbackfuncname' => ''))
+	function pagination2($total, $pageIndex, $pageSize = 15, $url = '', $context = array('before' => 3, 'after' => 2, 'ajaxcallback' => '', 'callbackfuncname' => ''))
 	{
 		global $_W;
 
@@ -1547,11 +1694,11 @@ if (!function_exists('pagination2')) {
 				}
 
 				if (!$context['before'] && ($context['before'] != 0)) {
-					$context['before'] = 5;
+					$context['before'] = 3;
 				}
 
 				if (!$context['after'] && ($context['after'] != 0)) {
-					$context['after'] = 4;
+					$context['after'] = 2;
 				}
 
 				if (($context['after'] != 0) && ($context['before'] != 0)) {
@@ -1660,6 +1807,38 @@ if (!function_exists('tpl_form_field_position')) {
 		return $s;
 	}
 }
+
+if (!(function_exists('tpl_goods_selector'))) {
+	/**
+     * @param $name 名字
+     * @param string $data 数据
+     * @param string $option 设置选项
+     * @param string $where 商品表where条件
+     */
+	function tpl_goods_selector($name, $data_gs = '', $option = array())
+	{
+		global $_W;
+		$condition = base64_encode($option['condition']);
+
+		if (is_array($data_gs)) {
+			$data_gs = json_encode($data_gs);
+		}
+		 else {
+			json_decode($data_gs);
+			if ((json_last_error() != JSON_ERROR_NONE) || empty($data_gs)) {
+				$data_gs = '{}';
+			}
+
+		}
+
+		$name_id = 'goods_selector_' . $name;
+		$data_arr = json_decode($data_gs, 1);
+		$path = IA_ROOT . '/addons/ewei_shopv2/template/web_v3/util/tpl_goods_selector.html';
+		include $path;
+		$_W['goods_selector_js'] = 1;
+	}
+}
+
 
 function auth_user($siteid, $domain) {
 
@@ -2048,5 +2227,4 @@ function _db_build_field_sql_ab($field) {
 	}
 	return "{$field['type']}{$length}{$signed}{$null}{$default}{$increment}";
 }
-
 ?>

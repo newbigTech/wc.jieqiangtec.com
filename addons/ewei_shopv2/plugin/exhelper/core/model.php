@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('IN_IA')) {
 	exit('Access Denied');
 }
@@ -79,7 +80,51 @@ class ExhelperModel extends PluginModel
 		$temp_sender = pdo_fetchall('SELECT id,isdefault,sendername,sendertel FROM ' . tablename('ewei_shop_exhelper_senduser') . ' WHERE uniacid=:uniacid and merchid=0 order by isdefault desc ', array(':uniacid' => $_W['uniacid']));
 		$temp_express = pdo_fetchall('SELECT id,type,isdefault,expressname FROM ' . tablename('ewei_shop_exhelper_express') . ' WHERE type=1 and uniacid=:uniacid and merchid=0 order by isdefault desc ', array(':uniacid' => $_W['uniacid']));
 		$temp_invoice = pdo_fetchall('SELECT id,type,isdefault,expressname FROM ' . tablename('ewei_shop_exhelper_express') . ' WHERE type=2 and uniacid=:uniacid and merchid=0 order by isdefault desc ', array(':uniacid' => $_W['uniacid']));
-		return array('temp_sender' => $temp_sender, 'temp_express' => $temp_express, 'temp_invoice' => $temp_invoice);
+		$temp_esheet = pdo_fetchall('SELECT id,isdefault,esheetname FROM ' . tablename('ewei_shop_exhelper_esheet_temp') . ' WHERE uniacid=:uniacid and merchid=0 order by isdefault desc ', array(':uniacid' => $_W['uniacid']));
+		return array('temp_sender' => $temp_sender, 'temp_express' => $temp_express, 'temp_invoice' => $temp_invoice, 'temp_esheet' => $temp_esheet);
+	}
+
+	/**
+     * 调用电子面单接口
+     */
+	public function submitEOrder($requestData)
+	{
+		global $_W;
+		global $_GPC;
+		$requestData = json_encode($requestData, JSON_UNESCAPED_UNICODE);
+		$printset = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_exhelper_sys') . ' WHERE uniacid=:uniacid and merchid=0 limit 1', array(':uniacid' => $_W['uniacid']));
+
+		if (empty($printset)) {
+			return NULL;
+		}
+
+		$datas = array('EBusinessID' => $printset['ebusiness'], 'RequestType' => '1007', 'RequestData' => urlencode($requestData), 'DataType' => '2');
+		$datas['DataSign'] = $this->encrypt($requestData, $printset['apikey']);
+		$result = $this->sendPost('http://api.kdniao.cc/api/EOrderService', $datas);
+		return $result;
+	}
+
+	/**
+     *  post提交数据
+     * @param  string $url 请求Url
+     * @param  array $datas 提交的数据
+     * @return url响应返回的html
+     */
+	public function sendPost($url, $datas)
+	{
+		load()->func('communication');
+		return ihttp_post($url, $datas);
+	}
+
+	/**
+     * 电商Sign签名生成
+     * @param data 内容
+     * @param appkey Appkey
+     * @return DataSign签名
+     */
+	public function encrypt($data, $appkey)
+	{
+		return urlencode(base64_encode(md5($data . $appkey)));
 	}
 }
 

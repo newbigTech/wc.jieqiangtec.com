@@ -17,6 +17,7 @@
     <li {if $_GPC['goodsfrom'] == 'out'} class="active" {/if}><a href="{php echo merchUrl('goods',array('goodsfrom'=>'out'))}">已售罄<span  class='text-danger'>{$totals['out']}</span></a></li>
     <li {if $_GPC['goodsfrom'] == 'stock'} class="active" {/if}><a href="{php echo merchUrl('goods',array('goodsfrom'=>'stock'))}">仓库中<span>{$totals['stock']}</span></a></li>
     <li {if $_GPC['goodsfrom'] == 'cycle'} class="active" {/if}><a href="{php echo merchUrl('goods',array('goodsfrom'=>'cycle'))}">回收站<span  class='text-default'>{$totals['cycle']}</span></a></li>
+    <li {if $_GPC['r'] == 'goods.group' || $_GPC['r'] == 'goods.group.edit'}class="active" {/if}><a href="{php echo webUrl('goods/group')}">商品组</a></li>
     <li {if $_W['action'] == 'goods.category'} class="active" {/if}><a href="{php echo merchUrl('goods/category')}">商品分类</a></li>
 </ul>
 {/if}
@@ -32,3 +33,4 @@
 {/if}
 
   
+<!--6Z2S5bKb5piT6IGU5LqS5Yqo572R57uc56eR5oqA5pyJ6ZmQ5YWs5Y+454mI5p2D5omA5pyJ-->

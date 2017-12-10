@@ -11,7 +11,7 @@ return array(
 	'menu'    => array(
 		'plugincom' => 1,
 		'items'     => array(
-			array('title' => '打印机设置', 'route' => 'printset'),
+			array('title' => '设置', 'route' => 'printset'),
 			array('title' => '商品简称管理', 'route' => 'short'),
 			array(
 				'title' => '模板管理',
@@ -19,13 +19,23 @@ return array(
 				'items' => array(
 					array('title' => '快递单模板', 'route' => 'express'),
 					array('title' => '发货单模板', 'route' => 'invoice'),
-					array('title' => '发件人模板', 'route' => 'sender', 'route_ns' => true)
+					array('title' => '发件人模板', 'route' => 'sender', 'route_ns' => true),
+					array('title' => '电子面单模版', 'hidemerch' => true, 'route' => 'esheet')
 					)
 				),
 			array(
-				'title' => '打印',
+				'title' => '快递单/发货单',
 				'route' => 'print',
 				'items' => array(
+					array('title' => '单个打印', 'route' => 'single'),
+					array('title' => '批量打印', 'route' => 'batch')
+					)
+				),
+			array(
+				'title'     => '电子面单',
+				'hidemerch' => true,
+				'route'     => 'esheetprint',
+				'items'     => array(
 					array('title' => '单个打印', 'route' => 'single'),
 					array('title' => '批量打印', 'route' => 'batch')
 					)

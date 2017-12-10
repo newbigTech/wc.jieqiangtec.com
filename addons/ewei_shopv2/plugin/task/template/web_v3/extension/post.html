@@ -283,7 +283,7 @@
                 <div id="goodslist">
                     {loop $data['reward_data']['goods'] $gk $gv}
                     <span class="goodslist" id="goods{$gk}">
-                        <span class="badge badge-success">yen{$gv['price']}</span>
+                        <span class="badge badge-success">¥{$gv['price']}</span>
                         <span class="badge badge-warning">x{$gv['num']}</span>{$gv['name']}
                         <a class="btn btn-danger" onclick="$(this).parent().remove()" style="float: right;">X</a>
                         <input type="hidden" name="data[reward_data][goods][{$gk}][option]" value="{$gv['option']}">
@@ -409,7 +409,7 @@
             return;
         }
         if (!specid) specid = 0;
-        $("#goodslist").append('<span class="goodslist" id="goods'+divid+'"><span class="badge badge-success">yen'+price+'</span><span class="badge badge-warning">x'+num+'</span>'+title+'<a class="btn btn-danger" onclick="$(this).parent().remove()" style="float: right;">X</a><input type="hidden" name="data[reward_data][goods]['+divid+'][option]" value="'+specid+'"><input type="hidden" name="data[reward_data][goods]['+divid+'][num]" value="'+num+'"><input type="hidden" name="data[reward_data][goods]['+divid+'][price]" value="'+price+'"><input type="hidden" name="data[reward_data][goods]['+divid+'][id]" value="'+goodsid+'"><input type="hidden" name="data[reward_data][goods]['+divid+'][name]" value="'+title+'"></span>');
+        $("#goodslist").append('<span class="goodslist" id="goods'+divid+'"><span class="badge badge-success">¥'+price+'</span><span class="badge badge-warning">x'+num+'</span>'+title+'<a class="btn btn-danger" onclick="$(this).parent().remove()" style="float: right;">X</a><input type="hidden" name="data[reward_data][goods]['+divid+'][option]" value="'+specid+'"><input type="hidden" name="data[reward_data][goods]['+divid+'][num]" value="'+num+'"><input type="hidden" name="data[reward_data][goods]['+divid+'][price]" value="'+price+'"><input type="hidden" name="data[reward_data][goods]['+divid+'][id]" value="'+goodsid+'"><input type="hidden" name="data[reward_data][goods]['+divid+'][name]" value="'+title+'"></span>');
     }
 
     function clickcoupon(obj) {
@@ -448,4 +448,4 @@
     }
 </script>
 {template '_footer'}
-<!--weichengtech-->
+<!--913702023503242914-->

@@ -56,7 +56,10 @@ class Temp_EweiShopV2Page extends MerchWebPage
 					$data[$keywords[$key]] = $names[$key];
 				}
 			}
-			$insert = array('uniacid' => $_W['uniacid'], 'cate' => intval($_GPC['cate']), 'title' => trim($_GPC['tp_title']), 'fields' => iserializer($data), 'merchid' => $_W['merchid']);
+			//$insert = array('uniacid' => $_W['uniacid'], 'cate' => intval($_GPC['cate']), 'title' => trim($_GPC['tp_title']), 'fields' => iserializer($data), 'merchid' => $_W['merchid']);
+			
+			$insert = array('uniacid' => $_W['uniacid'], 'cate' => intval($_GPC['cate']), 'title' => trim($_GPC['tp_title']), 'fields' => iserializer($data), 'linktext' => trim($_GPC['tp_linktext']), 'linkurl' => trim($_GPC['tp_linkurl']), 'merchid' => $_W['merchid']);
+
 			if (empty($id)) 
 			{
 				pdo_insert('ewei_shop_virtual_type', $insert);

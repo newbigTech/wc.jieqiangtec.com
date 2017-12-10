@@ -1,7 +1,11 @@
 <?php
-if (!defined('IN_IA')) {
+//dezend by QQ:278638500解密更新  维护群：468773368
+?>
+<?php
+if (!(defined('IN_IA'))) {
 	exit('Access Denied');
 }
+
 
 require EWEI_SHOPV2_PLUGIN . 'seckill/core/seckill_page_web.php';
 class Calendar_EweiShopV2Page extends SeckillWebPage
@@ -38,7 +42,13 @@ class Calendar_EweiShopV2Page extends SeckillWebPage
 		$year = trim($_GPC['year']);
 		$month = trim($_GPC['month']);
 		$day = get_last_day($year, $month);
-		$calendar = redis()->hGetAll($redis_prefix . 'calendar_' . $year . '_0' . $month);
+
+		if ($month < 10) {
+			$month = '0' . (string) $month;
+		}
+
+
+		$calendar = redis()->hGetAll($redis_prefix . 'calendar_' . $year . '_' . $month);
 
 		if (empty($calendar)) {
 			$calendar = array();
@@ -49,11 +59,12 @@ class Calendar_EweiShopV2Page extends SeckillWebPage
 					$i = '0' . $i;
 				}
 
+
 				$calendar[date($year . '-' . $month . '-' . $i)] = false;
 				++$i;
 			}
 		}
-		else {
+		 else {
 			$result = array();
 			$i = 1;
 
@@ -62,17 +73,20 @@ class Calendar_EweiShopV2Page extends SeckillWebPage
 					$i = '0' . $i;
 				}
 
-				$date = $year . '-0' . $month . '-' . $i;
+
+				$date = $year . '-' . $month . '-' . $i;
 				$result[$date] = false;
 
 				if (isset($calendar[$date])) {
 					$value = trim($calendar[$date]);
 					$result[$date] = false;
 
-					if (!empty($value)) {
+					if (!(empty($value))) {
 						$result[$date] = array('taskid' => $value, 'title' => pdo_fetchcolumn('select title from ' . tablename('ewei_shop_seckill_task') . ' where id=:id limit 1', array(':id' => $value)));
 					}
+
 				}
+
 
 				++$i;
 			}
@@ -94,6 +108,7 @@ class Calendar_EweiShopV2Page extends SeckillWebPage
 			show_json(0, '参数错误');
 		}
 
+
 		$redis_prefix = $this->model->get_prefix();
 		$time = strtotime($date);
 		$year = date('Y', $time);
@@ -103,6 +118,7 @@ class Calendar_EweiShopV2Page extends SeckillWebPage
 		if (empty($task)) {
 			show_json(0, '任务未找到');
 		}
+
 
 		redis()->hSet($redis_prefix . 'calendar_' . $year . '_' . $month, date('Y-m-d', $time), $taskid);
 		show_json(1, array('taskid' => $task['id'], 'title' => $task['title']));
@@ -117,6 +133,7 @@ class Calendar_EweiShopV2Page extends SeckillWebPage
 		if (empty($date)) {
 			show_json(0, '参数错误');
 		}
+
 
 		$time = strtotime($date);
 		$year = date('Y', $time);
@@ -137,6 +154,7 @@ class Calendar_EweiShopV2Page extends SeckillWebPage
 			$month = '0' . $month;
 		}
 
+
 		$redis_prefix = $this->model->get_prefix();
 		redis()->delete($redis_prefix . 'calendar_' . $year . '_' . $month);
 		show_json(1);
@@ -154,14 +172,17 @@ class Calendar_EweiShopV2Page extends SeckillWebPage
 			$month = '0' . $month;
 		}
 
+
 		$days = $_GPC['days'];
 		if (empty($taskid) || empty($year) || empty($month)) {
 			show_json(0, '参数错误');
 		}
 
-		if (!is_array($days) || empty($days)) {
+
+		if (!(is_array($days)) || empty($days)) {
 			show_json(0, '参数错误');
 		}
+
 
 		$task = pdo_fetch('select id ,title from ' . tablename('ewei_shop_seckill_task') . ' where uniacid=:uniacid and id=:id limit 1', array(':uniacid' => $_W['uniacid'], ':id' => $taskid));
 
@@ -169,9 +190,11 @@ class Calendar_EweiShopV2Page extends SeckillWebPage
 			show_json(0, '任务未找到');
 		}
 
+
 		if ($days[0] == 'all') {
 			array_shift($days);
 		}
+
 
 		$maxday = get_last_day($year, $month);
 		$arr = array();
@@ -183,6 +206,7 @@ class Calendar_EweiShopV2Page extends SeckillWebPage
 				$i = '0' . $i;
 			}
 
+
 			$date = date($year . '-' . $month . '-' . $i);
 			$week = date('w', strtotime($date));
 
@@ -190,10 +214,12 @@ class Calendar_EweiShopV2Page extends SeckillWebPage
 				$week = 7;
 			}
 
+
 			if (in_array($week, $days)) {
 				$arr[$date] = $taskid;
 				$dates[] = $date;
 			}
+
 
 			++$i;
 		}
@@ -214,26 +240,31 @@ class Calendar_EweiShopV2Page extends SeckillWebPage
 			$month = '0' . $month;
 		}
 
+
 		$days = $_GPC['days'];
 		if (empty($year) || empty($month)) {
 			show_json(0, '参数错误');
 		}
 
-		if (!is_array($days) || empty($days)) {
+
+		if (!(is_array($days)) || empty($days)) {
 			show_json(0, '参数错误');
 		}
+
 
 		if ($days[0] == 'all') {
 			array_shift($days);
 		}
 
+
 		$redis = redis();
 		$redis_prefix = $this->model->get_prefix();
 		$calendar = $redis->hGetAll($redis_prefix . 'calendar_' . $year . '_' . $month);
 
-		if (!is_array($calendar)) {
+		if (!(is_array($calendar))) {
 			$calendar = array();
 		}
+
 
 		$maxday = get_last_day($year, $month);
 		$dates = array();
@@ -244,6 +275,7 @@ class Calendar_EweiShopV2Page extends SeckillWebPage
 				$i = '0' . $i;
 			}
 
+
 			$date = date($year . '-' . $month . '-' . $i);
 			$week = date('w', strtotime($date));
 
@@ -251,13 +283,16 @@ class Calendar_EweiShopV2Page extends SeckillWebPage
 				$week = 7;
 			}
 
+
 			if (in_array($week, $days)) {
 				if (is_array($calendar) && isset($calendar[$date])) {
 					unset($calendar[$date]);
 					$redis->hDel($redis_prefix . 'calendar_' . $year . '_' . $month, $date);
 					$dates[] = $date;
 				}
+
 			}
+
 
 			++$i;
 		}
@@ -266,8 +301,10 @@ class Calendar_EweiShopV2Page extends SeckillWebPage
 			$redis->delete($redis_prefix . 'calendar_' . $year . '_' . $month);
 		}
 
+
 		show_json(1, array('dates' => implode(',', $dates)));
 	}
 }
+
 
 ?>
