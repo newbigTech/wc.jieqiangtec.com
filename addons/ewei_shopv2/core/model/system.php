@@ -322,6 +322,7 @@ class System_EweiShopV2Model
                 }
             }
         }
+        // var_dump('TODO jieqiangtest=menu==',array('menu' => $return_menu, 'submenu' => $return_submenu, 'shopmenu' => $this->getShopMenu()));exit;
 
         return array('menu' => $return_menu, 'submenu' => $return_submenu, 'shopmenu' => $this->getShopMenu());
     }
@@ -897,7 +898,7 @@ class System_EweiShopV2Model
                     )
                 )
             ),
-            'site' => array(
+            /*'site' => array(
                 'title' => '网站',
                 'subtitle' => '网站设置',
                 'icon' => 'wangzhan',
@@ -949,7 +950,7 @@ class System_EweiShopV2Model
                     array('title' => '系统更新', 'route' => 'upgrade'),
                     array('title' => '历史日志', 'route' => 'upgrade.log')
                 )
-            )
+            )*/
         );
     }
 
