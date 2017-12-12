@@ -1,6 +1,7 @@
 <?php
 global $_W;
 global $_GPC;
+//var_dump('TODO jieqiangtest==pwd==',getcwd(),__FILE__);exit;
 $shopset_level = intval($_W['shopset']['commission']['level']);
 $id = intval($_GPC['id']);
 $item = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_goods') . ' WHERE id = :id and uniacid = :uniacid', array(':id' => $id, ':uniacid' => $_W['uniacid']));
@@ -233,7 +234,11 @@ if ($_W['ispost']) {
 	$ccates = array();
 	$tcates = array();
 	$fcates = array();
-	$cates = array();
+    $cates = array();
+    // 品牌
+    $brands = array();
+    $brands = $_GPC['brands'];
+
 	$pcateid = 0;
 	$ccateid = 0;
 	$tcateid = 0;
@@ -278,10 +283,27 @@ if ($_W['ispost']) {
 		}
 	}
 
+	// 品牌处理
+    /*if (is_array($_GPC['brands'])) {
+        $brands = $_GPC['brands'];
+
+        foreach ($brands as $key => $bid) {
+            $b = pdo_fetch('select level from ' . tablename('ewei_shop_brand') . ' where id=:id and uniacid=:uniacid limit 1', array(':id' => $bid, ':uniacid' => $_W['uniacid']));
+            if ($key == 0) {
+                if ($b['level'] == 1) {
+                    $pcateid = $bid;
+                }
+            }
+        }
+    }*/
+
+
 	$data['pcate'] = $pcateid;
 	$data['ccate'] = $ccateid;
 	$data['tcate'] = $tcateid;
-	$data['cates'] = implode(',', $cates);
+    $data['cates'] = implode(',', $cates);
+    // 品牌合并
+    $data['brands'] = implode(',', $brands);
 	$data['pcates'] = implode(',', $pcates);
 	$data['ccates'] = implode(',', $ccates);
 	$data['tcates'] = implode(',', $tcates);
@@ -886,7 +908,9 @@ if (!empty($id)) {
 	}
 
 	$noticetype = explode(',', $item['noticetype']);
-	$cates = explode(',', $item['cates']);
+    $cates = explode(',', $item['cates']);
+    // 商品所有品牌
+    $brands = explode(',', $item['brands']);
 	$commission = json_decode($item['commission'], true);
 
 	if (isset($commission['type'])) {
