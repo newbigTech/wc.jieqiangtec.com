@@ -12,10 +12,10 @@ $we7_system_menu['account'] = array(
 	'section' => array(
 	
 	'renren' => array(
-			'title' => '人人店',
+			'title' => '惠惠城',
 			'menu' => array(
 				'mc_fans' => array(
-					'title' => '人人店',
+					'title' => '惠惠城',
 					'url' => './index.php?c=site&a=entry&m=ewei_shopv2&do=web&r=shop',
 					'icon' => 'wi wi-fansmanage',
 					'permission_name' => 'mc_fans',
