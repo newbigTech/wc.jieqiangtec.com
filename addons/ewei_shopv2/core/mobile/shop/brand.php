@@ -9,6 +9,14 @@ class Brand_EweiShopV2Page extends MobilePage
 	{
 		global $_W;
 		global $_GPC;
+        $brand = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_brand') . ' WHERE uniacid = \'' . $_W['uniacid'] . '\' ORDER BY displayorder DESC, id DESC');
+        foreach ($brand as $k=>$v) {
+            if ($v['enabled'] == 1) {
+                $brand[$k]['logo'] = tomedia($v['logo']);
+            }
+        }
+
+
 		// var_dump('TODO jieqiangtest==pwd==',getcwd(),__FILE__,$_W['shopset']);exit;
 		// $merchid = intval($_GPC['merchid']);
 		// $brand_set = $_W['shopset']['brand'];
@@ -20,7 +28,8 @@ class Brand_EweiShopV2Page extends MobilePage
 
 		// $brand = $this->getBrand($brand_set['level'], $merchid);
 		$set = m('common')->getSysset('brand');
-        // var_dump('TODO jieqiangtest==pwd==',getcwd(),__FILE__);exit;
+//         var_dump('TODO jieqiangtest==pwd==',getcwd(),__FILE__,$_GPC['merchid'],$_W['shopset']);exit;
+		var_dump($brand,debug_backtrace());exit;
 		include $this->template();
 	}
 
