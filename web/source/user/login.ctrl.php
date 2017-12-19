@@ -5,10 +5,12 @@
  */
 defined('IN_IA') or exit('Access Denied');
 define('IN_GW', true);
+
 if (checksubmit() || $_W['isajax']) {
 	_login($_GPC['referer']);
 }
 $setting = $_W['setting'];
+$BgNum = substr(time(), -1);
 //var_dump('jieqiangtest==首页登陆==',$_W,$_GPC);exit;
 
 template('user/login');
@@ -20,6 +22,8 @@ function _login($forward = '') {
 	$username = trim($_GPC['username']);
 	pdo_query('DELETE FROM'.tablename('users_failed_login'). ' WHERE lastupdate < :timestamp', array(':timestamp' => TIMESTAMP-300));
 	$failed = pdo_get('users_failed_login', array('username' => $username, 'ip' => CLIENT_IP));
+
+//    var_dump($failed);exit;
 	if ($failed['count'] >= 5) {
 		itoast('输入密码错误次数超过5次，请在5分钟后再登录',referer(), 'info');
 	}
@@ -43,6 +47,7 @@ function _login($forward = '') {
 		itoast('请输入密码', '', '');
 	}
 	$record = user_single($member);
+
 	if (!empty($record)) {
 		if ($record['status'] == 1) {
 			itoast('您的账号正在审核或是已经被系统禁止，请联系网站管理员解决！', '', '');

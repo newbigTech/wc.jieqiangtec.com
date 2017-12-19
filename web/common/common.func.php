@@ -14,6 +14,7 @@ function url($segment, $params = array()) {
 
 
 function message($msg, $redirect = '', $type = '', $tips = false) {
+
 	global $_W, $_GPC;
 	
 	if($redirect == 'refresh') {
@@ -27,6 +28,8 @@ function message($msg, $redirect = '', $type = '', $tips = false) {
 	} else {
 		$type = in_array($type, array('success', 'error', 'info', 'warning', 'ajax', 'sql')) ? $type : 'success';
 	}
+
+
 	if ($_W['isajax'] || !empty($_GET['isajax']) || $type == 'ajax') {
 		if($type != 'ajax' && !empty($_GPC['target'])) {
 			exit("
@@ -45,6 +48,7 @@ function message($msg, $redirect = '', $type = '', $tips = false) {
 			exit(json_encode($vars));
 		}
 	}
+
 	if (empty($msg) && !empty($redirect)) {
 		header('Location: '.$redirect);
 		exit;
@@ -56,7 +60,8 @@ function message($msg, $redirect = '', $type = '', $tips = false) {
 	if($type == 'ajax' || $type == 'sql') {
 		$label = 'warning';
 	}
-	
+
+
 	if ($tips) {
 		if (is_array($msg)){
 			$message_cookie['title'] = 'MYSQL 错误';
@@ -70,7 +75,10 @@ function message($msg, $redirect = '', $type = '', $tips = false) {
 		$message_cookie['msg'] = rawurlencode($message_cookie['msg']);
 		
 		isetcookie('message', stripslashes(json_encode($message_cookie, JSON_UNESCAPED_UNICODE)));
+//        var_dump($tips,$msg,!empty($message_cookie['redirect']));exit;
 		if (!empty($message_cookie['redirect'])) {
+//            include template('common/message', TEMPLATE_INCLUDEPATH);
+            // 直接跳转
 			header('Location: ' . $message_cookie['redirect']);
 		} else {
 			include template('common/message', TEMPLATE_INCLUDEPATH);
