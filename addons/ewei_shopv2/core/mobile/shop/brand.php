@@ -16,6 +16,8 @@ class Brand_EweiShopV2Page extends MobilePage
             }
         }
 
+        $brand =  array('parent' => $brand, 'children' => array(), 'grandchildren' => array());
+
 
 		// var_dump('TODO jieqiangtest==pwd==',getcwd(),__FILE__,$_W['shopset']);exit;
 		// $merchid = intval($_GPC['merchid']);
@@ -29,7 +31,8 @@ class Brand_EweiShopV2Page extends MobilePage
 		// $brand = $this->getBrand($brand_set['level'], $merchid);
 		$set = m('common')->getSysset('brand');
 //         var_dump('TODO jieqiangtest==pwd==',getcwd(),__FILE__,$_GPC['merchid'],$_W['shopset']);exit;
-		var_dump($brand,debug_backtrace());exit;
+//        var_dump($brand,debug_backtrace());exit;
+//        var_dump($brand,111);exit;
 		include $this->template();
 	}
 

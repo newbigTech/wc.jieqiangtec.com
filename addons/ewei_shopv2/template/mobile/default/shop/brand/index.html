@@ -17,14 +17,12 @@
     </div>
 	<div class="fui-content navbar">
     <div class="fui-fullHigh-group">
-        {if $category_set['level']!=1}
         <div class="fui-fullHigh-item menu" id="tab">
-            <nav data-cate="recommend" data-src="{$category_set['advimg']}" data-href="{$category_set['advurl']}">推荐分类</nav>
-            {loop $category['parent'][0] $value}
+            <nav data-cate="recommend" data-src="{$brand_set['advimg']}" data-href="{$brand_set['advurl']}">所有分类</nav>
+            {loop $brand['parent'] $value}
             <nav data-cate="{$value['id']}" data-src="{$value['advimg']}" data-href="{$value['advurl']}">{$value['name']}</nav>
             {/loop}
         </div>
-        {/if}
         <div class="fui-fullHigh-item container" style="position: relative">
             <a id="advurl" class="swipe external" href="javascript:">
                 <img id="advimg">
@@ -35,91 +33,20 @@
 </div>
 	</div>
 <script id='tpl_shop_category_list' type='text/html'>
-    <%if recommend == 1%>
     <div class="fui-icon-group selecter">
         <a class="fui-icon-col external" href="{php echo mobileUrl('goods')}">
             <div class="icon {if empty($set['style'])}radius{/if}"><i class="icon icon-category"></i></div>
             <div class="text">所有商品</div>
         </a>
-        {if $category_set['level']<=2}
-            <%each recommend_children as child%>
-                <a class="fui-icon-col external" href="{php echo mobileUrl('goods')}&cate=<%child.id%>">
-                    <div class="icon {if empty($set['style'])}radius{/if}"><img src="<%child.thumb%>" onerror="this.src='{EWEI_SHOPV2_STATIC}images/nopic100.jpg'; this.title='图片未找到.'"></div>
-                    <div class="text"><%child.name%></div>
-                </a>
-            <%/each%>
-
-        {else}
-
-            <%each recommend_children as child%>
-                <a class="fui-icon-col show" data-children="<%child.id%>" data-pid="recommend" data-src="<%child.advimg%>" data-href="<%child.advurl%>" href="javascript:">
-                    <div class="icon {if empty($set['style'])}radius{/if}">
-                        <img src="<%child.thumb%>" onerror="this.src='{EWEI_SHOPV2_STATIC}images/nopic100.jpg'; this.title='图片未找到.'">
-                    </div>
-                    <div class="text"><%child.name%></div>
-                </a>
-            <%/each%>
-        {/if}
-
-        <%each recommend_grandchildren as grandchild%>
-        <a class="fui-icon-col external" href="{php echo mobileUrl('goods')}&cate=<%grandchild.id%>">
-            <div class="icon {if empty($set['style'])}radius{/if}"><img src="<%grandchild.thumb%>" onerror="this.src='{EWEI_SHOPV2_STATIC}images/nopic100.jpg'; this.title='图片未找到.'"></div>
-            <div class="text"><%grandchild.name%></div>
-        </a>
-        <%/each%>
-    </div>
-    <%else%>
-
-    {if $category_set['level']==1}
-    <a class="fui-title">所有分类</a>
-    <div class="fui-icon-group selecter">
-        <a class="fui-icon-col external" href="{php echo mobileUrl('goods')}">
-            <div class="icon {if empty($set['style'])}radius{/if}"><i class="icon icon-category"></i></div>
-            <div class="text">所有商品</div>
-        </a>
-        <%each parent[0] as cate%>
+        <%each parent as cate%>
         <a class="fui-icon-col external" href="{php echo mobileUrl('goods')}&cate=<%cate.id%>">
             <div class="icon {if empty($set['style'])}radius{/if}"><img src="<%cate.advimg%>" onerror="this.src='{EWEI_SHOPV2_STATIC}images/nopic100.jpg'; this.title='图片未找到.'"></div>
-            <div class="text"><%cate.name%></div>
+            <div class="text"><%cate.id%></div>
         </a>
         <%/each%>
     </div>
 
-    {else if $category_set['level']==2 || empty($category_set['level']) }
-    <div class="fui-icon-group selecter">
-        <%each children as child%>
-        <a class="fui-icon-col external" href="{php echo mobileUrl('goods')}&cate=<%child.id%>">
-            <div class="icon {if empty($set['style'])}radius{/if}"><img src="<%child.thumb%>" onerror="this.src='{EWEI_SHOPV2_STATIC}images/nopic100.jpg'; this.title='图片未找到.'"></div>
-            <div class="text"><%child.name%></div>
-        </a>
-        <%/each%>
-    </div>
 
-    {else}
-    {if $category_set['show']!=1}
-    <%each children as child%>
-    <a class="fui-title external" href="{php echo mobileUrl('goods')}&cate=<%child.id%>"><%child.name%></a>
-    <div class="fui-icon-group selecter">
-        <%each grandchildren[child.id] as grandchild%>
-        <a class="fui-icon-col external" href="{php echo mobileUrl('goods')}&cate=<%grandchild.id%>">
-            <div class="icon {if empty($set['style'])}radius{/if}"><img src="<%grandchild.thumb%>" onerror="this.src='{EWEI_SHOPV2_STATIC}images/nopic100.jpg'; this.title='图片未找到.'"></div>
-            <div class="text"><%grandchild.name%></div>
-        </a>
-        <%/each%>
-    </div>
-    <%/each%>
-    {else}
-    <div class="fui-icon-group selecter">
-    <%each children as child%>
-    <a class="fui-icon-col show" data-children="<%child.id%>" data-pid="<%child.parentid%>"  data-src="<%child.advimg%>" data-href="<%child.advurl%>" href="javascript:">
-        <div class="icon {if empty($set['style'])}radius{/if}"><img src="<%child.thumb%>" onerror="this.src='{EWEI_SHOPV2_STATIC}images/nopic100.jpg'; this.title='图片未找到.'"></div>
-        <div class="text"><%child.name%></div>
-    </a>
-    <%/each%>
-    </div>
-    {/if}
-    {/if}
-    <%/if%>
 </script>
 
 <script id='tpl_shop_category_show_list' type='text/html'>
@@ -137,8 +64,8 @@
     </div>
 </script>
 <script language='javascript'>
-    require(['biz/shop/category'], function (modal) {
-        modal.init({php echo json_encode($category)},{php echo json_encode($category_set)});
+    require(['biz/shop/brand'], function (modal) {
+        modal.init({php echo json_encode($brand)},{php echo json_encode($brand_set)});
     });
 </script>
 {php $this->footerMenus()}

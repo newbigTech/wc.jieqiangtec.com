@@ -185,6 +185,8 @@ class Route_EweiShopV2Model
 		$_W['controller'] = $routes[0];
 		$global_set = m('cache')->getArray('globalset');
 
+		// var_dump('TODO jieqiangtest $global_set==',$global_set,debug_backtrace());exit;
+
 		if (empty($global_set)) {
 			$global_set = m('common')->setGlobalSet();
 		}
