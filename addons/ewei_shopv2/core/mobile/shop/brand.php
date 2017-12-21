@@ -19,7 +19,7 @@ class Brand_EweiShopV2Page extends MobilePage
         $brand =  array('parent' => $brand, 'children' => array(), 'grandchildren' => array());
 
 
-		// var_dump('TODO jieqiangtest==pwd==',getcwd(),__FILE__,$_W['shopset']);exit;
+//		var_dump('TODO jieqiangtest==pwd==',$brand,getcwd(),__FILE__,$_W['shopset']);exit;
 		// $merchid = intval($_GPC['merchid']);
 		// $brand_set = $_W['shopset']['brand'];
 		// $brand_set['advimg'] = tomedia($brand_set['advimg']);

@@ -8,6 +8,7 @@ define(['core', 'tpl'], function(core, tpl) {
 		recommend_grandchildren: [],
 	};
 	modal.init = function(cate, cateset) {
+		// alert(parent);
 		modal.cate = cate;
 		modal.cateset = cateset;
 		core.tpl('#container', 'tpl_shop_category_list', modal.cate, false);

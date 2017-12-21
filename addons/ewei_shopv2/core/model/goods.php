@@ -130,36 +130,45 @@ class Goods_EweiShopV2Model
 			}
 		}
 
-		if (!empty($args['cate'])) {
-			$category = m('shop')->getAllCategory();
-			$catearr = array($args['cate']);
 
-			foreach ($category as $index => $row) {
-				if ($row['parentid'] == $args['cate']) {
-					$catearr[] = $row['id'];
 
-					foreach ($category as $ind => $ro) {
-						if ($ro['parentid'] == $row['id']) {
-							$catearr[] = $ro['id'];
-						}
-					}
-				}
-			}
+        if (!empty($args['cate'])) {
+            $category = m('shop')->getAllCategory();
+            $catearr = array($args['cate']);
 
-			$catearr = array_unique($catearr);
-			$condition .= ' AND ( ';
+            foreach ($category as $index => $row) {
+                if ($row['parentid'] == $args['cate']) {
+                    $catearr[] = $row['id'];
 
-			foreach ($catearr as $key => $value) {
-				if ($key == 0) {
-					$condition .= 'FIND_IN_SET(' . $value . ',cates)';
-				}
-				else {
-					$condition .= ' || FIND_IN_SET(' . $value . ',cates)';
-				}
-			}
+                    foreach ($category as $ind => $ro) {
+                        if ($ro['parentid'] == $row['id']) {
+                            $catearr[] = $ro['id'];
+                        }
+                    }
+                }
+            }
 
-			$condition .= ' <>0 )';
-		}
+            $catearr = array_unique($catearr);
+            $condition .= ' AND ( ';
+
+            foreach ($catearr as $key => $value) {
+                if ($key == 0) {
+                    $condition .= 'FIND_IN_SET(' . $value . ',cates)';
+                }
+                else {
+                    $condition .= ' || FIND_IN_SET(' . $value . ',cates)';
+                }
+            }
+
+            $condition .= ' <>0 )';
+        }
+        
+		if (!empty($args['brand'])) {
+            $condition .= ' AND `brand`=' . intval($args['brand']);
+        }
+
+        // var_dump('TODO $condition==',$condition);exit;
+
 
 		$member = m('member')->getMember($openid);
 
