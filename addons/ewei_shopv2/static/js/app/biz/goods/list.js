@@ -8,6 +8,7 @@ define(['core', 'tpl', 'biz/goods/picker', 'biz/goods/wholesalePicker'], functio
 		issendfree: '',
 		istime: '',
 		cate: '',
+		brand: '',
 		order: '',
 		by: 'desc',
 		merchid: 0

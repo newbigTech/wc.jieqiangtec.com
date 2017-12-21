@@ -162,9 +162,11 @@ class Goods_EweiShopV2Model
 
             $condition .= ' <>0 )';
         }
-        
+
+        // 品牌搜索
 		if (!empty($args['brand'])) {
-            $condition .= ' AND `brand`=' . intval($args['brand']);
+            // $condition .= ' AND `brand`=' . intval($args['brand']);
+            $condition .= ' AND FIND_IN_SET(' . $args['brand'] . ',brands)';
         }
 
         // var_dump('TODO $condition==',$condition);exit;
