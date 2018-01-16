@@ -1,0 +1,602 @@
+﻿
+
+<div class="form-group">
+	<label class="col-xs-12 col-sm-3 col-md-2 control-label"><span style='color:red'>*</span>旅行名称</label>
+	<div class="col-sm-9 col-xs-12">
+		<input type="text" name="goodsname" id="goodsname" class="form-control" value="{$item['title']}" />
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-xs-12 col-sm-3 col-md-2 control-label">参与单位</label>
+	<div class="col-sm-6 col-xs-6">
+		<input type="text" name="unit" id="unit" class="form-control" value="{$item['unit']}" />
+		<span class="help-block">如: 人次</span>
+	</div>
+</div>
+<!--
+<div class="form-group">
+	<label class="col-xs-12 col-sm-3 col-md-2 control-label">商品属性</label>
+	<div class="col-sm-9 col-xs-12" >
+		<label for="isrecommand" class="checkbox-inline">
+			<input type="checkbox" name="isrecommand" value="1" id="isrecommand" {if $item['isrecommand'] == 1}checked="true"{/if} /> 首页推荐
+		</label>
+		<label for="isnew" class="checkbox-inline">
+			<input type="checkbox" name="isnew" value="1" id="isnew" {if $item['isnew'] == 1}checked="true"{/if} /> 新品推荐
+		</label>
+		<label for="ishot" class="checkbox-inline">
+			<input type="checkbox" name="ishot" value="1" id="ishot" {if $item['ishot'] == 1}checked="true"{/if} /> 热卖推荐
+		</label>
+		<label for="isdiscount" class="checkbox-inline">
+			<input type="checkbox" name="isdiscount" value="1" id="isdiscount" {if $item['isdiscount'] == 1}checked="true"{/if} /> 折扣商品
+		</label>
+		<label for="istime" class="checkbox-inline">
+			<input type="checkbox" name="istime" value="1" id="istime" {if $item['istime'] == 1}checked="true"{/if} /> 限时卖
+		</label>
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-xs-12 col-sm-3 col-md-2 control-label">限时卖时间</label>
+	<div class="col-sm-4 col-xs-6">
+		{php echo tpl_form_field_date('timestart', !empty($item['timestart']) ? date('Y-m-d H:i',$item['timestart']) : date('Y-m-d H:i'), 1)}
+	</div>
+	<div class="col-sm-4 col-xs-6">
+		{php echo tpl_form_field_date('timeend', !empty($item['timeend']) ? date('Y-m-d H:i',$item['timeend']) : date('Y-m-d H:i'), 1)}
+	</div>
+</div>-->
+
+<div class="form-group">
+	<label class="col-xs-12 col-sm-3 col-md-2 control-label"><span style='color:red'>*</span>分类{$set['phone']}</label>
+	<div class="col-sm-8 col-xs-12">
+		{php echo tpl_form_field_category_2level('category', $parent, $children, $item['pcate'], $item['ccate'])}
+	</div>
+</div>
+
+<div class="form-group">
+	<label class="col-xs-12 col-sm-3 col-md-2 control-label">热度星级</label>
+	<div class="col-sm-6 col-xs-6">
+		<input type="number" name="xingji" id="xingji" min="1" max="100"class="form-control" value="{$item['xingji']}" />
+       <span class="help-block">如: 1到100</span>
+	</div>
+</div>
+
+
+<div class="form-group">
+	<label class="col-xs-12 col-sm-3 col-md-2 control-label">展示图</label>
+	<div class="col-sm-9 col-xs-12">
+		{php echo tpl_form_field_image('thumb', $item['thumb'])}
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-xs-12 col-sm-3 col-md-2 control-label">其他展示图片</label>
+	<div class="col-sm-9 col-xs-12">
+		{php echo tpl_form_field_multi_image('thumbs',$piclist)}
+	</div>
+</div>
+
+<?php   
+	$location = $item['location'];
+	$location = json_decode($location,true);
+	
+	?>
+
+<div class="form-group">
+	<label class="col-xs-12 col-sm-3 col-md-2 control-label">地理位置坐标</label>
+	<div class="col-sm-9 col-xs-12">
+		{php echo tpl_form_field_coordinate('location',$location);}
+	</div>
+</div>
+
+
+
+
+<div class="form-group">
+	<label class="col-xs-12 col-sm-3 col-md-2 control-label"><span style='color:red'>*</span>行程特色</label>
+	<div class="col-sm-8 col-xs-12">
+		<textarea id="xc" class="form-control" rows="3" name="xingcheng">{$item['xingcheng']}</textarea>
+	</div>
+</div>
+
+<?php
+	$detime = $item['detime'];
+	$detime =json_decode($detime);
+	$succlefttpl = $detime[0];
+	$succcount = count($succlefttpl);
+	$succnum = $succcount-1;
+	$succrighttpl = $detime[1];
+
+	$yinpin = $item['yinpin'];
+	$yinpin = json_decode($yinpin);
+	print_r($yinpin);
+	$yinpinlefttpl = $yinpin[0];
+	$yinpinzhongtpl = $yinpin[1];
+	$yinpinrighttpl = $yinpin[2];
+	$yinpincount = count($yinpinlefttpl);
+	$yinpinnum = $yinpincount -1;
+
+	?>
+
+
+
+
+<div class="form-group">
+	<label class="col-xs-12 col-sm-3 col-md-2 control-label">本团参考价格</label>
+	<div class="col-sm-9 col-xs-12">
+		<div class="input-group form-group">
+			<span class="input-group-addon">成人票价</span>
+			<input type="text" name="marketprice" id="marketprice" class="form-control" value="{$item['marketprice']}" />
+			<span class="input-group-addon">元</span>
+		</div>
+		<div class="input-group form-group">
+			<span class="input-group-addon">儿童票价</span>
+			<input type="text" name="productprice" id="productprice" class="form-control" value="{$item['productprice']}" />
+			<span class="input-group-addon">元</span>
+		</div>
+		
+	</div>
+</div>
+
+<div class="form-group">
+	<label class="col-xs-12 col-sm-3 col-md-2 control-label">游玩人数</label>
+	<div class="col-sm-6 col-xs-12">
+		<div class="input-group">
+			<input type="text" name="total" id="total" class="form-control" value="{$item['total']}" />
+			<span class="input-group-addon">人</span>
+		</div>
+		<span class="help-block">当前已经参加人数</span>
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-xs-12 col-sm-3 col-md-2 control-label">减人数方式</label>
+	<div class="col-sm-9 col-xs-12">
+		<label for="totalcnf1" class="radio-inline"><input type="radio" name="totalcnf" value="0" id="totalcnf1" {if empty($item) || $item['totalcnf'] == 0}checked="true"{/if} /> 拍下减库存</label>
+		&nbsp;&nbsp;&nbsp;
+		<label for="totalcnf2" class="radio-inline"><input type="radio" name="totalcnf" value="1" id="totalcnf2"  {if !empty($item) && $item['totalcnf'] == 1}checked="true"{/if} /> 付款减库存</label>
+		&nbsp;&nbsp;&nbsp;
+		<label for="totalcnf3" class="radio-inline"><input type="radio" name="totalcnf" value="2" id="totalcnf3"  {if !empty($item) && $item['totalcnf'] == 2}checked="true"{/if} /> 永不减库存</label>
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-xs-12 col-sm-3 col-md-2 control-label">单次最多购买量</label>
+	<div class="col-sm-6 col-xs-12">
+		<div class="input-group">
+			<input type="text" name="maxbuy" id="maxbuy" class="form-control" value="{$item['maxbuy']}" />
+			<span class="input-group-addon">人次</span>
+		</div>
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-xs-12 col-sm-3 col-md-2 control-label">用户最多购买量</label>
+	<div class="col-sm-6 col-xs-12">
+		<div class="input-group">
+			<input type="text" name="usermaxbuy" class="form-control" value="{$item['usermaxbuy']}" />
+			<span class="input-group-addon">人次</span>
+		</div>
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-xs-12 col-sm-3 col-md-2 control-label">已出售数</label>
+	<div class="col-sm-6 col-xs-12">
+		<div class="input-group">
+			<input type="text" name="sales" id="sales" class="form-control" value="{$item['sales']}" />
+			<span class="input-group-addon">人次</span>
+		</div>
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-xs-12 col-sm-3 col-md-2 control-label">购买积分</label>
+	<div class="col-sm-6 col-xs-12">
+		<div class="input-group">
+			<input type="text" name="credit" id="credit" class="form-control" value="{$item['credit']}" />
+			<span class="input-group-addon">分</span>
+		</div>
+		<p class="help-block">会员购买积分, 如果不填写，则默认为不奖励积分</p>
+	</div>
+</div>
+
+
+<!--<div class="form-group">-->
+	<!--<label class="col-xs-12 col-sm-3 col-md-2 control-label">儿童价格相对成人的比例</label>-->
+	<!--<div class="col-sm-6 col-xs-12">-->
+		<!--<div class="input-group">-->
+			<!--<input type="number" name="xdbl" min="0" max="100" class="form-control" value="{$item['xdbl']}" />-->
+			<!--<span class="input-group-addon"></span>-->
+		<!--</div>-->
+		<!--<p class="help-block">最低0,最高100</p>-->
+	<!--</div>-->
+<!--</div>-->
+
+
+<div class="panel panel-default">
+	<div class="panel-heading">
+		出行时间价格自定义
+	</div>
+	<div class="panel-body succbody">
+
+		<div class="form-group">
+			<div class="col-md-offset-2 col-md-7">
+				<div class="col-md-4 ">
+					<input type="text" name="succlefttpl[]" class="form-control"  placeholder="出行时间"  onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',minDate:new Date()})" readonly="readonly" value="{$succlefttpl[0]}" >
+				</div>
+
+				<div class="col-md-4 col-md-offset-1">
+					<input type="text" name="succrighttpl[]" class="form-control" placeholder="成人出行价格" value="{$succrighttpl[0]}" >
+				</div>
+			</div>
+			<div class="col-md-3">
+				<a href="javascript:;" onclick="deleteItemsucc(this)" class="btn btn-default">删除</a>
+			</div>
+		</div>
+		{loop $succlefttpl $index $v}
+		{if $index>0&&$index<($succcount-1)}
+		<div class="form-group ls">
+			<div class="col-md-offset-2 col-md-7">
+				<div class="col-md-4 ">
+					<input type="text" name="succlefttpl[]" class="form-control"  placeholder="出行时间" value="{$succlefttpl[$index]}" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',minDate:new Date()})"  readonly="readonly" >
+				</div>
+
+				<div class="col-md-4 col-md-offset-1">
+					<input type="text" name="succrighttpl[]" class="form-control" placeholder="成人出行价格" value="{$succrighttpl[$index]}" >
+				</div>
+			</div>
+			<div class="col-md-3">
+				<a href="javascript:;" onclick="deleteItemsucc(this)" class="btn btn-default">删除</a>
+			</div>
+		</div>
+		{/if}
+		{/loop}
+		<div id="succlast">
+		</div>
+		<div class="form-group" >
+			<div class="col-md-offset-2 col-md-7">
+				<div class="col-md-4 ">
+					<input type="text" name="succlefttpl[]" class="form-control" placeholder="出行时间" value="{$succlefttpl[$succnum]}" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',minDate:new Date()})" readonly="readonly" >
+				</div>
+
+				<div class="col-md-4 col-md-offset-1">
+					<input type="text" name="succrighttpl[]" class="form-control" placeholder="成人出行价格" value="{$succrighttpl[$succnum]}" >
+				</div>
+			</div>
+			<div class="col-md-3">
+				<button class=" btn btn-default succaddtpl">添加</button> <!--<button class="btn btn-default col-md-offset-1 deltpl">删除</button>-->
+			</div>
+		</div>
+
+	</div>
+</div>
+<div id="succclone">
+	<div class="form-group">
+		<div class="col-md-offset-2 col-md-7">
+			<div class="col-md-4 ">
+				<input type="text" name="succlefttpl[]" class="form-control" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',minDate:new Date()})" readonly="readonly" placeholder="出行时间" >
+			</div>
+			<div class="col-md-4 col-md-offset-1">
+				<input type="text" name="succrighttpl[]" class="form-control" placeholder="成人出行价格" >
+			</div>
+		</div>
+		<div class="col-md-3">
+			<a href="javascript:;" onclick="deleteItemsucc(this)" class="btn btn-default">删除</a>
+		</div>
+	</div>
+</div>
+
+
+
+
+<div class="panel panel-default">
+	<div class="panel-heading">
+		语音服务(请上传合适的语音)
+	</div>
+	<div class="panel-body yinpinbody">
+
+		<div class="form-group">
+			<div class="">
+				<div class="col-md-3 ">
+					<input type="text" name="yinpinlefttpl[]" class="form-control"  placeholder="标题"   value="{$yinpinlefttpl[0]}" >
+				</div>
+				<div class="col-md-3">
+					{php echo tpl_form_field_audio('yinpinzhongtpl[]', $yinpinzhongtpl[0])}
+				</div>
+				<div class="col-md-5">
+					{php echo tpl_form_field_image('yinpinrighttpl[]', $yinpinrighttpl[0])}
+				</div>
+
+
+			</div>
+			<div class="col-md-1">
+				<a href="javascript:;" onclick="deleteItemyinpin(this)" class="btn btn-default">删除</a>
+			</div>
+		</div>
+		{loop $yinpinlefttpl $index $v}
+		{if $index>0&&$index<($yinpincount-1)}
+		<div class="form-group ls">
+			<div class="">
+				<div class="col-md-3 ">
+					<input type="text" name="yinpinlefttpl[]" class="form-control"  placeholder="标题" value="{$yinpinlefttpl[$index]}"  >
+				</div>
+				<div class="col-md-3">
+					{php echo tpl_form_field_audio('yinpinzhongtpl[]', $yinpinzhongtpl[$index])}
+				</div>
+				<div class="col-md-5">
+					{php echo tpl_form_field_image('yinpinrighttpl[]', $yinpinrighttpl[$index])}
+				</div>
+
+			</div>
+			<div class="col-md-1">
+				<a href="javascript:;" onclick="deleteItemyinpin(this)" class="btn btn-default">删除</a>
+			</div>
+		</div>
+		{/if}
+		{/loop}
+		<div id="yinpinlast">
+		</div>
+		<div class="form-group" >
+			<div class="">
+				<div class="col-md-3 ">
+					<input type="text" name="yinpinlefttpl[]" class="form-control" placeholder="标题" value="{$yinpinlefttpl[$yinpinnum]}"  >
+				</div>
+				<div class="col-md-3">
+					{php echo tpl_form_field_audio('yinpinzhongtpl[]', $yinpinzhongtpl[$yinpinnum])}
+				</div>
+				<div class="col-md-5">
+					{php echo tpl_form_field_image('yinpinrighttpl[]', $yinpinrighttpl[$yinpinnum])}
+				</div>
+			</div>
+			<div class="col-md-1">
+				<button class=" btn btn-default yinpinaddtpl">添加</button> <!--<button class="btn btn-default col-md-offset-1 deltpl">删除</button>-->
+			</div>
+		</div>
+
+	</div>
+</div>
+<div id="yinpinclone">
+	<div class="form-group">
+		<div class="">
+			<div class="col-md-3 ">
+				<input type="text" name="yinpinlefttpl[]" class="form-control"  placeholder="标题" >
+			</div>
+			<div class="col-md-3">
+				{php echo tpl_form_field_audio('yinpinzhongtpl[]')}
+			</div>
+			<div class="col-md-5">
+				{php echo tpl_form_field_image('yinpinrighttpl[]')}
+			</div>
+		</div>
+		<div class="col-md-1">
+			<a href="javascript:;" onclick="deleteItemyinpin(this)" class="btn btn-default">删除</a>
+		</div>
+	</div>
+</div>
+
+<script language="javascript">
+	$(function () {
+		var i = 0;
+		$('#selectimage').click(function () {
+			var editor = KindEditor.editor({
+				allowFileManager: false,
+				imageSizeLimit: '30MB',
+				uploadJson: './index.php?act=attachment&do=upload'
+			});
+			editor.loadPlugin('multiimage', function () {
+				editor.plugin.multiImageDialog({
+					clickFn: function (list) {
+						if (list && list.length > 0) {
+							for (i in list) {
+								if (list[i]) {
+									html = '<li class="imgbox" style="list-type:none">' +
+												'<a class="item_close" href="javascript:;" onclick="deletepic(this);" title="删除"></a>' +
+												'<span class="item_box"> <img src="' + list[i]['url'] + '" style="height:80px"></span>' +
+												'<input type="hidden" name="attachment-new[]" value="' + list[i]['filename'] + '" />' +
+											'</li>';
+									$('#fileList').append(html);
+									i++;
+								}
+							}
+							editor.hideDialog();
+						} else {
+							alert('请先选择要上传的图片！');
+						}
+					}
+				});
+			});
+		});
+	});
+	function deletepic(obj) {
+		if (confirm("确认要删除？")) {
+			var $thisob = $(obj);
+			var $liobj = $thisob.parent();
+			var picurl = $liobj.children('input').val();
+			$.post('{php echo $this->createMobileUrl('ajaxdelete',array())}', {pic: picurl}, function (m) {
+				if (m == '1') {
+					$liobj.remove();
+				} else {
+					alert("删除失败");
+				}
+			}, "html");
+		}
+	}
+	//修改版时间
+   //展开收缩
+   $(".panel-heading").each(function(){
+	   $(this).click(function(){
+		   var rr = $(this).parent().find(".panel-body");
+		   if(rr.is(':hidden')){
+			  // $(".panel-body").hide();
+			   rr.hide();
+			   rr.show(100);
+			   return false;
+		   }else{
+			   rr.hide(100);
+			   return false;
+		   }
+	   })
+   })
+
+	   var all = new Array();
+	   all[0]='succ';//succ为成人价格
+		all[1]='yinpin';//语音服务
+
+
+
+		var one = all[0];
+
+		$("."+one+"addtpl").on('click',function(){
+			$("#"+one+"last").before($("#"+one+"clone").find(".form-group").clone());
+			return false;
+		});
+		var two =all[1];
+	$("."+two+"addtpl").on('click',function(){
+		$("#"+two+"last").before($("#"+two+"clone").find(".form-group").clone());
+		return false;
+	});
+
+
+
+	//var one = all[0];
+	   //$(".panel-body").hide();
+	   $("#succclone").hide();
+	$("#yinpinclone").hide();
+	   function deleteItem(o) {
+		   $(o).parent().parent().remove();
+	   }
+	   function add(one){
+
+		   var full =true;
+		   var elements = $("input[name='"+one+"lefttpl[]']");
+		   var rightlen= $("input[name='"+one+"righttpl[]']").length;
+		   var leftlen = elements.length;
+		   var zhonglen = $("input[name='"+one+"zhongtpl[]']").length;
+		   var i=1;
+		   var j=1;
+		   var x=1;
+		   var y=1;
+		   var m=1;
+		   var n=1;
+		   $("input[name='"+one+"lefttpl[]']").each(function(index,item){
+			   if(index<(leftlen-1)){
+				   if(i!=j){
+					   full = false;
+					   return false;
+				   }
+				   j+=1;
+				   if($(this).val().trim()==''){
+					   $(this).parents().find("."+one+"body").show();
+					   $(this).focus();
+					   full = false;
+					   alert("左侧不要留空！");
+					   return false;
+				   }else {
+					   i+=1;
+				   }
+			   }
+		   })
+		   if(i!=j){
+			   full = false;
+			   return false;
+		   }
+
+		   $("input[name='"+one+"zhongtpl[]']").each(function(index,item){
+			   if(index<(zhonglen-1)){
+				   if(m!=n){
+					   full = false;
+					   return false;
+				   }
+				   n+=1;
+				   if($(this).val().trim()==''){
+					   $(this).parents().find("."+one+"body").show();
+					   $(this).focus();
+					   full = false;
+					   alert("中侧不要留空！");
+					   return false;
+				   }else {
+					   m+=1;
+				   }
+			   }
+		   })
+		   if(m!=n){
+			   full = false;
+			   return false;
+		   }
+
+
+		   $("input[name='"+one+"righttpl[]']").each(function(index,item){
+			   if(index<(rightlen-1)){
+				   if(x!=y){
+					   full = false;
+					   return false;
+				   }
+				   y+=1;
+				   if($(this).val().trim()==''){
+					   $(this).parents().find("."+one+"body").show();
+					   $(this).focus();
+					   full = false;
+					   alert("右侧请不要留空！");
+					   return false;
+				   }else {
+					   x+=1;
+				   }
+
+				   var ttt = $(this);
+				   if(!checknum(ttt,1)){
+					   full = false;
+					   return false;
+				   }
+			   }
+		   })
+		   if(x!=y){
+			   full = false;
+			   return false;
+		   }
+
+		   if(!full) { return false; }
+		   return full;
+	   }
+
+
+
+
+	   function deleteItemsucc(o) {
+		   $(o).parent().parent().remove();
+	   }
+
+		function deleteItemyinpin(o){
+
+			$(o).parent().parent().remove();
+		}
+
+
+	//检测数字
+	function checknum(money){
+		var jine = money.val();
+		var full = true;
+
+		if (isNaN(jine)||$.trim(jine)=='') {
+			money.val('');
+			money.focus();
+			full = false;
+			alert("价格为数字");
+			return false;
+		}
+		if(jine<0){
+			money.val('');
+			money.focus();
+			alert("大于0的数字");
+			full = false;
+			return false;
+		}
+		var dot = jine.indexOf(".");
+		if(dot!=-1) {
+			var dotCnt = jine.substring(dot + 1, jine.length);
+			if (dotCnt.length > 2) {
+				money.val('');
+				money.focus();
+				alert("小数位已超过2位！");
+				full = false;
+				return false;
+			}
+		}
+
+		if(!full) { return false; }
+		return full;
+	}
+
+</script>

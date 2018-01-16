@@ -1,0 +1,59 @@
+{php $bootstrap_type = 3;}
+{if empty($_W['isajax'])}
+<title>{if !empty($set['indextitle'])}{$set['indextitle']}{else}{$_W['account']['name']}{/if}</title>
+{template 'header'}
+{template 'common'}
+
+
+<link type="text/css" rel="stylesheet" href="../addons/xc_lv/images/style.css?{TIMESTAMP}">
+<div class="container" style="padding:0;">
+    {if !empty($yinpin)}
+    <ol class="list_sound">
+        {loop $yinpin[0] $index $item}
+        <li>
+            <audio id="music1" class="music11" src="{php echo tomedia($yinpin[1][$index])}"></audio>
+            <div style="background: url('{php echo tomedia($yinpin[2][$index])}') 0 0 no-repeat;background-size: cover;background-position: 50%;width:100%;height:200px;min-height: 200px;max-height: 220px;">
+                <img class="pull-right audioPlay" src="/addons/xc_lv/images/icon_start.png" style="margin-top:150px;margin-right:5%;width:35px;" />
+            </div>
+            <p class="padding-10" style="padding:2px;margin:0">景点：{$yinpin[0][$index]}</p>
+        </li>
+        <div style="clear: both;"></div>
+        {/loop}
+    </ol>
+    {else}
+    <div style="width:100%;text-align: center;margin:45% auto;font-size: 20px;color:red;">
+        <div style="width:220px;height:220px;border-radius:100%;background-color: #e6e6e6;margin:0 auto;line-height: 50px;padding-top: 60px;">
+            <span class="fa fa-exclamation-triangle" style="font-size: 60px;"></span><br/>
+            无音频解说
+        </div>
+
+    </div>
+
+    {/if}
+</div>
+<script>
+
+    $(".audioPlay").each(function(){
+        var xxx = $(this);
+        var allxxx=$(".audioPlay");
+
+        var music = $(this).parent().parent().find(".music11")[0];
+            $(this).click(function(){
+                if(music.paused){
+                    for(var i=0;i<allxxx.length;i++){
+                      var ttt = allxxx.eq(i).parent().parent().find(".music11")[0];
+                        allxxx.eq(i).attr("src","/addons/xc_lv/images/icon_start.png");
+                        ttt.pause();
+                    }
+                    music.play();
+                    xxx.attr("src","/addons/xc_lv/images/icon_stop.png");
+                }else{
+                    music.pause();
+                    xxx.attr("src","/addons/xc_lv/images/icon_start.png");
+                }
+            })
+        })
+</script>
+{template 'footer'}
+{template 'footerbar'}
+{/if}

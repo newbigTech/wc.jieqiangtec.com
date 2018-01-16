@@ -1,0 +1,240 @@
+{php $bootstrap_type = 3;}
+
+
+
+{template 'header'}
+
+
+
+{template 'common'}
+
+
+
+<style type="text/css">
+
+
+
+    #calendar{/*margin:10px 0;width:100%;height:30px;line-height:30px;*/cursor:pointer;text-align:center;padding:2px 5px;height:50px;}
+    .container input { text-align: right;box-shadow: none;-webkit-appearance:none;border:none;float:right;width:65%;padding:6px 12px;line-height: 1.44444;}
+    .container label { width:100%;}
+    label { padding-top:5px;border-bottom: 1px solid #e6e6e6; text-indent: 40px;}
+    input[type="date"], input[type="datetime-local"], input[type="month"], input[type="time"], input[type="week"]  { align-items: right;border:none;-webkit-appearance:none;background-color: white; border-bottom: none;background: url("/addons/xc_lv/images/right.png") 100% 0 no-repeat;background-size: 8px; background-position-y: 50%;}
+    .container label:nth-child(1) { background: url("/addons/xc_lv/images/icon_01.png") 0 0 no-repeat;background-size: 20px;background-position-x:10px;background-position-y: 5px;}
+    .container label:nth-child(3) { background: url("/addons/xc_lv/images/icon_02.png") 0 0 no-repeat;background-size: 20px;background-position-x:10px;background-position-y: 5px;}
+    .container label:nth-child(5) { background: url("/addons/xc_lv/images/icon_03.png") 0 0 no-repeat;background-size: 20px;background-position-x:10px;background-position-y: 5px;}
+    .container label:nth-child(7) { background: url("/addons/xc_lv/images/icon_04.png") 0 0 no-repeat;background-size: 20px;background-position-x:10px;background-position-y: 5px;}
+    .container label:nth-child(11) { background: url("/addons/xc_lv/images/icon_05.png") 0 0 no-repeat;background-size: 20px;background-position-x:10px;background-position-y: 5px;}
+    .container label:nth-child(13) { background: url("/addons/xc_lv/images/icon_06.png") 0 0 no-repeat;background-size: 20px;background-position-x:10px;background-position-y: 5px;}
+    .container label:nth-child(15) { background: url("/addons/xc_lv/images/icon_07.png") 0 0 no-repeat;background-size: 20px;background-position-x:10px;background-position-y: 5px;}
+
+</style>
+
+
+
+
+
+<script src="http://apps.bdimg.com/libs/jquery/2.1.1/jquery.min.js" type="text/javascript"></script>
+
+
+
+<link type="text/css" rel="stylesheet" href="../addons/xc_lv/images/style.css?{TIMESTAMP}">
+<form action="" method="post" class="form-horizontal form" enctype="multipart/form-data" id="form1" onload="wol();">
+
+<div class="container" style="margin-top:10px;">
+
+
+                    <label>出发地<input name="city" placeholder="请输入出发城市" type="text" required style="-webkit-appearance:none;" /></label>
+                     <div class="clearfix"></div>
+                    <label>目的地<input name="city2" placeholder="请输入目的城市" type="text" required style="-webkit-appearance:none;" /></label>
+                     <div class="clearfix"></div>
+                     <label>出行人数<input name ="xq" placeholder="请输入出行人数" type="text" required style="-webkit-appearance:none;" /></label>
+                      <div class="clearfix"></div>
+                      <label>出行时间<input value="2016-05-25" name ="stime" style="padding-top:4px;-webkit-appearance:none;" type="date" required/></label>
+                      <div class="clearfix"></div>
+        <p><textarea rows="5" class="form-control" placeholder="简短留言" name="mark" style="background-color:#f2f2f2;" ></textarea></p>
+
+        <p style="color: #ff6612;">请留下您的联系方式，以便我们及时与您取得联系</p>
+
+         <label>姓名<input placeholder="请输入您的真实姓名" type="text" name="xingming" required style="-webkit-appearance:none;" /></label>
+    <div class="clearfix"></div>
+         <label>电话<input placeholder="请输入您的电话号码" type="tel" name="tel" required style="-webkit-appearance:none;" /></label>
+    <div class="clearfix"></div>
+         <label>QQ或微信<input placeholder="请输入您的QQ号码或者微信号" name="haoma" type="text" required style="-webkit-appearance:none;" /></label>
+    <div class="clearfix"></div>
+      
+
+
+
+
+
+</div>
+    <div style="padding:2% 5%;">
+        <input type="submit" name="submit" value="提交" id="send" class="btn btn-success btn-lg submit" style="margin:50px auto;border-radius:30px;width:100%;text-align: center;" />
+
+        <input type="hidden" name="token" value="{$_W['token']}" />
+    </div>
+
+
+</form>
+
+
+
+{template 'footer'}
+
+
+
+<script type="text/javascript">
+
+	
+
+	$(document).ready(function(){
+
+		
+
+	
+
+        $("#send").click(function(){	
+
+		var city = $("input[name='city']").val();  //出发城市
+
+		var city2 = $("input[name='city2']").val(); //目的地城市
+
+		var stime = $("input[name='stime']").val();  //出行时间
+
+	     var xq =  $("input[name='xq']").val(); //出行详情
+
+		var mark = $("input[name='mark']").val();//留言
+
+		var xingming = $("input[name='xingming']").val();//姓名
+
+		var mobile = $("input[name='tel']").val();//手机号码
+
+		var haoma = $("input[name='haoma']").val();//QQ号码微信号码
+
+		
+
+		
+
+	  if(city==''){
+
+	  	
+
+	  	alert('出发城市不得为空');
+
+	  	return false;
+
+	  	
+
+	  }
+
+	  
+
+	   if(city2==''){
+
+	   	
+
+	   	alert("目的地城市不得为空");
+
+	   	return false;
+
+	   }
+
+	  if(stime==''){
+
+	  	
+
+	  	alert('时间不得为空');
+
+	  	return false;
+
+	  	
+
+	  }
+
+	  if(xq==''){
+
+	  	
+
+	  	alert('出行人数不得为空');
+
+	  	return false;
+
+	  }
+
+	  if(mark==''){
+
+	  	
+
+	  	alert("留言不能为空");
+
+	  	return false;
+
+	  }
+
+	      if(mobile.length==0) 
+
+       { 
+
+          alert('请输入手机号码！'); 
+
+        
+
+          return false; 
+
+       }     
+
+       if(mobile.length!=11) 
+
+       {  
+
+       	
+
+       	  
+
+           alert('请输入有效的手机号码！'); 
+
+           
+
+           return false; 
+
+       } 
+
+        
+
+       var myreg = /^1[3|4|5|8|7][0-9]\d{4,8}$/; 
+
+       if(!myreg.test(mobile)) 
+
+       { 
+
+           alert('请输入有效的手机号！'); 
+
+         
+
+           return false; 
+
+       } 
+
+       
+
+ 
+
+ 
+
+
+
+		//return false;
+
+		
+
+		});	
+
+		
+
+	});
+
+	
+
+</script>
+
+{template 'footerbar2'}
