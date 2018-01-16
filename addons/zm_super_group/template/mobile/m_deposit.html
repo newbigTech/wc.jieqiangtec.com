@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>提现</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="{php echo LOUIE_CSS}mui.css" rel="stylesheet" />
+		<link href="{php echo LOUIE_CSS}m_fonts.css" rel="stylesheet" />
+		<link href="{php echo LOUIE_CSS}basic.css" rel="stylesheet" />
+		<link href="{php echo LOUIE_CSS}m_deposit.css" rel="stylesheet" /> 
+		<script src="{php echo LOUIE_JS}mui.js" type="text/javascript" charset="utf-8"></script>
+    	<script src="{php echo LOUIE_JS}set.js" type="text/javascript" charset="utf-8"></script>
+    	{php echo Wx::WxJs('false',array('onMenuShareTimeline','onMenuShareAppMessage'))}
+    	{php echo $_share}
+	</head> 
+	<body>
+		<!--S主体内容-->
+		<div class="mui-content mui-scroll-wrapper">
+		    <div class="mui-scroll">
+		    	<!--E提现选项--> 
+		    	<form name="deposit" method="post" action="">
+		    		<div class="louie-form-child">
+						<label for="await">待提现金额</label> 
+						<input type="text" name="await" id="await" value="{php echo $_depositMoney['money']}元" placeholder="待提现金额" disabled="disabled"/>
+					</div>	 
+					 
+					<div class="louie-form-child">
+						<label for="money">提现金额</label> 
+						<input type="text" name="money" id="money" placeholder="请输入提现金额" />
+					</div>	
+		    	</form> 
+		    	<!--S提现选项-->  
+		    	
+		    	<h3 class="charge">提现手续费：{php echo $_param['deposit_charge']}%</h3>
+		    </div>
+		</div>
+		<!--E主体内容-->
+		
+		<nav class="mui-bar mui-bar-tab">
+	   	     确认提现
+	   	</nav> 
+	   	
+	   	<input type="hidden" id="deposit-limit" value="{php echo $_param['deposit_limit']}" /> 
+	   	<input type="hidden" id="deposit-charge" value="{php echo $_param['deposit_charge']}" />
+	   	<input type="hidden" id="now-page" value="{php echo $_W['siteurl']}" />
+	   	<script src="{php echo LOUIE_JS}basic.js"></script>
+	   	<script src="{php echo LOUIE_JS}m_deposit.js"></script>  
+	</body>
+</html>

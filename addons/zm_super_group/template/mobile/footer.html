@@ -1,0 +1,30 @@
+<nav class="mui-bar mui-bar-tab">
+		
+	    <a class="mui-tab-item" href="{php echo $this->createMobileUrl('m_index')}">
+	        <img src="{php echo LOUIE_IMG}{if $_index}a1.png{else}n1.png{/if}" />
+	        <div {if $_index}style="color:#F84B67;"{/if}>首页</div> 
+	    </a>
+	    <a class="mui-tab-item" href="{php echo $this->createMobileUrl('m_bought')}">
+	        <img src="{php echo LOUIE_IMG}{if $_bought}a2.png{else}n2.png{/if}" />
+	        <div {if $_bought}style="color:#F84B67;"{/if}>已购</div>
+	    </a>
+	    <a class="mui-tab-item" href="{php echo $this->createMobileUrl('m_member')}">
+	        <img src="{php echo LOUIE_IMG}{if $_m_member}a3.png{else}n3.png{/if}" />
+	        <div {if $_m_member}style="color:#F84B67;"{/if}>个人中心</div>
+	    </a>
+</nav>
+
+<!-- <nav class="mui-bar mui-bar-tab">
+	    <a class="mui-tab-item {if $_index}mui-active{/if}" href="{php echo $this->createMobileUrl('m_index')}">
+	        <span class="mui-icon iconfont icon-tuijian"></span>
+	        <span class="mui-tab-label">首页</span>
+	    </a>
+	    <a class="mui-tab-item {if $_bought}mui-active{/if}" href="{php echo $this->createMobileUrl('m_bought')}">
+	        <span class="mui-icon iconfont icon-yigou"></span>
+	        <span class="mui-tab-label">已购</span>
+	    </a>
+	    <a class="mui-tab-item {if $_m_member}mui-active{/if}" href="{php echo $this->createMobileUrl('m_member')}">
+	        <span class="mui-icon iconfont icon-gerenzhongxin"></span>
+	        <span class="mui-tab-label">个人中心</span>
+	    </a>
+</nav> -->

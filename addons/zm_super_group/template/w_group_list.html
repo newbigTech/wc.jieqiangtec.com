@@ -1,0 +1,204 @@
+{template 'common/header'} 
+<link href="{php echo LOUIE_CSS}w_group_list.css" rel="stylesheet" />
+<div class="panel panel-default" id="main">
+  <div class="panel-heading">
+  	社群列表
+  <a href="javascript:;" class="btn btn-success add-class" data-toggle="modal" data-target="#add-group">添加社群</a>
+  <a href="{php echo $this->createWebUrl('w_group')}" class="btn btn-success back-btn">社群管理</a>
+  </div>
+  <div class="panel-body">
+  	<a href="{php echo $this->createWebUrl('w_group_list')}" class="btn btn-success louie-recommend">全部社群</a> <a href="{php echo $this->createWebUrl('w_group_list',array('find'=>'recommend'))}" class="btn btn-primary louie-recommend">每日推荐</a> <a href="{php echo $this->createWebUrl('w_group_list',array('find'=>'boutique'))}" class="btn btn-danger louie-recommend">精品社群</a>
+   	<table class="table"> 
+   		<tr><th>社群标题</th><th>群主</th><th>社群头像</th><th>社群封面</th><th>每日推荐</th><th>精品设置</th><th>聊天数据</th><th>操作</th></tr>
+   		{loop $_groupList $item}
+   		 <tr><td>{php echo $item['title']}</td><td>{php echo $item['ownerNickname']}</td><td><img src="{php echo tomedia($item['header'])}" /></td><td><img src="{php echo tomedia($item['cover'])}" /><td><button class="btn btn-{if $item['recommend'] == 0}default{else}primary{/if} setRecommend" data-id="{php echo $item['id']}" data-is-recommend="{php echo $item['recommend']}">推荐</button></td><td><button class="btn btn-{if $item['boutique'] == 0}default{else}danger{/if} setBoutique" data-id="{php echo $item['id']}" data-is-boutique="{php echo $item['boutique']}">精品</button></td></td><td><a href="{php echo $this->createWebUrl('w_data',array('groupid'=>$item['id']))}" class="btn btn-default">聊天数据</a></td><td><button type="button" class="btn btn-success btn-update" data-toggle="modal" data-target="#update-group" data-groupid="{php echo $item['id']}">修改</button> <a href="{php echo $this->createWebUrl('w_group_list',array('doing'=>'delete','groupid'=>$item['group_id']))}" class="btn btn-warning" onclick="return confirm('您确定要解散该群吗？')">解散</a></td></tr>
+   		{/loop}
+   	</table>
+   	{php echo $_page}  
+  </div>
+</div>
+
+
+
+
+
+
+
+<!--S添加社群-->
+<div class="modal fade" id="add-group" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">添加社群</h4>
+      </div>
+      <div class="modal-body">
+        	<form action="" method="post" name="add_group">
+        	  <div class="form-group">
+			    <label for="title">社群标题</label> 
+			    <input type="text" class="form-control" id="title" placeholder="社群标题" name="title" /> 
+			  </div>
+        	
+	       	  <div class="form-group">
+			    <label for="name">社群名称</label>
+			    <input type="text" class="form-control" id="name" placeholder="社群名称" name="name" />
+			  </div>
+			  
+			  <div class="form-group" id="add_owner">
+			    <label for="owner">指定群主</label>
+			    <input type="text" class="form-control" placeholder="搜索用户昵称" />
+			    <button type="button" class="btn btn-default">搜索</button>
+			    <input type="hidden" name="owner" value="" />
+			    <div class="user-header">
+			    	<!--<dl> 
+				    	<dt><img src="{php echo LOUIE_IMG}img1.jpg" data-userid="1" /></dt>
+				    	<dd>醉解心语</dd>
+			    	</dl>-->
+			    </div>
+			  </div>
+			  
+			  
+			  <div class="form-group">
+			    <label for="class">所属分类</label><br />
+			    <select name="class_id">
+			    	{loop $_classList $index $item}
+			    		{if $index == 0}
+			    			<option value="{php echo $item['id']}" selected="selected">{php echo $item['name']}</option>
+			    		{else}
+			    			<option value="{php echo $item['id']}">{php echo $item['name']}</option>
+			    		{/if}
+			    	{/loop}
+			    </select> 
+			  </div>
+			  
+			  <div class="form-group">
+			    <label for="enter">入群验证</label><br />
+			    <select name="enter" id="enter">
+			    	<!--<option value="1">需验证</option>--> 
+			    	<option value="2">无需验证</option>
+			    	<option value="3">付款进入</option> 
+			    </select> 
+			  </div>
+			  
+			  <div class="form-group" style="display:none;"> 
+			    <label for="price">付款金额</label> 
+			    <input type="text" class="form-control" id="price" placeholder="付款金额" name="price" />
+			  </div> 
+			  
+			  <div class="form-group">
+				    <label for="brief">社群简介</label><br />
+				    <textarea name="brief"></textarea>
+			  </div>
+			  
+			  <div class="form-group">
+				    <label for="cover">群封面</label><br />
+				    {php echo tpl_form_field_image('cover');}
+			  </div>
+			  
+			  
+			  <div class="form-group">
+				    <label for="header">群头像</label><br />
+				    {php echo tpl_form_field_image('header');}
+			  </div>
+			  
+			  
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+        <button type="submit" class="btn btn-primary" name="send_add_group">添加社群</button> 
+        	</form>
+      </div>
+    </div>
+  </div>
+</div>
+<!--E添加社群-->
+
+
+<!--S修改社群-->
+<div class="modal fade" id="update-group" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">修改社群</h4>
+      </div>
+      <div class="modal-body">
+        	<form action="" method="post" name="update_group">
+        	  <div class="form-group">
+			    <label for="title">社群标题</label> 
+			    <input type="text" class="form-control" id="title" placeholder="社群标题" name="title" /> 
+			  </div>
+        	
+	       	  <div class="form-group">
+			    <label for="name">社群名称</label>
+			    <input type="text" class="form-control" id="name" placeholder="社群名称" name="name" /> 
+			  </div>
+			  
+			  <div class="form-group" id="update_owner">
+			    <label for="owner">指定群主</label>
+			    <input type="text" class="form-control" placeholder="搜索用户昵称" />
+			    <button type="button" class="btn btn-default">搜索</button>
+			    <input type="hidden" name="owner" value="" />
+			    <input type="hidden" name="original_owner" value="" />
+			    <div class="user-header">
+			    	<!--<dl>
+				    	<dt><img src="{php echo LOUIE_IMG}img1.jpg" data-userid="1" /></dt>
+				    	<dd>醉解心语</dd>
+			    	</dl>-->
+			    </div>
+			  </div>
+			  
+			  
+			  <div class="form-group">
+			    <label for="class">所属分类</label><br />
+			    <select name="class_id">
+			    	{loop $_classList $index $item}
+			    			<option value="{php echo $item['id']}">{php echo $item['name']}</option>
+			    	{/loop}
+			    </select> 
+			  </div> 
+			  
+			  <div class="form-group">
+			    <label for="enter">入群验证</label><br />
+			    <select name="enter">
+			    	<!--  <option value="1">需验证</option> -->
+			    	<option value="2">无需验证</option>
+			    	<option value="3">付款进入</option> 
+			    </select> 
+			  </div>
+			  
+			  <div class="form-group" style="display:none;"> 
+			    <label for="price">付款金额</label> 
+			    <input type="text" class="form-control" id="price" placeholder="付款金额" name="price" />
+			  </div> 
+			  
+			  <div class="form-group">
+				    <label for="brief">社群简介</label><br />
+				    <textarea name="brief"></textarea>
+			  </div>
+			  
+			  <div class="form-group">
+				    <label for="cover">群封面</label><br />
+				    {php echo tpl_form_field_image('cover');}
+			  </div>
+			  
+			  
+			  <div class="form-group">
+				    <label for="header">群头像</label><br />
+				    {php echo tpl_form_field_image('header');}
+			  </div>	
+			  <input type="hidden" name="groupid" value="" />  
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+        <button type="submit" class="btn btn-primary" name="send_update_group">修改社群</button>  
+        	</form>
+      </div>
+    </div>
+  </div>
+</div>
+<!--E修改社群-->
+
+<input type="hidden" id="now-page" value="{php echo $_W['siteurl']}" />
+<script src="{php echo LOUIE_JS}w_group_list.js"></script> 
+{template 'common/footer'} 

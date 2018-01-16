@@ -1,0 +1,223 @@
+{template 'common/header'} 
+<link href="{php echo LOUIE_CSS}w_config.css">
+<ul class="nav nav-tabs">
+  <li role="presentation" {if $_basic}class="active"{/if}><a href="{php echo $this->createWebUrl('w_config')}">全局设置</a></li>
+  <li role="presentation" {if $_im}class="active"{/if}><a href="{php echo $this->createWebUrl('w_config',array('doing'=>'im'))}">云通信设置</a></li>
+  <li role="presentation" {if $_pay}class="active"{/if}><a href="{php echo $this->createWebUrl('w_config',array('doing'=>'pay'))}">支付设置</a></li>
+  <li role="presentation" {if $_tpl}class="active"{/if}><a href="{php echo $this->createWebUrl('w_config',array('doing'=>'tpl'))}">模板消息</a></li>
+</ul>
+
+<!--S全局设置-->
+{if $_basic}
+<div class="panel panel-default">
+  <div class="panel-heading">分享设置</div>
+  <div class="panel-body">
+    <form class="form-horizontal" name="share" action="" method="post">
+    
+	  <div class="form-group">
+	    <label for="share-title" class="col-sm-2 control-label">分享标题</label>
+	    <div class="col-sm-10">
+	      <input type="text" class="form-control" id="share-title" placeholder="分享标题" name="share_title" value="{php echo $_param['share_title']}" />
+	    </div>
+	  </div>
+	  
+	  <div class="form-group">
+	    <label for="share-icon" class="col-sm-2 control-label">分享图标</label>
+	    <div class="col-sm-10">
+	      {php echo tpl_form_field_image('share_icon',$_param['share_icon']);}
+	    </div>
+	  </div>
+	  
+	  <div class="form-group">
+	    <label for="share-url" class="col-sm-2 control-label">分享链接</label>
+	    <div class="col-sm-10">
+	      <input type="text" class="form-control" id="share-url" placeholder="分享链接" name="share_url" value="{php echo $_param['share_url']}" />
+	    </div>  
+	  </div>
+	  
+	  <div class="form-group">
+	    <label for="share-description" class="col-sm-2 control-label">分享描述</label>
+	    <div class="col-sm-10">
+	      <input type="text" class="form-control" id="share—description" placeholder="分享描述" name="share_description" value="{php echo $_param['share_description']}" />
+	    </div>
+	  </div>
+  
+	  <div class="form-group">
+	    <div class="col-sm-offset-2 col-sm-10">
+	      <button type="submit" class="btn btn-default" name="send_set_share">确定设置</button>
+	    </div>
+	  </div>
+	  
+	</form>
+  </div>
+</div>
+
+<div class="panel panel-default">
+  <div class="panel-heading">社群@用户模板消息提示频率（每个用户每个群多长时间接收一次@模板消息提醒，单位为秒,0为不限制）</div>
+  <div class="panel-body">
+    <form action="" method="post" name="eith_tpl_message">
+    	<div class="form-group">
+		    <div class="col-sm-10">
+		      <input type="text" class="form-control" placeholder="&#31038;&#32676;&#64;&#29992;&#25143;&#27169;&#26495;&#28040;&#24687;&#25552;&#31034;&#39057;&#29575;&#46;&#35828;&#22270;&#35889;&#28304;&#30721;&#25552;&#20379;&#65281;" name="eith_tpl_message_time" value="{php echo $_param['eith_tpl_message_time']}" />
+		    </div>
+	  	</div>
+    	<button type="submit" name="send_eith_tpl_message_time" class="btn btn-default" style="margin-top:20px;">确定设置</button>
+    </form>
+  </div>
+</div>   
+
+
+
+<div class="panel panel-default">
+  <div class="panel-heading">创建社群页提示文字</div>
+  <div class="panel-body">
+    <form action="" method="post" name="create_group_hint_form">
+    	<textarea class="form-control" rows="3" name="create_group_hint">{php echo $_param['create_group_hint']}</textarea> 
+    	<button type="submit" name="send_set_create_group_hint" class="btn btn-default" style="margin-top:20px;">确定设置</button>
+    </form>
+  </div>
+</div>
+
+
+
+<div class="panel panel-default">
+  <div class="panel-heading">敏感词设置（每个词之前请以英文符合逗号隔开，如：我去,王八蛋,龟儿子...）</div>
+  <div class="panel-body">
+   	<form action="" method="post" name="sensitive-form">
+    	<textarea class="form-control" rows="3" name="sensitive">{php echo $_param['sensitive']}</textarea> 
+    	<button type="submit" name="send_set_sensitive" class="btn btn-default" style="margin-top:20px;">确定设置</button>
+    </form>
+  </div>
+</div>
+
+
+{/if}
+<!--E全局设置-->
+
+
+<!--S云通信设置-->
+{if $_im}
+	{if !function_exists('exec')}
+		<div class="alert alert-success" role="alert">
+			警告：您的PHP系统函数exec被禁用，会导致云通信接入失败！<br />
+			解决方法：修改php.ini配置文件，在PHP目录下找到php.ini文件打开编辑，找到"disable_functions",将等于号后边的exec删除保存即可，最后重启服务器！
+		</div>
+	{/if}
+	<form action="" method="post" name="im_set">
+	  <div class="form-group">
+	    <label for="im-appid">应用ID</label>
+	    <input type="text" class="form-control" id="im-appid" placeholder="云通信SDKAPPID" name="im_appid" value="{php echo $_param['im_appid']}" />
+	  </div>
+	  
+	  <div class="form-group">
+	    <label for="im-account">管理员账户名称</label>
+	    <input type="text" class="form-control" id="im-account" placeholder="管理员账户名称identifier" name="im_account" value="{php echo $_param['im_account']}" />
+	  </div>
+	  
+	  <div class="form-group">
+	    <label for="im-accountType">accountType</label>  
+	    <input type="text" class="form-control" id="im-accountType" placeholder="云通信accountType" name="im_accountType" value="{php echo $_param['im_accountType']}" />
+	  </div>     
+	  
+	  <div class="form-group">
+	    <label for="upload-key">上传私钥文件</label>
+	    <input type="file" name="upload_key" id="upload-key" placeholder="上传私钥文件" /> 
+	    <input type="hidden" name="im_key" value="{php echo $_param['im_key']}"/>
+	  </div>  
+	  
+	  <div class="form-group">
+	  	<label for="upload-tool">上传签名工具</label>
+	  	<input type="file" name="upload_tool" id="upload-tool" placeholder="上传签名工具" />
+	  </div>
+	   
+	  <button type="submit" class="btn btn-default" name="send_set_im">确认设置</button>
+	</form>
+
+<input type="hidden" id="request-url" value="{php echo $_W['siteurl']}" />
+<script src="{php echo LOUIE_JS}w_config.js"></script>
+{/if}
+<!--E云通信设置-->
+
+
+<!--S支付设置-->
+{if $_pay}
+<form method="post" action="" name="finance">
+
+  <!--Sappid-->
+		  <div class="form-group">
+		    <label for="pay_appid">Appid</label>
+		    <input type="text" class="form-control" value="{php echo $_param['pay_appid']}" id="pay_appid" name="pay_appid" placeholder="请输入appid">
+		  </div>
+	<!--Eappid-->
+
+	<!--Sappsecret-->
+		  <div class="form-group">
+		    <label for="pay_appSecret">AppSecret</label> 
+		    <input type="text" class="form-control" value="{php echo $_param['pay_appSecret']}" id="pay_appSecret" name="pay_appSecret" placeholder="请输入appsecret">
+		  </div>
+	<!--Eappsecret--> 
+
+
+	<!--S微信支付商户号-->
+		   <div class="form-group">
+		    <label for="pay_account">微信支付商户号</label>
+		    <input type="text" class="form-control" value="{php echo $_param['pay_account']}" id="pay_account" name="pay_account" placeholder="请输入微信支付商户号">
+		  </div>
+	<!--E微信支付商户号-->
+
+	 <!--S商户支付密钥-->
+		<div class="form-group">
+		    <label for="pay_key">商户支付密钥</label>
+		    <input type="text" class="form-control" value="{php echo $_param['pay_key']}" id="pay_key" name="pay_key" placeholder="请输入商户密钥">
+		 </div>
+	<!--E商户支付密钥-->
+	
+	 <!--S点击上传商户证书-->
+		   <p><button type="button" data-toggle="modal" data-target="#upload" class="btn btn-success">上传商户证书</button></p>
+	<!--E点击上传商户证书-->
+  <button type="submit" class="btn btn-success" name="send_set_pay">确认设置</button> 
+</form>
+
+<!--S上传支付证书弹窗-->
+<div class="modal fade" id="upload" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">上传商户证书</h4>
+      </div>
+      <div class="modal-body">
+        <form name="upload" action="" method="post" enctype="multipart/form-data">
+        <input type="file" name="certificate[]" multiple="multiple" />
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+        <button type="submit" name="send_upload" class="btn btn-primary">确认</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!--E上传支付证书弹窗-->
+
+{/if}
+<!--E支付设置-->
+
+
+<!--S模板消息设置-->
+{if $_tpl}
+<form action="" name="set_tpl" method="post"> 
+  <div class="form-group">
+    <label for="check_group_tpl">审核社群消息通知　<span style="color:red;">标题：任务处理通知　一级行业：IT科技 　二级行业：互联网|电子商务</span></label>
+    <input type="text" class="form-control" id="check_group_tpl" name="check_group_tpl" value="{php echo $_param['check_group_tpl']}" placeholder="审核社群消息通知">
+  </div>
+  <button type="submit" class="btn btn-default" name="send_set_tpl">确认设置</button>  
+</form>
+{/if}
+<!--E模板消息设置--> 
+
+
+
+
+
+{template 'common/footer'} 

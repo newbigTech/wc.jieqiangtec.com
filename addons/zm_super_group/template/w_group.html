@@ -1,0 +1,38 @@
+{template 'common/header'} 
+<link href="{php echo LOUIE_CSS}w_fonts.css" type="text/css" rel="stylesheet" />
+<link href="{php echo LOUIE_CSS}w_group.css" type="text/css" rel="stylesheet" />
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">社群管理</h3>
+  </div>
+  <div class="panel-body">
+    <ul id="group-list">
+		<li>
+			<a href="{php echo $this->createWebUrl('w_class')}">
+				<i class="iconfont icon-fenlei"></i>
+				<p>分类管理</p> 
+			</a>
+		</li>
+		
+		<li>
+			<a href="{php echo $this->createWebUrl('w_group_list')}">
+				<i class="iconfont icon-listpress"></i>
+				<p>社群列表</p>
+			</a>
+		</li>
+		
+		<li>
+			<a href="{php echo $this->createWebUrl('w_check')}"> 
+				<i class="iconfont icon-shenhe"></i> 
+				<p>建群审核</p>
+			</a>
+		</li>
+	</ul>
+  </div>
+</div>
+
+
+
+
+{template 'common/footer'} 

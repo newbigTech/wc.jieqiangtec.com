@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>提现记录</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="{php echo LOUIE_CSS}mui.css" rel="stylesheet" />
+		<link href="{php echo LOUIE_CSS}m_fonts.css" rel="stylesheet" />
+		<link href="{php echo LOUIE_CSS}basic.css" rel="stylesheet" /> 
+		<link href="{php echo LOUIE_CSS}m_deposit_record.css" rel="stylesheet" />   
+		<script src="{php echo LOUIE_JS}mui.js" type="text/javascript" charset="utf-8"></script>
+    	<script src="{php echo LOUIE_JS}set.js" type="text/javascript" charset="utf-8"></script> 
+    	{php echo Wx::WxJs('false',array('onMenuShareTimeline','onMenuShareAppMessage'))}
+    	{php echo $_share}
+	</head>
+	<body> 
+		<!--S主体内容-->
+		<div class="mui-content mui-scroll-wrapper"> 
+		    <div class="mui-scroll">
+		    	<!--S提现记录列表-->
+		    	<ul id="record-list">
+		    		<!--<li> 
+		    			<span class="time">2017-5-30</span>
+		    			<span class="status processed">审核中</span> 
+		    			<span class="money">39.5</span>
+		    		</li>
+		    		<li>
+		    			<span class="time">2017-5-30</span> 
+		    			<span class="status processed">审核中</span>
+		    			<span class="money">39.5</span>
+		    		</li> 
+		    		<li>
+		    			<span class="time">2017-5-30</span>
+		    			<span class="status processed">审核中</span>  
+		    			<span class="money">39.5</span>
+		    		</li>
+		    		<li>
+		    			<span class="time">2017-5-30</span>
+		    			<span class="status processed">审核中</span> 
+		    			<span class="money">39.5</span>
+		    		</li>
+		    		<li>
+		    			<span class="time">2017-5-30</span> 
+		    			<span class="status processed">审核中</span>
+		    			<span class="money">39.5</span>
+		    		</li> 
+		    		<li>
+		    			<span class="time">2017-5-30</span>
+		    			<span class="status processed">审核中</span>  
+		    			<span class="money">39.5</span>
+		    		</li>
+		    		<li>
+		    			<span class="time">2017-5-30</span>
+		    			<span class="status processed">审核中</span> 
+		    			<span class="money">39.5</span>
+		    		</li>
+		    		<li>
+		    			<span class="time">2017-5-30</span> 
+		    			<span class="status processed">审核中</span>
+		    			<span class="money">39.5</span>
+		    		</li> 
+		    		<li>
+		    			<span class="time">2017-5-30</span>
+		    			<span class="status processed">审核中</span>  
+		    			<span class="money">39.5</span>
+		    		</li>-->
+		    	</ul>
+		    	<!--E提现记录列表-->
+		    </div>
+		</div> 
+		<!--E主体内容-->
+		
+		
+		<nav class="mui-bar mui-bar-tab">
+		   	    <a href="{php echo $this->createMobileUrl('m_wallet')}"><i class="mui-icon mui-icon-undo"></i>返回我的钱包</a>    
+		</nav>
+		
+		<input type="hidden" id="now-page" value="{php echo $_W['siteurl']}" />
+		<script src="{php echo LOUIE_JS}basic.js"></script>
+		<script src="{php echo LOUIE_JS}m_deposit_record.js"></script> 
+	</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>个人中心</title> 
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="{php echo LOUIE_CSS}mui.css" rel="stylesheet" />
+		<link href="{php echo LOUIE_CSS}m_fonts.css" rel="stylesheet" />
+		<link href="{php echo LOUIE_CSS}basic.css" rel="stylesheet" />
+		<link href="{php echo LOUIE_CSS}m_member.css" rel="stylesheet" /> 
+		<script src="{php echo LOUIE_JS}mui.js" type="text/javascript" charset="utf-8"></script>
+    	<script src="{php echo LOUIE_JS}set.js" type="text/javascript" charset="utf-8"></script>
+    	{php echo Wx::WxJs('false',array('onMenuShareTimeline','onMenuShareAppMessage'))}
+    	{php echo $_share}
+	</head>
+	<body>
+		
+		<!--S主体内容-->
+		<div class="mui-content mui-scroll-wrapper">
+		    <div class="mui-scroll">
+		    	<!--S头像&昵称-->
+		    	<div id="head-nickname">
+		    		<img src="{if $_W['fans']['avatar']}{php echo $_W['fans']['avatar']}{else}{php echo LOUIE_IMG}no-header.png{/if}" class="head" />
+		    		<h2 class="nickname">{if $_W['fans']['nickname']}{php echo $_W['fans']['nickname']}{else}未获取{/if}</h2>
+		    		<!--  <span class="mui-icon mui-icon-forward"></span>-->
+		    	</div>
+		    	<!--E头像&昵称-->
+		    	
+		    	<!--S社群&创建社群-->
+		    	<div id="group-creategroup">
+		    		<a href="{php echo $this->createMobileUrl('m_me_group')}"><i class="iconfont icon-tubiaozhizuomoban"></i> 管理社群</a>
+		    		<span class="separate">|</span>
+		    		<a href="{php echo $this->createMobileUrl('m_create_group')}"><i class="iconfont icon-chuangjian"></i> 创建社群</a>   
+		    	</div>
+		    	<!--E社群&创建社群--> 
+		    	
+		    	<!--S个人选项列表-->
+		    	<ul id="member_list">
+		    		<li><a href="{php echo $this->createMobileUrl('m_fans')}"><i class="iconfont icon-wodefensi"></i>我的粉丝<span class="mui-icon mui-icon-forward"></span></a></li>
+		    		<li><a href="{php echo $this->createMobileUrl('m_attention_group')}"><i class="iconfont icon-guanzhu"></i>关注的社群<span class="mui-icon mui-icon-forward"></span></a></li>
+		    		<li><a href="{php echo $this->createMobileUrl('m_browse_record')}"><i class="iconfont icon-kanguode"></i>看过的社群<span class="mui-icon mui-icon-forward"></span></a></li>
+		    		<!--  <li><a href="{php echo $this->createMobileUrl('m_fans')}"><i class="iconfont icon-bangding"></i>绑定手机号<span class="mui-icon mui-icon-forward"></span></a></li>-->
+		    		<li><a href="{php echo $this->createMobileUrl('m_me_private')}"><i class="iconfont icon-siliao"></i>我的私聊<span class="mui-icon mui-icon-forward"></span></a></li>
+		    		<li><a href="{php echo $this->createMobileUrl('m_wallet')}"><i class="iconfont icon-wodeqianbao"></i>我的钱包<span class="mui-icon mui-icon-forward"></span></a></li>
+		    	</ul>
+		    	<!--E个人选项列表-->
+		    	
+		    </div>
+		</div>
+		
+		
+	{php include $this->template('footer')} 
+	
+	<script src="{php echo LOUIE_JS}basic.js"></script>
+	<script src="{php echo LOUIE_JS}m_member.js"></script>
+	</body>
+</html>

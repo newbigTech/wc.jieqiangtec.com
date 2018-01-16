@@ -1,0 +1,17 @@
+{template 'common/header'} 
+<link href="{php echo LOUIE_CSS}w_data.css" rel="stylesheet" />
+<div class="panel panel-default">
+  <div class="panel-heading" style="position:relative;"> 
+    <h3 class="panel-title">聊天数据<a href="{php echo $this->createWebUrl('w_group_list')}" class="btn btn-default btn-one">社群列表</a></h3>
+  </div>
+  <table class="table">
+  <tr><th>用户</th><th>头像</th><th>社群</th><th>类型</th><th>内容</th><th>时间</th><th>操作</th></tr>
+  {loop $_list $item}
+  <tr><td>{php echo $item['nickname']}</td><td><img src="{php echo $item['header']}" style="width:50px;height:50px;" /></td><td>{php echo $item['groupName']}</td><td>{if $item['type'] == 'TIMTextElem'}文字{elseif $item['type'] == 'TIMImageElem'}图片{elseif $item['type'] == 'TIMSoundElem'}语音{/if}</td><td>{if $item['type'] == 'TIMTextElem'}{php echo $item['content']}{elseif $item['type']=='TIMImageElem'}<img src="{php echo tomedia($item['content'])}" style="width:100px;">{elseif $item['type'] =='TIMSoundElem'}{php echo $item['content']}{/if}</td><td>{php echo date('Y-m-d H:i:s',$item['time'])}</td><td><button class="btn btn-default louie-delete" data-msg-id="{php echo $item['id']}">删除</button></td></tr> 
+  {/loop}
+  </table> 
+</div>
+	{php echo $_page}
+<input type="hidden" id="now-page" value="{php echo $_W['siteurl']}" />
+<script src="{php echo LOUIE_JS}w_data.js"></script>
+{template 'common/footer'} 

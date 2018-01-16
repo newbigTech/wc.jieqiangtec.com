@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>{if !$_isPrivate}{php echo $_groupInfo['title']}{else}私聊{/if}</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="{php echo LOUIE_CSS}mui.css" rel="stylesheet" />
+		<link href="{php echo LOUIE_CSS}m_fonts.css" rel="stylesheet" />
+		<link href="{php echo LOUIE_CSS}basic.css" rel="stylesheet" />
+		<link href="{php echo LOUIE_CSS}m_room.css" rel="stylesheet" />   
+		<script src="{php echo LOUIE_JS}mui.js" type="text/javascript" charset="utf-8"></script>
+    	<script src="{php echo LOUIE_JS}set.js" type="text/javascript" charset="utf-8"></script>
+    	<script src="{php echo LOUIE_JS}obj/SendRed.obj.js" type="text/javascript" charset="utf-8"></script>
+    	<script src="{php echo LOUIE_JS}obj/PrivateChat.obj.js" type="text/javascript" charset="utf-8"></script>
+    	{php echo Wx::WxJs('false',array('startRecord','stopRecord','onVoiceRecordEnd','playVoice','pauseVoice','stopVoice','onVoicePlayEnd','uploadVoice','downloadVoice','translateVoice','onMenuShareTimeline','onMenuShareAppMessage'))}
+    	{php echo $_share} 
+	</head>
+	<body data-banned-talk="{php echo $_groupInfo['is_banned_talk']}" data-owner="{php echo $_groupInfo['owner']}" data-groupid="{php echo $_groupInfo['id']}" data-person="{php echo $_groupInfo['personNum']}" data-room-type="{if $_isPrivate}private{else}public{/if}"> 
+		 
+		{if !$_isPrivate} 
+			<header class="mui-bar mui-bar-nav" id="louie-header">  
+			  <img src="{php echo tomedia($_groupInfo['header'])}" />
+			  {if !$_isAttention}<button data-group-id="{php echo $_groupInfo['id']}">关注</button>{/if} 
+			  <span class="title">{php echo $_groupInfo['name']}</span>
+			  <span class="member">社群成员：{php echo $_groupInfo['personNum']}</span>
+			</header>
+		{else}
+			 <header class="mui-bar mui-bar-nav" id="louie-header">  
+			  	<h1 class="private-title">与{php echo $_title}聊天中</h1>
+			</header>
+		{/if}
+		
+		<!--S主体内容-->
+		<div class="mui-content mui-scroll-wrapper" id="chat"> 
+		    <div class="mui-scroll">
+		    <!-- <figure class="me text">
+		    		<img src="{php echo LOUIE_IMG}img1.jpg" class="header" />
+		    		<figcaption class="nickname">醉解心语<span>&nbsp;&nbsp;&nbsp;2017-10-09 10:17:14</span></figcaption>
+		    		<figcaption class="content">
+		    			<span class="msgStatus"><img src="{php echo LOUIE_IMG}loading.gif" /></span>
+		    			你们的我们都是我的，我的你们的也都是我的！！哈哈哈哈打算尽快发垃圾死啦 的是否可垃圾分开了按付款理解的深刻了
+		    		</figcaption>
+		    </figure>  
+		    	 <figure class="other text">
+		    		<img src="{php echo LOUIE_IMG}img1.jpg" class="header" />
+		    		<figcaption class="nickname">醉解心语<span>&nbsp;&nbsp;&nbsp;2017-10-09 10:17:14</span></figcaption>
+		    		<figcaption class="content">
+		    			你们的我们都是我的，我的你们的也都是我的！！哈哈哈哈打算尽快发垃圾死啦 的是否可垃圾分开了按付款理解的深刻了
+		    		</figcaption>
+		    	</figure>
+		    	
+		    	<figure class="me text">
+		    		<img src="{php echo LOUIE_IMG}img1.jpg" class="header" /> 
+		    		<figcaption class="nickname">醉解心语<span>&nbsp;&nbsp;&nbsp;10:17:14</span></figcaption>
+		    		<figcaption class="content">
+		    			你们的我们都是我的，我的你们的也都是我的！！哈哈哈哈打算尽快发垃圾死啦 的是否可垃圾分开了按付款理解的深刻了
+		    		</figcaption>
+		    	</figure> 
+		    	
+		    	<figure class="other image">
+		    		<img src="{php echo LOUIE_IMG}img1.jpg" class="header" />
+		    		<figcaption class="nickname">醉解心语</figcaption>
+		    		<figcaption class="content">
+		    			<img src="{php echo LOUIE_IMG}img2.jpg" />
+		    		</figcaption>
+		    	</figure>
+		    	
+		    	<figure class="me image">
+		    		<img src="{php echo LOUIE_IMG}img1.jpg" class="header" />
+		    		<figcaption class="nickname">醉解心语</figcaption>
+		    		<figcaption class="content">
+		    			<img src="{php echo LOUIE_IMG}img2.jpg" />
+		    		</figcaption>
+		    	</figure>
+		    	
+		    	<figure class="other text">
+		    		<img src="{php echo LOUIE_IMG}img1.jpg" class="header" />
+		    		<figcaption class="nickname">醉解心语</figcaption>
+		    		<figcaption class="content">
+		    			你们的我们都是我的，我的你们的也都是我的！！哈哈哈哈打算尽快发垃圾死啦 的是否可垃圾分开了按付款理解的深刻了
+		    		</figcaption> 
+		    	</figure>   
+		    	
+		    	 <figure class="me image">
+		    		<img src="{php echo LOUIE_IMG}img1.jpg" class="header" />
+		    		<figcaption class="nickname">醉解心语</figcaption>
+		    		<figcaption class="content">
+		    			<img src="{php echo LOUIE_IMG}img1.jpg" />
+		    		</figcaption>
+		    	</figure>  
+		    	
+		    	<figure class="other image">
+		    		<img src="{php echo LOUIE_IMG}img1.jpg" class="header" />
+		    		<figcaption class="nickname">醉解心语</figcaption>
+		    		<figcaption class="content">
+		    			<img src="{php echo LOUIE_IMG}img2.jpg" />
+		    		</figcaption>
+		    	</figure>
+		    	
+		    	<figure class="other voice">
+		    		<img src="{php echo LOUIE_IMG}img1.jpg" class="header" />
+		    		<figcaption class="nickname">醉解心语</figcaption>
+		    		<figcaption class="content">
+		    			<span class="time">66”</span>
+		    			<span class="progress">
+		    				<span class="now"></span>
+		    				<span class="control"></span>
+		    			</span>
+		    			<span class="iconfont icon-bofang"></span>
+		    		</figcaption> 
+		    	</figure> 
+		    	
+		    	<figure class="me voice">
+		    		<img src="{php echo LOUIE_IMG}img1.jpg" class="header" />
+		    		<figcaption class="nickname">醉解心语</figcaption>
+		    		<figcaption class="content">
+		    			<span class="time">66”</span>
+		    			<span class="progress">
+		    				<span class="now"></span>
+		    				<span class="control"></span>
+		    			</span>
+		    			<span class="iconfont icon-bofang"></span>
+		    		</figcaption> 
+		    	</figure>
+		    	
+		    	<figure class="me voice">
+		    		<img src="{php echo LOUIE_IMG}img1.jpg" class="header" />
+		    		<figcaption class="nickname">醉解心语</figcaption>
+		    		<figcaption class="content">
+		    			<span class="time">66”</span>
+		    			<span class="progress">
+		    				<span class="now"></span>
+		    				<span class="control"></span>
+		    			</span>
+		    			<span class="iconfont icon-bofang1"></span>
+		    		</figcaption> 
+		    	</figure>
+		    	 
+		    	
+		    	<figure class="other voice">
+		    		<img src="{php echo LOUIE_IMG}img1.jpg" class="header" />
+		    		<figcaption class="nickname">醉解心语</figcaption>
+		    		<figcaption class="content">
+		    			<span class="time">66”</span> 
+		    			<span class="progress">
+		    				<span class="now"></span>
+		    				<span class="control"></span>
+		    			</span>
+		    			<span class="iconfont icon-bofang1"></span>
+		    		</figcaption> 
+		    	</figure> 
+		    	
+		    	 <figure class="other red">
+		    		<img src="{php echo LOUIE_IMG}img1.jpg" class="header" />
+		    		<figcaption class="nickname">醉解心语</figcaption>
+		    		<figcaption class="content red-open"> 
+		    			<div class="red-main">
+		    				<div class="red-title">恭喜发财，大吉大利</div>
+		    				<div class="red-status-text">红包已领取</div>
+		    			</div>
+		    			<div class="red-footer">
+		    				现金红包
+		    			</div>
+		    		</figcaption> 
+		    	</figure>
+		    	
+		    	<figure class="me red">
+		    		<img src="{php echo LOUIE_IMG}img1.jpg" class="header" />
+		    		<figcaption class="nickname">醉解心语</figcaption>
+		    		<figcaption class="content red-close"> 
+		    			<div class="red-main">
+		    				<div class="red-title">恭喜发财，大吉大利</div>
+		    				<div class="red-status-text">领取红包</div>
+		    			</div>
+		    			<div class="red-footer">
+		    				现金红包
+		    			</div>
+		    		</figcaption> 
+		    	</figure>
+		    	
+		    	<figure class="other red">
+		    		<img src="{php echo LOUIE_IMG}img1.jpg" class="header" />
+		    		<figcaption class="nickname">醉解心语</figcaption>
+		    		<figcaption class="content red-close"> 
+		    			<div class="red-main">
+		    				<div class="red-title">恭喜发财，大吉大利</div>
+		    				<div class="red-status-text">领取红包</div>
+		    			</div>
+		    			<div class="red-footer">
+		    				现金红包
+		    			</div>
+		    		</figcaption> 
+		    	</figure>
+		    	
+		    	<figure class="me red">
+		    		<img src="{php echo LOUIE_IMG}img1.jpg" class="header" />
+		    		<figcaption class="nickname">醉解心语</figcaption>
+		    		<figcaption class="content red-open"> 
+		    			<div class="red-main">
+		    				<div class="red-title">恭喜发财，大吉大利</div>
+		    				<div class="red-status-text">领取红包</div>
+		    			</div>
+		    			<div class="red-footer">
+		    				现金红包
+		    			</div>
+		    		</figcaption> 
+		    	</figure>--> 
+		    	
+		    </div>
+		</div>
+		<!--E主体内容-->
+		 
+		<!--S内容控制-->
+		<nav class="mui-bar mui-bar-tab">
+			<!--S艾特用户提示元素-->
+			<div id="eith-status"><span class="eith-status-text"></span>请输入@内容，长按此处取消@</div>
+			<!--E艾特用户提示元素-->
+			
+			<!--S输入项选择-->
+			<div id="select-input">
+		   	     <input type="text" id="text-border" data-userid="0"/>   
+		   	     <button class="send-btn">发送</button>  
+		   	     <img src="{php echo LOUIE_IMG}room1.png" id="showHiddenVoice"/> 
+		   	     <img src="{php echo LOUIE_IMG}room2.png" id="showHiddenPic"/> 
+		   	     <img src="{php echo LOUIE_IMG}room3.png" id="showHiddenOther"/>    
+	   	     </div> 
+	   	     <!--S输入项选择-->
+	   	     
+	   	     <!--S表情&图片&红包-->
+	   	     <div id="pic-face-red">
+	   	     	<!--S表情-->
+	   	     	<figure>
+	   	     		<figcaption><i class="iconfont icon-weibiaoti-_fuzhi-"></i></figcaption>
+	   	     		<figcaption>表情</figcaption>
+	   	     	</figure>
+	   	     	<!--E表情-->
+	   	     	
+	   	     	<!--S图片-->
+	   	     	<figure>
+	   	     		<figcaption><i class="iconfont icon-tupian"></i></figcaption>
+	   	     		<figcaption>图片</figcaption>
+	   	     	</figure>
+	   	     	<!--S图片-->
+	   	     	
+	   	     	<!--S红包-->
+	   	     	<figure> 
+	   	     		<figcaption><i class="iconfont icon-hongbao"></i></figcaption>
+	   	     		<figcaption>红包</figcaption>
+	   	     	</figure>
+	   	     	<!--S红包-->
+	   	     	
+	   	     	 <!--S表情包内容-->
+	   	     	<!--<div class="face">  
+	   	     		<ul class="mui-scroll">
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_1.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_2.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_3.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_4.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_5.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_6.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_1.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_2.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_3.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_4.gif" /></li>
+						<li><img src="{php echo LOUIE_FACE}1/1_1.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_2.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_3.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_4.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_5.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_6.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_1.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_2.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_3.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_4.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_1.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_2.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_3.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_4.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_5.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_6.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_1.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_2.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_3.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_4.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_1.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_2.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_3.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_4.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_5.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_6.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_1.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_2.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_3.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_4.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_1.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_2.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_3.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_4.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_5.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_6.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_1.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_2.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_3.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_4.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_1.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_2.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_3.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_4.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_5.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_6.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_1.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_2.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_3.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_4.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_1.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_2.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_3.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_4.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_5.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_6.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_1.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_2.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_3.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_4.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_1.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_2.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_3.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_4.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_5.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_6.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_1.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_2.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_3.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_4.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_1.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_2.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_3.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_4.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_5.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_6.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_1.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_2.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_3.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_4.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_1.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_2.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_3.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_4.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_5.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_6.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_1.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_2.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_3.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_4.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_1.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_2.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_3.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_4.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_5.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_6.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_1.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_2.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_3.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_4.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_3.gif" /></li>
+	   	     			<li><img src="{php echo LOUIE_FACE}1/1_4.gif" /></li>
+	   	     		</ul>
+	   	     	</div>-->
+	   	    <!--E表情包内容-->
+	   	     	
+	   	     	
+	   	     </div>
+	   	     <!--E表情&图片&红包-->
+	   	     
+	   	     
+	   	     <!--S语音-->
+	   	     <div id="recode">
+	   	     	<p class="recode-hint-text">单击一次录音</p>
+	   	     	<div class="circle-wrap">
+	   	     		<div class="circle-inner" data-status="start"> 
+	   	     			
+	   	     		</div>
+	   	     	</div> 
+	   	     	
+	   	     	<button type="button" class="voice-audition" data-voice-id='0'>试听</button>
+	   	     	<button type="button" class="voice-reset" data-voice-id='0'>重录</button>       
+	   	     </div>
+	   	     <!--E语音--> 
+	   	    
+	   	</nav>
+	   	<!--E内容控制-->
+	   	
+	   	<!--S群聊页面资料-->
+	   	<div id="im_info" style="display:none;">
+	   	{php echo $_imInfo} 
+	   	</div>
+	    <!--E群聊页面资料-->
+	    
+	    
+	    <!--S社群管理面板-->
+	    {if !$_isPrivate}
+	    <div id="group_manage_box" class="mui-popover mui-popover-bottom mui-popover-action ">
+		    <!-- 可选择菜单 -->
+		    <ul class="mui-table-view" id="group_manage_opt">
+		     {if $_W['member']['uid'] == $_groupInfo['owner']}
+		      <li class="mui-table-view-cell">
+		        <a href="javascript:;" data-banned-talk="{php echo $_groupInfo['is_banned_talk']}" data-groupid="{php echo $_groupInfo['id']}"><span class="banned-talk-status">{if empty($_groupInfo['is_banned_talk'])}开启{else}关闭{/if}</span>全员禁言</a> 
+		      </li>
+		      <li class="mui-table-view-cell">
+		        <a href="{php echo $this->createMobileUrl('m_set_share',array('groupid'=>$_GPC['groupid']))}">分享设置</a> 
+		      </li>
+		      {/if}
+		      <li class="mui-table-view-cell">
+		        <a href="javascript:;">正在开发中...</a>
+		      </li>
+		    </ul>
+		    <!-- 取消菜单 -->
+		    <ul class="mui-table-view">
+		      <li class="mui-table-view-cell">
+		        <a href="javascript:;" id="hidden_group_manage_box"><b>取消</b></a>
+		      </li>
+		    </ul>
+		</div>
+		{/if}
+	    <!--E社群管理面板-->
+	    
+	    
+	    <!--S用户控制面板-->
+	    {if !$_isPrivate}
+	    <div id="user-control" class="mui-popover mui-popover-bottom mui-popover-action">
+		    <!-- 可选择菜单 -->
+		    <ul class="mui-table-view">
+		      <li class="mui-table-view-cell">
+		        <a href="javascript:;" id="eith-option">@TA</a>
+		      </li>
+		      <li class="mui-table-view-cell">
+		        <a href="javascript:;" id="private-chat">私聊</a> 
+		      </li>
+		    </ul>
+		    <!-- 取消菜单 -->
+		    <ul class="mui-table-view">
+		      <li class="mui-table-view-cell">
+		        <a href="#user-control"><b>取消</b></a>
+		      </li>
+		    </ul>
+		</div>
+		{/if}
+	    <!--E用户控制面板-->
+	    
+	    <!--S艾特消息-->
+	    <div id="eith-box">
+	    	<img src="{php echo LOUIE_IMG}no-header.png" class="eith-box-header"/>
+	    	<div class="eith-box-text"></div>
+	    	<img src="{php echo LOUIE_IMG}change-eith.png" class="eith-icon" />
+	    </div>
+	    <!--E艾特消息-->
+	    
+	    <!--S发送红包区域-->
+	    <!--<div id="set-red-box">
+	    	<form action="" method="post" name="red-param">
+	    		<ul>
+	    			<li>
+	    				<span>单个金额</span>
+	    				<input type="text" placeholder="0.00" name="unit_price" />
+	    				<b>元</b>
+	    			</li>
+	    			<li></li>
+	    			<li>
+	    				<span>红包个数</span>
+	    				<input type="text" placeholder="{php echo $_groupInfo['personNum']}" name="number" />
+	    				<b>个</b>
+	    			</li>
+	    			<li>本群共{php echo $_groupInfo['personNum']}人</li>
+	    			<li>
+	    				<textarea name="title" placeholder="恭喜发财，大吉大利"></textarea>
+	    			</li>
+	    		</ul>
+	    		<h2><span>￥</span>0.00</h2>
+	    		<button type="button" class="send-red">塞进红包</button>
+	    		<button type="button" class="send-cancel">取消</button>
+	    	</form>
+	    </div>-->
+	    <!--E发送红包区域-->
+	    
+	    <!--S红包领取列表-->
+	    <!--  
+	    <div id="red-list-page">
+		    	<div class="mui-scroll">
+		    	<div class="red-list-header">
+		    		<img src="{php echo LOUIE_IMG}nopic.jpg" class="red-list-user-header" />
+		    		<h2><span>某某某某某某</span>的红包</h2>
+		    		<h3>恭喜发财，打击大了恭喜发财，打击大了恭喜发财，打击大了恭喜发财，打击大了恭喜发财，打击大了恭喜发财，打击大了恭喜发财，打击大了恭喜发财，打击大了恭喜发财，打击大了恭喜发财，打击大了恭喜发财，打击大了恭喜发财，打击大了恭喜发财，打击大了</h3>
+		    		<h4><span>88.88</span>元</h4>
+		    		<h5>已存入钱包，可用于提现</h5>
+		    	</div>
+		    	<div class="red-list-number">6个红包，59秒被抢完</div>
+		    	<figure>
+		    		<img src="{php echo LOUIE_IMG}nopic.jpg" />
+		    		<figcaption class="take-user-name">默默家欧式的肺结核的首付款</figcaption>
+		    		<figcaption class="time">10-30 15:03</figcaption>
+		    		<figcaption class="sum">122.25元</figcaption>
+		    		<figcaption class="line"></figcaption>
+		    	</figure>
+		    	</div>
+	    </div>
+	    -->
+	    <!--E红包领取列表-->
+	
+	<input type="hidden" value="{php echo $_W['siteurl']}" id="now-page" /> 
+	<input type="hidden" value="{php echo $_W['member']['uid']}" id="now-user" /> 
+	<input type="hidden" value="{php echo $_W['fans']['nickname']}" id="now-nickname" /> 
+	<input type="hidden" value="{php echo $_W['fans']['headimgurl']}" id="now-header" />   
+	<input type="hidden" value="{php echo LOUIE_IMG}" id="img-dir" /> 
+	<input type="hidden" value="{php echo LOUIE_FACE}" id="face-dir" />  
+		 
+	<script src="{php echo LOUIE_JS}basic.js"></script> 
+	<script src="{php echo LOUIE_JS}m_room.js"></script> 
+	<script src="{php echo LOUIE_IM_JS}sdk/webim.js"></script>
+	<script src="{php echo LOUIE_IM_JS}sdk/json2.js"></script>
+	<!--web im sdk 登录 示例代码-->
+    <script type="text/javascript" src="{php echo LOUIE_IM_JS}login/login.js"></script>  
+    <!--web im 监听新消息(c2c或群) 示例代码-->
+    <script type="text/javascript" src="{php echo LOUIE_IM_JS}msg/receive_new_msg.js"></script>
+
+	
+    <script src="{php echo LOUIE_IM_JS}im_basic.js"></script> 
+    <script src="{php echo LOUIE_IM_JS}im_basic_two.js"></script>
+	<script src="{php echo LOUIE_IM_JS}louie_im.js"></script>     
+	</body>
+</html>

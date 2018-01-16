@@ -1,0 +1,24 @@
+@CHARSET "UTF-8";
+.mui-content{
+	background:#292931;
+}
+#poster{
+	width:75%;
+	margin:0 auto;
+	display:block;
+	border-radius:.5rem;
+	margin-top:.65rem;
+}
+h2{
+	width:80%;
+	height:1rem;
+	line-height:2rem;
+	margin:.6rem auto;
+	padding:0;
+	color:#fff;
+	font-size:.75rem;
+	font-weight:normal;
+	background:url('../images/sjt.png') no-repeat; 
+	background-size:1rem 100%;
+	text-indent:1.2rem;
+}

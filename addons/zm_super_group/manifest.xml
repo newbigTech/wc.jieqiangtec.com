@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns="http://www.shuotupu.com" versionCode="0.8,1.0">
+	<application setting="false">
+		<name><![CDATA[超级社群]]></name>
+		<identifie><![CDATA[zm_super_group]]></identifie>
+		<version><![CDATA[0.19]]></version>
+		<type><![CDATA[activity]]></type>
+		<ability><![CDATA[超级社群]]></ability>
+		<description><![CDATA[超级社群]]></description>
+		<author><![CDATA[说图谱源码网]]></author>
+		<url><![CDATA[http://www.shuotupu.com]]></url>
+	</application>
+	<platform>
+		<subscribes>
+		</subscribes>
+		<handles>
+		</handles>
+		<rule embed="false" />
+		<card embed="false" />
+	</platform>
+	<bindings>
+		<cover>
+			<entry title="入口" do="m_index" state="" direct="false" />
+		</cover>
+		<menu>
+			<entry title="财务中心" do="w_finance" state="" direct="false" />
+			<entry title="页面设置" do="w_page" state="" direct="false" />
+			<entry title="数据监控" do="w_data" state="" direct="false" />
+			<entry title="会员列表" do="w_member" state="" direct="false" />
+			<entry title="社群管理" do="w_group" state="" direct="false" />
+			<entry title="基础设置" do="w_config" state="" direct="false" />
+			<entry title="推广管理" do="w_generalize" state="" direct="false" />
+		</menu>
+	</bindings>
+	<permissions>
+	</permissions>
+	<install><![CDATA[CREATE TABLE IF NOT EXISTS `ims_zm_super_group_attention_group` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '关注的社群—ID',
+  `uniacid` smallint(5) unsigned NOT NULL COMMENT '关注的社群—关注的社群',
+  `groupid` int(10) unsigned NOT NULL COMMENT '关注的社群—社群ID',
+  `userid` mediumint(8) unsigned NOT NULL COMMENT '关注的社群—用户ID',
+  `status` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '关注的社群—关注状态(0=未关注，1=已关注）',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=67 DEFAULT CHARSET=utf8;
+CREATE TABLE IF NOT EXISTS `ims_zm_super_group_browse_record` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '用户浏览社群记录表—ID',
+  `userid` mediumint(8) unsigned NOT NULL COMMENT '用户浏览社群记录表—用户ID',
+  `uniacid` smallint(5) unsigned NOT NULL COMMENT '用户浏览社群记录表—公众号ID',
+  `group_id` int(10) unsigned NOT NULL COMMENT '用户浏览社群记录表—社群ID',
+  `time` int(10) unsigned NOT NULL COMMENT '用户浏览社群记录表—浏览时间',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=355 DEFAULT CHARSET=utf8;
+CREATE TABLE IF NOT EXISTS `ims_zm_super_group_class` (
+  `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT COMMENT '分类表—id',
+  `uniacid` smallint(5) unsigned NOT NULL COMMENT '分类表—公众号ID',
+  `name` varchar(4) NOT NULL COMMENT '分类表—分类名称',
+  `sort` mediumint(8) unsigned DEFAULT NULL COMMENT '分类表—排序',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=20 DEFAULT CHARSET=utf8;
+CREATE TABLE IF NOT EXISTS `ims_zm_super_group_config` (
+  `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT COMMENT '参数表—ID',
+  `im_appid` int(10) unsigned DEFAULT NULL COMMENT '参数表—云通信应用APPID',
+  `im_account` varchar(30) DEFAULT NULL COMMENT '参数表—云通信应用管理员账户名',
+  `im_accountType` mediumint(8) unsigned DEFAULT NULL COMMENT '参数表—云通信应用accountType',
+  `im_key` varchar(255) DEFAULT NULL COMMENT '参数表—云通信应用私钥路径',
+  `uniacid` smallint(5) unsigned DEFAULT NULL COMMENT '参数表—公众号ID',
+  `check_group_tpl` varchar(255) DEFAULT NULL COMMENT '参数表—审核社群结果通知消息模板',
+  `pay_appid` varchar(50) DEFAULT NULL COMMENT '参数表—微信商户appid',
+  `pay_appSecret` varchar(50) DEFAULT NULL COMMENT '参数表—微信商户appSecret',
+  `pay_account` varchar(50) DEFAULT NULL COMMENT '参数表—微信商户账户',
+  `pay_key` varchar(50) DEFAULT NULL COMMENT '参数表—微信商户秘钥',
+  `deposit_limit` decimal(10,2) unsigned DEFAULT NULL COMMENT '参数表—用户余额满多少可以提现',
+  `deposit_charge` decimal(5,2) unsigned DEFAULT NULL COMMENT '参数表—提现手续费（百分比）',
+  `share_title` varchar(255) DEFAULT NULL COMMENT '参数表—分享标题',
+  `share_icon` varchar(255) DEFAULT NULL COMMENT '参数表—分享图标',
+  `share_description` varchar(255) DEFAULT NULL COMMENT '参数表—分享描述',
+  `share_url` varchar(255) DEFAULT NULL COMMENT '参数表—分享链接',
+  `create_group_hint` varchar(255) DEFAULT NULL COMMENT '参数表—创建社群提示文字',
+  `wallet_hint` varchar(255) DEFAULT NULL COMMENT '参数表—我的钱包提示文字',
+  `sensitive` text COMMENT '参数表—敏感词',
+  `edit_time` int(10) unsigned DEFAULT NULL COMMENT '参数表—修改时间',
+  `eith_tpl_message_time` int(10) unsigned DEFAULT '0' COMMENT '参数表—群@用户模板消息通知时间（频率）秒',
+  `index_icon_status` char(3) DEFAULT 'on' COMMENT '参数表—首页自定义图标开始状态',
+  `q_x` smallint(5) unsigned DEFAULT NULL COMMENT '参数表—海报二维码X',
+  `q_y` smallint(5) unsigned DEFAULT NULL COMMENT '参数表—海报二维码y',
+  `q_z` smallint(5) unsigned DEFAULT NULL COMMENT '参数表—海报二维码大小',
+  `h_show` tinyint(1) unsigned DEFAULT '0' COMMENT '参数表—海报头像是否显示',
+  `h_x` smallint(5) unsigned DEFAULT NULL COMMENT '参数表—海报头像X',
+  `h_y` smallint(5) unsigned DEFAULT NULL COMMENT '参数表—海报头像y',
+  `h_z` smallint(5) unsigned DEFAULT NULL COMMENT '参数表—海报头像大小',
+  `n_show` tinyint(1) unsigned DEFAULT '0' COMMENT '参数表—海报昵称是否显示',
+  `n_x` smallint(5) unsigned DEFAULT NULL COMMENT '参数表—海报昵称X',
+  `n_y` smallint(5) unsigned DEFAULT NULL COMMENT '参数表—海报昵称y',
+  `n_z` smallint(5) unsigned DEFAULT NULL COMMENT '参数表—海报昵称大小',
+  `n_c` varchar(20) DEFAULT NULL COMMENT '参数表—海报昵称颜色',
+  `t_show` tinyint(1) unsigned DEFAULT '0' COMMENT '参数表—海报社群标题是否显示',
+  `t_x` smallint(5) unsigned DEFAULT NULL COMMENT '参数表—海报社群标题X',
+  `t_y` smallint(5) unsigned DEFAULT NULL COMMENT '参数表—海报社群标题Y',
+  `t_z` smallint(5) unsigned DEFAULT NULL COMMENT '参数表—海报社群标题大小',
+  `t_c` varchar(20) DEFAULT NULL COMMENT '参数表—海报社群标题颜色',
+  `c_show` tinyint(1) unsigned DEFAULT '0' COMMENT '参数表—海报社群社群封面是否显示',
+  `c_x` smallint(5) unsigned DEFAULT NULL COMMENT '参数表—海报社群社群封面X',
+  `c_y` smallint(5) unsigned DEFAULT NULL COMMENT '参数表—海报社群社群封面Y',
+  `c_w` smallint(5) unsigned DEFAULT NULL COMMENT '参数表—海报社群社群封面W',
+  `c_h` smallint(5) unsigned DEFAULT NULL COMMENT '参数表—海报社群社群封面H',
+  `poster_bg` varchar(255) DEFAULT NULL COMMENT '参数表—海报背景图',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+CREATE TABLE IF NOT EXISTS `ims_zm_super_group_deal_record` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '交易记录表—ID',
+  `orderid` varchar(15) NOT NULL COMMENT '交易记录表—订单ID',
+  `uniacid` smallint(5) unsigned NOT NULL COMMENT '交易记录表—公众号ID',
+  `groupid` int(10) unsigned NOT NULL COMMENT '交易记录表—社群ID',
+  `pay_user` mediumint(8) unsigned NOT NULL COMMENT '交易记录表—支付用户',
+  `take_user` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT '交易记录表—收益用户',
+  `price` decimal(10,2) unsigned NOT NULL COMMENT '交易记录表—价格',
+  `status` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '交易记录表—付款状态—0=未付款、1=已经付款、2=付款失败',
+  `time` int(10) unsigned NOT NULL COMMENT '交易记录表—订单时间',
+  `use` tinyint(4) unsigned DEFAULT '0' COMMENT '交易记录表—付款用途（0=付款入群，1=发红包）',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=78 DEFAULT CHARSET=utf8;
+CREATE TABLE IF NOT EXISTS `ims_zm_super_group_deposit` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '提现表—ID',
+  `uniacid` smallint(5) unsigned NOT NULL COMMENT '提现表—公众号ID',
+  `userid` mediumint(8) unsigned NOT NULL COMMENT '提现表—提现用户',
+  `money` decimal(10,2) unsigned NOT NULL COMMENT '提现表—提现金额',
+  `status` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '提现表—提现状态（0=等待提现、1=提现成功、2=拒绝提现）',
+  `time` int(10) unsigned NOT NULL COMMENT '提现表—提现时间',
+  `charge_money` decimal(10,2) unsigned NOT NULL COMMENT '提现表—提现手续费',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=28 DEFAULT CHARSET=utf8;
+CREATE TABLE IF NOT EXISTS `ims_zm_super_group_eith_record` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '艾特记录表—ID',
+  `eith_user` mediumint(8) unsigned NOT NULL COMMENT '艾特记录表—被艾特用户ID',
+  `groupid` int(10) unsigned NOT NULL COMMENT '艾特记录表—公众号ID',
+  `time` int(10) unsigned NOT NULL COMMENT '艾特记录表—艾特时间',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+CREATE TABLE IF NOT EXISTS `ims_zm_super_group_fans` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '用户粉丝表—ID',
+  `by_userid` mediumint(8) unsigned NOT NULL COMMENT '用户粉丝表—被关注的用户',
+  `from_userid` mediumint(8) unsigned NOT NULL COMMENT '用户粉丝表—关注的用户',
+  `uniacid` smallint(5) unsigned NOT NULL COMMENT '用户粉丝表—公众号ID',
+  `status` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '用户粉丝表—关注状态（0=取消关注，1=已关注）',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=68 DEFAULT CHARSET=utf8;
+CREATE TABLE IF NOT EXISTS `ims_zm_super_group_group` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '社群—ID',
+  `uniacid` smallint(5) unsigned NOT NULL COMMENT '社群—公众号ID',
+  `title` varchar(30) NOT NULL COMMENT '社群—社群标题',
+  `name` varchar(30) NOT NULL COMMENT '社群—群名称',
+  `group_id` varchar(20) NOT NULL COMMENT '社群—群ID(云通信)',
+  `cover` varchar(255) NOT NULL COMMENT '社群—群封面',
+  `header` varchar(255) NOT NULL COMMENT '社群—群头像',
+  `brief` varchar(255) DEFAULT NULL COMMENT '社群—群简介',
+  `owner` mediumint(8) unsigned NOT NULL COMMENT '社群—群主',
+  `class_id` mediumint(8) unsigned NOT NULL COMMENT '社群—社群所属分类',
+  `recommend` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '社群—推荐社群(0=不推荐，1=推荐)',
+  `boutique` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '社群—精品社群(0=普通，1=精品)',
+  `enter` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '社群—进群限制（1=需要验证，2=无需验证，3=付费进入）',
+  `browse_count` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '社群—浏览次数',
+  `price` decimal(10,2) unsigned DEFAULT NULL COMMENT '社群—进群价格',
+  `create_time` int(10) unsigned NOT NULL COMMENT '社群—创建时间',
+  `status` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '社群—社群状态(1=正常，2=审核中，3=拒绝申请，4=关闭）',
+  `is_banned_talk` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '社群—禁止发言（0=正常，1=禁止）',
+  `share_award` tinyint(1) unsigned DEFAULT '0' COMMENT '社群—社群是否开启分享奖励(0=不开启(默认），1=开启)',
+  `award_ratio` decimal(10,2) unsigned DEFAULT '0.00' COMMENT '社群—分享奖励比率',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=56 DEFAULT CHARSET=utf8;
+CREATE TABLE IF NOT EXISTS `ims_zm_super_group_group_member` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '社群成员表—id',
+  `group_id` int(10) unsigned NOT NULL COMMENT '社群成员表—社群ID',
+  `member_id` mediumint(8) unsigned NOT NULL COMMENT '社群成员表—成员ID',
+  `rank` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '社群成员表—成员身份（1=普通，2=管理员）',
+  `status` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '社群成员表—成员状态（1=正常）',
+  `uniacid` smallint(5) unsigned NOT NULL COMMENT '社群成员表—公众号ID',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=149 DEFAULT CHARSET=utf8;
+CREATE TABLE IF NOT EXISTS `ims_zm_super_group_icon` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '首页自定义图标',
+  `uniacid` smallint(10) unsigned DEFAULT NULL COMMENT '首页自定义图标—公众号ID',
+  `icon1_icon` varchar(255) DEFAULT NULL COMMENT '自定义图标1',
+  `icon1_name` varchar(6) DEFAULT NULL COMMENT '自定义图标名称',
+  `icon1_url` varchar(255) DEFAULT NULL COMMENT '自定义图标链接',
+  `icon2_icon` varchar(255) DEFAULT NULL COMMENT '自定义图标',
+  `icon2_name` varchar(6) DEFAULT NULL,
+  `icon2_url` varchar(255) DEFAULT NULL COMMENT '自定义图标链接',
+  `icon3_icon` varchar(255) DEFAULT NULL COMMENT '自定义图标',
+  `icon3_name` varchar(255) DEFAULT NULL COMMENT '自定义图标名称',
+  `icon3_url` varchar(255) DEFAULT NULL COMMENT '自定义图标链接',
+  `icon4_icon` varchar(255) DEFAULT NULL COMMENT '自定义图标',
+  `icon4_name` varchar(6) DEFAULT NULL,
+  `icon4_url` varchar(255) DEFAULT NULL COMMENT '自定义图标链接',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+CREATE TABLE IF NOT EXISTS `ims_zm_super_group_member` (
+  `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT COMMENT '会员表—ID',
+  `uniacid` smallint(5) unsigned NOT NULL COMMENT '会员表—公众号ID',
+  `openid` varchar(100) NOT NULL COMMENT '会员表—用户openid',
+  `userid` mediumint(8) unsigned NOT NULL COMMENT '会员表—用户微擎用户ID',
+  `nickname` varchar(20) NOT NULL COMMENT '会员表—用户昵称',
+  `header` varchar(255) NOT NULL COMMENT '会员表—用户头像',
+  `sex` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '会员表—用户性别',
+  `money` decimal(10,2) unsigned NOT NULL DEFAULT '0.00' COMMENT '会员表—用户余额',
+  `status` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '会员表—用户状态（用户状态1=正常，0=锁定）',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=72 DEFAULT CHARSET=utf8;
+CREATE TABLE IF NOT EXISTS `ims_zm_super_group_msg` (
+  `id` bigint(19) unsigned NOT NULL AUTO_INCREMENT COMMENT '群消息表—ID',
+  `uniacid` smallint(6) unsigned NOT NULL COMMENT '群消息表—公众号ID',
+  `userid` mediumint(8) unsigned NOT NULL COMMENT '群消息表—用户ID',
+  `groupid` varchar(20) NOT NULL COMMENT '群消息表—社群ID',
+  `type` varchar(15) NOT NULL COMMENT '群消息表—消息类型',
+  `time` int(10) NOT NULL COMMENT '群消息表—发送时间',
+  `seq` bigint(19) unsigned NOT NULL COMMENT '群消息表—云通信消息ID',
+  `content` text NOT NULL COMMENT '群消息表—消息内容',
+  `eith` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT '群消息表—艾特用户ID',
+  `is_read` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '群消息表—艾特消息读取状态（0=未读，1=已读）',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=1460 DEFAULT CHARSET=utf8;
+CREATE TABLE IF NOT EXISTS `ims_zm_super_group_msg_image` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '聊天图片数据—ID',
+  `uniacid` smallint(5) unsigned NOT NULL COMMENT '聊天图片数据—公众号ID',
+  `min_url` varchar(255) NOT NULL COMMENT '聊天图片数据—小图地址',
+  `min_width` smallint(5) unsigned NOT NULL COMMENT '聊天图片数据—小图宽度',
+  `min_height` smallint(5) unsigned NOT NULL COMMENT '聊天图片数据—小图高度',
+  `max_url` varchar(255) NOT NULL COMMENT '聊天图片数据—大图地址',
+  `max_width` smallint(5) unsigned NOT NULL COMMENT '聊天图片数据—大图宽度',
+  `max_height` smallint(5) unsigned NOT NULL COMMENT '聊天图片数据—大图高度',
+  `original_url` varchar(255) DEFAULT NULL COMMENT '聊天图片数据—原图链接',
+  `original_width` smallint(5) unsigned DEFAULT NULL COMMENT '聊天图片数据—原图宽度',
+  `original_height` smallint(5) unsigned DEFAULT NULL COMMENT '聊天图片数据—原图高度',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=198 DEFAULT CHARSET=utf8;
+CREATE TABLE IF NOT EXISTS `ims_zm_super_group_msg_red` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '红包消息表—ID',
+  `title` varchar(255) NOT NULL COMMENT '红包消息表—红包标题',
+  `sum` decimal(10,2) unsigned NOT NULL COMMENT '红包消息表—红包总额',
+  `number` smallint(5) unsigned NOT NULL COMMENT '红包消息表—红包个数',
+  `type` tinyint(1) unsigned NOT NULL COMMENT '红包消息表—红包个数（1=普通红包，2=手气红包）',
+  `uniacid` smallint(5) unsigned NOT NULL COMMENT '红包消息表—公众号ID',
+  `unit` decimal(10,2) unsigned NOT NULL COMMENT '红包消息表—单个红包金额',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=28 DEFAULT CHARSET=utf8;
+CREATE TABLE IF NOT EXISTS `ims_zm_super_group_msg_voice` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '聊天语音数据—ID',
+  `uniacid` smallint(5) unsigned NOT NULL COMMENT '聊天语音数据—公众号ID',
+  `url` varchar(255) NOT NULL COMMENT '聊天语音数据—语音链接',
+  `duration` tinyint(2) unsigned DEFAULT NULL COMMENT '聊天语音数据—语音时长',
+  `past_time` int(10) unsigned NOT NULL COMMENT '聊天语音数据—语音过期时间',
+  `media_id` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=148 DEFAULT CHARSET=utf8;
+CREATE TABLE IF NOT EXISTS `ims_zm_super_group_private` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '私聊表-ID',
+  `user1` mediumint(8) unsigned NOT NULL COMMENT '私聊表—用户1',
+  `user2` mediumint(8) unsigned NOT NULL COMMENT '私聊表—用户2',
+  `group_id` int(10) unsigned NOT NULL COMMENT '私聊表—社群ID',
+  `uniacid` smallint(5) unsigned NOT NULL COMMENT '私聊变—公众号ID',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=37 DEFAULT CHARSET=utf8;
+CREATE TABLE IF NOT EXISTS `ims_zm_super_group_qrcode` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '二维码表—ID',
+  `uniacid` smallint(5) unsigned NOT NULL COMMENT '二维码表—公众号ID',
+  `userid` mediumint(8) unsigned NOT NULL COMMENT '二维码表—用户ID',
+  `groupid` int(10) unsigned NOT NULL COMMENT '二维码表—公众号ID',
+  `scene_id` int(10) unsigned NOT NULL COMMENT '二维码表—二维码标识符',
+  `name` char(8) NOT NULL COMMENT '二维码表—响应关键词名称',
+  `keyword` char(8) NOT NULL COMMENT '二维码表—响应关键词',
+  `time` int(10) unsigned NOT NULL COMMENT '二维码表—过期时间',
+  `url` varchar(255) NOT NULL COMMENT '二维码表—响应关键词链接',
+  `ticket` varchar(255) NOT NULL COMMENT '二维码表—获取二维码图片凭证',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+CREATE TABLE IF NOT EXISTS `ims_zm_super_group_red_open_record` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '红包打开记录表—ID',
+  `userid` mediumint(8) unsigned NOT NULL COMMENT '红包打开记录表—用户ID',
+  `red_id` int(10) unsigned NOT NULL COMMENT '红包打开记录表—红包ID',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=58 DEFAULT CHARSET=utf8;
+CREATE TABLE IF NOT EXISTS `ims_zm_super_group_red_record` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '红包记录表—ID',
+  `red_id` int(10) unsigned NOT NULL COMMENT '红包记录表—红包ID',
+  `sum` decimal(10,2) unsigned NOT NULL COMMENT '红包记录表—红包金额',
+  `take_user` mediumint(8) unsigned NOT NULL DEFAULT '0' COMMENT '红包记录表—抢到红包的用户',
+  `time` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '红包记录表—抢到红包的时间',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=37 DEFAULT CHARSET=utf8;
+CREATE TABLE IF NOT EXISTS `ims_zm_super_group_relation` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '推广关系表—ID',
+  `parent_user` mediumint(8) unsigned NOT NULL COMMENT '推广关系表—上级用户',
+  `userid` mediumint(8) unsigned NOT NULL COMMENT '推广关系表—用户',
+  `groupid` int(10) unsigned NOT NULL COMMENT '推广关系表—公众号ID',
+  `status` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '推广关系表—奖励状态（0=未奖励，1=已奖励）',
+  `uniacid` smallint(5) unsigned NOT NULL COMMENT '推广关系表—公众号ID',
+  `time` int(10) unsigned DEFAULT '0' COMMENT '推广关系表—推广用户购买进群时间',
+  `award` decimal(10,2) unsigned DEFAULT NULL COMMENT '//推广关系表—推广用户获取的佣金',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+CREATE TABLE IF NOT EXISTS `ims_zm_super_group_slide` (
+  `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT COMMENT '幻灯表—ID',
+  `slide_pic` varchar(255) NOT NULL COMMENT '幻灯表—图片地址',
+  `slide_url` varchar(255) DEFAULT NULL COMMENT '幻灯表—链接地址',
+  `state` tinyint(1) unsigned DEFAULT '1' COMMENT '幻灯表—显示状态',
+  `uniacid` int(10) unsigned NOT NULL COMMENT '幻灯表—公众号ID',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
+]]></install>
+	<uninstall><![CDATA[DROP TABLE IF EXISTS `ims_zm_super_group_attention_group`;
+DROP TABLE IF EXISTS `ims_zm_super_group_browse_record`;
+DROP TABLE IF EXISTS `ims_zm_super_group_class`;
+DROP TABLE IF EXISTS `ims_zm_super_group_config`;
+DROP TABLE IF EXISTS `ims_zm_super_group_deal_record`;
+DROP TABLE IF EXISTS `ims_zm_super_group_deposit`;
+DROP TABLE IF EXISTS `ims_zm_super_group_eith_record`;
+DROP TABLE IF EXISTS `ims_zm_super_group_fans`;
+DROP TABLE IF EXISTS `ims_zm_super_group_group`;
+DROP TABLE IF EXISTS `ims_zm_super_group_group_member`;
+DROP TABLE IF EXISTS `ims_zm_super_group_icon`;
+DROP TABLE IF EXISTS `ims_zm_super_group_member`;
+DROP TABLE IF EXISTS `ims_zm_super_group_msg`;
+DROP TABLE IF EXISTS `ims_zm_super_group_msg_image`;
+DROP TABLE IF EXISTS `ims_zm_super_group_msg_red`;
+DROP TABLE IF EXISTS `ims_zm_super_group_msg_voice`;
+DROP TABLE IF EXISTS `ims_zm_super_group_private`;
+DROP TABLE IF EXISTS `ims_zm_super_group_qrcode`;
+DROP TABLE IF EXISTS `ims_zm_super_group_red_open_record`;
+DROP TABLE IF EXISTS `ims_zm_super_group_red_record`;
+DROP TABLE IF EXISTS `ims_zm_super_group_relation`;
+DROP TABLE IF EXISTS `ims_zm_super_group_slide`;
+]]></uninstall>
+	<upgrade><![CDATA[]]></upgrade>
+</manifest>

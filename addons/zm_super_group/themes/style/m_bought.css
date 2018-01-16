@@ -1,0 +1,76 @@
+@CHARSET 'utf-8';
+.mui-content{ 
+	background:#ededed;
+	padding-bottom:2.433333rem;
+}
+h2,h3{
+	margin:0;
+	padding:0;
+}
+#bought dl{
+	margin:0;
+	padding:0;
+	width:100%;
+	height:6.966666rem;
+	border-bottom:1px solid #e2e2e2;
+	background:#fff;
+	margin-top:.3rem;
+} 
+#bought dl dt{
+	position:relative;
+	width:100%;
+	height:4.05rem;
+	border-bottom:1px solid #e2e2e2;
+}
+#bought dl dt img,#bought dl dt h2{
+	position:absolute;
+}
+#bought dl dt img{
+	top:0.5rem;
+	left:0.5rem;
+	width:3.033333rem;
+	height:3.033333rem;
+}
+#bought dl dt .title{
+	top:0.2rem;
+	left:4.266666rem;
+	font-size:0.72rem;
+	color:#373737;
+	line-height:1.15rem;
+	font-weight:normal;
+	width:11.5rem;
+}
+#bought dl dt .name{
+	bottom:0.2rem;
+	left:4.266666rem;
+	font-size:0.6rem; 
+	color:#999;
+	font-weight:normal;
+}
+#bought dl dd{
+	position:relative;
+	width:100%;
+	height:2.916666rem;
+	margin:0;
+	padding:0;
+}
+#bought dl dd h3{
+	position:absolute;
+}
+#bought dl dd .price{
+	top:0.6rem;
+	right:0.55rem;
+	font-size:0.6rem;
+	color:#727272;
+	font-weight:normal;
+}
+#bought dl dd .price span{
+	color:#4f4f4f;
+}
+#bought dl dd .time{
+	bottom:0.65rem;
+	font-size:0.6rem;
+	right:0.55rem;
+	color:#9b9b9b;
+	font-weight:normal;
+}

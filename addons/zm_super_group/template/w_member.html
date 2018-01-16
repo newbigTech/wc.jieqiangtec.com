@@ -1,0 +1,24 @@
+{template 'common/header'} 
+<link href="{php echo LOUIE_CSS}w_member.css" rel="stylesheet" type='text/css' />
+<!--S面板-->
+<div class="panel panel-default">
+  <div class="panel-heading louie-title">会员管理{if isset($_GPC['search'])}<a href="{php echo $this->createWebUrl('w_member')}" class="btn btn-default" id="back-list-btn">返回列表</a>{/if}</div>
+  <div class="panel-body">
+  	<form action="" method="post" name="search_form" id="louie-search-form">
+  		<input type="text" name="keyword" placeholder="搜索昵称" />
+  		<button type="button" name="send_search">搜索</button>  
+  	</form>
+  	
+    <table class="table">
+    	<tr><th>会员ID</th><th>会员昵称</th><th>头像</th><th>性别</th><th>历史佣金</th><th>剩余佣金</th><th>建群数量</th><th>用户状态</th></tr>
+    	{loop $_memberList $item}
+    	<tr><td>{php echo $item['userid']}</td><td>{php echo $item['nickname']}</td><td><img src="{php echo $item['header']}" style="width:50px;height:50px;" /></td><td>{if empty($item['sex'])}女{else}男{/if}</td><td>{if $item['income']}{php echo $item['income']}{else}0.00{/if}</td><td>{php echo $item['money']}</td><td>{php echo $item['groupNum']}</td><td><a href="{php echo $this->createWebUrl('w_member',array('doing'=>'changeStatus','status'=>$item['status'],'memberid'=>$item['userid']))}" class="btn {if empty($item['status'])}btn-danger{else}btn-default{/if}">{if empty($item['status'])}锁定{else}正常{/if}</a></td></tr>
+    	{/loop}
+    </table>
+    {php echo $_page}
+  </div>
+</div>
+<!--E面板-->
+<input type="hidden" value="{php echo $this->createWebUrl('w_member')}" id="now-page" />
+<script src="{php echo LOUIE_JS}w_member.js"></script>
+{template 'common/footer'} 

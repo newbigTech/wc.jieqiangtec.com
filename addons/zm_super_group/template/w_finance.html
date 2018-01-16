@@ -1,0 +1,68 @@
+{template 'common/header'} 
+<ul class="nav nav-tabs nav-justified">
+  <li role="presentation" {if $_setFinance}class="active"{/if}><a href="{php echo $this->createWebUrl('w_finance')}">基础设置</a></li>
+  <li role="presentation" {if $_deposit_list}class="active"{/if}><a href="{php echo $this->createWebUrl('w_finance',array('doing'=>'deposit_list','depositStatus'=>0))}">提现列表</a></li>
+  <li role="presentation" {if $_pay_record}class="active"{/if}><a href="{php echo $this->createWebUrl('w_finance',array('doing'=>'pay_record'))}">支付记录</a></li>
+</ul>
+
+
+{if $_setFinance}
+<div class="panel panel-default">
+  <div class="panel-heading">财务设置</div>
+  <div class="panel-body">
+    <form action="" method="post">
+		<div class="form-group">
+	    <label for="deposit_limit">用户余额满多少可提现</label>
+	    <input type="text" class="form-control" id="deposit_limit" placeholder="用户余额满多少可提现" value="{php echo $_param['deposit_limit']}" name="deposit_limit" />
+	  	</div>
+	  	
+	  	<div class="form-group">
+	    <label for="deposit_charge">提现手续费(百分比))</label>
+	    <input type="text" class="form-control" id="deposit_charge" placeholder="提现手续费" value="{php echo $_param['deposit_charge']}" name="deposit_charge" /> 
+	  	</div>
+	  <button type="submit" class="btn btn-default" name="send_set_finance">设置</button> 
+	</form>
+  </div>
+</div>
+
+
+<div class="panel panel-default">
+  <div class="panel-heading">我的钱包温馨提示</div>
+  <div class="panel-body">
+    <form action="" method="post" name="wallet_hint_form">
+    	<textarea class="form-control" rows="3" name="wallet_hint">{php echo $_param['wallet_hint']}</textarea> 
+    	<button type="submit" name="send_set_wallet_hint" class="btn btn-default" style="margin-top:20px;">设定设置</button>
+    </form>
+  </div>
+</div>
+{/if}
+
+
+{if $_deposit_list}
+<a href="{php echo $this->createWebUrl('w_finance',array('doing'=>'deposit_list','depositStatus'=>'0'))}" class="btn btn-default">待提现</a>
+<a href="{php echo $this->createWebUrl('w_finance',array('doing'=>'deposit_list','depositStatus'=>'1'))}" class="btn btn-default">已提现</a>
+<a href="{php echo $this->createWebUrl('w_finance',array('doing'=>'deposit_list','depositStatus'=>'2'))}" class="btn btn-default">拒绝提现</a>
+
+
+<table class="table">
+<tr><th>提现用户</th><th>提现金额</th><th>提现手续费</th><th>实际提现金额</th><th>提现时间</th>{if $_GPC['depositStatus'] == 0}<th>操作</th>{/if}</tr>
+{loop $_list $item}
+<tr><td>{php echo $item['nickname']}</td><td>{php echo $item['money']}</td><td>{php echo $item['charge_money']}</td><td>{php echo $item['money'] - $item['charge_money']}</td><td>{php echo date('Y-m-d H:i:s',$item['time'])}</td>{if $_GPC['depositStatus'] == 0}<td><a href="{php echo $this->createWebUrl('w_finance',array('doing'=>'deposit_list','passDeposit'=>$item['id']))}" class="btn btn-success" onclick="return confirm('确定要给该用户提现吗？')">提现</a> <a href="{php echo $this->createWebUrl('w_finance',array('doing'=>'deposit_list','noDeposit'=>$item['id']))}" class="btn btn-danger" onclick="return confirm('确定拒绝该用户的提现吗？')">拒绝</a></td>{/if}</tr>
+{/loop}
+</table>
+{php echo $_page} 
+{/if}
+ 
+
+
+{if $_pay_record}
+<table class="table">
+<tr><th>用户ID</th><th>头像</th><th>昵称</th><th>社群</th><th>金额</th><th>状态</th><th>时间</th></tr>
+{loop $_list $item}
+<tr><td>{php echo $item['pay_user']}</td><td><img src="{php echo $item['header']}" style="width:50px;height:50px;"></td><td>{php echo $item['nickname']}</td><td>{php echo $item['groupName']}</td><td>{php echo $item['price']}</td><td>{if $item['status'] == 0}未付款{elseif $item['status'] == 1}已付款{elseif $item['status'] == 2}付款失败{/if}</td><td>{php echo date('Y-m-d H:i:s',$item['time'])}</td></tr> 
+{/loop}
+</table>
+{php echo $_page}
+{/if}
+
+{template 'common/footer'} 

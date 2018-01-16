@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>创建社群</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="{php echo LOUIE_CSS}mui.css" rel="stylesheet" />
+		<link href="{php echo LOUIE_CSS}mui.picker.min.css" rel="stylesheet" />
+		<link href="{php echo LOUIE_CSS}m_fonts.css" rel="stylesheet" />
+		<link href="{php echo LOUIE_CSS}m_create_group.css" rel="stylesheet" /> 
+		<script src="{php echo LOUIE_JS}mui.js" type="text/javascript" charset="utf-8"></script>
+		<script src="{php echo LOUIE_JS}mui.picker.min.js" type="text/javascript" charset="utf-8"></script>
+    	<script src="{php echo LOUIE_JS}set.js" type="text/javascript" charset="utf-8"></script>
+    	{php echo Wx::WxJs('false',array('onMenuShareTimeline','onMenuShareAppMessage'))}
+    	{php echo $_share}
+	</head>
+	<body data-url="{php echo $_W['siteurl']}">      
+		<!--S主体内容-->
+		<div class="mui-content mui-scroll-wrapper">
+		    <div class="mui-scroll">
+		    	<!--S创建社群选项-->
+		    	<form id="create-list" name="createGroup" method="post" action="">
+		    		<label class="louie-first"> 
+		    			<b>社群头像</b>
+		    			<img src="{php echo tomedia($_oneGroup['header'])}" id="header-pic" />
+		    			<input type="file" name="header_file" id="header-contral" />
+		    			<input type="hidden" name="header" value="{php echo $_oneGroup['header']}" />
+		    		</label>
+		    		
+		    		
+		    		<label class="louie-default" for="name">    
+		    			<b>社群名称</b>
+		    			<input type="text" name="name" placeholder="请输入名称" id="name" value="{php echo $_oneGroup['name']}" />
+		    		</label>
+		    		
+		    		<div class="louie-line"><div></div></div> 
+		    		
+		    		<label class="louie-title" for="title">
+		    			<b>社群标题</b>
+		    			<textarea id="title" name="title" placeholder="请输入标题">{php echo $_oneGroup['title']}</textarea>
+		    			<span class="words-count">（25字以内）</span>
+		    		</label>  
+		    		
+		    		<div class="louie-default group-type">
+		    			<b>社群类别</b> 
+		    			<div class="mui-input-row mui-radio mui-left">
+							<label>群聊</label>
+							<input name="type" type="radio" checked="checked" value="1" /> 
+						</div>  
+		    		</div>
+		    		
+		    		<label class="louie-select"> 
+		    			<b>社群分类</b>
+		    			<select name="class_id">
+		    				{loop $_classList $item}
+		    				{if $item['id'] == $_oneGroup['class_id']}
+		    				<option value="{php echo $item['id']}" selected="selected">{php echo $item['name']}</option>
+		    				{else}
+		    				<option value="{php echo $item['id']}">{php echo $item['name']}</option>
+		    				{/if}  
+		    				{/loop}  
+		    			</select>
+		    		</label>
+		    		
+		    		<div class="louie-default group-enter"> 
+		    			<b>入群方式</b> 
+		    			<div class="mui-input-row mui-radio mui-left">
+							<label>无验证</label>
+							<input name="enter" type="radio" {if $_oneGroup['enter'] == 2}checked="checked"{/if} value="2" />  
+						</div>   
+						
+						<div class="mui-input-row mui-radio mui-left"> 
+							<label>付费</label>
+							<input name="enter" type="radio" value="3" {if $_oneGroup['enter'] == 3}checked="checked"{/if}/>   
+						</div>
+						
+		    		</div>
+		    		
+		    		<label class="louie-default enter-price" {if $_oneGroup['enter'] != 3}style="display:none;{else}style="display:block;{/if}">
+		    			<b>入群费用</b>
+		    			<input type="text" name="price" value="{php echo $_oneGroup['price']}"/>
+		    		</label>
+		    		
+		    		
+		    		<div class="louie-cover">
+		    			<b>上传封面</b>
+		    			<img src="{php echo tomedia($_oneGroup['cover'])}" id="cover-pic" />
+		    			<input type="file" name="cover_contral" id="cover-contral" />
+		    			<input type="hidden" name="cover" value="{php echo $_oneGroup['cover']}" />  
+		    		</div>
+		    		
+		    		<div class="louie-brief"> 
+		    			<b>社群简介</b> 
+		    			<textarea name="brief" placeholder="请输入简介">{php echo $_oneGroup['brief']}</textarea>
+		    			<span class="brief-words-number">（255字以内）</span>
+		    		</div>
+		    		<input type="hidden" name="groupid" value="{php echo $_oneGroup['group_id']}" />  
+		    		<input type="hidden" name="owner" value="{php echo $_W['member']['uid']}" />  
+		    		<button type="button" type="button" class="create-btn" data-succ-url="{php echo $this->createMobileUrl('m_me_group')}">修改</button>
+		    		
+		    		
+		    		<div class="create-hint">
+		    			发的那是尽快发货你开了三等分开了电脑上发的卡拉斯加对方考虑到是的房间爱思考了房间发动机撒开了家打飞机奥卡索
+		    		</div>
+		    		
+		    	</form>
+		    	<!--E创建社群选项-->
+		    	
+    	    </div>
+    	</div>
+		<!--E选择进群方式-->
+		 
+		 <input type="hidden" value="{php echo LOUIE_IMG}" id="system-img-url" />  	
+	<script src="{php echo LOUIE_JS}basic.js"></script>
+	<script src="{php echo LOUIE_JS}m_editor_group.js"></script>   
+	</body>
+</html>

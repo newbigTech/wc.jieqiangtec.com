@@ -1,0 +1,40 @@
+@charset "utf-8";
+.mui-content{
+	background:#fff;
+	padding-bottom:2.033333rem;
+}
+#deal-list{
+	margin:0;
+	padding:0;
+	list-style:none;
+}
+#deal-list li{
+	position:relative;
+	width:100%;
+	height:2.3rem;
+	line-height:2.3rem;
+	border-bottom:1px solid #e5e5e5;
+}
+#deal-list li span{
+	position:absolute;
+	font-size:0.666666rem;
+}
+#deal-list li span.time{
+	left:0.4rem;
+}
+#deal-list li span.money{
+	color:#fe2e4f;
+	right:0.483333rem;
+}
+nav.mui-bar{
+	height:2.033333rem;
+	line-height:2.033333rem;
+	background:#f84c69;
+	color:#fff;
+	text-align:center;
+	font-size:0.8rem;
+}
+nav.mui-bar a{
+	color:#fff;
+	display:block;
+}

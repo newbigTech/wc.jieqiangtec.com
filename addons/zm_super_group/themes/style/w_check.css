@@ -1,0 +1,18 @@
+@CHARSET "UTF-8";
+.group-header{
+	disolay:block;
+	width:80px;
+	height:80px;	
+}
+.group-cover{
+	width:100px;
+	height:80px;
+}
+#group-info dl{
+	margin:0;
+	padding:0;
+	color:#666;
+}
+#group-info dd{
+	margin-bottom:15px;
+}

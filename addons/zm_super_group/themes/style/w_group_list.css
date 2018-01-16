@@ -1,0 +1,96 @@
+@CHARSET "UTF-8";
+#main .panel-heading{
+	position:relative !important;
+}
+#main .panel-heading a{
+	position:absolute !important;
+	top:3px;
+	right:10px;
+}
+#main .panel-heading a.add-class{
+	right:100px;
+}
+#main .sort{
+	width:80px;
+	height:30px;
+	border:1px solid #ccc;
+	background:#fff;
+}
+#main button[name=send_sort]{
+	width:80px;
+}
+#add-group textarea,#update-group textarea{
+	background:#fff;
+	border:1px solid #E7E7EB;
+	width:100%;
+	height:70px;
+	padding:10px;
+}
+#add-group,#update-group{
+	z-index:1030 !important;	
+}
+#add-group .modal-body,#update-group .modal-body{
+	max-height:700px;
+	overflow-y:auto;
+}
+#add-group #add_owner,#update-group #add_owner{
+	position:relative;
+}
+#add-group #update_owner,#update-group #update_owner{
+	position:relative;
+}
+#add-group #add_owner input[type=text],#update-group #add_owner input[type=text]{
+	width:50%;
+}
+#add-group #update_owner input[type=text],#update-group #update_owner input[type=text]{
+	width:50%;
+}
+#add-group input[type=text]:focus,#update-group input[type=text]:focus{
+	border:1px solid #E7E7EB;
+	box-shadow:none;
+}
+#add-group #add_owner button,#update-group #add_owner button{
+	position:absolute;
+	left:300px;
+	top:22px;
+	border-top-left-radius:0;
+	border-bottom-left-radius:0;
+}
+#add-group #update_owner button,#update-group #update_owner button{
+	position:absolute;
+	left:300px;
+	top:22px;
+	border-top-left-radius:0;
+	border-bottom-left-radius:0;
+}
+.user-header{
+	margin-top:10px;
+}
+.user-header dl{
+	width:90px;
+	cursor:pointer;
+	float:left;
+	border:1px solid #fff;
+	padding-top:3px;
+}
+.user-header img{
+	margin:0 auto;
+	display:block;
+	width:50px;
+	height:50px;
+}
+.user-header dl dd{
+	text-align:center;
+}
+.table tr td:nth-child(3) img{
+	width:50px;
+	height:50px;
+}
+.table tr td:nth-child(4) img{
+	width:80px;
+	height:80px;
+}
+.louie-recommend{
+	margin-bottom:10px;
+}
+

@@ -1,0 +1,21 @@
+@CHARSET "UTF-8";
+#main .panel-heading{
+	position:relative !important;
+}
+#main .panel-heading a{
+	position:absolute !important;
+	top:3px;
+	right:10px;
+}
+#main .panel-heading a.add-class{
+	right:100px;
+}
+#main .sort{
+	width:80px;
+	height:30px;
+	border:1px solid #ccc;
+	background:#fff;
+}
+#main button[name=send_sort]{
+	width:80px;
+}

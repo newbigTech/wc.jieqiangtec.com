@@ -1,0 +1,46 @@
+@charset "utf-8";
+.mui-content{
+	background:#fff;
+}
+#record-list{
+	margin:0;
+	padding:0; 
+}
+#record-list li{
+	position:relative;
+	height:2.383333rem;
+	line-height:2.393333rem;
+	border-bottom:1px solid #ebebeb;
+	font-size:0.583333rem;
+	color:#2e2e2e; 
+}
+#record-list li .time{
+	position:absolute;
+	left:0.433333rem;
+}
+#record-list li .status{
+	position:absolute;
+	right:2.883333rem;
+}
+#record-list li .processed{
+	color:#2e2e2e;
+}
+#record-list li .success{
+	color:#9b9b9b;
+}
+#record-list li .money{
+	position:absolute;
+	right:0.883333rem;
+}
+nav.mui-bar{
+	height:2.033333rem; 
+	line-height:2.533333rem;
+	background:#f84c69;
+	color:#fff;
+	text-align:center;
+	font-size:0.8rem;
+}
+nav.mui-bar a{
+	color:#fff;
+	display:block;
+}

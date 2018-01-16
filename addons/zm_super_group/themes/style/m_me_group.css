@@ -1,0 +1,167 @@
+@charset "utf-8";
+h2,h3,h4{
+	margin:0;
+	padding:0;
+}
+.mui-content{
+	background:#fff;
+	padding-bottom:2.033333rem;
+}
+#header-nickname{
+	position:relative;
+	width:100%;
+	height:4.066666rem;
+	border-bottom:1px solid #ddd;  
+}
+#header-nickname .header{ 
+	position:absolute;
+	display:block;
+	top:0.666666rem;
+	left:0.633333rem;
+	width:2.683333rem;
+	height:2.683333rem;
+	border-radius:6px;
+}
+#header-nickname .nickname{
+	position:absolute;
+	left:4.116666rem;
+	top:1.416666rem;
+	color:#313131;
+	font-size:0.666666rem;
+	width:9rem;
+	overflow:hidden;
+	text-overflow:ellipsis;
+	white-space:nowrap; 
+}
+#fans-create{
+	height:2.016666rem;
+	border-bottom:1px solid #ddd;
+}
+.louie-spacing{
+	width:100%;
+	height:.2rem;
+	background:#ededed;
+}
+#fans-create a{
+	display:block;
+	float:left;
+	width:7.683333rem;
+	height:2.016666rem;
+	line-height:2.016666rem;
+	font-size:0.577833rem;
+	text-align:center;
+	color:#343434;
+	position:relative;
+}
+#fans-create a:last-child{
+	left:.7rem;
+}
+#fans-create>span{
+	float:left;
+	display:block;
+	line-height:2.016666rem;
+	color:#ddd;
+}
+#fans-create a:first-child span{
+	color:#ff547b;
+}
+#fans-create a:last-child i{
+	font-size:1rem;
+	color:#f94c68;
+	position:absolute;
+	left:1.5rem;
+}
+#group-list h3{
+	width:100%;
+	text-align:center;
+	line-height:1.666666rem;
+	height:1.666666rem;
+	font-size:0.577833rem;
+	border-top:1px solid #ddd;
+	border-bottom:1px solid #ddd;
+	margin-bottom:0.866666rem;
+}
+.louie-list{
+	width:100%;
+	margin-bottom:1.02rem;
+}
+.louie-list h2{
+	margin:0;
+	padding:0;
+	height:1.433333rem;
+	line-height:1.433333rem;
+	font-size:0.666666rem;
+	margin-bottom:1.083333rem;
+}
+.louie-list h2 i{
+	color:#f6193c;
+	font-size:0.633333rem;
+}
+.louie-list figure{
+	position:relative;
+	height:3.533333rem;
+	padding:0;
+	padding-bottom:4.1rem;
+	width:14.5rem;
+	margin:0 auto .3rem auto; 
+	border-bottom:.5px solid #ddd;
+}
+.louie-list figure a{
+	display:block;
+	height:3.533333rem !important;
+	color:#000;
+}
+.louie-list figure:last-child{
+	margin-bottom:0;
+}
+.louie-list figure img{
+	position:absolute;
+	left:0;
+	top:0.14rem;
+	display:block;
+	width:2.783333rem;
+	height:2.783333rem;
+}
+.louie-list figcaption{
+	position:absolute;
+}
+.louie-list figcaption.title{
+	left:3.45rem;
+	top:0.133333rem;
+	line-height:120%;
+	font-size:0.6rem;
+}
+.louie-list figcaption.brief{
+	font-size:0.516666rem;
+	top:1.733333rem;
+	left:3.45rem;
+	line-height:0.52rem;
+	color:#9a9a9a;
+}
+.louie-list figcaption.count-price{
+	width:10.56rem;
+	font-size:0.516666rem;
+	top:2.966666rem;
+	left:3.3rem;
+	line-height:100%;
+	color:#9a9a9a;
+}
+.louie-list figcaption.count-price .price{
+	color:#ff2349;
+	float:right;
+}
+nav.mui-bar{
+	background:#f84c69;
+	color:#fff;
+	text-align:center;
+	font-size:0.8rem;
+	height:2.033333rem; 
+	line-height:2.533333rem;
+}
+nav.mui-bar a{
+	color:#fff;
+	display:block;
+	height:100%;
+}
+
+

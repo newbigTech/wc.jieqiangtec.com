@@ -1,0 +1,32 @@
+@CHARSET "UTF-8";
+#louie-search-form{
+	position:relative;
+	height:40px;
+}
+#louie-search-form input:first-child{
+	position:absolute;
+	left:0;
+	top:0;
+	width:200px;
+	height:30px;
+	border:1px solid #ccc;
+	background:#fff;
+	border-right:none;
+	text-indent:5px;
+}
+#louie-search-form button:last-child{
+	position:absolute;
+	left:200px; 
+	border:1px solid #ccc;
+	background:#fff;
+	width:80px;
+	height:30px;
+}
+.louie-title{
+	position:relative;
+}
+#back-list-btn{
+	position:absolute;
+	right:10px;
+	top:3px;
+}

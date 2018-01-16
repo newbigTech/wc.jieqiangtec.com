@@ -1,0 +1,64 @@
+@CHARSET "UTF-8";
+#poster-box{
+	position:relative;
+	height:1100px;
+}
+#set-poster{
+	position:absolute;
+	top:60px;
+	width:320px;
+	height:568px;
+	border:2px solid #ccc;
+	background-repeat:no-repeat;
+	background-size:100% 100%;
+	box-sizing:border-box;
+	overflow:hidden;
+}
+#poster-form{
+	position:absolute;
+	top:60px;
+	right:0;
+	width:600px;
+}
+.send_poster{
+	margin-top:20px;
+}
+#set-poster img{
+	position:absolute;
+	margin:0;
+	width:100px;
+	height:100px;
+	display:block;
+}
+.poster-option{
+	margin-top:20px;
+	margin-bottom:30px;
+	border-top:1px solid #ccc;
+}
+.poster-option h4{
+	font-size:16px;
+}
+.poster-option input{
+	width:100px;
+	height:30px;
+	border:1px solid #ccc;
+	background:#fff;
+	margin-bottom:10px;
+} 
+.poster-option input[type=range]{
+	border:none;
+	display:inline; 
+	position:relative;
+	top:20px;
+}
+#p-nickname,#p-title{
+	position:absolute;
+	font-size:14px;
+	min-width:80px;   
+	display:none;
+}
+
+
+
+
+

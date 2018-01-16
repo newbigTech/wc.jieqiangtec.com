@@ -1,0 +1,65 @@
+@charset "utf-8";
+.mui-content{
+	background:#fff;
+	padding-bottom:2.033333rem;
+}
+#earnings-record figure{
+	position:relative;
+	margin:0;
+	padding:0;
+	border-bottom:1px solid #ccc;
+	width:100%;
+	height:3.45rem;
+}
+#earnings-record figure figcaption{
+	position:absolute;
+}
+#earnings-record figure img{
+	position:absolute;
+	top:1.5rem;
+	left:0.566666rem;
+	display:block;
+	width:1.3rem;
+	height:1.3rem;
+	border-radius:0.65rem;
+}
+#earnings-record figure figcaption.title{
+	width:11.166666rem;
+	font-size:0.5335rem;
+	top:0.333333rem;
+	left:0.4rem;
+	color:#000;
+	white-space:nowrap;
+	overflow:hidden;
+	text-overflow:ellipsis; 
+	line-height:150%;
+}
+#earnings-record figure figcaption.time{
+	font-size:0.5335rem;
+	right:0.4rem;
+	top:0.333333rem;
+	color:#585858;
+}
+#earnings-record figure figcaption.nickname{
+	font-size:0.5335rem;
+	top:1.666666rem;
+	left:2.3rem;
+}  
+#earnings-record figure figcaption.money{
+	font-size:0.5335rem;
+	color:red; 
+	right:0.4rem;
+	top:1.666666rem;
+}
+nav.mui-bar{
+	height:2.033333rem;
+	line-height:2.033333rem;
+	background:#f84c69;
+	color:#fff;
+	text-align:center;
+	font-size:0.8rem;
+}
+nav.mui-bar a{
+	color:#fff;
+	display:block;
+} 

@@ -1,0 +1,19 @@
+setRem();
+ 
+
+
+window.onientationchange = function(){
+	setRem(); 
+} 
+window.onresize = function(){
+	setRem();
+}
+
+function setRem(){
+	var html = document.documentElement;
+	var hWidth = html.getBoundingClientRect().width;
+	html.style.fontSize = hWidth / 16 + 'px'; 
+}
+
+
+

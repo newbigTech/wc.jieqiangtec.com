@@ -1,0 +1,32 @@
+{template 'common/header'} 
+<link href="{php echo LOUIE_CSS}w_fonts.css" type="text/css" rel="stylesheet" />
+<link href="{php echo LOUIE_CSS}w_page.css" type="text/css" rel="stylesheet" />
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">页面管理</h3>
+  </div>
+  <div class="panel-body">
+    <ul id="group-list">
+		<li>
+			<a href="{php echo $this->createWebUrl('w_slide')}">
+				<i class="iconfont icon-uislide"></i>
+				<p>幻灯设置</p> 
+			</a>
+		</li>
+		
+		<li>
+			<a href="{php echo $this->createWebUrl('w_icon')}">
+				<i class="iconfont icon-tubiao"></i>
+				<p>首页导航图标</p>  
+			</a>
+		</li>
+		 
+	</ul>
+  </div>
+</div>
+
+
+
+
+{template 'common/footer'} 

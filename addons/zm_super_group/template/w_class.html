@@ -1,0 +1,77 @@
+{template 'common/header'} 
+<link href="{php echo LOUIE_CSS}w_class.css" rel="stylesheet" />
+<div class="panel panel-default" id="main">
+  <div class="panel-heading">
+  	分类列表
+  <a href="javascript:;" class="btn btn-success add-class" data-toggle="modal" data-target="#add-class">添加分类</a>
+  <a href="{php echo $this->createWebUrl('w_group')}" class="btn btn-success back-btn">社群管理</a>
+  </div>
+  <div class="panel-body">
+    <table class="table">
+    	<form action="" method="post">
+    	<tr><th>分类名称</th><th>排序</th><th>操作</th></tr>
+    	{loop $_list $item}
+    	<tr><td>{php echo $item['name']}</td><td><input type="text" name="sort[{php echo $item['id']}]" value="{php echo $item['sort']}" class="sort" /></td><td><button type="button" class="btn btn-success update-btn" data-toggle="modal" data-target="#update-class" data-classId="{php echo $item['id']}" data-className="{php echo $item['name']}">修改</button> <a class="btn btn-warning" href="{php echo $this->createWebUrl('w_class',array('doing'=>'delete','classId'=>$item['id']))}" onclick="return confirm('您确定要删除该分类吗？')">删除</a></td></tr>
+    	{/loop}
+    	<tr><td></td><td><button class="btn btn-success" name="send_sort" type="submit">排序</button></td><td></td></tr>
+    	</form>
+    </table>
+  </div>
+</div>
+
+
+<!--S添加分类弹窗-->
+<div class="modal fade" id="add-class" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">添加分类</h4>
+      </div>
+      <div class="modal-body">
+        	<form action="" name="add_class" method="post">
+        	  <div class="form-group">
+			    <label for="name">分类名称</label>
+			    <input type=text class="form-control" id="name" placeholder="分类名称" name="name" />
+			  </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+        <button type="submit" class="btn btn-primary" name="send_add_class">确定</button>
+        	</form>
+      </div>
+    </div>
+  </div>
+</div>
+<!--E添加分类弹窗-->
+
+<!--S修改分类弹窗-->
+<div class="modal fade" id="update-class" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">修改分类</h4>
+      </div>
+      <div class="modal-body">
+        	<form action="" name="update_class" method="post">
+        	  <div class="form-group">
+			    <label for="name">分类名称</label>
+			    <input type=text class="form-control" id="name" placeholder="分类名称" name="name" />
+			  </div>
+			  <input type="hidden" value="" name="classId" />  
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button> 
+        <button type="submit" class="btn btn-primary" name="send_update_class">确定</button> 
+       </form> 
+      </div>
+    </div>
+  </div>
+</div>
+<!--E修改分类弹窗-->
+
+
+
+<script src="{php echo LOUIE_JS}w_class.js"></script> 
+{template 'common/footer'} 

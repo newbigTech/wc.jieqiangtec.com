@@ -1,0 +1,195 @@
+{template 'common/header'} 
+<style>
+#addslide{
+	z-index:1030;
+}
+</style>
+<!--S面板-->
+
+<div class="panel panel-default">
+
+  <div class="panel-heading">幻灯管理</div>
+
+  <div class="alert alert-danger" role="alert">建议：幻灯数量不要超过5个！</div>
+
+  <div class="panel-body">
+
+    	<!--S添加幻灯按钮-->
+
+  			<button type="button" class="btn btn-default" data-toggle="modal" data-target="#addslide">添加幻灯</button>
+
+  		<!--E添加幻灯按钮-->
+
+  		
+
+  		
+
+  		<!--S显示幻灯列表-->
+
+    		<table class="table">
+
+				<tr><th>幻灯缩略图</th><th>幻灯链接</th><th>显示状态</th><th>操作</th></tr>
+
+				{loop $_allSlide $inde $item}
+
+				<tr><td><img src="{php echo tomedia($item['slide_pic'])}" style="width:150px;height:80px;"/></td><td><a href="{php echo $item['slide_url']}">链接地址</a></td><td><a href="{php echo $this->createWebUrl('w_slide',array('slidestate'=>$item['state'],'slideid'=>$item['id']))}">{php echo $item['show_state']}</a></td><td><button type="button" class="btn btn-default glyphicon glyphicon-pencil" data-toggle="modal" data-target="#updateslide{php echo $item['id']}">修改</button> <a href="{php echo $this->createWebUrl('w_slide',array('deleteslide'=>$item['id']))}" onclick="return confirm('您确定要删除这个幻灯吗？删除后数据不可恢复！');" class="btn btn-default glyphicon glyphicon-remove">删除</a></td></tr>   		
+
+				<!--修改弹窗-->
+
+			 			<!-- Modal -->
+
+						<div class="modal fade" id="updateslide{php echo $item['id']}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+
+						  <div class="modal-dialog">
+
+						    <div class="modal-content">
+
+						      <div class="modal-header">
+
+						        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+
+						        <h4 class="modal-title" id="myModalLabel">修改幻灯</h4>
+
+						      </div>
+
+						      <div class="modal-body">
+
+						      		<!--S修改类别表单-->
+
+						      		<form action="" method="post" name="updateslide">
+
+       									<input type="hidden" name="slide_id" value="{php echo $item['id']}">
+
+							       		<div class="form-group">
+
+									    <label for="input3">幻灯图片</label>
+
+									    {php echo tpl_form_field_image('slide_pic',$item['slide_pic'])}
+
+									  	</div>
+
+									  	
+
+									  	
+
+							        	<div class="form-group">
+
+									    <label for="input4">幻灯链接</label>
+
+									    <input type="text" class="form-control" id="input4" value="{php echo $item['slide_url']}" name="slide_url" placeholder="幻灯链接">
+
+									  	</div>
+
+									  	
+
+							        	
+
+							      </div>
+
+							      <div class="modal-footer">
+
+							        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+
+							        <input type="submit" class="btn btn-primary" name="send_updateslide" value="确认修改" />
+
+							        </form>
+
+						        	<!--E修改类别表单-->
+
+						      </div>
+
+						    </div>
+
+						  </div>
+
+						</div>
+
+			 			<!--修改弹窗-->
+
+				{/loop}
+
+			</table>
+
+		<!--E显示幻灯列表-->
+
+  </div>
+
+</div>
+
+<!--E面板-->
+
+
+
+
+
+<!--S添加类别弹窗-->
+
+<!-- Modal -->
+
+<div class="modal fade" id="addslide" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+
+  <div class="modal-dialog">
+
+    <div class="modal-content">
+
+      <div class="modal-header">
+
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+
+        <h4 class="modal-title" id="myModalLabel">添加幻灯</h4>
+
+      </div>
+
+      <div class="modal-body">
+
+       <form action="" method="post" name="addslide">
+
+       
+
+       		<div class="form-group">
+
+		    <label for="input1">幻灯图片</label>
+
+		    {php echo tpl_form_field_image('slide_pic')}
+
+		  	</div>
+
+		  	
+
+		  	
+
+        	<div class="form-group">
+
+		    <label for="input2">幻灯链接</label>
+
+		    <input type="text" class="form-control" id="input2" name="slide_url" placeholder="幻灯链接">
+
+		  	</div>
+
+		  	
+
+        	
+
+      </div>
+
+      <div class="modal-footer">
+
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+
+        <input type="submit" class="btn btn-primary" name="send_addslide" value="确认添加" />
+
+        </form>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!--E添加类别弹窗-->
+
+
+
+{template 'common/footer'} 

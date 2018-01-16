@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8" />
+    <title>超级社群—首页</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <link rel="stylesheet" type="text/css" href="{php echo LOUIE_CSS}mui.css"/>
+    <link rel="stylesheet" type="text/css" href="{php echo LOUIE_CSS}m_fonts.css"/> 
+    <link rel="stylesheet" type="text/css" href="{php echo LOUIE_CSS}basic.css"/>
+    <link rel="stylesheet" type="text/css" href="{php echo LOUIE_CSS}index.css"/>
+    <script src="{php echo LOUIE_JS}mui.js" type="text/javascript" charset="utf-8"></script>
+    <script src="{php echo LOUIE_JS}set.js" type="text/javascript" charset="utf-8"></script>  
+    {php echo Wx::WxJs('false',array('onMenuShareTimeline','onMenuShareAppMessage'))}
+    {php echo $_share}
+</head>
+<body>  
+	
+	
+    
+	<!-- 主页面标题 -->
+	<header class="mui-bar mui-bar-nav">
+		<div id="header-scroll" class="mui-slider-indicatorcode mui-segmented-control mui-segmented-control-inverted">
+			<!--S滚动导航-->
+		    <nav class="mui-scroll">
+		    	<a href="javascript:;" class="active" data-page="index">首页</a> 
+		    	{loop $_classList $index $item}
+		    	<a href="javascript:;" data-page="{php echo $item['id']}">{php echo $item['name']}</a>
+				{/loop}
+			</nav>
+			<!--E滚动导航-->
+		</div>
+		
+		<!--S头部搜索-->
+		<div id="search" data-url="{php echo $this->createMobileUrl('m_search')}"> 
+			<i class="iconfont icon-sousuo"></i>
+		</div>
+		<!--E头部搜索-->
+	</header>
+	   
+	    <!-- 主页面内容容器 -->
+	<div class="mui-content mui-scroll-wrapper">
+	    <div class="mui-scroll">
+	        <!--S幻灯-->
+			<div id="slider" class="mui-slider">  
+				<div class="mui-slider-group mui-slider-loop">
+					<div class="mui-slider-item mui-slider-item-duplicate">
+						<a href="{php echo $_slideList[count($_slideList)-1]['slide_url']}"><img src="{php echo tomedia($_slideList[count($_slideList)-1]['slide_pic'])}"></a>
+					</div>
+					{loop $_slideList $item}
+					<div class="mui-slider-item">
+						<a href="{php echo $item['slide_url']}"><img src="{php echo tomedia($item['slide_pic'])}"></a>
+					</div>
+					{/loop}
+					<div class="mui-slider-item mui-slider-item-duplicate">
+						<a href="{php echo $_slideList[0]['slide_url']}"><img src="{php echo tomedia($_slideList[0]['slide_pic'])}"></a>
+					</div>
+				</div>
+				
+				<div class="mui-slider-indicator">
+					{loop $_slideList $index $item}
+					{if $index == 0}
+					<div class="mui-indicator mui-active"></div>
+					{else}
+					<div class="mui-indicator"></div>
+					{/if}
+					{/loop}
+				</div>
+			</div>
+		<!--E幻灯-->
+		
+		
+		
+		
+		{if $_param['index_icon_status'] == 'off'}
+		<!--S限时、低价、排行榜、精品内容-->
+		<div id="four-class">
+			<div>
+				<a href="javascript:;" data-page='free'>
+					<img src="{php echo LOUIE_IMG}free.png" />
+					<span>限时免费</span>
+				</a>
+		    </div>
+
+		    <div>
+		    	<a href="javascript:;" data-page='lowPrice'>
+					<img src="{php echo LOUIE_IMG}lowprice.png" />
+					<span>低价专区</span>
+				</a>
+		    </div>
+
+		    <div>
+		    	<a href="javascript:;">
+					<img src="{php echo LOUIE_IMG}ranking.png" />
+					<span>排行榜</span>
+				</a>
+		    </div>
+
+		    <div>
+		    	<a href="javascript:;" data-page="boutique"> 
+					<img src="{php echo LOUIE_IMG}boutique.png" /> 
+					<span>精品内容</span> 
+				</a>
+		    </div>
+		    <!--E限时、低价、排行榜、精品内容-->
+		</div>
+		{else}
+		<!--S自定义图标-->
+		{if !empty($_params['icon1_icon']) || !empty($_params['icon2_icon']) || !empty($_params['icon3_icon']) || !empty($_params['icon4_icon'])}
+		<div id="custom-icon">
+			{if !empty($_params['icon1_icon'])}
+			<div>
+				<a href="{php echo $_params['icon1_url']}">
+					<img src="{php echo tomedia($_params['icon1_icon'])}" />
+					<span>{php echo $_params['icon1_name']}</span>
+				</a>
+		    </div>
+			{/if}
+			
+			{if !empty($_params['icon2_icon'])}
+			<div>
+				<a href="{php echo $_params['icon2_url']}">
+					<img src="{php echo tomedia($_params['icon2_icon'])}" />
+					<span>{php echo $_params['icon2_name']}</span>
+				</a>
+		    </div>
+			{/if}
+			
+			{if !empty($_params['icon3_icon'])}
+			<div>
+				<a href="{php echo $_params['icon3_url']}">
+					<img src="{php echo tomedia($_params['icon3_icon'])}" />
+					<span>{php echo $_params['icon3_name']}</span>
+				</a>
+		    </div>
+			{/if}
+			
+			{if !empty($_params['icon4_icon'])}
+			<div>
+				<a href="{php echo $_params['icon4_url']}">
+					<img src="{php echo tomedia($_params['icon4_icon'])}" />
+					<span>{php echo $_params['icon4_name']}</span>
+				</a>
+		    </div>
+			{/if}
+		    
+		</div>
+		{/if}
+		<!--E自定义图标-->
+		{/if}
+		
+		
+		
+		<!--分割--><div id="class-spacing-list"></div>
+		
+		<!--S每日推荐-->
+		<div class="louie-list" id="today-recommend">
+			<h2><i class="iconfont icon-shuxian"></i>每日推荐</h2>
+			{loop $_recommendList $item}
+			<figure>
+				<a href="{php echo $this->createMobileUrl('m_group_door',array('groupid'=>$item['id']))}">
+				<img src="{php echo tomedia($item['header'])}" />
+				<figcaption class="title">{php echo $item['title']}</figcaption>
+				<figcaption class="brief">{php echo $item['name']}</figcaption>
+				<figcaption class="count-price">
+					<span class="count">{php echo $item['browse_count']}人浏览</span>
+					<span class="price">{if $item['enter'] == 1 || $item['enter'] == 2}免费{else}￥{php echo $item['price']}{/if}</span>  
+				</figcaption>
+				</a>
+			</figure>
+			{/loop}
+		</div>
+		<!--E每日推荐-->
+		
+		
+		<!--S热门群聊-->
+		<div id="louie-hot">
+			<h2><span>//</span> 热门群聊 <span>//</span></h2>
+			<!--S8个最热群聊滚动-->
+			<div id="hot-scroll" class="mui-slider-indicatorcode mui-segmented-control mui-segmented-control-inverted">
+				<div class="mui-scroll">
+					{loop $_eightHotList $item}
+					<figure>
+						<a href="{php echo $this->createMobileUrl('m_group_door',array('groupid'=>$item['id']))}"> 
+						<img src="{php echo tomedia($item['header'])}" />
+						<figcaption class="name">{php echo $item['name']}</figcaption>
+						<figcaption class="count">{php echo $item['browse_count']}人浏览</figcaption>
+						</a>
+					</figure>
+					{/loop}
+				</div>
+			</div>
+			<!--S8个最热群聊滚动-->
+
+
+			<!--S热门群聊列表>>上拉加载-->
+			<div id="hot-list" class="louie-list">
+				{loop $_fiveHotList $item}
+				<figure>
+					<a href="{php echo $this->createMobileUrl('m_group_door',array('groupid'=>$item['id']))}">
+					<img src="{php echo tomedia($item['header'])}" />
+					<figcaption class="title">{php echo $item['title']}</figcaption>
+					<figcaption class="brief">{php echo $item['name']}</figcaption>
+					<figcaption class="count-price">
+						<span class="count">{php echo $item['browse_count']}人浏览</span>
+						<span class="price">{if $item['enter'] == 1 || $item['enter'] == 2}免费{/if}</span>
+					</figcaption>
+					</a>
+				</figure>
+				{/loop}
+			</div>
+			<!--E热门群聊列表>>上拉加载-->
+		</div>
+		<!--E热门群聊-->
+
+	    </div>		
+	</div>
+	
+	
+	<div id="group-list" class="mui-scroll-wrapper"> 
+		<div class="louie-list mui-scroll group-list">  
+				<!-- <div class="loadingState">
+					正在加载中...  
+				</div> 
+				<figure>
+					<img src="{php echo LOUIE_IMG}img1.jpg" />
+					<figcaption class="title">美丽瑜伽还你完美体态，解决肩颈腰疾病让你轻松挺拔，哈哈哈嘟嘟嘟</figcaption>
+					<figcaption class="brief">妻子专业瑜伽到时培训 | 共9节课</figcaption>
+					<figcaption class="count-price">
+						<span class="count">1.3万次参与</span>
+						<span class="price">￥39.9</span>
+					</figcaption>
+				</figure>
+				--> 
+		</div>
+	</div>
+	    
+	
+{php include $this->template('footer')}	 
+	
+<input type="hidden" id="now-page" value="{php echo $_W['siteurl']}" />
+<script src="{php echo LOUIE_JS}basic.js"></script>
+<script src="{php echo LOUIE_JS}index.js"></script> 
+<script src="{php echo LOUIE_JS}index_two.js"></script> 
+</body>
+</html>

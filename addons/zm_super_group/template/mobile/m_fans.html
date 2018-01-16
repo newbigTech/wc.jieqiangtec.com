@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>我的粉丝</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="{php echo LOUIE_CSS}mui.css" rel="stylesheet" />
+		<link href="{php echo LOUIE_CSS}m_fonts.css" rel="stylesheet" />
+		<link href="{php echo LOUIE_CSS}m_fans.css" rel="stylesheet" />
+		<script src="{php echo LOUIE_JS}mui.js" type="text/javascript" charset="utf-8"></script>
+    	<script src="{php echo LOUIE_JS}set.js" type="text/javascript" charset="utf-8"></script>
+    	{php echo Wx::WxJs('false',array('onMenuShareTimeline','onMenuShareAppMessage'))}
+    	{php echo $_share}
+	</head>
+	<body> 
+		
+		<header class="mui-bar mui-bar-nav">
+			<h2>粉丝（{php echo $_fansTotal}人）</h2>   
+		</header>  
+		
+		<!--S主体内容-->
+		<div class="mui-content mui-scroll-wrapper">
+		    <div class="mui-scroll">
+		    	<div id="fans-list"> 
+		    		{loop $_fansList $item}
+		    		<figure>
+		    			<img src="{php echo tomedia($item['header'])}" />
+		    			<figcaption class="nickname">{php echo $item['nickname']}</figcaption>
+		    		</figure>
+		    		{/loop}
+		    	</div>
+		    </div>
+		</div>
+		<!--E主体内容-->
+		
+		
+		<nav class="mui-bar mui-bar-tab">
+		   	    <a href="{php echo $this->createMobileUrl('m_member')}"><i class="mui-icon mui-icon-undo"></i>返回个人中心</a>    
+		</nav> 
+		
+		<input type="hidden" value="{php echo $_W['siteurl']}" id="now-page" />
+		<script src="{php echo LOUIE_JS}basic.js"></script>
+		<script src="{php echo LOUIE_JS}m_fans.js"></script> 
+	</body>
+</html>

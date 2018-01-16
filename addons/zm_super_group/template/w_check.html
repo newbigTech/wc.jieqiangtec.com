@@ -1,0 +1,56 @@
+{template 'common/header'} 
+<link href="{php echo LOUIE_CSS}w_check.css" rel="stylesheet" type="text/css" />
+<div class="panel panel-default">
+  <div class="panel-heading">建群审核</div>
+  <div class="panel-body">
+    <table class="table">
+    	<tr><th>创建人</th><th>社群信息</th><th>创建时间</th><th>操作</th></tr>
+    	{loop $_groupList $item}
+    	<tr><td>{php echo $item['ownerNickname']}</td><td><button class="btn btn-success group-info" data-toggle="modal" data-target="#group-info" data-id="{php echo $item['id']}">查看信息</button></td><td>{php echo date('Y-m-d H:i:s',$item['create_time'])}</td><td><button class="btn btn-success pass" data-id="{php echo $item['id']}">通过</button> <button class="btn btn-danger down" data-id="{php echo $item['id']}">拒绝</button></td></tr>
+    	{/loop}
+    </table>
+    {php echo $_page}
+  </div>
+</div>
+
+
+<!--S查看社群信息-->
+<div class="modal fade" id="group-info" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">社群信息</h4>
+      </div>
+      <div class="modal-body" id="group-info-content">
+        	<!--  <dl>
+        		<dt>标题</dt>
+        		<dd>范德萨发进口量的萨芬刻录机的楼房的离开谁极爱</dd>
+        		<dt>名称</dt>
+        		<dd>范德萨发的地方撒</dd>
+        		<dt>头像</dt>
+        		<dd><img src="{php echo LOUIE_IMG}img1.jpg" class="group-header" /></dd>
+        		<dt>封面</dt>
+        		<dd><img src="{php echo LOUIE_IMG}img1.jpg" class="group-cover" /></dd>
+        		<dt>类别</dt>
+        		<dd>范德萨就开了房间了</dd>
+        		<dt>入群方式</dt>
+        		<dd>付费入群</dd>
+        		<dt>付费金额</dt>
+        		<dd>￥125.5</dd>
+        		<dt>简介</dt>
+        		<dd>范德萨发的开了房间开拉萨的积分开了家发的是尽快开了房间卡拉斯加饭都快来发生就开了的房间开连锁店及安防及地方撒开了健康</dd>
+        	</dl>-->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!--E查看社群信息-->
+
+<input type="hidden" id="system-img-url" value="$_W['attachurl']" />
+<input type="hidden" id="now-page" value="{php echo $_W['siteurl']}" />
+<script src="{php echo LOUIE_JS}w_check.js"></script>
+{template 'common/footer'} 

@@ -1,0 +1,85 @@
+{template 'common/header'} 
+<link href="{php echo LOUIE_CSS}w_icon.css" type="text/css" rel="stylesheet" /> 
+<div class="panel panel-default">
+  <div class="panel-heading">首页导航图标</div>
+  <div class="panel-body">
+  
+  	<div id="icon-switch">
+  	<label>是否开启首页导航自定义图标：(开启后如不设置图标则默认不显示首页4个图标导航)</label>
+    	<div class="louie-switch" data-status="{php echo $_param['index_icon_status']}">
+    		<div class="louie-switch-bg">
+    			<div class="louie-switch-btn"></div> 
+    		</div>
+    	</div>
+    </div>
+    
+    <div class="icon-box">
+    	<h2>图标一</h2>
+	    <form action="" method="post" name="fm1">
+	    	{php echo tpl_form_field_image('icon1_icon',$_params['icon1_icon'])} 
+	    	<div class="form-group">
+			    <label for="icon1_name">图标名称</label> 
+			    <input type="text" class="form-control" id="icon1_name" name="icon1_name" placeholder="图标名称" value="{php echo $_params['icon1_name']}" />
+			</div>
+			<div class="form-group">
+			    <label for="icon1_url">图标链接</label>
+			    <input type="text" class="form-control" id="icon1_url" name="icon1_url" placeholder="图标链接" value="{php echo $_params['icon1_url']}"/>
+			</div> 
+			<input type="submit" class="btn btn-default" name="send_icon1" value="确定" />
+	    </form>
+    </div> 
+    
+    <div class="icon-box">
+    	<h2>图标二</h2>
+	    <form action="" method="post" name="fm2">
+	    	{php echo tpl_form_field_image('icon2_icon',$_params['icon2_icon'])}  
+	    	<div class="form-group">
+			    <label for="icon2_name">图标名称</label>
+			    <input type="text" class="form-control" id="icon2_name" name="icon2_name" placeholder="图标名称" value="{php echo $_params['icon2_name']}" />
+			</div>
+			<div class="form-group">
+			    <label for="icon2_url">图标链接</label>
+			    <input type="text" class="form-control" id="icon2_url" name="icon2_url" placeholder="图标链接" value="{php echo $_params['icon2_url']}" />
+			</div>
+			<input type="submit" class="btn btn-default" name="send_icon2" value="确定" />
+	    </form> 
+    </div>
+    
+    <div class="icon-box">
+    	<h2>图标三</h2>
+	    <form action="" method="post" name="fm3">
+	    	{php echo tpl_form_field_image('icon3_icon',$_params['icon3_icon'])} 
+	    	<div class="form-group">
+			    <label for="icon3_name">图标名称</label>
+			    <input type="text" class="form-control" id="icon3_name" name="icon3_name" placeholder="图标名称" value="{php echo $_params['icon3_name']}"/>
+			</div>
+			<div class="form-group">
+			    <label for="icon3_url">图标链接</label>
+			    <input type="text" class="form-control" id="icon3_url" name="icon3_url" placeholder="图标链接" value="{php echo $_params['icon3_url']}"/> 
+			</div>
+			<input type="submit" class="btn btn-default" name="send_icon3" value="确定" />
+	    </form>
+    </div>
+    
+    <div class="icon-box">
+    	<h2>图标四</h2>
+	    <form action="" method="post" name="fm4">
+	    	{php echo tpl_form_field_image('icon4_icon',$_params['icon4_icon'])} 
+	    	<div class="form-group">
+			    <label for="icon4_name">图标名称</label>
+			    <input type="text" class="form-control" id="icon4_name" name="icon4_name" placeholder="图标名称" value="{php echo $_params['icon4_name']}" />
+			</div>
+			<div class="form-group">
+			    <label for="icon4_url">图标链接</label>
+			    <input type="text" class="form-control" id="icon4_url" name="icon4_url" placeholder="图标链接" value="{php echo $_params['icon4_url']}" />
+			</div>  
+			<input type="submit" class="btn btn-default" name="send_icon4" value="确定" /> 
+	    </form>
+    </div> 
+     
+  </div>
+</div>
+
+<input type="hidden" id="now-page" value="{php echo $_W['siteurl']}" />
+<script src="{php echo LOUIE_JS}w_icon.js"></script>
+{template 'common/footer'} 

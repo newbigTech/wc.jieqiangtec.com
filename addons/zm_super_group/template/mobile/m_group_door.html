@@ -1,0 +1,113 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>{php echo $_one['title']}</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="{php echo LOUIE_CSS}mui.css" rel="stylesheet" />
+		<link href="{php echo LOUIE_CSS}m_fonts.css" rel="stylesheet" />
+		<link href="{php echo LOUIE_CSS}m_group_door.css" rel="stylesheet" />
+		<script src="{php echo LOUIE_JS}mui.js" type="text/javascript" charset="utf-8"></script>
+    	<script src="{php echo LOUIE_JS}set.js" type="text/javascript" charset="utf-8"></script>  
+    	<script src="{php echo LOUIE_JS}obj/Poster.obj.js" type="text/javascript"></script>
+    	{php echo Wx::WxJs('false',array('onMenuShareTimeline','onMenuShareAppMessage'))} 
+    	{php echo $_share} 
+	</head>
+	<body data-groupid="{php echo $_GPC['groupid']}">  
+		<!--S主体内容-->
+		<div class="mui-content mui-scroll-wrapper">
+		    <div class="mui-scroll">
+		    	<!--S群聊封面-->
+		    	<div id="cover">
+		    		<img src="{php echo tomedia($_one['cover'])}" />
+		    		<div class="title">
+	    				<h2>{php echo $_one['title']}</h2>
+	    			</div>
+	    			<p>  
+	    				{php echo $_one['browse_count']}次浏览
+	    				<span>
+	    					{loop $_fourMember $item}
+	    					<img src="{php echo tomedia($item['header'])}" />
+	    					{/loop}
+	    				</span>
+	    			</p>
+	    			
+	    			
+	    			<!--S分享赚奖励生成海报按钮--> 
+	    			{if !empty($_one['share_award'])}
+		    			<div id="create-poster" data-url="{php echo $this->createMobileUrl('m_create_poster',array('groupid'=>$_GPC['groupid']))}">
+		    				<i class="iconfont icon-fenxiang"></i>
+		    				分享赚佣金
+		    			</div>
+	    			{/if}  
+	    			<!--E分享赚奖励生成海报按钮-->
+	    			
+		    	</div>
+		    	<!--E群聊封面-->
+		    	
+		    	 
+		    	<!--S价格、群名称、创建时间-->
+		    	<div id="price-name-time">
+		    		<h3 class="price">{if $_one['enter'] == 1 || $_one['enter'] == 2}免费{else}￥{php echo $_one['price']}{/if}</h3>
+		    		<h3 class="name">{php echo $_one['name']}</h3>
+		    		<h3 class="time">创建时间：{php echo date('Y-m-d',$_one['create_time'])}</h3>
+		    		<!--<h3 class="browse-count">{php echo $_one['browse_count']}次浏览</h3>-->
+		    	</div>
+		    	<!--E价格、群名称、创建时间-->
+		    	
+		    	
+		    	<!--S群主信息-->
+		    	<div id="owner">
+		    		<img src="{php echo $_one['ownerHeader']}" />
+		    		<h3 class="name">{php echo $_one['ownerNickname']}</h3>
+		    		<h3 class="attention-num">{php echo $_attentionTotal}人已关注</h3>
+		    		{if $_one['owner'] != $_W['member']['uid']} 
+		    			{if !$_attentionStatus}
+		    				<h3 class="attention" id="attention-btn" data-by-userid="{php echo $_one['owner']}" data-status="1">+ 关注</h3>
+		    			{else}
+		    				<h3 class="attention" id="attention-btn" data-by-userid="{php echo $_one['owner']}" data-status="0">取消关注</h3>
+		    			{/if}
+		    		{/if} 
+		    	</div>
+		    	<!--E群主信息-->
+		    	
+		    	<!--S群简介-->
+		    	<div id="brief">
+		    		<h2><img src="{php echo LOUIE_IMG}brief.png" /> 简介</h2> 
+		    		<div class="content">
+		    		 	{php echo $_one['brief']}
+		    		</div>
+		    	</div>
+		    	<!--E群简介-->
+		    	
+		    </div>
+	   	</div>
+	   	<!--E主体内容-->
+	   	
+	   	<nav class="mui-bar mui-bar-tab" data-succ-location="{php echo $this->createMobileUrl('m_room',array('groupid'=>$_one['id']))}">
+	   		{if $_one['owner'] != $_W['member']['uid']} 
+	   			{if !$_userExistsGroup}
+		   			{if $_one['enter'] == 1}
+		   	    		<div id="enter-group" data-type="{php echo $_one['enter']}" data-groupid="{php echo $_one['id']}">申请入群</div>
+		   	    	{/if}
+		   	    	{if $_one['enter'] == 2}
+		   	    		<div id="enter-group" data-type="{php echo $_one['enter']}" data-groupid="{php echo $_one['id']}">进入群聊</div> 
+		   	    	{/if}
+		   	    	{if $_one['enter'] == 3}  
+		   	    		<div id="enter-group" data-type="{php echo $_one['enter']}" data-groupid="{php echo $_one['id']}">付款入群</div>  
+		   	    	{/if}
+		   	    {else}
+		   	    	<a href="{php echo $this->createMobileUrl('m_room',array('groupid'=>$_one['id']))}" class="louie-bar-one">进入群聊</a>
+		   	    {/if}
+	   	    {else}
+	   	    	<a href="{php echo $this->createMobileUrl('m_editor_group',array('groupid'=>$_one['id']))}" class="louie-bar"><i class="iconfont icon-bianji"></i>编辑</a> 
+	   	    	<a href="{php echo $this->createMobileUrl('m_room',array('groupid'=>$_one['id']))}" class="louie-bar">进入群聊</a> 
+	   	    {/if}
+	   	</nav>  
+	   	
+	  
+	   	<!--当前页面--><input type="hidden" value="{php echo $_W['siteurl']}" id="now-page" />
+	   	<script src="{php echo LOUIE_JS}basic.js"></script>
+	   	<script src="{php echo LOUIE_JS}m_group_door.js"></script>
+	</body>
+</html>

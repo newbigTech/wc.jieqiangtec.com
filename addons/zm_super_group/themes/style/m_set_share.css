@@ -1,0 +1,53 @@
+@CHARSET "UTF-8";
+.mui-content{
+	background:#f3f3f3;
+}
+#set-share-card{
+	width:14.8rem;
+	margin:0 auto;
+}
+#set-share-card label{
+	position:relative;
+	display:block;
+	width:14.8rem;
+	height:1.916666667rem;
+	border-bottom:1px solid #ccc;
+}
+#set-share-card label p{
+	color:#000;
+	height:1.916666667rem;
+	line-height:1.916666667rem;
+	font-size:.7rem;
+}
+#group-share-status{
+	position:absolute;
+	right:0;
+	top:.308333333333rem;     
+	height:1.3rem;
+	line-height:1rem;
+}
+.mui-switch-handle{
+	width:1.2rem !important;
+	height:1.2rem !important;
+}
+#award-ratio{
+	position:absolute;
+	right:0;
+	top:0;
+	width:10rem;
+	height:100%;
+	border:none;
+	background:none;
+	text-align:right;
+}
+#send-set{
+	width:100%;
+	height:1.86666667rem;
+	margin-top:2.133333333rem;
+	background:#f94c68;
+	border:#f94c68;
+	color:#fff;
+	font-size:.7rem;
+	font-weight:bold;
+}
+

@@ -1,0 +1,67 @@
+@charset "utf-8";
+.mui-content{
+	background:#fff;
+	padding-bottom:2.033333rem;
+}
+#browse-list figure{
+	position:relative;
+	width:100%;
+	height:3.95rem;	
+	margin:0;
+	padding:0;
+}
+.spacing-line{
+	width:100%;
+	height:1px;
+	background:#ddd;
+	margin-left:.6rem;
+}
+.spacing-line:last-child{
+	margin:0;
+}
+#browse-list figure a{
+	display:block;
+	width:100%;
+	height:100%;
+}
+#browse-list figcaption{
+	position:absolute;
+}
+#browse-list figure img{
+	position:absolute;
+	top:0.416666rem;
+	left:0.65rem;
+	width:2.783333rem;
+	height:2.783333rem;
+	border-radius:2px;
+}
+#browse-list figcaption.title{
+	position:absolute;
+	font-size:0.577833rem;
+	color:#000;
+	left:4.15rem;
+	line-height:120%;
+	top:0.75rem;
+}
+#browse-list figcaption.name{
+	position:absolute;
+	left:4.15rem;
+	top:2.166666rem;
+	font-size:0.4445rem;
+	color:#969696; 
+}
+nav.mui-bar{
+	height:2.033333rem; 
+	line-height:2.533333rem;
+	background:#f84c69;
+	color:#fff;
+	text-align:center;
+	font-size:0.8rem;
+}
+nav.mui-bar a{
+	color:#fff;
+	display:block;
+}
+.mui-pull-caption-nomore,.mui-pull-caption-refresh{
+	color:#ccc;
+}

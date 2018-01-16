@@ -1,0 +1,20 @@
+.mui-content{
+	background:#fff;
+}
+nav.mui-bar-tab{
+	height:2.433333rem !important; 
+	background:#fff;
+}
+nav a.mui-tab-item{
+	
+}
+nav a.mui-tab-item img{
+	width:1.2rem;
+	height:1.2rem;  
+	display:block;
+	margin:.3rem auto 0 auto;
+}
+nav a.mui-tab-item div{
+	font-size:0.533333rem;
+	color:#bdb6b6;
+}

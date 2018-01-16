@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>设置分享卡</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="{php echo LOUIE_CSS}mui.css" rel="stylesheet" />
+		<link href="{php echo LOUIE_CSS}m_fonts.css" rel="stylesheet" />
+		<link href="{php echo LOUIE_CSS}basic.css" rel="stylesheet" />
+		<link href="{php echo LOUIE_CSS}m_set_share.css" rel="stylesheet" /> 
+		<script src="{php echo LOUIE_JS}mui.js" type="text/javascript" charset="utf-8"></script>
+    	<script src="{php echo LOUIE_JS}set.js" type="text/javascript" charset="utf-8"></script>
+	</head> 
+	<body data-url="{php echo $_W['siteurl']}">
+		<!--S主体内容-->
+		<div class="mui-content mui-scroll-wrapper">
+		    <div class="mui-scroll">
+		    	<form action="" method="post" name="set_share_card" id="set-share-card">
+		    		<label>
+		    			<p>开启分享卡</p>
+		    			<div class="mui-switch mui-switch-mini {if !empty($_param['share_award'])}mui-active{/if}" id="group-share-status" data-groupid="{php echo $_GPC['groupid']}">
+						  <div class="mui-switch-handle"></div>
+						</div>
+		    		</label>
+		    		
+		    		<label>
+		    			<p>设置奖励百分比</p>
+						<input type="text" name="award_ratio" id="award-ratio" placeholder="请输入" value="{php echo $_param['award_ratio']}"/>			    			
+		    		</label>
+		    		<button type="button" id="send-set">保存</button> 
+		    	</form>
+    		</div>
+    	</div>
+    	<!--E主体内容--> 
+	   	<script src="{php echo LOUIE_JS}basic.js"></script>
+	   	<script src="{php echo LOUIE_JS}m_set_share.js"></script>
+	</body>
+</html>

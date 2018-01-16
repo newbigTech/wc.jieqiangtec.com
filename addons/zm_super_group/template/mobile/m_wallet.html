@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>我的钱包</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="{php echo LOUIE_CSS}mui.css" rel="stylesheet" />
+		<link href="{php echo LOUIE_CSS}m_fonts.css" rel="stylesheet" />
+		<link href="{php echo LOUIE_CSS}basic.css" rel="stylesheet" /> 
+		<link href="{php echo LOUIE_CSS}m_wallet.css" rel="stylesheet" />  
+		<script src="{php echo LOUIE_JS}mui.js" type="text/javascript" charset="utf-8"></script>
+    	<script src="{php echo LOUIE_JS}set.js" type="text/javascript" charset="utf-8"></script> 
+    	{php echo Wx::WxJs('false',array('onMenuShareTimeline','onMenuShareAppMessage'))}
+    	{php echo $_share} 
+	</head> 
+	<body>
+		<!--S主体内容-->
+		<div class="mui-content mui-scroll-wrapper">
+		    <div class="mui-scroll">
+		    	 <!--S头部总览-->
+		    	 <div id="pandect">
+		    	 	<h2>历史总收益</h2>
+		    	 	<h3>{php echo $_historyEarnings}</h3>
+		    	 	<h4>今日 +{php echo $_todayEarnings}</h4>
+		    	 	<h5><a href="{php echo $this->createMobileUrl('m_deposit')}">待提现 <span>￥{php echo $_depositEarnings['money']}</span> ></a></h5>
+		    	 </div>
+		    	 <!--E头部总览-->  
+		    	 
+		    	 <!--S交易、提现、收益记录-->
+		    	 <ul id="record">
+		    	 	<li><a href="{php echo $this->createMobileUrl('m_deal_record')}">交易记录<i class="mui-icon mui-icon-arrowright"></i></a></li>
+		    	 	<li><a href="{php echo $this->createMobileUrl('m_deposit_record')}">提现记录<i class="mui-icon mui-icon-arrowright"></i></a></li>
+		    	 	<li><a href="{php echo $this->createMobileUrl('m_earnings')}">收益记录<i class="mui-icon mui-icon-arrowright"></i></a></li>
+		    	 </ul>
+		    	 <!--E交易、提现、收益记录-->
+		    	 
+		    	 <!--S温馨提示-->
+		    	 <div id="prompt">
+		    	 {if !empty($_hintText['wallet_hint'])}
+		    	 	<h2>温馨提示：</h2>
+		    	 	<div class="content">
+		    	 		{php echo $_hintText['wallet_hint']} 
+		    	 	</div>
+		    	 {/if}
+		    	 </div>
+		    	 <!--E温馨提示-->
+		    	 
+		    </div>
+		</div> 
+		<!--E主体内容-->
+	<script src="{php echo LOUIE_JS}basic.js"></script> 
+	<script src="{php echo LOUIE_JS}m_wallet.js"></script>  
+	</body>
+</html>

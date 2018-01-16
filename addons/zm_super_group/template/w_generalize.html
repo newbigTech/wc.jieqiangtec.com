@@ -1,0 +1,97 @@
+{template 'common/header'} 
+<link href="{php echo LOUIE_CSS}w_generalize.css" rel="stylesheet" />
+<ul class="nav nav-tabs">
+  <li role="presentation" {if $_record}class="active"{/if}><a href="{php echo $this->createWebUrl('w_generalize')}">推荐记录</a></li>
+  <li role="presentation" {if $_poster}class="active"{/if}><a href="{php echo $this->createWebUrl('w_generalize',array('doing'=>'poster'))}">海报设置</a></li>
+</ul>
+
+
+<!--S海报设置-->
+{if $_poster}
+<div id="poster-box">
+	<div id="poster-option">
+		<button class="{if empty($_param['h_show'])}btn btn-default{else}btn btn-success{/if}" data-status="{if empty($_param['h_show'])}0{else}1{/if}">用户头像</button> 
+		<button class="{if empty($_param['n_show'])}btn btn-default{else}btn btn-success{/if}" data-status="{if empty($_param['n_show'])}0{else}1{/if}">用户昵称</button>
+		<button class="{if empty($_param['t_show'])}btn btn-default{else}btn btn-success{/if}" data-status="{if empty($_param['t_show'])}0{else}1{/if}">社群标题</button>
+		<button class="{if empty($_param['c_show'])}btn btn-default{else}btn btn-success{/if}" data-status="{if empty($_param['c_show'])}0{else}1{/if}">社群封面</button>
+	</div>
+	
+	<div id="set-poster">
+		<img src="{php echo LOUIE_IMG}poster-qrcode.jpg" id="p-qrcode" style="left:{php echo $_param['q_x']}px;top:{php echo $_param['q_y']}px;width:{php echo $_param['q_z']}px;height:{php echo $_param['q_z']}px;" />  
+		<img src="{php echo LOUIE_IMG}poster-header.jpg" id="p-header" style="{if empty($_param['h_show'])}display:none;{else}display:block;left:{php echo $_param['h_x']}px;top:{php echo $_param['h_y']}px;width:{php echo $_param['h_z']}px;height:{php echo $_param['h_z']}px;{/if}" /> 
+		<img src="{php echo LOUIE_IMG}poster-cover.jpg" id="p-cover" style="{if empty($_param['c_show'])}display:none;{else}display:block;left:{php echo $_param['c_x']}px;top:{php echo $_param['c_y']}px;width:{php echo $_param['c_w']}px;height:{php echo $_param['c_h']}px;{/if}" />
+		<div id="p-nickname" style="{if empty($_param['n_show'])}display:none;{else}display:block;left:{php echo $_param['n_x']}px;top:{php echo $_param['n_y']}px;color:{php echo $_param['n_c']};font-size:{php echo $_param['n_z']}px;{/if}">用户昵称</div>
+		<div id="p-title" style="{if empty($_param['t_show'])}display:none;{else}display:block;left:{php echo $_param['t_x']}px;top:{php echo $_param['t_y']}px;color:{php echo $_param['t_c']};font-size:{php echo $_param['t_z']}px;{/if}">社群标题</div>
+	</div>
+	
+	
+	<form action="" method="post" id="poster-form" name="poster_form">
+		{php echo tpl_form_field_image('poster_bg',$_param['poster_bg'])}
+		<div class="poster-option">
+			<h4>二维码</h4>
+			X：<input type="range" name="q_x" value="{php echo $_param['q_x']}" min="0" step="1" max="3000"  />　 
+			Y：<input type="range" name="q_y" value="{php echo $_param['q_y']}" min="0" step="1" max="3000"  />
+			图片大小：<input type="range" name="q_z" value="{php echo $_param['q_z']}" min="0" max="318" step="1" />
+		</div>
+		
+		<div class="poster-option">
+			<h4>头像</h4>
+			X：<input type="range" name="h_x" value="{php echo $_param['h_x']}" min="0" step="1" max="3000" />　
+			Y：<input type="range" name="h_y" value="{php echo $_param['h_y']}" min="0" step="1" max="3000" />　
+			图片大小：<input type="range" name="h_z" value="{php echo $_param['h_z']}" min="0" max="318" step="1" />
+			<input type="hidden" name="h_show" value="{if empty($_param['h_show'])}0{else}1{/if}" />
+		</div>
+		
+		<div class="poster-option">
+			<h4>昵称</h4>
+			X：<input type="range" name="n_x" value="{php echo $_param['n_x']}" min="0" step="1" max="3000" />　
+			Y：<input type="range" name="n_y" value="{php echo $_param['n_y']}" min="0" step="1" max="3000" />　
+			文字大小：<input type="range" name="n_z" value="{php echo $_param['n_z']}" min="0" max="50" step="1" />
+			文字颜色：<input type="color" name="n_cc" />
+			<input type="hidden" name="n_c" value="{php echo $_param['n_c']}" /> 
+			<input type="hidden" name="n_show" value="{if empty($_param['n_show'])}0{else}1{/if}" /> 
+		</div>
+		
+		<div class="poster-option">
+			<h4>社群标题</h4>
+			X：<input type="range" name="t_x" value="{php echo $_param['t_x']}" min="0" step="1" max="3000" />　
+			Y：<input type="range" name="t_y" value="{php echo $_param['t_y']}" min="0" step="1" max="3000" />　
+			文字大小：<input type="range" name="t_z" value="{php echo $_param['t_z']}" min="0" max="50" step="1" />  
+			文字颜色：<input type="color" name="t_cc" />
+			<input type="hidden" name="t_c" value="{php echo $_param['t_c']}" />
+			<input type="hidden" name="t_show" value="{if empty($_param['t_show'])}0{else}1{/if}" />
+		</div>
+		
+		<div class="poster-option"> 
+			<h4>社群封面</h4>
+			X：<input type="range" name="c_x" value="{php echo $_param['c_x']}" min="0" step="1" max="3000" />　
+			Y：<input type="range" name="c_y" value="{php echo $_param['c_y']}" min="0" step="1" max="3000" />　
+			图片宽：<input type="range" name="c_w" value="{php echo $_param['c_w']}" min="0" max="275" step="1" />
+			图片高：<input type="range" name="c_h" value="{php echo $_param['c_h']}" min="0" max="170" step="1" />   
+			<input type="hidden" name="c_show" value="{if empty($_param['c_show'])}0{else}1{/if}" />  
+		</div>
+		
+		<button class="btn btn-default send_poster" name="send_poster" type="submit">确定设置</button>
+	</form>
+	
+</div> 
+
+<input type="hidden" id="theme-img" value="{php echo LOUIE_IMG}" />
+<input type="hidden" id="now-page" value="{php echo $_W['siteurl']}" />
+
+<script src="{php echo LOUIE_JS}w_generalize.js"></script>
+{/if}
+<!--S海报设置-->
+
+<!--S推荐记录-->
+{if $_record}
+<table class="table">
+	<tr><th>推荐用户</th><th>被推荐用户</th><th>推荐社群</th><th>获得佣金</th><th>时间</th></tr>
+	{loop $_list $item}
+	<tr><td>{php echo $item['parent_nickname']}</td><td>{php echo $item['by_nickname']}</td><td>{php echo $item['group']}</td><td>{php echo $item['award']}</td><td>{php echo date('Y-m-d H:i:s',$item['time'])}</td></tr>
+	{/loop}
+</table>
+{/if}
+<!--E推荐记录-->
+
+{template 'common/footer'} 
