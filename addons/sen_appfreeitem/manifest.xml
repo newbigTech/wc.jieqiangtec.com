@@ -1,0 +1,292 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns="http://www.shuotupu.com" versionCode="0.6,0.7,0.8,1.0">
+	<application setting="true">
+		<name><![CDATA[申请试用]]></name>
+		<identifie><![CDATA[sen_appfreeitem]]></identifie>
+		<version><![CDATA[4.1.4]]></version>
+		<type><![CDATA[business]]></type>
+		<ability><![CDATA[申请试用]]></ability>
+		<description><![CDATA[申请试用]]></description>
+		<author><![CDATA[说图谱源码网]]></author>
+		<url><![CDATA[http://www.shuotupu.com/]]></url>
+	</application>
+	<platform>
+		<subscribes>
+		</subscribes>
+		<handles>
+		</handles>
+		<rule embed="false" />
+		<card embed="false" />
+	</platform>
+	<bindings>
+		<cover>
+			<entry title="申请项目入口设置" do="list" state="" direct="false" />
+		</cover>
+		<menu>
+			<entry title="报告管理" do="report" state="" direct="false" />
+			<entry title="规则管理" do="rule" state="" direct="false" />
+			<entry title="幻灯片管理" do="adv" state="" direct="false" />
+			<entry title="物流管理" do="express" state="" direct="false" />
+			<entry title="配送方式" do="dispatch" state="" direct="false" />
+			<entry title="调查问题" do="category" state="" direct="false" />
+			<entry title="项目管理" do="project" state="" direct="false" />
+			<entry title="申请管理" do="order" state="" direct="false" />
+		</menu>
+	</bindings>
+	<permissions>
+	</permissions>
+	<install><![CDATA[
+CREATE TABLE IF NOT EXISTS `ims_sen_appfreeitem_address` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `weid` int(10) unsigned NOT NULL,
+  `openid` varchar(50) NOT NULL,
+  `realname` varchar(20) NOT NULL,
+  `mobile` varchar(11) NOT NULL,
+  `province` varchar(30) NOT NULL,
+  `city` varchar(30) NOT NULL,
+  `area` varchar(30) NOT NULL,
+  `address` varchar(300) NOT NULL,
+  `isdefault` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `deleted` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+CREATE TABLE IF NOT EXISTS `ims_sen_appfreeitem_adv` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `weid` int(11) DEFAULT '0',
+  `advname` varchar(50) DEFAULT '',
+  `link` varchar(255) NOT NULL DEFAULT '',
+  `thumb` varchar(255) DEFAULT '',
+  `displayorder` int(11) DEFAULT '0',
+  `enabled` int(11) DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `indx_weid` (`weid`),
+  KEY `indx_enabled` (`enabled`),
+  KEY `indx_displayorder` (`displayorder`)
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+CREATE TABLE IF NOT EXISTS `ims_sen_appfreeitem_cart` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `weid` int(10) unsigned NOT NULL,
+  `projectid` int(11) NOT NULL,
+  `from_user` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_openid` (`from_user`)
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+CREATE TABLE IF NOT EXISTS `ims_sen_appfreeitem_category` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `weid` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '所属帐号',
+  `name` varchar(1000) NOT NULL DEFAULT '' COMMENT '分类名称',
+  `thumb` varchar(1000) NOT NULL DEFAULT '' COMMENT '分类图片',
+  `parentid` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '上级分类ID,0为第一级',
+  `isrecommand` int(10) DEFAULT '0',
+  `answer` varchar(500) NOT NULL DEFAULT '' COMMENT '答案',
+  `fenshu` float(7,2) DEFAULT NULL COMMENT '分数',
+  `displayorder` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '排序',
+  `enabled` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '是否开启',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=30 DEFAULT CHARSET=utf8;
+CREATE TABLE IF NOT EXISTS `ims_sen_appfreeitem_dispatch` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `weid` int(11) DEFAULT '0',
+  `dispatchname` varchar(50) DEFAULT '',
+  `dispatchtype` int(11) DEFAULT '0',
+  `displayorder` int(11) DEFAULT '0',
+  `firstprice` decimal(10,2) DEFAULT '0.00',
+  `secondprice` decimal(10,2) DEFAULT '0.00',
+  `firstweight` int(11) DEFAULT '0',
+  `secondweight` int(11) DEFAULT '0',
+  `express` int(11) DEFAULT '0',
+  `description` text,
+  `enabled` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '是否开启',
+  PRIMARY KEY (`id`),
+  KEY `indx_weid` (`weid`),
+  KEY `indx_displayorder` (`displayorder`)
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+CREATE TABLE IF NOT EXISTS `ims_sen_appfreeitem_express` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `weid` int(11) DEFAULT '0',
+  `express_name` varchar(50) DEFAULT '',
+  `displayorder` int(11) DEFAULT '0',
+  `express_price` varchar(10) DEFAULT '',
+  `express_area` varchar(100) DEFAULT '',
+  `express_url` varchar(255) DEFAULT '',
+  PRIMARY KEY (`id`),
+  KEY `indx_weid` (`weid`),
+  KEY `indx_displayorder` (`displayorder`)
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+CREATE TABLE IF NOT EXISTS `ims_sen_appfreeitem_feedback` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `weid` int(10) unsigned NOT NULL,
+  `openid` varchar(50) NOT NULL,
+  `type` tinyint(1) unsigned NOT NULL DEFAULT '1' COMMENT '1为维权，2为告擎',
+  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '状态0未解决，1用户同意，2用户拒绝',
+  `feedbackid` varchar(30) NOT NULL COMMENT '投诉单号',
+  `transid` varchar(30) NOT NULL COMMENT '订单号',
+  `reason` varchar(1000) NOT NULL COMMENT '理由',
+  `solution` varchar(1000) NOT NULL COMMENT '期待解决方案',
+  `remark` varchar(1000) NOT NULL COMMENT '备注',
+  `createtime` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_weid` (`weid`),
+  KEY `idx_feedbackid` (`feedbackid`),
+  KEY `idx_createtime` (`createtime`),
+  KEY `idx_transid` (`transid`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+CREATE TABLE IF NOT EXISTS `ims_sen_appfreeitem_order` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `weid` int(10) unsigned NOT NULL,
+  `from_user` varchar(50) NOT NULL,
+  `ordersn` varchar(20) NOT NULL,
+  `pid` int(10) unsigned NOT NULL,
+  `item_id` int(10) unsigned NOT NULL,
+  `price` varchar(10) NOT NULL,
+  `status` tinyint(4) NOT NULL DEFAULT '0' COMMENT '-1取消状态，0普通状态，1为已付款，2为已发货，3为成功',
+  `state` tinyint(3) DEFAULT NULL,
+  `sendtype` tinyint(1) unsigned NOT NULL COMMENT '1为快递，2为自提',
+  `paytype` tinyint(1) unsigned NOT NULL COMMENT '1为余额，2为在线，3为到付',
+  `transid` varchar(30) NOT NULL DEFAULT '0' COMMENT '微信支付单号',
+  `return_type` tinyint(1) unsigned NOT NULL DEFAULT '1',
+  `remark` varchar(1000) NOT NULL DEFAULT '',
+  `addressid` int(10) unsigned NOT NULL,
+  `expresscom` varchar(30) NOT NULL DEFAULT '',
+  `expresssn` varchar(50) NOT NULL DEFAULT '',
+  `express` varchar(200) NOT NULL DEFAULT '',
+  `item_price` decimal(10,2) DEFAULT '0.00',
+  `dispatchprice` decimal(10,2) DEFAULT '0.00',
+  `dispatch` int(10) DEFAULT '0',
+  `createtime` int(10) unsigned NOT NULL,
+  `Answer` text,
+  `shouhuodata` varchar(255) DEFAULT NULL,
+  `fenshu` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `index_name` (`from_user`),
+  KEY `from_user` (`from_user`),
+  KEY `fenshu` (`fenshu`)
+) ENGINE=MyISAM AUTO_INCREMENT=14046 DEFAULT CHARSET=utf8;
+CREATE TABLE IF NOT EXISTS `ims_sen_appfreeitem_order_ws` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `weid` int(10) unsigned DEFAULT NULL,
+  `from_user` varchar(50) DEFAULT NULL,
+  `nickname` varchar(20) NOT NULL DEFAULT '',
+  `avatar` varchar(255) NOT NULL DEFAULT '',
+  `ordersn` int(10) unsigned DEFAULT NULL,
+  `price` decimal(10,2) unsigned DEFAULT NULL,
+  `paytype` varchar(10) DEFAULT NULL,
+  `transid` varchar(20) DEFAULT NULL,
+  `status` tinyint(1) unsigned DEFAULT NULL,
+  `remark` varchar(255) DEFAULT NULL,
+  `pid` int(10) unsigned DEFAULT NULL,
+  `createtime` int(10) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+CREATE TABLE IF NOT EXISTS `ims_sen_appfreeitem_project` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `weid` int(10) unsigned NOT NULL,
+  `from_user` varchar(50) DEFAULT NULL,
+  `displayorder` int(10) unsigned NOT NULL DEFAULT '0',
+  `title` varchar(100) NOT NULL DEFAULT '',
+  `cpnumber` int(10) DEFAULT '0',
+  `donenum` int(10) unsigned NOT NULL DEFAULT '0',
+  `myprice` int(11) unsigned DEFAULT NULL,
+  `price` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `finish_price` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `starttime` int(10) unsigned DEFAULT '0',
+  `deal_days` int(10) unsigned NOT NULL,
+  `tjqian` int(11) unsigned DEFAULT NULL,
+  `tjhou` int(11) unsigned DEFAULT NULL,
+  `ishot` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  `isrecommand` tinyint(1) unsigned DEFAULT '0',
+  `pcate` int(10) unsigned NOT NULL DEFAULT '0',
+  `ccate` int(10) unsigned NOT NULL DEFAULT '0',
+  `thumb` varchar(255) DEFAULT '',
+  `content` text NOT NULL,
+  `nosubuser` tinyint(1) unsigned NOT NULL,
+  `status` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '0暂停1正常2停止',
+  `wtname` varchar(10000) DEFAULT NULL,
+  `reason` varchar(255) DEFAULT NULL,
+  `createtime` int(10) unsigned NOT NULL,
+  `subsurl` varchar(500) DEFAULT NULL,
+  `url` varchar(255) DEFAULT NULL,
+  `direct` tinyint(1) NOT NULL DEFAULT '0',
+  `show_type` int(10) DEFAULT '0',
+  `type` tinyint(10) DEFAULT '0',
+  `lianxiren` varchar(20) DEFAULT '',
+  `tel` int(10) DEFAULT NULL,
+  `fenshu` int(11) DEFAULT NULL,
+  `share_title` varchar(255) DEFAULT NULL,
+  `share_img` varchar(255) DEFAULT NULL,
+  `share_content` varchar(255) DEFAULT NULL,
+  `share_url` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+CREATE TABLE IF NOT EXISTS `ims_sen_appfreeitem_project_item` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `weid` int(10) unsigned NOT NULL,
+  `displayorder` int(10) unsigned NOT NULL,
+  `pid` int(10) unsigned NOT NULL,
+  `price` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `description` varchar(2000) NOT NULL,
+  `thumb` varchar(255) NOT NULL,
+  `limit_num` int(10) unsigned NOT NULL,
+  `donenum` int(10) unsigned NOT NULL DEFAULT '0',
+  `repaid_day` int(10) unsigned NOT NULL,
+  `return_type` tinyint(1) unsigned NOT NULL,
+  `delivery_fee` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `dispatch` int(10) unsigned NOT NULL,
+  `createtime` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+CREATE TABLE IF NOT EXISTS `ims_sen_appfreeitem_report` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `weid` int(11) DEFAULT NULL,
+  `rtitle` varchar(255) DEFAULT NULL,
+  `from_user` varchar(255) DEFAULT NULL,
+  `oid` int(11) DEFAULT NULL,
+  `pid` int(10) unsigned DEFAULT NULL,
+  `content` text,
+  `tijiaotime` datetime DEFAULT NULL,
+  `is_display` tinyint(1) unsigned DEFAULT NULL,
+  `images` varchar(10000) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+CREATE TABLE IF NOT EXISTS `ims_sen_appfreeitem_report_category` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `uniacid` int(10) unsigned DEFAULT NULL,
+  `title` varchar(255) DEFAULT NULL,
+  `displayorder` int(10) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+CREATE TABLE IF NOT EXISTS `ims_sen_appfreeitem_rule` (
+  `Id` int(11) NOT NULL AUTO_INCREMENT,
+  `wid` int(11) DEFAULT NULL,
+  `content` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`Id`)
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+CREATE TABLE IF NOT EXISTS `ims_sen_appfreeitem_share` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `uinacid` int(10) unsigned NOT NULL,
+  `reply_id` int(10) unsigned NOT NULL,
+  `share_from` varchar(50) NOT NULL,
+  `share_time` int(10) unsigned NOT NULL,
+  `pid` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;	
+	]]></install>
+	<uninstall><![CDATA[
+DROP TABLE IF EXISTS `ims_sen_appfreeitem_address`;
+DROP TABLE IF EXISTS `ims_sen_appfreeitem_adv`;
+DROP TABLE IF EXISTS `ims_sen_appfreeitem_cart`;
+DROP TABLE IF EXISTS `ims_sen_appfreeitem_category`;
+DROP TABLE IF EXISTS `ims_sen_appfreeitem_dispatch`;
+DROP TABLE IF EXISTS `ims_sen_appfreeitem_express`;
+DROP TABLE IF EXISTS `ims_sen_appfreeitem_feedback`;
+DROP TABLE IF EXISTS `ims_sen_appfreeitem_order`;
+DROP TABLE IF EXISTS `ims_sen_appfreeitem_order_ws`;
+DROP TABLE IF EXISTS `ims_sen_appfreeitem_project`;
+DROP TABLE IF EXISTS `ims_sen_appfreeitem_project_item`;
+DROP TABLE IF EXISTS `ims_sen_appfreeitem_report`;
+DROP TABLE IF EXISTS `ims_sen_appfreeitem_report_category`;
+DROP TABLE IF EXISTS `ims_sen_appfreeitem_rule`;
+DROP TABLE IF EXISTS `ims_sen_appfreeitem_share`;	
+	]]></uninstall>
+	<upgrade><![CDATA[update.php]]></upgrade>
+</manifest>

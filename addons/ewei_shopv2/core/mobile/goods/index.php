@@ -2,6 +2,9 @@
 if (!(defined('IN_IA'))) {
 	exit('Access Denied');
 }
+// 开启日志
+ini_set("display_errors", "On");
+error_reporting(E_ALL);
 
 class Index_EweiShopV2Page extends MobilePage
 {
