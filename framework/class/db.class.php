@@ -93,20 +93,19 @@ class DB
             return false;
         }
 
-        // TODO jieqiang调试
+        /*// TODO jieqiang调试
         foreach ($params as $key=>$val){
             $arr1[] = $key;
             $arr2[] = '\''.$val.'\'';
         }
         $sql2 = str_replace($arr1,$arr2,$sql);
-        WeUtility::logging('TODO debug3',  array('file'=>'D:\www\users\wd2.jieqiangtec.com\framework\class\db.class.php query($sql, $params = array()) ','sql2'=>$sql2,'$params'=>$params));
+        WeUtility::logging('TODO debug3',  array('file'=>'D:\www\users\wd2.jieqiangtec.com\framework\class\db.class.php query($sql, $params = array()) ','sql2'=>$sql2,'$params'=>$params));*/
         // var_dump($sql2);exit;
-
 
         if (in_array(strtolower(substr($sql, 0, 6)), array('update', 'delete', 'insert', 'replac'))) {
             $this->cacheNameSpace($sql, true);
         }
-        $starttime = microtime();
+        $starttime = microtime(TRUE);
         if (empty($params)) {
             $result = $this->pdo->exec($sql);
             if (PDO_DEBUG) {
@@ -126,8 +125,19 @@ class DB
             $info['error'] = $statement->errorInfo();
             $this->debug(false, $info);
         }
-        $endtime = microtime();
-        $this->performance($sql, $endtime - $starttime);
+        $endtime = microtime(TRUE);
+
+        // TODO jieqiang调试
+        foreach ($params as $key=>$val){
+            $arr1[] = $key;
+            $arr2[] = '\''.$val.'\'';
+        }
+        $sql2 = str_replace($arr1,$arr2,$sql);
+        $runtime = round(($endtime - $starttime),3);
+        WeUtility::logging('TODO debug3 runtime='.$runtime.'s',  array('file'=>'db.class.php query() ','sql2'=>$sql2,'$params'=>$params));
+
+
+        $this->performance($sql,$runtime );
         if (!$result) {
             return false;
         } else {
@@ -142,7 +152,7 @@ class DB
         if (($cache = $this->cacheRead($cachekey)) !== false) {
             return $cache['data'];
         }
-        $starttime = microtime();
+        $starttime = microtime(TRUE);
         $statement = $this->prepare($sql);
         $result = $statement->execute($params);
         if (PDO_DEBUG) {
@@ -152,8 +162,18 @@ class DB
             $info['error'] = $statement->errorInfo();
             $this->debug(false, $info);
         }
-        $endtime = microtime();
-        $this->performance($sql, $endtime - $starttime);
+        $endtime = microtime(TRUE);
+
+        // TODO jieqiang调试
+        foreach ($params as $key => $val) {
+            $arr1[] = $key;
+            $arr2[] = '\'' . $val . '\'';
+        }
+        $sql2 = str_replace($arr1, $arr2, $sql);
+        $runtime = round(($endtime - $starttime),3);
+        WeUtility::logging('TODO debug1 runtime='.$runtime.'s', array('file' => 'fetchcolumn() ', 'sql2' => $sql2, '$params' => $params));
+
+        $this->performance($sql, $runtime);
         if (!$result) {
             return false;
         } else {
@@ -170,17 +190,9 @@ class DB
         if (($cache = $this->cacheRead($cachekey)) !== false) {
             return $cache['data'];
         }
-        $starttime = microtime();
+        $starttime = microtime(TRUE);
         $statement = $this->prepare($sql);
         $result = $statement->execute($params);
-
-        foreach ($params as $key => $val) {
-            $arr1[] = $key;
-            $arr2[] = '\'' . $val . '\'';
-        }
-        $sql2 = str_replace($arr1, $arr2, $sql);
-        WeUtility::logging('TODO debug2', array('file' => 'D:\www\users\wd2.jieqiangtec.com\framework\class\db.class.php fetch($sql, $params = array()) ', 'sql2' => $sql2, '$params' => $params));
-
 
         if (PDO_DEBUG) {
             $info = array();
@@ -189,8 +201,18 @@ class DB
             $info['error'] = $statement->errorInfo();
             $this->debug(false, $info);
         }
-        $endtime = microtime();
-        $this->performance($sql, $endtime - $starttime);
+        $endtime = microtime(TRUE);
+
+        // TODO jieqiang调试
+        foreach ($params as $key => $val) {
+            $arr1[] = $key;
+            $arr2[] = '\'' . $val . '\'';
+        }
+        $sql2 = str_replace($arr1, $arr2, $sql);
+        $runtime = round(($endtime - $starttime),3);
+        WeUtility::logging('TODO debug2 runtime='.$runtime.'s', array('file' => 'fetch() ', 'sql2' => $sql2, '$params' => $params));
+
+        $this->performance($sql, $runtime);
         if (!$result) {
             return false;
         } else {
@@ -207,18 +229,9 @@ class DB
         if (($cache = $this->cacheRead($cachekey)) !== false) {
             return $cache['data'];
         }
-        $starttime = microtime();
+        $starttime = microtime(TRUE);
         $statement = $this->prepare($sql);
         $result = $statement->execute($params);
-
-        // TODO jieqiang调试
-        foreach ($params as $key=>$val){
-            $arr1[] = $key;
-            $arr2[] = '\''.$val.'\'';
-        }
-        $sql2 = str_replace($arr1,$arr2,$sql);
-        WeUtility::logging('TODO debug4', array('file' => 'D:\www\users\wd2.jieqiangtec.com\framework\class\db.class.php fetchall($sql, $params = array()) ', 'sql2' => $sql2, '$params' => $params));
-
 
         if (PDO_DEBUG) {
             $info = array();
@@ -228,8 +241,18 @@ class DB
 //            var_dump(PDO_DEBUG,$statement->errorInfo());exit;
             $this->debug(false, $info);
         }
-        $endtime = microtime();
-        $this->performance($sql, $endtime - $starttime);
+        $endtime = microtime(TRUE);
+
+        // TODO jieqiang调试
+        foreach ($params as $key=>$val){
+            $arr1[] = $key;
+            $arr2[] = '\''.$val.'\'';
+        }
+        $sql2 = str_replace($arr1,$arr2,$sql);
+        $runtime = round(($endtime - $starttime),3);
+        WeUtility::logging('TODO debug4 runtime='.$runtime.'s', array('file' => 'fetchall() ', 'sql2' => $sql2, '$params' => $params));
+
+        $this->performance($sql, $runtime);
         if (!$result) {
             return false;
         } else {
