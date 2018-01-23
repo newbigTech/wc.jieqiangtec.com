@@ -1,0 +1,2 @@
+ALTER TABLE `ims_ewei_shop_sms_set` ADD COLUMN `aliyun_new_keyid` varchar(255) NOT NULL DEFAULT '';
+ALTER TABLE `ims_ewei_shop_sms_set` ADD COLUMN `aliyun_new_keysecret` varchar(255) NOT NULL DEFAULT '';

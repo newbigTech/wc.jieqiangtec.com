@@ -239,7 +239,7 @@ class Apply_EweiShopV2Page extends CommissionMobileLoginPage
 			$type = intval($_GPC['type']);
 
 			if (!array_key_exists($type, $type_array)) {
-				show_json(0, '未选择提现方式，请您选择提现方式后重试!');
+				show_json(0, '未选择体现方式2，请您选择提现方式后重试!');
 			}
 
 			$apply = array();

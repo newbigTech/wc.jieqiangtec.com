@@ -2,15 +2,11 @@
 if (!(defined('IN_IA'))) {
 	exit('Access Denied');
 }
-// 开启日志
-ini_set("display_errors", "On");
-error_reporting(E_ALL);
 
 class Index_EweiShopV2Page extends MobilePage
 {
 	public function main()
 	{
-	    // var_dump('TODO jieqiangtest===商品详情页',debug_backtrace());exit;
 		global $_W;
 		global $_GPC;
 		$allcategory = m('shop')->getCategory();
@@ -61,9 +57,7 @@ class Index_EweiShopV2Page extends MobilePage
 	{
 		global $_GPC;
 		global $_W;
-		$args = array('pagesize' => 10, 'page' => intval($_GPC['page']), 'isnew' => trim($_GPC['isnew']), 'ishot' => trim($_GPC['ishot']), 'isrecommand' => trim($_GPC['isrecommand']), 'isdiscount' => trim($_GPC['isdiscount']), 'istime' => trim($_GPC['istime']), 'issendfree' => trim($_GPC['issendfree']), 'keywords' => trim($_GPC['keywords']), 'cate' => trim($_GPC['cate']),'brand' => trim($_GPC['brand']), 'order' => trim($_GPC['order']), 'by' => trim($_GPC['by']));
-
-        // var_dump('TODO jieqiangtest==$args==',$args);
+		$args = array('pagesize' => 10, 'page' => intval($_GPC['page']), 'isnew' => trim($_GPC['isnew']), 'ishot' => trim($_GPC['ishot']), 'isrecommand' => trim($_GPC['isrecommand']), 'isdiscount' => trim($_GPC['isdiscount']), 'istime' => trim($_GPC['istime']), 'issendfree' => trim($_GPC['issendfree']), 'keywords' => trim($_GPC['keywords']), 'cate' => trim($_GPC['cate']), 'order' => trim($_GPC['order']), 'by' => trim($_GPC['by']));
 		$plugin_commission = p('commission');
 		if ($plugin_commission && (0 < intval($_W['shopset']['commission']['level'])) && empty($_W['shopset']['commission']['closemyshop']) && !(empty($_W['shopset']['commission']['select_goods']))) {
 			$frommyshop = intval($_GPC['frommyshop']);
