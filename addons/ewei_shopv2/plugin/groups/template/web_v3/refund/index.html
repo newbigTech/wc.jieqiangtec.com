@@ -115,7 +115,7 @@
             <td style='overflow:hidden;'><img src="{php echo tomedia($item['thumb'])}" style='width:50px;height:50px;border:1px solid #ccc; padding:1px;' onerror="this.src='../addons/ewei_shopv2/static/images/nopic.png'"></td>
             <td style='text-align: left;overflow:hidden;border-left:none;'>{$item['title']}</td>
             <td style='text-align:right;border-left:none;'>
-                &yen {if $item['is_team']==1}{$item['groupsprice']}{else}{$item['singleprice']}{/if}
+                ¥ {if $item['is_team']==1}{$item['groupsprice']}{else}{$item['singleprice']}{/if}
                 <br/>x1
             </td>
             <td style='text-align: center;' >
@@ -154,7 +154,7 @@
                 </span>
             </td>
             <td style='text-align:center' >
-                &yen {php echo number_format($item['applyprice'],2)}
+                ¥ {php echo number_format($item['applyprice'],2)}
             </td>
             <td style='text-align:center' >
                 {if !empty($item['refundid'])}
@@ -195,4 +195,4 @@
 </div>
 </div>
 {template '_footer'}
-<!--weichengtech-->
+<!--913702023503242914-->

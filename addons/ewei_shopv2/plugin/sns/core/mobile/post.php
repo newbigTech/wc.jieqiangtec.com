@@ -1,7 +1,11 @@
 <?php
-if (!defined('IN_IA')) {
+//weichengtech
+?>
+<?php
+if (!(defined('IN_IA'))) {
 	exit('Access Denied');
 }
+
 
 require EWEI_SHOPV2_PLUGIN . 'sns/core/page_mobile.php';
 class Post_EweiShopV2Page extends SnsMobilePage
@@ -16,11 +20,13 @@ class Post_EweiShopV2Page extends SnsMobilePage
 			$this->message('参数错误');
 		}
 
+
 		$post = $this->model->getPost($id);
 
 		if (empty($post)) {
 			$this->message('未找到话题!');
 		}
+
 
 		$post['avatar'] = tomedia($post['avatar']);
 		$post['avatar'] = $this->model->getAvatar($post['avatar']);
@@ -31,15 +37,19 @@ class Post_EweiShopV2Page extends SnsMobilePage
 			$this->message('未找到版块!');
 		}
 
+
 		$isManager = $this->model->isManager($board['id']);
 		$isSuperManager = $this->model->isSuperManager();
-		if (!$isSuperManager && !$isManager) {
+
+		if (!($isSuperManager) && !($isManager)) {
 			$check = $this->model->check($m, $board);
 
 			if (is_error($check)) {
 				show_message($check['message'], '', 'error');
 			}
+
 		}
+
 
 		$post['content'] = m('ui')->lazy($post['content']);
 		$post['content'] = $this->model->replaceContent($post['content']);
@@ -51,27 +61,31 @@ class Post_EweiShopV2Page extends SnsMobilePage
 		$isgood = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_sns_like') . ' where uniacid=:uniacid and pid=:pid and openid=:openid  limit 1', array(':uniacid' => $_W['uniacid'], ':pid' => $post['id'], ':openid' => $_W['openid']));
 		$set = $this->getSet();
 		$member = $this->model->getMember($post['openid']);
-		$level = array('levelname' => empty($set['levelname']) ? '社区粉丝' : $set['levelname'], 'color' => empty($set['levelcolor']) ? '#333' : $set['levelcolor'], 'bg' => empty($set['levelbg']) ? '#eee' : $set['levelbg']);
+		$level = array('levelname' => (empty($set['levelname']) ? '社区粉丝' : $set['levelname']), 'color' => (empty($set['levelcolor']) ? '#333' : $set['levelcolor']), 'bg' => (empty($set['levelbg']) ? '#eee' : $set['levelbg']));
 
-		if (!empty($member['sns_level'])) {
+		if (!(empty($member['sns_level']))) {
 			$level = pdo_fetch('select * from ' . tablename('ewei_shop_sns_level') . ' where id=:id  limit 1', array(':id' => $member['sns_level']));
 		}
+
 
 		$catelist = pdo_fetchall('SELECT id,name FROM ' . tablename('ewei_shop_sns_complaincate') . ' WHERE uniacid = \'' . $_W['uniacid'] . '\' ORDER BY displayorder asc');
 		$shareImg = tomedia($board['share_icon']);
 
-		if (!empty($images)) {
+		if (!(empty($images))) {
 			$shareImg = tomedia($images[0]);
 		}
 
+
 		$url = str_replace('./index.php?', '', mobileUrl('sns/post', array('id' => $post['id'])));
 		$loginurl = mobileUrl('account/login', array('backurl' => urlencode(base64_encode($url))));
-		$_W['shopshare'] = array('title' => !empty($post['title']) ? $post['title'] : $board['title'], 'imgUrl' => $shareImg, 'link' => mobileUrl('sns/post', array('id' => $post['id']), true), 'desc' => $board['title']);
+		$_W['shopshare'] = array('title' => (!(empty($post['title'])) ? $post['title'] : $board['title']), 'imgUrl' => $shareImg, 'link' => mobileUrl('sns/post', array('id' => $post['id']), true), 'desc' => $board['title']);
 		$canpost = true;
-		if (!$isManager && !$isSuperManager) {
+
+		if (!($isManager) && !($isSuperManager)) {
 			$check = $this->model->check($m, $board, true);
-			$canpost = !is_error($check);
+			$canpost = !(is_error($check));
 		}
+
 
 		include $this->template();
 	}
@@ -87,6 +101,7 @@ class Post_EweiShopV2Page extends SnsMobilePage
 			show_json(0, '该话题或评论不存在！');
 		}
 
+
 		show_json(1, array('post' => $post));
 	}
 
@@ -95,9 +110,10 @@ class Post_EweiShopV2Page extends SnsMobilePage
 		global $_W;
 		global $_GPC;
 
-		if (!$this->islogin) {
+		if (!($this->islogin)) {
 			show_json(0, '未登录');
 		}
+
 
 		$bid = intval($_GPC['bid']);
 
@@ -105,22 +121,27 @@ class Post_EweiShopV2Page extends SnsMobilePage
 			show_json(0, '参数错误');
 		}
 
+
 		$board = $this->model->getBoard($bid);
 
 		if (empty($board)) {
 			show_json(0, '未找到版块!');
 		}
 
+
 		$member = m('member')->getMember($_W['openid']);
 		$issupermanager = $this->model->isSuperManager();
 		$ismanager = $this->model->isManager($board['id']);
-		if (!$issupermanager && !$ismanager) {
+
+		if (!($issupermanager) && !($ismanager)) {
 			$check = $this->model->check($member, $board, true);
 
 			if (is_error($check)) {
 				show_json(0, $check['message']);
 			}
+
 		}
+
 
 		$title = trim($_GPC['title']);
 		$len = istrlen($title);
@@ -129,9 +150,11 @@ class Post_EweiShopV2Page extends SnsMobilePage
 			show_json(0, '标题最少3个汉字或字符哦~');
 		}
 
+
 		if (25 < $len) {
 			show_json(0, '标题最多25个汉字或字符哦~');
 		}
+
 
 		$content = trim($_GPC['content']);
 		$len = istrlen($content);
@@ -140,44 +163,59 @@ class Post_EweiShopV2Page extends SnsMobilePage
 			show_json(0, '内容最少3个汉字或字符哦~');
 		}
 
+
 		if (1000 < $len) {
 			show_json(0, '内容最多1000个汉字或字符哦~');
 		}
 
+
 		$checked = 0;
 
 		if ($ismanager) {
-			$checked = ($board['needcheckmanager'] ? 0 : 1);
+			$checked = (($board['needcheckmanager'] ? 0 : 1));
 		}
-		else {
-			$checked = ($board['needcheck'] ? 0 : 1);
+		 else {
+			$checked = (($board['needcheck'] ? 0 : 1));
 		}
 
 		if ($issupermanager) {
 			$checked = 1;
 		}
 
+
 		$imagesData = $this->getSet();
 
 		if (is_array($_GPC['images'])) {
 			$imgcount = count($_GPC['images']);
+
 			if (($imagesData['imagesnum'] < $imgcount) && (0 < $imagesData['imagesnum'])) {
 				show_json(0, '话题图片最多上传' . $imagesData['imagesnum'] . '张！');
 			}
 
+
 			if ((5 < $imgcount) && ($imagesData['imagesnum'] == 0)) {
 				show_json(0, '话题图片最多上传5张！');
 			}
+
 		}
 
+
 		$time = time();
-		$data = array('uniacid' => $_W['uniacid'], 'bid' => $bid, 'openid' => $_W['openid'], 'createtime' => $time, 'avatar' => $member['avatar'], 'nickname' => $member['nickname'], 'replytime' => $time, 'title' => trim($_GPC['title']), 'content' => trim($_GPC['content']), 'images' => is_array($_GPC['images']) ? iserializer($_GPC['images']) : serialize(array()), 'checked' => $checked);
+		$data = array('uniacid' => $_W['uniacid'], 'bid' => $bid, 'openid' => $_W['openid'], 'createtime' => $time, 'avatar' => $member['avatar'], 'nickname' => $member['nickname'], 'replytime' => $time, 'title' => trim($_GPC['title']), 'content' => trim($_GPC['content']), 'images' => (is_array($_GPC['images']) ? iserializer($_GPC['images']) : serialize(array())), 'checked' => $checked);
 		pdo_insert('ewei_shop_sns_post', $data);
 
 		if ($checked) {
 			$this->model->setCredit($_W['openid'], $bid, SNS_CREDIT_POST);
 			$this->model->upgradeLevel($_W['openid']);
 		}
+
+
+		$task = p('task');
+
+		if ($task) {
+			$task->checkTaskProgress(1, 'post');
+		}
+
 
 		show_json(1, array('checked' => $checked));
 	}
@@ -187,9 +225,10 @@ class Post_EweiShopV2Page extends SnsMobilePage
 		global $_W;
 		global $_GPC;
 
-		if (!$this->islogin) {
+		if (!($this->islogin)) {
 			show_json(0, '未登录');
 		}
+
 
 		$uniacid = $_W['uniacid'];
 		$id = intval($_GPC['id']);
@@ -200,11 +239,13 @@ class Post_EweiShopV2Page extends SnsMobilePage
 			show_json(0, '您要投诉的话题或评论不存在！');
 		}
 
+
 		$type = intval($_GPC['type']);
 
 		if (empty($type)) {
 			show_json(0, '请选择投诉类别！');
 		}
+
 
 		$content = trim($_GPC['content']);
 		$len = istrlen($content);
@@ -213,17 +254,20 @@ class Post_EweiShopV2Page extends SnsMobilePage
 			show_json(0, '内容最少3个汉字或字符哦~');
 		}
 
+
 		if (500 < $len) {
 			show_json(0, '内容最多500个汉字或字符哦~');
 		}
 
-		$data = array('uniacid' => $uniacid, 'type' => $type, 'postsid' => $id, 'defendant' => $posts['openid'], 'complainant' => $openid, 'complaint_type' => $type, 'complaint_text' => $content, 'createtime' => time(), 'images' => is_array($_GPC['images']) ? iserializer($_GPC['images']) : serialize(array()));
+
+		$data = array('uniacid' => $uniacid, 'type' => $type, 'postsid' => $id, 'defendant' => $posts['openid'], 'complainant' => $openid, 'complaint_type' => $type, 'complaint_text' => $content, 'createtime' => time(), 'images' => (is_array($_GPC['images']) ? iserializer($_GPC['images']) : serialize(array())));
 		pdo_insert('ewei_shop_sns_complain', $data);
 		$insert_id = pdo_insertid();
 
 		if (empty($insert_id)) {
 			show_json(0, '提交投诉失败，请重试！');
 		}
+
 
 		show_json(1);
 	}
@@ -233,9 +277,10 @@ class Post_EweiShopV2Page extends SnsMobilePage
 		global $_W;
 		global $_GPC;
 
-		if (!$this->islogin) {
+		if (!($this->islogin)) {
 			show_json(0, '未登录');
 		}
+
 
 		$bid = intval($_GPC['bid']);
 		$pid = intval($_GPC['pid']);
@@ -245,11 +290,13 @@ class Post_EweiShopV2Page extends SnsMobilePage
 			show_json(0, '参数错误');
 		}
 
+
 		$board = $this->model->getBoard($bid);
 
 		if (empty($board)) {
 			show_json(0, '未找到版块!');
 		}
+
 
 		$post = $this->model->getPost($pid);
 
@@ -257,16 +304,20 @@ class Post_EweiShopV2Page extends SnsMobilePage
 			show_json(0, '未找到话题!');
 		}
 
+
 		$member = $this->model->getMember($_W['openid']);
 		$ismanager = $this->model->isManager($board['id']);
 		$issupermanager = $this->model->isSuperManager();
-		if (!$issupermanager && !$ismanager) {
+
+		if (!($issupermanager) && !($ismanager)) {
 			$check = $this->model->check($member, $board, true);
 
 			if (is_error($check)) {
 				show_json(0, $check['message']);
 			}
+
 		}
+
 
 		$content = trim($_GPC['content']);
 		$len = istrlen($content);
@@ -275,25 +326,28 @@ class Post_EweiShopV2Page extends SnsMobilePage
 			show_json(0, '内容最少3个汉字或字符哦~');
 		}
 
+
 		if (500 < $len) {
 			show_json(0, '内容最多500个汉字或字符哦~');
 		}
 
+
 		$checked = 0;
 
 		if ($ismanager) {
-			$checked = ($board['needcheckreplymanager'] ? 0 : 1);
+			$checked = (($board['needcheckreplymanager'] ? 0 : 1));
 		}
-		else {
-			$checked = ($board['needcheckreply'] ? 0 : 1);
+		 else {
+			$checked = (($board['needcheckreply'] ? 0 : 1));
 		}
 
 		if ($issupermanager) {
 			$checked = 1;
 		}
 
+
 		$time = time();
-		$data = array('uniacid' => $_W['uniacid'], 'bid' => $bid, 'pid' => $pid, 'rpid' => $rpid, 'openid' => $_W['openid'], 'avatar' => $member['avatar'], 'nickname' => $member['nickname'], 'createtime' => $time, 'replytime' => $time, 'content' => trim($_GPC['content']), 'images' => is_array($_GPC['images']) ? iserializer($_GPC['images']) : serialize(array()), 'checked' => $checked);
+		$data = array('uniacid' => $_W['uniacid'], 'bid' => $bid, 'pid' => $pid, 'rpid' => $rpid, 'openid' => $_W['openid'], 'avatar' => $member['avatar'], 'nickname' => $member['nickname'], 'createtime' => $time, 'replytime' => $time, 'content' => trim($_GPC['content']), 'images' => (is_array($_GPC['images']) ? iserializer($_GPC['images']) : serialize(array())), 'checked' => $checked);
 		pdo_insert('ewei_shop_sns_post', $data);
 		pdo_update('ewei_shop_sns_post', array('replytime' => $time), array('id' => $pid, 'uniacid' => $_W['uniacid']));
 
@@ -303,6 +357,7 @@ class Post_EweiShopV2Page extends SnsMobilePage
 			$content = mb_substr($content, 0, 15) . '...';
 			$this->model->sendReplyMessage($post['openid'], array('nickname' => $member['nickname'], 'id' => $post['id'], 'boardtitle' => $board['title'], 'posttitle' => $post['title'], 'content' => $content, 'createtime' => $data['createtime']));
 		}
+
 
 		show_json(1, array('checked' => $checked));
 	}
@@ -323,15 +378,17 @@ class Post_EweiShopV2Page extends SnsMobilePage
 		$params = array(':uniacid' => $_W['uniacid'], ':pid' => $pid, ':bid' => $bid);
 		$isSuperManager = $this->model->isSuperManager();
 		$isManager = $this->model->isManager($bid);
-		if (!$isManager && !$isSuperManager) {
+
+		if (!($isManager) && !($isSuperManager)) {
 			$condition .= ' and `checked`=1';
 		}
+
 
 		$sql = 'select id,bid,rpid,title,createtime,content,images ,openid, nickname,avatar,checked from ' . tablename('ewei_shop_sns_post') . '  where 1 ' . $condition . ' ORDER BY createtime desc LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize;
 		$list = pdo_fetchall($sql, $params);
 		$total = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_sns_post') . ' where 1 ' . $condition, $params);
 
-		foreach ($list as $key => &$row) {
+		foreach ($list as $key => &$row ) {
 			$row['avatar'] = tomedia($row['avatar']);
 			$row['avatar'] = $this->model->getAvatar($row['avatar']);
 			$row['createtime'] = date('Y-m-d H:i', $row['createtime']);
@@ -339,13 +396,15 @@ class Post_EweiShopV2Page extends SnsMobilePage
 			$row['postcount'] = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_sns_post') . ' where pid=:pid limit 1', array(':pid' => $row['id']));
 			$images = array();
 			$rowimages = iunserializer($row['images']);
-			if (is_array($rowimages) && !empty($rowimages)) {
-				foreach ($rowimages as $img) {
+			if (is_array($rowimages) && !(empty($rowimages))) {
+				foreach ($rowimages as $img ) {
 					if (count($images) <= 2) {
 						$images[] = tomedia($img);
 					}
+
 				}
 			}
+
 
 			$row['images'] = $images;
 			$row['imagewidth'] = '32%';
@@ -353,20 +412,22 @@ class Post_EweiShopV2Page extends SnsMobilePage
 			$row['content'] = $this->model->replaceContent($row['content']);
 			$row['parent'] = false;
 
-			if (!empty($row['rpid'])) {
+			if (!(empty($row['rpid']))) {
 				$parentPost = $this->model->getPost($row['rpid']);
 				$row['parent'] = array('nickname' => $parentPost['nickname'], 'content' => $this->model->replaceContent($parentPost['content']));
 			}
+
 
 			$isgood = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_sns_like') . ' where uniacid=:uniacid and pid=:pid and openid=:openid limit 1', array(':uniacid' => $_W['uniacid'], ':pid' => $row['id'], ':openid' => $_W['openid']));
 			$row['isgood'] = $isgood;
 			$row['goodcount'] = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_sns_like') . ' where uniacid=:uniacid and pid=:pid  limit 1', array(':uniacid' => $_W['uniacid'], ':pid' => $row['id']));
 			$member = $this->model->getMember($row['openid']);
-			$level = array('levelname' => empty($set['levelname']) ? '社区粉丝' : $set['levelname'], 'color' => empty($set['levelcolor']) ? '#333' : $set['levelcolor'], 'bg' => empty($set['levelbg']) ? '#eee' : $set['levelbg']);
+			$level = array('levelname' => (empty($set['levelname']) ? '社区粉丝' : $set['levelname']), 'color' => (empty($set['levelcolor']) ? '#333' : $set['levelcolor']), 'bg' => (empty($set['levelbg']) ? '#eee' : $set['levelbg']));
 
-			if (!empty($member['sns_level'])) {
+			if (!(empty($member['sns_level']))) {
 				$level = pdo_fetch('select * from ' . tablename('ewei_shop_sns_level') . ' where id=:id  limit 1', array(':id' => $member['sns_level']));
 			}
+
 
 			$row['member'] = array('id' => $member['id']);
 			$row['level'] = $level;
@@ -384,9 +445,10 @@ class Post_EweiShopV2Page extends SnsMobilePage
 		global $_W;
 		global $_GPC;
 
-		if (!$this->islogin) {
+		if (!($this->islogin)) {
 			show_json(0, '未登录');
 		}
+
 
 		$bid = intval($_GPC['bid']);
 		$pid = intval($_GPC['pid']);
@@ -395,11 +457,13 @@ class Post_EweiShopV2Page extends SnsMobilePage
 			show_json(0, '参数错误');
 		}
 
+
 		$board = $this->model->getBoard($bid);
 
 		if (empty($board)) {
 			show_json(0, '未找到版块!');
 		}
+
 
 		$post = $this->model->getPost($pid);
 
@@ -407,14 +471,15 @@ class Post_EweiShopV2Page extends SnsMobilePage
 			show_json(0, '未找到话题!');
 		}
 
+
 		$isgood = 1;
 		$like = pdo_fetch('select id from ' . tablename('ewei_shop_sns_like') . ' where pid=:pid and openid=:openid limit 1', array(':pid' => $pid, ':openid' => $_W['openid']));
 
-		if (!empty($like)) {
+		if (!(empty($like))) {
 			$isgood = 0;
 			pdo_delete('ewei_shop_sns_like', array('id' => $like['id']));
 		}
-		else {
+		 else {
 			$like = array('uniacid' => $_W['uniacid'], 'pid' => $pid, 'openid' => $_W['openid']);
 			pdo_insert('ewei_shop_sns_like', $like);
 		}
@@ -430,9 +495,10 @@ class Post_EweiShopV2Page extends SnsMobilePage
 		global $_W;
 		global $_GPC;
 
-		if (!$this->islogin) {
+		if (!($this->islogin)) {
 			show_json(0, '未登录');
 		}
+
 
 		$bid = intval($_GPC['bid']);
 		$pid = intval($_GPC['pid']);
@@ -441,11 +507,13 @@ class Post_EweiShopV2Page extends SnsMobilePage
 			show_json(0, '参数错误');
 		}
 
+
 		$board = $this->model->getBoard($bid);
 
 		if (empty($board)) {
 			show_json(0, '未找到版块!');
 		}
+
 
 		$post = $this->model->getPost($pid);
 
@@ -453,18 +521,21 @@ class Post_EweiShopV2Page extends SnsMobilePage
 			show_json(0, '未找到话题!');
 		}
 
+
 		$isManager = $this->model->isManager($bid);
 		$isSuperManager = $this->model->isSuperManager();
-		if (!$isManager && !$isSuperManager) {
+
+		if (!($isManager) && !($isSuperManager)) {
 			show_json(0, '无权删除');
 		}
+
 
 		pdo_update('ewei_shop_sns_post', array('deleted' => 1, 'deletedtime' => time()), array('id' => $pid));
 
 		if ($post['pid']) {
 			$this->model->setCredit($post['openid'], $bid, SNS_CREDIT_DELETE_REPLY);
 		}
-		else {
+		 else {
 			$this->model->setCredit($post['openid'], $bid, SNS_CREDIT_DELETE_POST);
 		}
 
@@ -476,9 +547,10 @@ class Post_EweiShopV2Page extends SnsMobilePage
 		global $_W;
 		global $_GPC;
 
-		if (!$this->islogin) {
+		if (!($this->islogin)) {
 			show_json(0, '未登录');
 		}
+
 
 		$bid = intval($_GPC['bid']);
 		$pid = intval($_GPC['pid']);
@@ -487,11 +559,13 @@ class Post_EweiShopV2Page extends SnsMobilePage
 			show_json(0, '参数错误');
 		}
 
+
 		$board = $this->model->getBoard($bid);
 
 		if (empty($board)) {
 			show_json(0, '未找到版块!');
 		}
+
 
 		$post = $this->model->getPost($pid);
 
@@ -499,22 +573,26 @@ class Post_EweiShopV2Page extends SnsMobilePage
 			show_json(0, '未找到话题!');
 		}
 
+
 		$isManager = $this->model->isManager($bid);
 		$isSuperManager = $this->model->isSuperManager();
-		if (!$isManager && !$isSuperManager) {
+
+		if (!($isManager) && !($isSuperManager)) {
 			show_json(0, '无权审核');
 		}
 
-		if (!$post['checked']) {
+
+		if (!($post['checked'])) {
 			pdo_update('ewei_shop_sns_post', array('checked' => 1, 'checktime' => time()), array('id' => $pid));
 
 			if ($post['pid']) {
 				$this->model->setCredit($post['openid'], $bid, SNS_CREDIT_REPLY);
 			}
-			else {
+			 else {
 				$this->model->setCredit($post['openid'], $bid, SNS_CREDIT_POST);
 			}
 		}
+
 
 		show_json(1);
 	}
@@ -524,9 +602,10 @@ class Post_EweiShopV2Page extends SnsMobilePage
 		global $_W;
 		global $_GPC;
 
-		if (!$this->islogin) {
+		if (!($this->islogin)) {
 			show_json(0, '未登录');
 		}
+
 
 		$bid = intval($_GPC['bid']);
 		$pid = intval($_GPC['pid']);
@@ -535,11 +614,13 @@ class Post_EweiShopV2Page extends SnsMobilePage
 			show_json(0, '参数错误');
 		}
 
+
 		$board = $this->model->getBoard($bid);
 
 		if (empty($board)) {
 			show_json(0, '未找到版块!');
 		}
+
 
 		$post = $this->model->getPost($pid);
 
@@ -547,11 +628,14 @@ class Post_EweiShopV2Page extends SnsMobilePage
 			show_json(0, '未找到话题!');
 		}
 
+
 		$isManager = $this->model->isManager($bid);
 		$isSuperManager = $this->model->isSuperManager();
-		if (!$isManager && !$isSuperManager) {
+
+		if (!($isManager) && !($isSuperManager)) {
 			show_json(0, '无权设置精华');
 		}
+
 
 		$isbest = 1;
 
@@ -560,7 +644,7 @@ class Post_EweiShopV2Page extends SnsMobilePage
 			pdo_update('ewei_shop_sns_post', array('isboardbest' => 0), array('id' => $pid));
 			$this->model->setCredit($post['openid'], $bid, SNS_CREDIT_BEST_BOARD_CANCEL);
 		}
-		else {
+		 else {
 			pdo_update('ewei_shop_sns_post', array('isboardbest' => 1), array('id' => $pid));
 			$this->model->setCredit($post['openid'], $bid, SNS_CREDIT_BEST_BOARD);
 		}
@@ -573,9 +657,10 @@ class Post_EweiShopV2Page extends SnsMobilePage
 		global $_W;
 		global $_GPC;
 
-		if (!$this->islogin) {
+		if (!($this->islogin)) {
 			show_json(0, '未登录');
 		}
+
 
 		$bid = intval($_GPC['bid']);
 		$pid = intval($_GPC['pid']);
@@ -584,11 +669,13 @@ class Post_EweiShopV2Page extends SnsMobilePage
 			show_json(0, '参数错误');
 		}
 
+
 		$board = $this->model->getBoard($bid);
 
 		if (empty($board)) {
 			show_json(0, '未找到版块!');
 		}
+
 
 		$post = $this->model->getPost($pid);
 
@@ -596,11 +683,14 @@ class Post_EweiShopV2Page extends SnsMobilePage
 			show_json(0, '未找到话题!');
 		}
 
+
 		$isManager = $this->model->isManager($bid);
 		$isSuperManager = $this->model->isSuperManager();
-		if (!$isManager && !$isSuperManager) {
+
+		if (!($isManager) && !($isSuperManager)) {
 			show_json(0, '无权设置置顶');
 		}
+
 
 		$istop = 1;
 
@@ -609,7 +699,7 @@ class Post_EweiShopV2Page extends SnsMobilePage
 			pdo_update('ewei_shop_sns_post', array('isboardtop' => 0), array('id' => $pid));
 			$this->model->setCredit($post['openid'], $bid, SNS_CREDIT_TOP_BOARD_CANCEL);
 		}
-		else {
+		 else {
 			pdo_update('ewei_shop_sns_post', array('isboardtop' => 1), array('id' => $pid));
 			$this->model->setCredit($post['openid'], $bid, SNS_CREDIT_TOP_BOARD);
 		}
@@ -622,9 +712,10 @@ class Post_EweiShopV2Page extends SnsMobilePage
 		global $_W;
 		global $_GPC;
 
-		if (!$this->islogin) {
+		if (!($this->islogin)) {
 			show_json(0, '未登录');
 		}
+
 
 		$bid = intval($_GPC['bid']);
 		$pid = intval($_GPC['pid']);
@@ -633,11 +724,13 @@ class Post_EweiShopV2Page extends SnsMobilePage
 			show_json(0, '参数错误');
 		}
 
+
 		$board = $this->model->getBoard($bid);
 
 		if (empty($board)) {
 			show_json(0, '未找到版块!');
 		}
+
 
 		$post = $this->model->getPost($pid);
 
@@ -645,11 +738,13 @@ class Post_EweiShopV2Page extends SnsMobilePage
 			show_json(0, '未找到话题!');
 		}
 
+
 		$isManager = $this->model->isSuperManager();
 
-		if (!$isManager) {
+		if (!($isManager)) {
 			show_json(0, '无权设置全站精华');
 		}
+
 
 		$isbest = 1;
 
@@ -658,7 +753,7 @@ class Post_EweiShopV2Page extends SnsMobilePage
 			pdo_update('ewei_shop_sns_post', array('isbest' => 0), array('id' => $pid));
 			$this->model->setCredit($post['openid'], $bid, SNS_CREDIT_BEST_CANCEL);
 		}
-		else {
+		 else {
 			pdo_update('ewei_shop_sns_post', array('isbest' => 1), array('id' => $pid));
 			$this->model->setCredit($post['openid'], $bid, SNS_CREDIT_BEST);
 		}
@@ -671,9 +766,10 @@ class Post_EweiShopV2Page extends SnsMobilePage
 		global $_W;
 		global $_GPC;
 
-		if (!$this->islogin) {
+		if (!($this->islogin)) {
 			show_json(0, '未登录');
 		}
+
 
 		$bid = intval($_GPC['bid']);
 		$pid = intval($_GPC['pid']);
@@ -682,11 +778,13 @@ class Post_EweiShopV2Page extends SnsMobilePage
 			show_json(0, '参数错误');
 		}
 
+
 		$board = $this->model->getBoard($bid);
 
 		if (empty($board)) {
 			show_json(0, '未找到版块!');
 		}
+
 
 		$post = $this->model->getPost($pid);
 
@@ -694,11 +792,13 @@ class Post_EweiShopV2Page extends SnsMobilePage
 			show_json(0, '未找到话题!');
 		}
 
+
 		$isManager = $this->model->isSuperManager();
 
-		if (!$isManager) {
+		if (!($isManager)) {
 			show_json(0, '无权设置全站置顶');
 		}
+
 
 		$istop = 1;
 
@@ -707,7 +807,7 @@ class Post_EweiShopV2Page extends SnsMobilePage
 			pdo_update('ewei_shop_sns_post', array('istop' => 0), array('id' => $pid));
 			$this->model->setCredit($post['openid'], $bid, SNS_CREDIT_TOP_CANCEL);
 		}
-		else {
+		 else {
 			pdo_update('ewei_shop_sns_post', array('istop' => 1), array('id' => $pid));
 			$this->model->setCredit($post['openid'], $bid, SNS_CREDIT_TOP);
 		}
@@ -715,5 +815,6 @@ class Post_EweiShopV2Page extends SnsMobilePage
 		show_json(1, array('istop' => $istop));
 	}
 }
+
 
 ?>

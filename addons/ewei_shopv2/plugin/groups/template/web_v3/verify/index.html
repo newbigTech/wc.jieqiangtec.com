@@ -107,7 +107,7 @@
             <td style='overflow:hidden;'><img src="{php echo tomedia($item['thumb'])}" style='width:50px;height:50px;border:1px solid #ccc; padding:1px;' onerror="this.src='../addons/ewei_shopv2/static/images/nopic.png'"></td>
             <td style='text-align: left;overflow:hidden;border-left:none;'>{$item['title']}</td>
             <td style='text-align:right;border-left:none;'>
-                &yen {if $item['is_team']==1}{$item['groupsprice']}{else}{$item['singleprice']}{/if}
+                ¥ {if $item['is_team']==1}{$item['groupsprice']}{else}{$item['singleprice']}{/if}
                 <br/>x1
             </td>
             <td  style='text-align: center;' >
@@ -149,51 +149,51 @@
                 {/if}
             </td>
             <td style='text-align:center' >
-                &yen {php echo number_format($item['price']-$item['creditmoney']+$item['freight'],2)}
+                ¥ {php echo number_format($item['price']-$item['creditmoney']+$item['freight'],2)}
                 <a data-toggle='popover' data-html='true' data-trigger="hover" data-placement='right' data-content="<table style='width:100%;'>
                 <tr>
                     <td  style='border:none;text-align:right;'>商品小计：</td>
                     <td  style='border:none;text-align:right;;'>
-                        &yen {php echo number_format($item['price'] + $item['discount'],2)}
+                        ¥ {php echo number_format($item['price'] + $item['discount'],2)}
                     </td>
                 </tr>
                 <tr>
                     <td  style='border:none;text-align:right;'>运费：</td>
-                    <td  style='border:none;text-align:right;;'>&yen {php echo number_format( $item['freight'],2)}</td>
+                    <td  style='border:none;text-align:right;;'>¥ {php echo number_format( $item['freight'],2)}</td>
                 </tr>
                 {if $item['discount']>0}
                 <tr>
                     <td  style='border:none;text-align:right;'>团长优惠：</td>
-                    <td class='text-danger' style='border:none;text-align:right;'>- &yen{$item['discount']}</td>
+                    <td class='text-danger' style='border:none;text-align:right;'>- ¥{$item['discount']}</td>
                 </tr>
                 {/if}
                 {if $item['discountprice']>0}
                 <tr>
                     <td  style='border:none;text-align:right;'>会员折扣：</td>
-                    <td  class='text-danger' style='border:none;text-align:right;;'>-&yen {php echo number_format( $item['discountprice'],2)}</td>
+                    <td  class='text-danger' style='border:none;text-align:right;;'>-¥ {php echo number_format( $item['discountprice'],2)}</td>
                 </tr>
                 {/if}
                 {if $item['creditmoney']>0}
                 <tr>
                     <td  style='border:none;text-align:right;'>积分抵扣：</td>
-                    <td  class='text-danger' style='border:none;text-align:right;;'>-&yen {php echo number_format( $item['creditmoney'],2)}</td>
+                    <td  class='text-danger' style='border:none;text-align:right;;'>-¥ {php echo number_format( $item['creditmoney'],2)}</td>
                 </tr>
                 {/if}
                 {if $item['deductenough']>0}
                 <tr>
                     <td  style='border:none;text-align:right;'>满额立减：</td>
-                    <td  class='text-danger' style='border:none;text-align:right;;'>-&yen {php echo number_format( $item['deductenough'],2)}</td>
+                    <td  class='text-danger' style='border:none;text-align:right;;'>-¥ {php echo number_format( $item['deductenough'],2)}</td>
                 </tr>
                 {/if}
                 {if $item['couponprice']>0}
                 <tr>
                     <td  style='border:none;text-align:right;'>优惠券优惠：</td>
-                    <td  class='text-danger' style='border:none;text-align:right;;'>-&yen {php echo number_format( $item['couponprice'],2)}</td>
+                    <td  class='text-danger' style='border:none;text-align:right;;'>-¥ {php echo number_format( $item['couponprice'],2)}</td>
                 </tr>
                 {if $item['isdiscountprice']>0}
                 <tr>
                     <td  style='border:none;text-align:right;'>促销优惠：</td>
-                    <td  class='text-danger' style='border:none;text-align:right;;'>-&yen {php echo number_format( $item['isdiscountprice'],2)}</td>
+                    <td  class='text-danger' style='border:none;text-align:right;;'>-¥ {php echo number_format( $item['isdiscountprice'],2)}</td>
                 </tr>
                 {/if}
                 {/if}
@@ -202,7 +202,7 @@
                     <td  style='border:none;text-align:right;'>卖家改价：</td>
                     <td  style='border:none;text-align:right;;'>
                     <span class='{if 0<$item['changeprice']}success{else}danger{/if}'>
-                    {if 0<$item['changeprice']}+{else}-{/if}&yen {php echo number_format(abs($item['changeprice']),2)}
+                    {if 0<$item['changeprice']}+{else}-{/if}¥ {php echo number_format(abs($item['changeprice']),2)}
                     </span>
                     </td>
                 </tr>
@@ -212,19 +212,19 @@
                     <td  style='border:none;text-align:right;'>卖家改运费：</td>
                     <td  style='border:none;text-align:right;;'>
                         <span class='{if 0<$item['changedispatchprice']}success{else}danger{/if}'>
-                        {if 0<$item['changedispatchprice']}+{else}-{/if}&yen {php echo abs($item['changedispatchprice'])}
+                        {if 0<$item['changedispatchprice']}+{else}-{/if}¥ {php echo abs($item['changedispatchprice'])}
                         </span>
                     </td>
                 </tr>
                 {/if}
                 <tr>
                     <td style='border:none;text-align:right;'>应收款：</td>
-                    <td style='border:none;text-align:right;font-weight:bold'>&yen {php echo number_format($item['price']-$item['creditmoney']+$item['freight'],2)}</td>
+                    <td style='border:none;text-align:right;font-weight:bold'>¥ {php echo number_format($item['price']-$item['creditmoney']+$item['freight'],2)}</td>
                 </tr>
             </table>">
                     <i class='fa fa-question-circle'></i></a>
                 {if $item['freight']>0}
-                <br/>(含运费:&yen {php echo number_format( $item['freight'],2)})
+                <br/>(含运费:¥ {php echo number_format( $item['freight'],2)})
                 {/if}
             </td>
             <td style='text-align:center' >
@@ -269,4 +269,4 @@
 </div>
 </div>
 {template '_footer'}
-<!--weichengtech-->
+<!--NDAwMDA5NzgyNw==-->

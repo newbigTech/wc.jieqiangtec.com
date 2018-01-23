@@ -48,10 +48,10 @@
 				<div class="lynn_index_list_info fui-list-inner" onclick="window.location.href='{php echo mobileUrl('groups/goods', array('id'=>$item['id']))}';">
 					<h3>{$item['title']}</h3>
 					<p>{$item['description']}</p>
-					<del>原价：&yen{$item['price']}</del>
+					<del>原价：¥{$item['price']}</del>
 					<div class="lynn_index_list_team">
 						<span class="lynn_index_list_team_left">
-							<strong><i class="icon icon-group"></i></strong>{$item['groupnum']}人团 &yen<em>{$item['groupsprice']}</em>/{$item['goodsnum']}{if $item['units']}{$item['units']}{else}件{/if}
+							<strong><i class="icon icon-group"></i></strong>{$item['groupnum']}人团 ¥<em>{$item['groupsprice']}</em>/{$item['goodsnum']}{if $item['units']}{$item['units']}{else}件{/if}
 						</span>
 						<a href="{php echo mobileUrl('groups/goods', array('id'=>$item['id']))}" class="external lynn_index_list_team_a">去拼团 ></a>
 					</div>
@@ -72,4 +72,4 @@
 </div>
 {php $this->footerMenus()}
 {template '_footer'}
-<!--weichengtech-->
+<!--青岛易联互动网络科技有限公司-->

@@ -36,7 +36,7 @@
 						({if $order['status'] ==1}申请退款{else}申请售后{/if}中)
 						{/if}
 					</div>
-					<div class='text'>订单金额(含运费): &yen {php echo ($order['price'] - $order['creditmoney'] + $order['freight']);}<span></div>
+					<div class='text'>订单金额(含运费): yen {php echo ($order['price'] - $order['creditmoney'] + $order['freight']);}<span></div>
 				</div>
 				<div class='fui-list-media'>
 					{if empty($order['status'])}
@@ -137,7 +137,7 @@
 					{if !empty($good['optionid'])}<div class='subtitle'>{$good['optiontitle']}</div>{/if}
 			</div>
 			<div class='fui-list-angle'>
-				&yen <span class='marketprice'>{if $order['is_team'] == 1}{$good['groupsprice']}{else}{$good['singleprice']}{/if}/{if $good['units']}{$good['goodsnum']}{$good['units']}{else}1件{/if}
+				yen <span class='marketprice'>{if $order['is_team'] == 1}{$good['groupsprice']}{else}{$good['singleprice']}{/if}/{if $good['units']}{$good['goodsnum']}{$good['units']}{else}1件{/if}
 				<br/>   x 1</span>
 			</div>
 		</div>
@@ -274,19 +274,19 @@
 			<div class="fui-cell">
 				<div class="fui-cell-label">商品小计</div>
 				<div class="fui-cell-info"></div>
-				<div class="fui-cell-remark noremark">&yen {php echo number_format($order['price']+$order['discount'],2)}</div>
+				<div class="fui-cell-remark noremark">yen {php echo number_format($order['price']+$order['discount'],2)}</div>
 			</div>
 			<div class="fui-cell">
 				<div class="fui-cell-label">运费</div>
 				<div class="fui-cell-info"></div>
-				<div class="fui-cell-remark noremark">&yen {$order['freight']}</div>
+				<div class="fui-cell-remark noremark">yen {$order['freight']}</div>
 			</div>
 			{if $order['discount'] > 0}
 			<div class="fui-cell">
 				<div class="fui-cell-label">团长优惠</div>
 				<div class="fui-cell-info"></div>
 				<div class="fui-cell-remark noremark">
-					- &yen {php echo number_format($order['discount'],2)}
+					- yen {php echo number_format($order['discount'],2)}
 				</div>
 			</div>
 			{/if}
@@ -294,34 +294,34 @@
 			<div class="fui-cell">
 				<div class="fui-cell-label">会员优惠</div>
 				<div class="fui-cell-info"></div>
-				<div class="fui-cell-remark noremark">-&yen {$order['discountprice']}</div>
+				<div class="fui-cell-remark noremark">-yen {$order['discountprice']}</div>
 			</div>
 			{/if}
 			{if $order['isdiscountprice']>0}
 			<div class="fui-cell">
 				<div class="fui-cell-label">促销优惠</div>
 				<div class="fui-cell-info"></div>
-				<div class="fui-cell-remark noremark">-&yen {$order['isdiscountprice']}</div>
+				<div class="fui-cell-remark noremark">-yen {$order['isdiscountprice']}</div>
 			</div>
 			{/if}
 			{if $order['creditmoney']>0}
 			<div class="fui-cell">
 				<div class="fui-cell-label">积分抵扣</div>
 				<div class="fui-cell-info"></div>
-				<div class="fui-cell-remark noremark">- &yen {$order['creditmoney']}</div>
+				<div class="fui-cell-remark noremark">- yen {$order['creditmoney']}</div>
 			</div>
 			{/if}
 			{if $order['deductcredit2']>0}
 			<div class="fui-cell">
 				<div class="fui-cell-label">余额抵扣</div>
 				<div class="fui-cell-info"></div>
-				<div class="fui-cell-remark noremark">-&yen {$order['deductcredit2']}</div>
+				<div class="fui-cell-remark noremark">-yen {$order['deductcredit2']}</div>
 			</div>
 			{/if}
 			<div class="fui-cell">
 				<div class="fui-cell-label" style='width:auto;'>实付费(含运费)</div>
 				<div class="fui-cell-info"></div>
-				<div class="fui-cell-remark noremark"><span class='text-danger'>&yen <span style='font-size:.8rem'>{php echo number_format(($order['price'] - $order['creditmoney'] + $order['freight']),2)}</span></span></div>
+				<div class="fui-cell-remark noremark"><span class='text-danger'>yen <span style='font-size:.8rem'>{php echo number_format(($order['price'] - $order['creditmoney'] + $order['freight']),2)}</span></span></div>
 			</div>
 		</div>
 

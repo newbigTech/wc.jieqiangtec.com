@@ -164,7 +164,7 @@
                         </tr>
                         <tr>
                             <td>订单金额：</td>
-                            <td>&yen {php echo number_format($order['price']+$order['freight'],2)} &nbsp;&nbsp;
+                            <td>yen {php echo number_format($order['price']+$order['freight'],2)} &nbsp;&nbsp;
                                </td>
                         </tr>
                         {if !empty($coupon)}
@@ -600,14 +600,14 @@
                     </td>
                     <td style="text-align: center;">
                         {if $order['is_team']==1}
-                        &yen {$order['groupsprice']}
+                        yen {$order['groupsprice']}
                         {else}
-                        &yen {$order['singleprice']}
+                        yen {$order['singleprice']}
                         {/if}
                     </td>
                     <td style="text-align: center;">1</td>
                     <td style='text-align: center;'>
-                        &yen {php echo number_format($order['price'] + $order['freight'],2)}
+                        yen {php echo number_format($order['price'] + $order['freight'],2)}
                     </td>
                     {if !empty($goods['diyformdata'])}
                     <td>
@@ -636,37 +636,37 @@
                 <tr class="trorder">
                     <td colspan="5">
                         <div class="price">
-                            <p> <span class="price-inner">  订单金额：</span><span style="font-weight: bold"> &yen {php echo number_format($order['price']+$order['freight'],2)}</span></p>
-                            <p><span class="price-inner">商品小计：</span><span  style="font-weight: bold">&yen {php echo number_format($order['price'] + $order['discount'] ,2)}</span></p>
-                            <p><span class="price-inner">运费：</span><span>&yen {php echo number_format( $order['freight'],2)}</span></p>
+                            <p> <span class="price-inner">  订单金额：</span><span style="font-weight: bold"> yen {php echo number_format($order['price']+$order['freight'],2)}</span></p>
+                            <p><span class="price-inner">商品小计：</span><span  style="font-weight: bold">yen {php echo number_format($order['price'] + $order['discount'] ,2)}</span></p>
+                            <p><span class="price-inner">运费：</span><span>yen {php echo number_format( $order['freight'],2)}</span></p>
                             {if $order['discount']>0}
-                            <p><span class="price-inner">团长优惠：</span><span class="text-danger">- &yen{$order['discount']}</span></p>
+                            <p><span class="price-inner">团长优惠：</span><span class="text-danger">- yen{$order['discount']}</span></p>
                             {/if}
                             {if $order['discountprice']>0}
-                            <p><span class="price-inner">会员折扣：</span><span class="text-danger">-&yen {php echo number_format( $order['discountprice'],2)}</span></p>
+                            <p><span class="price-inner">会员折扣：</span><span class="text-danger">-yen {php echo number_format( $order['discountprice'],2)}</span></p>
                             {/if}
                             {if $order['creditmoney']>0}
-                            <p><span class="price-inner">积分抵扣：</span><span class="text-danger">-&yen {php echo number_format( $order['creditmoney'],2)}</span></p>
+                            <p><span class="price-inner">积分抵扣：</span><span class="text-danger">-yen {php echo number_format( $order['creditmoney'],2)}</span></p>
                             {/if}
                             {if $order['deductcredit2']>0}
-                            <p><span class="price-inner">余额抵扣：</span ><span class="text-danger">-&yen {php echo number_format( $order['deductcredit2'],2)}</span></p>
+                            <p><span class="price-inner">余额抵扣：</span ><span class="text-danger">-yen {php echo number_format( $order['deductcredit2'],2)}</span></p>
                             {/if}
                             {if $order['deductenough']>0}
-                            <p><span class="price-inner">满额立减：</span><span class="text-danger">-&yen {php echo number_format( $order['deductenough'],2)}</span></p>
+                            <p><span class="price-inner">满额立减：</span><span class="text-danger">-yen {php echo number_format( $order['deductenough'],2)}</span></p>
                             {/if}
                             {if $order['couponprice']>0}
-                            <p><span class="price-inner">优惠券优惠：</span><span class="text-danger">-&yen {php echo number_format( $order['couponprice'],2)}</span></p>
+                            <p><span class="price-inner">优惠券优惠：</span><span class="text-danger">-yen {php echo number_format( $order['couponprice'],2)}</span></p>
                             {/if}
                             {if $order['isdiscountprice']>0}
-                            <p><span class="price-inner">促销优惠：</span><span class="text-danger">-&yen {php echo number_format( $order['isdiscountprice'],2)}</span></p>
+                            <p><span class="price-inner">促销优惠：</span><span class="text-danger">-yen {php echo number_format( $order['isdiscountprice'],2)}</span></p>
                             {/if}
                             {if intval($order['changeprice'])!=0}
-                            <p><span class="price-inner">卖家改价：</span><span style='{if 0<$order['changeprice']}color:green{else}color:red{/if}'>{if 0<$order['changeprice']}+{else}-{/if}&yen {php echo number_format(abs($order['changeprice']),2)}</span></p>
+                            <p><span class="price-inner">卖家改价：</span><span style='{if 0<$order['changeprice']}color:green{else}color:red{/if}'>{if 0<$order['changeprice']}+{else}-{/if}yen {php echo number_format(abs($order['changeprice']),2)}</span></p>
                             {/if}
                             {if intval($order['changedispatchprice'])!=0}
-                            <p><span class="price-inner">卖家改运费：</span><span style='{if 0<$order['changedispatchprice']}color:green{else}color:red{/if}'>{if 0<$order['changedispatchprice']}+{else}-{/if}&yen {php echo abs($order['changedispatchprice'])}</span></p>
+                            <p><span class="price-inner">卖家改运费：</span><span style='{if 0<$order['changedispatchprice']}color:green{else}color:red{/if}'>{if 0<$order['changedispatchprice']}+{else}-{/if}yen {php echo abs($order['changedispatchprice'])}</span></p>
                             {/if}
-                            <p><span class="price-inner">实付款：</span><span style="font-size: 14px;font-weight: bold;color: #e4393c">&yen {php echo number_format($order['price'] - $order['creditmoney'] + $order['freight'],2)}</span></p>
+                            <p><span class="price-inner">实付款：</span><span style="font-size: 14px;font-weight: bold;color: #e4393c">yen {php echo number_format($order['price'] - $order['creditmoney'] + $order['freight'],2)}</span></p>
                         </div>
 
                     </td>

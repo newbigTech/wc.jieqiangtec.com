@@ -49,15 +49,15 @@
 					</div>
 					<div class='fui-list-angle'>
 						<span class='marketprice text-danger'>
-							&yen <%if order.is_team > 0%><%order.groupsprice%><%else%><%order.singleprice%><%/if%>
+							yen <%if order.is_team > 0%><%order.groupsprice%><%else%><%order.singleprice%><%/if%>
 						</span>/<%if order.units%><%order.goodsnum%><%order.units%><%else%>1件<%/if%><br/>
 						x1
 					</div>
 				</div>
 				<div class='lynn_order_price'>
 					<span class='status'>
-						运费: <span class='text-danger'>&yen <%order.freight%></span>元, 共 <span class='text-danger'>1</span> 个商品
-						总额: <span class='text-danger'>&yen <%order.amount%></span>元
+						运费: <span class='text-danger'>yen <%order.freight%></span>元, 共 <span class='text-danger'>1</span> 个商品
+						总额: <span class='text-danger'>yen <%order.amount%></span>元
 					</span>
 				</div>
 			</a>

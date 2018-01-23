@@ -50,7 +50,7 @@
 			</p>
 			{/if}
 			<div class="lynn_goods_head_info">
-				&yen <strong>{$goods['groupsprice']}</strong>/{if $goods['units']}{$goods['goodsnum']}{$goods['units']}{else}1件{/if} <del>&yen {$goods['price']}</del>
+				yen <strong>{$goods['groupsprice']}</strong>/{if $goods['units']}{$goods['goodsnum']}{$goods['units']}{else}1件{/if} <del>yen {$goods['price']}</del>
 				<span class="fr">
 					已有<b>{$goods['fightnum']}</b>人参团，销量<b>{$goods['sales']}</b>
 				</span>
@@ -58,7 +58,7 @@
 			</div>
 			{if !empty($goods['isdiscount'])}
 			<div class="lynn_goods_discount">
-				【团长优惠 <span>{if $goods['headstype']==0} &yen{$goods['headsmoney']}{elseif $goods['headstype']==1}{php echo number_format($goods['headsdiscount'] / 10,1)}折{/if}</span>】
+				【团长优惠 <span>{if $goods['headstype']==0} yen{$goods['headsmoney']}{elseif $goods['headstype']==1}{php echo number_format($goods['headsdiscount'] / 10,1)}折{/if}</span>】
 			</div>
 			{/if}
 		</div>
@@ -83,10 +83,10 @@
 			<p class="icon icon-home1"></p>
 		</a>
 		<a class="lynn_goods_btn lynn_btn_waring btn-single" href="javascript:void(0);">
-			<p>{if $goods['single']}&yen <strong>{$goods['singleprice']}</strong>{else}<br />{/if}</p> 单独购买
+			<p>{if $goods['single']}yen <strong>{$goods['singleprice']}</strong>{else}<br />{/if}</p> 单独购买
 		</a>
 		<a class="lynn_goods_btn lynn_btn_danger" data-nocache="true" href="{php echo mobileUrl('groups/goods/openGroups',array('id'=>$goods['id']))}">
-			<p>&yen <strong>{$goods['groupsprice']}</strong></p> {$goods['groupnum']}人成团
+			<p>yen <strong>{$goods['groupsprice']}</strong></p> {$goods['groupnum']}人成团
 		</a>
 	</div>
 </div>
