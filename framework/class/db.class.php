@@ -128,16 +128,16 @@ class DB
         $endtime = microtime(TRUE);
 
         // TODO jieqiang调试
-        foreach ($params as $key=>$val){
+        foreach ($params as $key => $val) {
             $arr1[] = $key;
-            $arr2[] = '\''.$val.'\'';
+            $arr2[] = '\'' . $val . '\'';
         }
-        $sql2 = str_replace($arr1,$arr2,$sql);
-        $runtime = round(($endtime - $starttime),3);
-        WeUtility::logging('TODO debug3 runtime='.$runtime.'s',  array('file'=>'db.class.php query() ','sql2'=>$sql2,'$params'=>$params));
+        $sql2 = str_replace($arr1, $arr2, $sql);
+        $runtime = round(($endtime - $starttime), 3);
+        WeUtility::logging('TODO debug3 runtime=' . $runtime . 's', array('file' => 'db.class.php query() ', 'sql2' => $sql2, '$params' => $params));
 
 
-        $this->performance($sql,$runtime );
+        $this->performance($sql2, $runtime);
         if (!$result) {
             return false;
         } else {
@@ -170,10 +170,10 @@ class DB
             $arr2[] = '\'' . $val . '\'';
         }
         $sql2 = str_replace($arr1, $arr2, $sql);
-        $runtime = round(($endtime - $starttime),3);
-        WeUtility::logging('TODO debug1 runtime='.$runtime.'s', array('file' => 'fetchcolumn() ', 'sql2' => $sql2, '$params' => $params));
+        $runtime = round(($endtime - $starttime), 3);
+        WeUtility::logging('TODO debug1 runtime=' . $runtime . 's', array('file' => 'fetchcolumn() ', 'sql2' => $sql2, '$params' => $params));
 
-        $this->performance($sql, $runtime);
+        $this->performance($sql2, $runtime);
         if (!$result) {
             return false;
         } else {
@@ -209,10 +209,10 @@ class DB
             $arr2[] = '\'' . $val . '\'';
         }
         $sql2 = str_replace($arr1, $arr2, $sql);
-        $runtime = round(($endtime - $starttime),3);
-        WeUtility::logging('TODO debug2 runtime='.$runtime.'s', array('file' => 'fetch() ', 'sql2' => $sql2, '$params' => $params));
+        $runtime = round(($endtime - $starttime), 3);
+        WeUtility::logging('TODO debug2 runtime=' . $runtime . 's', array('file' => 'fetch() ', 'sql2' => $sql2, '$params' => $params));
 
-        $this->performance($sql, $runtime);
+        $this->performance($sql2, $runtime);
         if (!$result) {
             return false;
         } else {
@@ -244,15 +244,15 @@ class DB
         $endtime = microtime(TRUE);
 
         // TODO jieqiang调试
-        foreach ($params as $key=>$val){
+        foreach ($params as $key => $val) {
             $arr1[] = $key;
-            $arr2[] = '\''.$val.'\'';
+            $arr2[] = '\'' . $val . '\'';
         }
-        $sql2 = str_replace($arr1,$arr2,$sql);
-        $runtime = round(($endtime - $starttime),3);
-        WeUtility::logging('TODO debug4 runtime='.$runtime.'s', array('file' => 'fetchall() ', 'sql2' => $sql2, '$params' => $params));
+        $sql2 = str_replace($arr1, $arr2, $sql);
+        $runtime = round(($endtime - $starttime), 3);
+        WeUtility::logging('TODO debug4 runtime=' . $runtime . 's', array('file' => 'fetchall() ', 'sql2' => $sql2, '$params' => $params));
 
-        $this->performance($sql, $runtime);
+        $this->performance($sql2, $runtime);
         if (!$result) {
             return false;
         } else {
@@ -624,24 +624,25 @@ class DB
         }
     }
 
-    private function performance($sql, $runtime = 0)
+    private function performance($sql2, $runtime = 0)
     {
         global $_W;
         if ($runtime == 0) {
             return false;
         }
-        if (strexists($sql, 'core_performance')) {
+        if (strexists($sql2, 'core_performance')) {
             return false;
         }
+//        var_dump('TODO jieqiangtest $_W[\'config\'][\'setting\'][\'maxtimesql\']==',$_W['config']['setting']['maxtimesql'],$sql2,$runtime);exit;
         if (empty($_W['config']['setting']['maxtimesql'])) {
-            $_W['config']['setting']['maxtimesql'] = 5;
+            $_W['config']['setting']['maxtimesql'] = 0.1;
         }
         if ($runtime > $_W['config']['setting']['maxtimesql']) {
             $sqldata = array(
                 'type' => '2',
                 'runtime' => $runtime,
                 'runurl' => 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
-                'runsql' => $sql,
+                'runsql' => $sql2,
                 'createtime' => time()
             );
             $this->insert('core_performance', $sqldata);
