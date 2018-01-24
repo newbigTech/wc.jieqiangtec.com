@@ -596,9 +596,11 @@ class Common_EweiShopV2Model
      */
 	public function wechat_build($params, $wechat, $type = 0)
 	{
+
 		global $_W;
 		list(, $payment) = $this->public_build();
 
+		// var_dump('TODO 微信支付');exit;
 		if (is_error($payment)) {
 			return $payment;
 		}
@@ -609,7 +611,7 @@ class Common_EweiShopV2Model
 			$params['openid'] = isset($params['user']) ? $params['user'] : $_W['openid'];
 			return $this->wechat_child_build($params, $wechat, $type);
 		}
-
+        // var_dump('TODO 微信支付 $response22=',$payment,$payment['is_new']);exit;
 		if ($payment['is_new'] == 1) {
 			if (empty($payment['type'])) {
 				return $this->wechat_jspay($params, $payment, $type);
@@ -774,7 +776,11 @@ class Common_EweiShopV2Model
 		$dat = array2xml($package);
 		$response = ihttp_request('https://api.mch.weixin.qq.com/pay/unifiedorder', $dat);
 
-		if (is_error($response)) {
+        WeUtility::logging('TODO 微信支付 $response=' . json_encode($response));
+
+
+
+        if (is_error($response)) {
 			return $response;
 		}
 

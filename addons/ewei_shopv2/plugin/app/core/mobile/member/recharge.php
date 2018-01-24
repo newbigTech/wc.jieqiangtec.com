@@ -90,6 +90,8 @@ class Recharge_EweiShopV2Page extends AppMobilePage
 			$params['title'] = $log['title'];
 			$wechat = array('success' => false);
 			if (!empty($set['pay']['wxapp']) && $this->iswxapp) {
+
+//			if (1) {
 				$payinfo = array('openid' => $_W['openid'], 'title' => $log['title'], 'tid' => $params['tid'], 'fee' => $money);
 				$res = $this->model->wxpay($payinfo, 15);
 
@@ -105,7 +107,7 @@ class Recharge_EweiShopV2Page extends AppMobilePage
 			}
 
 			if (!$wechat['success']) {
-				app_error(AppError::$MemberRechargeError, '微信支付参数错误!');
+				app_error(AppError::$MemberRechargeError, '微信支付参数错误123!');
 			}
 
 			app_json(array('wechat' => $wechat, 'logid' => $logid));

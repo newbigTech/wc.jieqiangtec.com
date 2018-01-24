@@ -143,6 +143,7 @@ class Recharge_EweiShopV2Page extends MobileLoginPage
 			$params['fee'] = $money;
 			$params['title'] = $log['title'];
 			if (isset($set['pay']) && ($set['pay']['weixin'] == 1) && ($jie !== 1)) {
+
 				load()->model('payment');
 				$setting = uni_setting($_W['uniacid'], array('payment'));
 				$options = array();
@@ -203,7 +204,7 @@ class Recharge_EweiShopV2Page extends MobileLoginPage
 			$wechat['jie'] = $jie;
 
 			if (!$wechat['success']) {
-				show_json(0, '微信支付参数错误!');
+				show_json(0, '微信支付参数错误222!');
 			}
 
 			show_json(1, array('wechat' => $wechat, 'logid' => $logid));

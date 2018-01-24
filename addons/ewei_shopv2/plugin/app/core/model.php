@@ -231,6 +231,8 @@ if (!class_exists('AppModel')) {
 		public function wxpay($params, $type = 0)
 		{
 			global $_W;
+			// var_dump(111);exit;
+            // WeUtility::logging('TODO $response=='.json_encode($response));
 			$data = m('common')->getSysset('app');
 			$openid = (empty($params['openid']) ? $_W['openid'] : $params['openid']);
 			if (isset($openid) && strexists($openid, 'sns_wa_')) {
@@ -274,6 +276,7 @@ if (!class_exists('AppModel')) {
 			load()->func('communication');
 			$response = ihttp_request('https://api.mch.weixin.qq.com/pay/unifiedorder', $dat);
 
+            WeUtility::logging('TODO 微信调试返回值 $response=='.json_encode($response));
 			if (is_error($response)) {
 				return error(-1, $response['message']);
 			}
