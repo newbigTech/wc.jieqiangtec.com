@@ -55,7 +55,9 @@ if(DEVELOPMENT) {
 	ini_set('display_errors', '1');
 	error_reporting(E_ALL ^ E_NOTICE);
 } else {
-	error_reporting(0);
+	// error_reporting(0);
+    // ini_set('display_errors', '0');
+    error_reporting(E_ALL  ^ E_NOTICE);
 }
 
 if(!in_array($_W['config']['setting']['cache'], array('mysql', 'memcache', 'redis'))) {
