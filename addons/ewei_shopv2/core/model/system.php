@@ -544,6 +544,7 @@ class System_EweiShopV2Model
                     array('title' => '出售中', 'desc' => '出售中商品管理', 'extend' => 'goods.sale'),
                     array('title' => '已售罄', 'route' => 'out', 'desc' => '已售罄/无库存商品管理'),
                     array('title' => '仓库中', 'route' => 'stock', 'desc' => '仓库中商品管理'),
+                    array('title' => '仓库中_ERP', 'route' => 'erp', 'desc' => '仓库中_ERP商品管理'),
                     array('title' => '回收站', 'route' => 'cycle', 'desc' => '回收站/已删除商品管理'),
                     array('title' => '待审核', 'route' => 'verify', 'desc' => '多商户待审核商品管理'),
                     array('title' => '商品分类', 'route' => 'category'),
