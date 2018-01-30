@@ -35,8 +35,6 @@ class Index_EweiShopV2Page extends WebPage
         }
 
 
-
-
         $pindex = max(1, intval($_GPC['page']));
         $psize = 20;
         $sqlcondition = $groupcondition = '';
@@ -49,41 +47,76 @@ class Index_EweiShopV2Page extends WebPage
             $status = 1;
 
             // 获取域名后缀
-            $suffix = pathinfo($_SERVER['SERVER_NAME'],PATHINFO_EXTENSION );
+            $suffix = pathinfo($_SERVER['SERVER_NAME'], PATHINFO_EXTENSION);
             // var_dump($suffix);exit;
-            $url = 'http://erp.rongec.'.$suffix.'/admin/index.php?mod=product.list&api=1&page='.$pindex;
+            $url = 'http://erp.rongec.' . $suffix . '/admin/index.php?mod=product.list&api=1&page=' . $pindex;
 
             load()->func('communication');
             $response = ihttp_get($url);
-            var_dump($response);exit;
+            // var_dump($response,$response['content']);
 
             if (!isset($response['content'])) {
                 return array('result' => '0', 'error' => '未从淘宝获取到商品信息!');
+            } else {
+                $res = json_decode($response['content'], true);
+                // var_dump($res);exit;
             }
 
-            $total_all = pdo_fetchall($sql, $params);
-            $total = count($total_all);
-            unset($total_all);
+            $total = $res['total'];
 
             if (!empty($total)) {
-                $sql = 'SELECT g.* FROM ' . tablename('ewei_shop_goods') . 'g' . $sqlcondition . $condition . $groupcondition . " ORDER BY g.`status` DESC, g.`displayorder` DESC,\r\n                g.`id` DESC LIMIT " . (($pindex - 1) * $psize) . ',' . $psize;
-                $list = pdo_fetchall($sql, $params);
+                /*$sql = 'SELECT g.* FROM ' . tablename('ewei_shop_goods') . 'g' . $sqlcondition . $condition . $groupcondition . " ORDER BY g.`status` DESC, g.`displayorder` DESC,\r\n                g.`id` DESC LIMIT " . (($pindex - 1) * $psize) . ',' . $psize;*/
 
+                $list = $res['productList'];
+                // var_dump($list);exit;
                 foreach ($list as $key => &$value) {
-                    $url = mobileUrl('goods/detail', array('id' => $value['id']), true);
-                    $value['qrcode'] = m('qrcode')->createQrcode($url);
-                }
+                    /*$url = mobileUrl('goods/detail', array('id' => $value['id']), true);
+                    $value['qrcode'] = m('qrcode')->createQrcode($url);*/
+                    $list[$key]['title'] = $value['name'];
+                    $list[$key]['catch_source'] = 'erp';
+                    $list[$key]['catch_id'] = $value['id'];
+                    $list[$key]['catch_url'] = 'erp';
 
+                    $list[$key]['uniacid'] = $_W['uniacid'];
+                    $list[$key]['merchid'] = $_W['merchid'];
+                    $list[$key]['checked'] = '';
+
+                    // 价格
+                    $list[$key]['total'] = 0;
+                    $list[$key]['marketprice'] = $value['market_price'];
+                    $list[$key]['cost_price'] = $value['cost_price'];
+                    $list[$key]['pcate'] = $value['cid'];
+                    $list[$key]['ccate'] = $value['cid'];
+                    $list[$key]['tcate'] = $value['cid'];
+                    $list[$key]['sales'] = $value['sales'];
+                    $list[$key]['createtime'] = $value['add_time'];
+                    $list[$key]['updatetime'] = $value['updatetime'];
+                    $list[$key]['hasoption'] = $value['hasoption'];
+                    $list[$key]['status'] = '0';
+                    $list[$key]['deleted'] = '0';
+                    $list[$key]['buylevels'] = $value['buylevels'];
+                    $list[$key]['showlevels'] = $value['showlevels'];
+                    $list[$key]['buygroups'] = $value['buygroups'];
+                    $list[$key]['showgroups'] = $value['showgroups'];
+                    $list[$key]['noticeopenid'] = $value['noticeopenid'];
+                    $list[$key]['storeids'] = $value['storeids'];
+                    $list[$key]['merchsale'] = $value['merchsale'];
+                    $list[$key]['discounts'] = $value['discounts'];
+                    $list[$key]['thumb'] = $value['image_source_url'];
+                    $list[$key]['thumb_url'] = $value['image_source_url'];
+
+                }
+                $psize = $res['onePage'];
                 $pager = pagination2($total, $pindex, $psize);
 
-                if ($merch_plugin) {
+                /*if ($merch_plugin) {
                     $merch_user = $merch_plugin->getListUser($list, 'merch_user');
                     if (!empty($list) && !empty($merch_user)) {
                         foreach ($list as &$row) {
                             $row['merchname'] = $merch_user[$row['merchid']]['merchname'] ? $merch_user[$row['merchid']]['merchname'] : $_W['shopset']['shop']['name'];
                         }
                     }
-                }
+                }*/
             }
             include $this->template('goods');
             exit;
@@ -533,6 +566,64 @@ class Index_EweiShopV2Page extends WebPage
     {
         global $_W;
         global $_GPC;
+
+        // jieqiang erp数据上架
+        if ($_GPC['goodsfrom'] == 'erp') {
+
+            // 获取域名后缀
+            $suffix = pathinfo($_SERVER['SERVER_NAME'], PATHINFO_EXTENSION);
+            // var_dump($suffix);exit;  http://erp.rongec.cn/admin/index.php?mod=product.edit&id=12875&cid=0
+            $url = 'http://erp.rongec.' . $suffix . '/admin/index.php?mod=product.edit&api=1&id=' . $_GPC['id'];
+
+            load()->func('communication');
+            $response = ihttp_get($url);
+
+            if (!isset($response['content'])) {
+                show_json(0, array('url' => referer()));
+            } else {
+                $res = json_decode($response['content'], true);
+
+                plog('goods.edit', ('修改商品状态<br/>ID: ' . $res['productInfo']['id'] . '<br/>商品名称: ' . $res['productInfo']['name'] . '<br/>状态: 上架'));
+
+                $data['title'] = $res['productInfo']['name'];
+                $data['catch_source'] = 'erp';
+                $data['catch_id'] = $res['productInfo']['id'];
+                $data['catch_url'] = 'erp';
+
+                $data['uniacid'] = $_W['uniacid'];
+                $data['merchid'] = $_W['merchid'];
+                $data['checked'] = '';
+
+                // 价格
+                $data['total'] = 0;
+                $data['marketprice'] = $res['productInfo']['market_price'];
+                $data['cost_price'] = $res['productInfo']['cost_price'];
+                $data['pcate'] = $res['productInfo']['cid'];
+                $data['ccate'] = $res['productInfo']['cid'];
+                $data['tcate'] = $res['productInfo']['cid'];
+                $data['sales'] = $res['productInfo']['sales'];
+                $data['createtime'] = $res['productInfo']['add_time'];
+                $data['updatetime'] = $res['productInfo']['updatetime'];
+                $data['hasoption'] = $res['productInfo']['hasoption'];
+                $data['status'] = '0';
+                $data['deleted'] = '0';
+                $data['buylevels'] = $res['productInfo']['buylevels'];
+                $data['showlevels'] = $res['productInfo']['showlevels'];
+                $data['buygroups'] = $res['productInfo']['buygroups'];
+                $data['showgroups'] = $res['productInfo']['showgroups'];
+                $data['noticeopenid'] = $res['productInfo']['noticeopenid'];
+                $data['storeids'] = $res['productInfo']['storeids'];
+                $data['merchsale'] = $res['productInfo']['merchsale'];
+                $data['discounts'] = $res['productInfo']['discounts'];
+                $data['thumb'] = $res['productInfo']['image_source_url'];
+                $data['thumb_url'] = $res['productInfo']['image_source_url'];
+                // var_dump('$data==',$data);exit;
+
+                $this->save_erp_goods($item = $data, $catch_url = '');
+                show_json(1, array('url' => referer()));
+            }
+
+        }
         $id = intval($_GPC['id']);
 
         if (empty($id)) {
@@ -555,6 +646,124 @@ class Index_EweiShopV2Page extends WebPage
 
         show_json(1, array('url' => referer()));
     }
+
+
+    // 获取erp商品信息
+    public function save_erp_goods($item = array(), $catch_url = '')
+    {
+        global $_W;
+        $data = array('uniacid' => $_W['uniacid'], 'merchid' => $item['merchid'], 'checked' => $item['checked'], 'catch_source' => 'erp', 'catch_id' => $item['catch_id'], 'catch_url' => $item['catch_id'], 'title' => $item['title'], 'total' => $item['total'], 'marketprice' => $item['marketprice'], 'pcate' => $item['pcate'], 'ccate' => $item['ccate'], 'tcate' => $item['tcate'], 'cates' => $item['cates'], 'sales' => $item['sales'], 'createtime' => time(), 'updatetime' => time(), 'hasoption' => 0, 'status' => 1, 'deleted' => 0, 'buylevels' => '', 'showlevels' => '', 'buygroups' => '', 'showgroups' => '', 'noticeopenid' => '', 'storeids' => '', 'minprice' => $item['marketprice'], 'maxprice' => $item['marketprice'], 'merchsale' => 1);
+
+        /*var_dump('$data22==', $data);
+        exit;*/
+        if (empty($item['merchid'])) {
+            $data['discounts'] = '{"type":"0","default":"","default_pay":""}';
+        }
+
+        $thumb_url = array();
+        $pics = $item['pics'];
+        $piclen = count($pics);
+
+        if (0 < $piclen) {
+            $img = $this->save_image($pics[0], false);
+
+            if (empty($img)) {
+                $img = $pics[0];
+            }
+
+            $data['thumb'] = $img;
+
+            if (1 < $piclen) {
+                $i = 1;
+
+                while ($i < $piclen) {
+                    $img = $this->save_image($pics[$i], false);
+
+                    if (empty($img)) {
+                        $img = $pics[$i];
+                    }
+
+                    $thumb_url[] = $img;
+                    ++$i;
+                }
+            }
+        }
+
+        $data['thumb_url'] = serialize($thumb_url);
+        $goods = pdo_fetch('select * from ' . tablename('ewei_shop_goods') . ' where  catch_id=:catch_id and catch_source=\'erp\' and uniacid=:uniacid and merchid=:merchid', array(':catch_id' => $item['itemId'], ':uniacid' => $_W['uniacid'], ':merchid' => $item['merchid']));
+
+        if (empty($goods)) {
+            pdo_insert('ewei_shop_goods', $data);
+            $goodsid = pdo_insertid();
+        } else {
+            $goodsid = $goods['id'];
+            unset($data['createtime']);
+            pdo_update('ewei_shop_goods', $data, array('id' => $goodsid));
+        }
+
+        $goods_params = pdo_fetchall('select * from ' . tablename('ewei_shop_goods_param') . ' where goodsid=:goodsid ', array(':goodsid' => $goodsid));
+        $params = $item['params'];
+        $paramids = array();
+        $displayorder = 0;
+        /*var_dump('$params==', $params);
+        exit;*/
+
+        if (is_array($params)) {
+            foreach ($params as $p) {
+                $oldp = pdo_fetch('select * from ' . tablename('ewei_shop_goods_param') . ' where goodsid=:goodsid and title=:title limit 1', array(':goodsid' => $goodsid, ':title' => $p['title']));
+                $paramid = 0;
+                $d = array('uniacid' => $_W['uniacid'], 'goodsid' => $goodsid, 'title' => $p['title'], 'value' => $p['value'], 'displayorder' => $displayorder);
+
+                if (empty($oldp)) {
+                    pdo_insert('ewei_shop_goods_param', $d);
+                    $paramid = pdo_insertid();
+                } else {
+                    pdo_update('ewei_shop_goods_param', $d, array('id' => $oldp['id']));
+                    $paramid = $oldp['id'];
+                }
+
+                $paramids[] = $paramid;
+                ++$displayorder;
+            }
+        }
+        if (0 < count($paramids)) {
+            pdo_query('delete from ' . tablename('ewei_shop_goods_param') . ' where goodsid=:goodsid and id not in (' . implode(',', $paramids) . ')', array(':goodsid' => $goodsid));
+        } else {
+            pdo_query('delete from ' . tablename('ewei_shop_goods_param') . ' where goodsid=:goodsid ', array(':goodsid' => $goodsid));
+        }
+
+        $content = $item['content'];
+        preg_match_all('/<img.*?src=[\\\\\'| \\"](.*?(?:[\\.gif|\\.jpg]?))[\\\\\'|\\"].*?[\\/]?>/', $content, $imgs);
+
+        if (isset($imgs[1])) {
+            foreach ($imgs[1] as $img) {
+                $catchimg = $img;
+
+                if (substr($catchimg, 0, 2) == '//') {
+                    $img = 'http://' . substr($img, 2);
+                }
+
+                $im = array('catchimg' => $catchimg, 'system' => $this->save_image($img, true));
+                $images[] = $im;
+            }
+        }
+
+        $html = $content;
+
+        if (isset($images)) {
+            foreach ($images as $img) {
+                if (!empty($img['system'])) {
+                    $html = str_replace($img['catchimg'], $img['system'], $html);
+                }
+            }
+        }
+
+        $html = m('common')->html_to_images($html);
+        $d = array('content' => $html);
+        pdo_update('ewei_shop_goods', $d, array('id' => $goodsid));
+        return array('result' => '1', 'goodsid' => $goodsid);
+    }
+
 
     public function checked()
     {

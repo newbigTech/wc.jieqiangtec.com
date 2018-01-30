@@ -333,6 +333,7 @@ class Page extends WeModuleSite
             shop_template_compile($source, $compile, true);
         }
 
+        // var_dump('TODO jieqiangtest $compile=',$compile);exit;
         return $compile;
     }
 
