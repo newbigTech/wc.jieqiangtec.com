@@ -129,10 +129,10 @@ class PDOStatement_mysql {
 					if (strexists($v, '\"')) {
 						$v = str_replace('\"', '\\\\"', $v);
 					}
-					array_push($tempr, '"'.mysql_real_escape_string()($v).'"');
+					array_push($tempr, '"'.mysql_real_escape_string($v).'"');
 				}
 				else {
-					$parse = create_function('$v', 'return \'"\'.mysql_real_escape_string()($v).\'"\';');
+					$parse = create_function('$v', 'return \'"\'.mysql_real_escape_string($v).\'"\';');
 					$__query = preg_replace("/(\?)/e", '$parse($array[$k++]);', $__query);
 					break;
 				}
