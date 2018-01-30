@@ -578,6 +578,8 @@ class Index_EweiShopV2Page extends WebPage
             load()->func('communication');
             $response = ihttp_get($url);
 
+            // var_dump('$response==',$response);exit;
+
             if (!isset($response['content'])) {
                 show_json(0, array('url' => referer()));
             } else {
@@ -617,7 +619,13 @@ class Index_EweiShopV2Page extends WebPage
                 $data['discounts'] = $res['productInfo']['discounts'];
                 $data['thumb'] = $res['productInfo']['image_source_url'];
                 $data['thumb_url'] = $res['productInfo']['image_source_url'];
+                // 图片
+                $data['pics'] = array('http://erp.rongec.' . $suffix.'/admin/'.$res['productInfo']['image_source_url']);
                 // var_dump('$data==',$data);exit;
+
+                // 简介
+                $data['content'] = $res['productInfo']['summary'];
+
 
                 $this->save_erp_goods($item = $data, $catch_url = '');
                 show_json(1, array('url' => referer()));
@@ -652,16 +660,21 @@ class Index_EweiShopV2Page extends WebPage
     public function save_erp_goods($item = array(), $catch_url = '')
     {
         global $_W;
-        $data = array('uniacid' => $_W['uniacid'], 'merchid' => $item['merchid'], 'checked' => $item['checked'], 'catch_source' => 'erp', 'catch_id' => $item['catch_id'], 'catch_url' => $item['catch_id'], 'title' => $item['title'], 'total' => $item['total'], 'marketprice' => $item['marketprice'], 'pcate' => $item['pcate'], 'ccate' => $item['ccate'], 'tcate' => $item['tcate'], 'cates' => $item['cates'], 'sales' => $item['sales'], 'createtime' => time(), 'updatetime' => time(), 'hasoption' => 0, 'status' => 1, 'deleted' => 0, 'buylevels' => '', 'showlevels' => '', 'buygroups' => '', 'showgroups' => '', 'noticeopenid' => '', 'storeids' => '', 'minprice' => $item['marketprice'], 'maxprice' => $item['marketprice'], 'merchsale' => 1);
+        $item['catch_url'] = $item['catch_url']?:'';
+        /*$data = array('uniacid' => $_W['uniacid'], 'merchid' => $item['merchid'], 'checked' => $item['checked'], 'catch_source' => 'erp', 'catch_id' => $item['catch_id'], 'catch_url' => $item['catch_url'], 'title' => $item['title'], 'total' => $item['total'], 'marketprice' => $item['marketprice'], 'pcate' => $item['pcate'], 'ccate' => $item['ccate'], 'tcate' => $item['tcate'], 'cates' => $item['cates'], 'sales' => $item['sales'], 'createtime' => time(), 'updatetime' => time(), 'hasoption' => 0, 'status' => 1, 'deleted' => 0, 'buylevels' => '', 'showlevels' => '', 'buygroups' => '', 'showgroups' => '', 'noticeopenid' => '', 'storeids' => '', 'minprice' => $item['marketprice'], 'maxprice' => $item['marketprice'], 'merchsale' => 1,'pics'=>$item['pics']);*/
+
+        $data = array('uniacid' => $_W['uniacid'], 'merchid' => $item['merchid'], 'checked' => $item['checked'], 'catch_source' => 'erp', 'catch_id' => $item['catch_id'], 'catch_url' => $item['catch_url'], 'title' => $item['title'], 'total' => $item['total'], 'marketprice' => $item['marketprice'], 'pcate' => $item['pcate'], 'ccate' => $item['ccate'], 'tcate' => $item['tcate'], 'cates' => $item['cates'], 'sales' => $item['sales'], 'createtime' => time(), 'updatetime' => time(), 'hasoption' => 0, 'status' => 1, 'deleted' => 0, 'buylevels' => '', 'showlevels' => '', 'buygroups' => '', 'showgroups' => '', 'noticeopenid' => '', 'storeids' => '', 'minprice' => $item['marketprice'], 'maxprice' => $item['marketprice'], 'merchsale' => 1, 'content' => $item['content']);
 
         /*var_dump('$data22==', $data);
         exit;*/
+
         if (empty($item['merchid'])) {
             $data['discounts'] = '{"type":"0","default":"","default_pay":""}';
         }
 
         $thumb_url = array();
         $pics = $item['pics'];
+
         $piclen = count($pics);
 
         if (0 < $piclen) {
@@ -692,6 +705,7 @@ class Index_EweiShopV2Page extends WebPage
         $data['thumb_url'] = serialize($thumb_url);
         $goods = pdo_fetch('select * from ' . tablename('ewei_shop_goods') . ' where  catch_id=:catch_id and catch_source=\'erp\' and uniacid=:uniacid and merchid=:merchid', array(':catch_id' => $item['itemId'], ':uniacid' => $_W['uniacid'], ':merchid' => $item['merchid']));
 
+//         var_dump('$data==',$data);exit;
         if (empty($goods)) {
             pdo_insert('ewei_shop_goods', $data);
             $goodsid = pdo_insertid();
@@ -762,6 +776,44 @@ class Index_EweiShopV2Page extends WebPage
         $d = array('content' => $html);
         pdo_update('ewei_shop_goods', $d, array('id' => $goodsid));
         return array('result' => '1', 'goodsid' => $goodsid);
+    }
+
+
+    // 保存图片
+    public function save_image($url, $iscontent)
+    {
+        global $_W;
+        $ext = strrchr($url, '.');
+        if (($ext != '.jpeg') && ($ext != '.gif') && ($ext != '.jpg') && ($ext != '.png')) {
+            return $url;
+        }
+
+        if (trim($url) == '') {
+            return $url;
+        }
+
+        $filename = random(32) . $ext;
+        $save_dir = ATTACHMENT_ROOT . 'images/' . $_W['uniacid'] . '/' . date('Y') . '/' . date('m') . '/';
+        if (!file_exists($save_dir) && !mkdir($save_dir, 511, true)) {
+            return $url;
+        }
+
+        $img = ihttp_get($url);
+
+        if (is_error($img)) {
+            return '';
+        }
+
+        $img = $img['content'];
+
+        if (strlen($img) != 0) {
+            file_put_contents($save_dir . $filename, $img);
+            $imgdir = 'images/' . $_W['uniacid'] . '/' . date('Y') . '/' . date('m') . '/';
+            $saveurl = save_media($imgdir . $filename, true);
+            return $saveurl;
+        }
+
+        return '';
     }
 
 
