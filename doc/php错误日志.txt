@@ -1,0 +1,149 @@
+
+
+
+             42778 2018/01/30 22:42:50 [error] 5744#5744: *2766 FastCGI sent in stderr: " PHP Deprecated:  mysql_escape_string(): This function is deprecated; use mysql_real_escape
+      _string() instead. in /www/docs/wc.jieqiangtec.com/framework/library/pdo/PDOStatement_mysql.class.php on line 132
+42779 PHP message: PHP Deprecated:  mysql_escape_string(): This function is deprecated; use mysql_real_escape_string() instead. in /www/docs/wc.jieqiangtec.com/framewo
+      rk/library/pdo/PDOStatement_mysql.class.php on line 132
+42780 PHP message: PHP Strict Standards:  Only variables should be assigned by reference in /www/docs/wc.jieqiangtec.com/framework/library/pdo/PDOStatement_mysql.class
+      .php on line 148" while reading upstream, client: 27.154.4.168, server: wc.jieqiangtec.com, request: "GET /app/index.php?i=10&c=entry&m=ewei_shopv2&do=mobile HTT
+      P/1.1", upstream: "fastcgi://127.0.0.1:9000", host: "shop.rongec.com", referrer: "http://shop.rongec.com/app/index.php?i=10&c=entry&m=ewei_shopv2&do=mobile"
+      
+
+
+Fatal error: Call to undefined function ImageCreate() in /www/docs/wc.jieqiangtec.com/framework/library/qrcode/phpqrcode.php on line 985
+
+
+See any operating system documentation about shared libraries for
+more information, such as the ld(1) and ld.so(8) manual pages.
+----------------------------------------------------------------------
+
+Build complete.
+Don't forget to run 'make test'.
+
+Installing shared extensions:     /usr/local/php55/lib/php/extensions/no-debug-non-zts-20121212/
+Installing header files:          /usr/local/php55/include/php/
+
+
+[root@roohl bin]# ./php -i|grep php.ini
+Configuration File (php.ini) Path => /etc
+Loaded Configuration File => /etc/php.ini
+
+[root@roohl bin]# ./php  -m|grep mysql
+mysql
+
+[root@roohl bin]# ./php -i |grep  extension_dir 
+extension_dir => /usr/local/php/lib/php/extensions/no-debug-non-zts-20131226 => /usr/local/php/lib/php/extensions/no-debug-non-zts-20131226
+sqlite3.extension_dir => no value => no value
+
+
+[root@roohl gd]# cp /usr/lib64/php/modules/gd.so /usr/local/php55/lib/php/extensions/no-debug-non-zts-20121212/
+
+[root@roohl gd]# find / -name 'gd.so'              
+/usr/lib64/php/modules/gd.so
+
+
+[root@roohl no-debug-non-zts-20121212]# yum install php-gd
+Loaded plugins: security
+Setting up Install Process
+Package php-gd-5.3.3-49.el6.x86_64 already installed and latest version
+Nothing to do
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Total                                                                                                                                  3.1 MB/s | 2.7 MB     00:00     
+Running rpm_check_debug
+Running Transaction Test
+Transaction Test Succeeded
+Running Transaction
+  Installing : php-cli-5.3.3-49.el6.x86_64                                                                                                                         1/4 
+  Installing : 1:php-pear-1.9.4-5.el6.noarch                                                                                                                       2/4 
+  Installing : php-pecl-igbinary-1.2.1-1.el6.x86_64                                                                                                                3/4 
+  Installing : php-pecl-redis-2.2.8-1.el6.x86_64                                                                                                                   4/4 
+  Verifying  : php-pecl-igbinary-1.2.1-1.el6.x86_64                                                                                                                1/4 
+  Verifying  : php-pecl-redis-2.2.8-1.el6.x86_64                                                                                                                   2/4 
+  Verifying  : php-cli-5.3.3-49.el6.x86_64                                                                                                                         3/4 
+  Verifying  : 1:php-pear-1.9.4-5.el6.noarch                                                                                                                       4/4 
+
+Installed:
+  php-pecl-redis.x86_64 0:2.2.8-1.el6                                                                                                                                  
+
+Dependency Installed:
+  php-cli.x86_64 0:5.3.3-49.el6                       php-pear.noarch 1:1.9.4-5.el6                       php-pecl-igbinary.x86_64 0:1.2.1-1.el6                      
+
+Complete!
+[root@roohl downloads]# 
+
+
+
+    local/php55/lib/php/extensions/no-debug-non-zts-20121212/zip.so: cannot open shared object file: No such file or directory in Unknown on line 0
+115 [07-Jan-2018 07:22:11 UTC] PHP Warning:  PHP Startup: Unable to load dynamic library '/usr/local/php55/lib/php/extensions/no-debug-non-zts-20121212/php_bz2.dll' -
+    /usr/local/php55/lib/php/extensions/no-debug-non-zts-20121212/php_bz2.dll: cannot open shared object file: No such file or directory in Unknown on line 0
+116 [07-Jan-2018 07:22:11 UTC] PHP Warning:  PHP Startup: Unable to load dynamic library '/usr/local/php55/lib/php/extensions/no-debug-non-zts-20121212/php_curl.dll' -
+     /usr/local/php55/lib/php/extensions/no-debug-non-zts-20121212/php_curl.dll: cannot open shared object file: No such file or directory in Unknown on line 0
+117 [07-Jan-2018 07:22:11 UTC] PHP Warning:  PHP Startup: Unable to load dynamic library '/usr/local/php55/lib/php/extensions/no-debug-non-zts-20121212/php_fileinfo.dl
+    l' - /usr/local/php55/lib/php/extensions/no-debug-non-zts-20121212/php_fileinfo.dll: cannot open shared object file: No such file or directory in Unknown on line 0
+118 [07-Jan-2018 07:22:11 UTC] PHP Warning:  PHP Startup: Unable to load dynamic library '/usr/local/php55/lib/php/extensions/no-debug-non-zts-20121212/php_gd2.dll' -
+    /usr/local/php55/lib/php/extensions/no-debug-non-zts-20121212/php_gd2.dll: cannot open shared object file: No such file or directory in Unknown on line 0
+119 [07-Jan-2018 07:22:11 UTC] PHP Warning:  PHP Startup: Unable to load dynamic library '/usr/local/php55/lib/php/extensions/no-debug-non-zts-20121212/curl.so' - /usr
+    /local/php55/lib/php/extensions/no-debug-non-zts-20121212/curl.so: cannot open shared object file: No such file or directory in Unknown on line 0
+120 [07-Jan-2018 07:22:11 UTC] PHP Warning:  PHP Startup: Unable to load dynamic library '/usr/local/php55/lib/php/extensions/no-debug-non-zts-20121212/fileinfo.so' -
+    /usr/local/php55/lib/php/extensions/no-debug-non-zts-20121212/fileinfo.so: cannot open shared object file: No such file or directory in Unknown on line 0
+121 [07-Jan-2018 07:22:11 UTC] PHP Warning:  PHP Startup: Unable to load dynamic library '/usr/local/php55/lib/php/extensions/no-debug-non-zts-20121212/gd.so' - /usr/l
+    ocal/php55/lib/php/extensions/no-debug-non-zts-20121212/gd.so: cannot open shared object file: No such file or directory in Unknown on line 0
+122 [07-Jan-2018 07:22:11 UTC] PHP Warning:  PHP Startup: Unable to load dynamic library '/usr/local/php55/lib/php/extensions/no-debug-non-zts-20121212/json.so' - /usr
+    /local/php55/lib/php/extensions/no-debug-non-zts-20121212/json.so: cannot open shared object file: No such file or directory in Unknown on line 0
+123 [07-Jan-2018 07:22:11 UTC] PHP Warning:  PHP Startup: Unable to load dynamic library '/usr/local/php55/lib/php/extensions/no-debug-non-zts-20121212/phar.so' - /usr
+    /local/php55/lib/php/extensions/no-debug-non-zts-20121212/phar.so: cannot open shared object file: No such file or directory in Unknown on line 0
+124 [07-Jan-2018 07:22:11 UTC] PHP Warning:  PHP Startup: Unable to load dynamic library '/usr/local/php55/lib/php/extensions/no-debug-non-zts-20121212/zip.so' - /usr/
+    local/php55/lib/php/extensions/no-debug-non-zts-20121212/zip.so: cannot open shared object file: No such file or directory in Unknown on line 0
+
+
+
+
+Notice: Undefined index: plugin in /www/docs/wc.jieqiangtec.com/addons/ewei_shopv2/core/model/system.php on line 10
+
+Deprecated: mysql_escape_string(): This function is deprecated; use mysql_real_escape_string() instead. in /www/docs/wc.jieqiangtec.com/framework/library/pdo/PDOStatement_mysql.class.php on line 132
+
+Strict Standards: Only variables should be assigned by reference in /www/docs/wc.jieqiangtec.com/framework/library/pdo/PDOStatement_mysql.class.php on line 148
+
+Notice: Undefined offset: 2 in /www/docs/wc.jieqiangtec.com/framework/function/global.func.php on line 379
+
+
+Notice: Undefined index: route in /www/docs/wc.jieqiangtec.com/addons/ewei_shopv2/core/model/system.php on line 367
+
+Notice: Undefined offset: 2 in /www/docs/wc.jieqiangtec.com/framework/function/global.func.php on line 379
+
+Notice: Undefined offset: 2 in /www/docs/wc.jieqiangtec.com/framework/function/global.func.php on line 379
+
+Notice: Undefined offset: 2 in /www/docs/wc.jieqiangtec.com/framework/function/global.func.php on line 379
+
+Notice: Undefined index: route in /www/docs/wc.jieqiangtec.com/addons/ewei_shopv2/core/model/system.php on line 367
+
+Notice: Undefined offset: 2 in /www/docs/wc.jieqiangtec.com/framework/function/global.func.php on line 379
+
+Warning: Cannot modify header information - headers already sent by (output started at /www/docs/wc.jieqiangtec.com/framework/function/global.func.php:379) in /www/docs/wc.jieqiangtec.com/framework/function/global.func.php on line 112
+
+Notice: Undefined index: merchid in /www/docs/wc.jieqiangtec.com/addons/ewei_shopv2/plugin/merch/core/model.php on line 497
+
+Deprecated: mysql_escape_string(): This function is deprecated; use mysql_real_escape_string() instead. in /www/docs/wc.jieqiangtec.com/framework/library/pdo/PDOStatement_mysql.class.php on line 132
+
+
+Strict Standards: Only variables should be assigned by reference in /www/docs/wc.jieqiangtec.com/framework/library/pdo/PDOStatement_mysql.class.php on line 148
+
+Notice: Undefined index: mid in /www/docs/wc.jieqiangtec.com/addons/ewei_shopv2/core/inc/functions.php on line 1058
+
+Notice: Undefined index: merchid in /www/docs/wc.jieqiangtec.com/addons/ewei_shopv2/core/inc/functions.php on line 1077
+
+Notice: Undefined index: liveid in /www/docs/wc.jieqiangtec.com/addons/ewei_shopv2/core/inc/functions.php on line 1090
+
+Notice: Undefined offset: 2 in /www/docs/wc.jieqiangtec.com/framework/function/global.func.php on line 401
+
+Notice: Undefined offset: 1 in /www/docs/wc.jieqiangtec.com/framework/function/global.func.php on line 401
+
+Deprecated: mysql_escape_string(): This function is deprecated; use mysql_real_escape_string() instead. in /www/docs/wc.jieqiangtec.com/framework/library/pdo/PDOStatement_mysql.class.php on line 132
+
+Strict Standards: Only variables should be assigned by reference in /www/docs/wc.jieqiangtec.com/framework/library/pdo/PDOStatement_mysql.class.php on line 148
+
+Fatal error: Call to undefined function ImageCreate() in /www/docs/wc.jieqiangtec.com/framework/library/qrcode/phpqrcode.php on line 985
