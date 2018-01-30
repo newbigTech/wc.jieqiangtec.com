@@ -1,3 +1,26 @@
+47608 PHP message: PHP Warning:  SQL: <br/>select id,couponid,openid,isparent,sendtime,price,merchid,isverify,addressid,isvirtualsend,virtual,dispatchtype from `ims_ewei_shop_order` where uniacid=6 and status=2 <hr/>Params: <br/>array (
+47609 )<hr/>SQL Error: <br/>You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'virt
+      ual,dispatchtype from `ims_ewei_shop_order` where uniacid=6 and status=2' at line 1<hr/>Traces: <br/>file: /framework/class/db.class.php; line: 242; <br />file:
+      /framework/function/pdo.func.php; line: 44; <br />file: /addons/ewei_shopv2/core/task/order/receive.php; line: 81; <br /> in /www/docs/wc.jieqiangtec.com/framewo
+      rk/class/db.class.php on line 600
+47610 PHP message: PHP Warning:  SQL: <br/>select id,couponid,openid,isparent,sendtime,price,merchid,isverify,addressid,isvirtualsend,virtual,dispatchtype from `ims_ew
+      ei_shop_order` where uniacid=8 and status=2 <hr/>Params: <br/>array (
+47611 )<hr/>SQL Error: <br/>You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'virt
+      ual,dispatchtype from `ims_ewei_shop_order` where uniacid=8 and status=2' at line 1<hr/>T
+47612 2018/01/30 23:56:54 [error] 5744#5744: *3903 open() "/www/docs/wc.jieqiangtec.com/addons/ewei_shopv2/data/goodscode/10/e55733b6797ab907b747694c3f0789d8.jpg" fail
+      ed (2: No such file or directory), client: 120.41.19.110, server: wc.jieqiangtec.com, request: "GET /addons/ewei_shopv2/data/goodscode/10/e55733b6797ab907b747694
+      c3f0789d8.jpg HTTP/1.1", host: "shop.rongec.com", referrer: "http://shop.rongec.com/app/index.php?i=10&c=entry&m=ewei_shopv2&do=mobile&r=goods.detail&id=222"
+47613 2018/01/30 23:56:56 [error] 5744#5744: *3902 open() "/www/docs/wc.jieqiangtec.com/attachment/images/10/2018/01/E3b7BKJkIEgj4NOIJz7oM4IL1OGSi3Bz.jpg" failed (2: N
+      o such file or directory), client: 120.41.19.110, server: wc.jieqiangtec.com, request: "GET /attachment/images/10/2018/01/E3b7BKJkIEgj4NOIJz7oM4IL1OGSi3Bz.jpg HT
+      TP/1.1", host: "shop.rongec.com", referrer: "http://shop.rongec.com/app/index.php?i=10&c=entry&eid=1&wxref=mp.weixin.qq.com"
+
+
+
+
+
+[30-Jan-2018 23:23:55] WARNING: [pool www] child 4835 said into stderr: "NOTICE: PHP message: PHP Deprecated:  mysql_escape_string(): This function is deprecated; use mysql_real_escape_string() instead. in /www/docs/wc.jieqiangtec.com/framework/library/pdo/PDOStatement_mysql.class.php on line 132"
+
+[30-Jan-2018 23:23:55] WARNING: [pool www] child 4835 said into stderr: "NOTICE: PHP message: PHP Strict Standards:  Only variables should be assigned by reference in /www/docs/wc.jieqiangtec.com/framework/library/pdo/PDOStatement_mysql.class.php on line 148"
 
 
 

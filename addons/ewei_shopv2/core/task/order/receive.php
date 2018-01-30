@@ -78,7 +78,7 @@ foreach ($sets as $set) {
 	$days = intval($trade['receive']);
 	$p = p('commission');
 	$pcoupon = com('coupon');
-	$orders = pdo_fetchall('select id,couponid,openid,isparent,sendtime,price,merchid,isverify,addressid,isvirtualsend,virtual,dispatchtype from ' . tablename('ewei_shop_order') . ' where uniacid=' . $_W['uniacid'] . ' and status=2 ', array(), 'id');
+	$orders = pdo_fetchall('select id,couponid,openid,isparent,sendtime,price,merchid,isverify,addressid,isvirtualsend,`virtual`,dispatchtype from ' . tablename('ewei_shop_order') . ' where uniacid=' . $_W['uniacid'] . ' and status=2 ', array(), 'id');
 
 	if (!empty($orders)) {
 		foreach ($orders as $orderid => $order) {
