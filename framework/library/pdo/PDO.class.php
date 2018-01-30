@@ -276,7 +276,9 @@ else {
 		const ATTR_PERSISTENT = PDO::ATTR_PERSISTENT;
 		var $__driver;
 		function _PDO($string_dsn, $string_username = '', $string_password = '', $array_driver_options = null) {
-			$con = &$this->__getDNS($string_dsn);
+			// $con = &$this->__getDNS($string_dsn);
+			$con_old = $this->__getDNS($string_dsn);
+			$con = &$con_old;
 			if($con['dbtype'] === 'mysql') {
 				require_once('PDO_mysql.class.php');
 				if(isset($con['port']))

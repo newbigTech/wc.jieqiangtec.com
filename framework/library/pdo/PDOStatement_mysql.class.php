@@ -145,7 +145,10 @@ class PDOStatement_mysql {
 				//$__query = str_replace($tempf, $tempr, $__query);
 			}
 		}
-		if(is_null($this->__result = &$this->__uquery($__query)))
+		// if(is_null($this->__result = &$this->__uquery($__query)))
+		
+		$query_new = $this->__uquery($__query);
+		if(is_null($this->__result = &$query_new))
 			$keyvars = false;
 		else
 			$keyvars = true;
