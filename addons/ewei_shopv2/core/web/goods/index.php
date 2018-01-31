@@ -102,8 +102,10 @@ class Index_EweiShopV2Page extends WebPage
                     $list[$key]['storeids'] = $value['storeids'];
                     $list[$key]['merchsale'] = $value['merchsale'];
                     $list[$key]['discounts'] = $value['discounts'];
-                    $list[$key]['thumb'] = $value['image_source_url'];
-                    $list[$key]['thumb_url'] = $value['image_source_url'];
+
+                    // 图片 'http://erp.rongec.' . $suffix.'/admin/'.$res['productInfo']['image_source_url']
+                    $list[$key]['thumb'] = 'http://erp.rongec.' . $suffix.'/admin/'. $value['image_source_url'];
+                    $list[$key]['thumb_url'] =  'http://erp.rongec.' . $suffix.'/admin/'. $value['image_source_url'];
 
                 }
                 $psize = $res['onePage'];

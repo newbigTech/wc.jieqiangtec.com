@@ -1,3 +1,6 @@
+[31-Jan-2018 22:04:08] WARNING: [pool www] child 4835 said into stderr: "NOTICE: PHP message: PHP Strict Standards:  Only variables should be assigned by reference in /www/docs/wc.jieqiangtec.com/framework/library/pdo/PDOStatement_mysql.class.php on line 148"
+
+
 47608 PHP message: PHP Warning:  SQL: <br/>select id,couponid,openid,isparent,sendtime,price,merchid,isverify,addressid,isvirtualsend,virtual,dispatchtype from `ims_ewei_shop_order` where uniacid=6 and status=2 <hr/>Params: <br/>array (
 47609 )<hr/>SQL Error: <br/>You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'virt
       ual,dispatchtype from `ims_ewei_shop_order` where uniacid=6 and status=2' at line 1<hr/>Traces: <br/>file: /framework/class/db.class.php; line: 242; <br />file:
