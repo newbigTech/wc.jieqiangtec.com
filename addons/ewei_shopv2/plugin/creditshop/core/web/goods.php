@@ -732,6 +732,7 @@ class Goods_EweiShopV2Page extends PluginWebPage
 		$params[':uniacid'] = $_W['uniacid'];
 		$condition = " and status=1 and deleted=0 and uniacid=:uniacid and type = 1 and groupstype = 0 \r\n                    and isdiscount = 0 and istime = 0 and  ifnull(bargain,0)=0 and ispresell = 0 ";
 
+		// var_dump($condition);exit;
 		if (!empty($kwd)) {
 			$condition .= ' AND (`title` LIKE :keywords OR `keywords` LIKE :keywords)';
 			$params[':keywords'] = '%' . $kwd . '%';
