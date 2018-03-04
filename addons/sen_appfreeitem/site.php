@@ -44,6 +44,8 @@ class sen_appfreeitemModuleSite extends WeModuleSite
         $advs = pdo_fetchall("select * from " . tablename('sen_appfreeitem_adv') . " where enabled=1 and weid= '{$_W['uniacid']}'");
         $rpindex = max(1, intval($_GPC['rpage']));
         $rpsize = 6;
+
+        // 首页展示
         $condition = ' and isrecommand=1';
         $rlist = pdo_fetchall("SELECT * FROM " . tablename('sen_appfreeitem_project') . " WHERE weid = '{$_W['uniacid']}' AND status >= '2' and status < '4' and isrecommand = '1' $condition ORDER BY displayorder DESC, finish_price DESC LIMIT " . ($rpindex - 1) * $rpsize . ',' . $rpsize);
         $carttotal = $this->getCartTotal();
@@ -1305,7 +1307,7 @@ class sen_appfreeitemModuleSite extends WeModuleSite
                         message('产品名称必填，请返回修改');
                     }
 
-                    $data = array('weid' => $_W['uniacid'], 'displayorder' => intval($_GPC['displayorder']), 'title' => $_GPC['title'], 'cpnumber' => intval($_GPC['cpnumber']), 'myprice' => intval($_GPC['myprice']), 'price' => $_GPC['price'], 'deal_days' => strtotime($_GPC['deal_days']), 'isrecommand' => intval($_GPC['isrecommand']), 'wtname' => iserializer($_GPC['wtname']), 'pcate' => intval($_GPC['pcate']), 'ccate' => intval($_GPC['ccate']), 'tjqian' => intval($_GPC['tjqian']), 'tjhou' => intval($_GPC['tjhou']), 'thumb' => $_GPC['thumb'], 'content' => htmlspecialchars_decode($_GPC['content']), 'nosubuser' => intval($_GPC['nosubuser']), 'subsurl' => trim($_GPC['subsurl']), 'direct' => $_GPC['direct'], 'starttime' => strtotime($_GPC['starttime']), 'show_type' => intval($_GPC['show_type']), 'type' => intval($_GPC['type']), 'lianxiren' => $_GPC['lianxiren'], 'tel' => $_GPC['tel'], 'status' => 3, 'createtime' => TIMESTAMP,);
+                    $data = array('weid' => $_W['uniacid'], 'displayorder' => intval($_GPC['displayorder']), 'title' => $_GPC['title'], 'cpnumber' => intval($_GPC['cpnumber']), 'myprice' => intval($_GPC['myprice']), 'price' => $_GPC['price'], 'deal_days' => strtotime($_GPC['deal_days']), 'isrecommand' => intval($_GPC['isrecommand']),'ishot' => intval($_GPC['ishot']), 'wtname' => iserializer($_GPC['wtname']), 'pcate' => intval($_GPC['pcate']), 'ccate' => intval($_GPC['ccate']), 'tjqian' => intval($_GPC['tjqian']), 'tjhou' => intval($_GPC['tjhou']), 'thumb' => $_GPC['thumb'], 'content' => htmlspecialchars_decode($_GPC['content']), 'nosubuser' => intval($_GPC['nosubuser']), 'subsurl' => trim($_GPC['subsurl']), 'direct' => $_GPC['direct'], 'starttime' => strtotime($_GPC['starttime']), 'show_type' => intval($_GPC['show_type']), 'type' => intval($_GPC['type']), 'lianxiren' => $_GPC['lianxiren'], 'tel' => $_GPC['tel'], 'status' => 3, 'createtime' => TIMESTAMP,);
 
                     // 品牌
                     $brands = array();
