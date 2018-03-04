@@ -1,6 +1,10 @@
 {template 'common/header'}
 {template 'common'}
 <script type="text/javascript" src="resource/js/lib/jquery-ui-1.10.3.min.js"></script>
+
+<!-- <script type="text/javascript" src="http://shop.rongec.cn/addons/ewei_shopv2/static/js/dist/select2/select2.min.js"></script>
+<link href="http://shop.rongec.cn/addons/ewei_shopv2/static/js/dist/select2/select2-bootstrap.css?v=1520043257274sf.css" rel="stylesheet"> -->
+
 <ul class="nav nav-tabs">
 	<li {if $operation == 'post'}class="active"{/if}>
 		<a href="{php echo $this->createWebUrl('project', array('op' => 'post'))}">添加产品</a>
@@ -42,6 +46,61 @@
 				<input type="text" name="title" id="title" class="form-control" value="{$item['title']}" />
 			</div>
 		</div>
+
+		<!-- <div class="form-group">
+	        <label class="col-sm-2 control-label">产品分类</label>
+	        <div class="col-sm-8 col-xs-12">
+	            <select id="cates"  name='cates[]' class="form-control select2" style='width:605px;' multiple='' >
+	                {loop $categorys $c}
+	                <option value="{$c['id']}" {if is_array($cates) &&  in_array($c['id'],$cates)}selected{/if} >{$c['name']}</option>
+	                {/loop}
+	            </select>
+	        </div>
+	    </div>
+
+		<div class="form-group">
+	        <label class="col-sm-2 control-label">产品品牌</label>
+	        <div class="col-sm-8 col-xs-12">
+	            <select id="brands"  name='brands[]' class="form-control select2" style='width:605px;' multiple='' >
+	                {loop $brand $c}
+	                <option value="{$c['id']}" {if is_array($brands) &&  in_array($c['id'],$brands)}selected{/if} >{$c['name']}</option>
+	                {/loop}
+	            </select>
+	        </div>
+	    </div> -->
+
+	    <div class="form-group">
+			<label class="col-sm-2 control-label">产品分类</label>
+			<div class="col-sm-8 col-xs-12">
+				<select name="cates[]" class="form-control">
+					<option value="">不限</option>
+					{loop $categorys_new $c}
+	                <option value="{$c['id']}" {if is_array($cates) &&  in_array($c['id'],$cates)}selected{/if} >{$c['name']}</option>
+	                {/loop}
+	                <!-- {loop $categorys_new $c}
+	                <option value="{$c['id']}" {if $item['cates'] == $c['id']}selected{/if} >{$c['name']}</option>
+	                {/loop} -->
+				</select>
+			</div>
+		</div>
+
+	    <div class="form-group">
+			<label class="col-sm-2 control-label">产品品牌<?php // var_dump($brands);?></label>
+			<div class="col-sm-8 col-xs-12">
+				<select name="brands[]" class="form-control">
+					<option value="">不限</option>
+					{loop $brands_new $c}
+					<option value="{$c['id']}" {if is_array($brands) &&  in_array($c['id'],$brands)}selected{/if} >{$c['name']}</option>
+					{/loop}
+
+					<!-- {loop $brands_new $c}
+					<option value="{$c['id']}" {if $item['brands'] == $c['id']}selected{/if} >{$c['name']}</option>
+					{/loop} -->
+				</select>
+			</div>
+		</div>
+
+
 		<input type="hidden" name="type" value="0">
 		<!--div class="form-group">
 			<label class="col-xs-12 col-sm-3 col-md-2 control-label">产品类型</label>

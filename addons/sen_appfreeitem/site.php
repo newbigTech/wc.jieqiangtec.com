@@ -7,6 +7,8 @@ define('IMG_PATH', '../addons/sen_appfreeitem/template/style/images/');
 include '../addons/sen_appfreeitem/inc/core/function/forum.func.php';
 include '../addons/sen_appfreeitem/inc/core/function/qiniu.mod.php';
 
+include '../addons/sen_appfreeitem/inc/core/function/functions.php';
+
 class sen_appfreeitemModuleSite extends WeModuleSite
 {
     public function __construct()
@@ -1253,6 +1255,15 @@ class sen_appfreeitemModuleSite extends WeModuleSite
         load()->func('tpl');
         $category = pdo_fetchall("SELECT * FROM " . tablename('sen_appfreeitem_category') . " WHERE weid = '{$_W['uniacid']}' ORDER BY parentid ASC, displayorder DESC", array(), 'id');
         $dispatch = pdo_fetchall("select id,dispatchname,dispatchtype,firstprice,firstweight,secondprice,secondweight from " . tablename("sen_appfreeitem_dispatch") . " WHERE weid = {$_W['uniacid']} order by displayorder desc");
+
+
+        // TODO jieqiang 品牌 分类
+        $categorys_new = $this->getFullCategory(true);
+        $brands_new = $this->getFullBrand(true);
+
+        /*var_dump($brand,$categorys);
+        exit;*/
+
         if (!empty($category)) {
             $children = '';
             foreach ($category as $cid => $cate) {
@@ -1272,6 +1283,12 @@ class sen_appfreeitemModuleSite extends WeModuleSite
                 }
                 $item = pdo_fetch("SELECT * FROM " . tablename('sen_appfreeitem_project') . " WHERE id = :id", array(':id' => $id));
                 $item['wtname'] = iunserializer($item['wtname']);
+
+
+                // 商品所有品牌
+                $brands = explode(',', $item['brands']);
+                $cates = explode(',', $item['cates']);
+
             }
             if (empty($category)) {
                 message('抱歉，请您先添加产品分类！', $this->createWebUrl('category', array('op' => 'post')), 'error');
@@ -1287,7 +1304,18 @@ class sen_appfreeitemModuleSite extends WeModuleSite
                     if (empty($_GPC['title'])) {
                         message('产品名称必填，请返回修改');
                     }
+
                     $data = array('weid' => $_W['uniacid'], 'displayorder' => intval($_GPC['displayorder']), 'title' => $_GPC['title'], 'cpnumber' => intval($_GPC['cpnumber']), 'myprice' => intval($_GPC['myprice']), 'price' => $_GPC['price'], 'deal_days' => strtotime($_GPC['deal_days']), 'isrecommand' => intval($_GPC['isrecommand']), 'wtname' => iserializer($_GPC['wtname']), 'pcate' => intval($_GPC['pcate']), 'ccate' => intval($_GPC['ccate']), 'tjqian' => intval($_GPC['tjqian']), 'tjhou' => intval($_GPC['tjhou']), 'thumb' => $_GPC['thumb'], 'content' => htmlspecialchars_decode($_GPC['content']), 'nosubuser' => intval($_GPC['nosubuser']), 'subsurl' => trim($_GPC['subsurl']), 'direct' => $_GPC['direct'], 'starttime' => strtotime($_GPC['starttime']), 'show_type' => intval($_GPC['show_type']), 'type' => intval($_GPC['type']), 'lianxiren' => $_GPC['lianxiren'], 'tel' => $_GPC['tel'], 'status' => 3, 'createtime' => TIMESTAMP,);
+
+                    // 品牌
+                    $brands = array();
+                    $brands = $_GPC['brands'];
+                    // 品牌合并
+                    $data['brands'] = implode(',', $brands);
+
+                    $cates = $_GPC['cates'];
+                    $data['cates'] = implode(',', $cates);
+
                     if (empty($id)) {
                         pdo_insert('sen_appfreeitem_project', $data);
                         $id = pdo_insertid();
@@ -1709,6 +1737,97 @@ class sen_appfreeitemModuleSite extends WeModuleSite
         $postarr = '{"touser":"' . $tousers . '","template_id":"' . $template_id . '","url":"' . $url . '","topcolor":"' . $topcolor . '","data":' . $data . '}';
         $res = ihttp_post('https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=' . $access_token, $postarr);
         return true;
+    }
+
+
+    // TODO 获取全部品牌
+    public function getFullBrand($fullname = false, $enabled = false)
+    {
+        global $_W;
+        $sql = 'SELECT * FROM ' . tablename('ewei_shop_brand') . ' WHERE uniacid=:uniacid ';
+
+        if ($enabled) {
+            $sql .= ' AND enabled=1';
+        }
+        $sql .= ' ORDER BY displayorder DESC';
+        $brand = pdo_fetchall($sql, array(':uniacid' => $_W['uniacid']));
+        $brand = set_medias($brand, array('thumb', 'logo'));
+
+        if (empty($brand)) {
+            return array();
+        }
+        return $brand;
+    }
+
+    public function getFullCategory($fullname = false, $enabled = false)
+    {
+        global $_W;
+        $allcategory = array();
+        $sql = 'SELECT * FROM ' . tablename('ewei_shop_category') . ' WHERE uniacid=:uniacid ';
+
+        if ($enabled) {
+            $sql .= ' AND enabled=1';
+        }
+
+        $sql .= ' ORDER BY parentid ASC, displayorder DESC';
+        $category = pdo_fetchall($sql, array(':uniacid' => $_W['uniacid']));
+        $category = set_medias($category, array('thumb', 'advimg'));
+
+        if (empty($category)) {
+            return array();
+        }
+
+        foreach ($category as &$c) {
+            if (empty($c['parentid'])) {
+                $allcategory[] = $c;
+
+                foreach ($category as &$c1) {
+                    if ($c1['parentid'] != $c['id']) {
+                        continue;
+                    }
+
+                    if ($fullname) {
+                        $c1['name'] = $c['name'] . '-' . $c1['name'];
+                    }
+
+                    $allcategory[] = $c1;
+
+                    foreach ($category as &$c2) {
+                        if ($c2['parentid'] != $c1['id']) {
+                            continue;
+                        }
+
+                        if ($fullname) {
+                            $c2['name'] = $c1['name'] . '-' . $c2['name'];
+                        }
+
+                        $allcategory[] = $c2;
+
+                        foreach ($category as &$c3) {
+                            if ($c3['parentid'] != $c2['id']) {
+                                continue;
+                            }
+
+                            if ($fullname) {
+                                $c3['name'] = $c2['name'] . '-' . $c3['name'];
+                            }
+
+                            $allcategory[] = $c3;
+                        }
+
+                        unset($c3);
+                    }
+
+                    unset($c2);
+                }
+
+                unset($c1);
+            }
+
+            unset($c);
+        }
+
+        return $allcategory;
     }
 }
 
