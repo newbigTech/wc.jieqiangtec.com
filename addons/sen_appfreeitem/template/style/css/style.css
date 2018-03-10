@@ -21,6 +21,106 @@ body {
 	src: url('http://zc.imaumm.com/wap/tpl/default/images/iconfont/iconfont.eot?#iefix') format('embedded-opentype'), url('http://zc.imaumm.com/wap/tpl/default/images/iconfont/iconfont.woff') format('woff'), url('http://zc.imaumm.com/wap/tpl/default/images/iconfont/iconfont.ttf') format('truetype'), url('http://zc.imaumm.com/wap/tpl/default/images/iconfont/iconfont.svg#iconfont') format('svg');
 	/* iOS 4.1-*/
 }
+
+/* notice 样式 */
+.fui-notice {
+    height: auto;
+    font-size: 0.8rem;
+    background: #fff;
+    padding: 0.3rem;
+    overflow: hidden;
+    position: relative;
+}
+
+.fui-notice:before {
+    content: " ";
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 0;
+    width: 100%;
+    border-top: 1px solid #e2e2e2;
+}
+
+.fui-notice:after {
+    content: " ";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 0;
+    width: 100%;
+    border-top: 1px solid #e2e2e2;
+}
+
+.fui-notice .image {
+    display: inline-block;
+    height: 1rem;
+    width: auto;
+    position: relative;
+    float: left;
+    padding-right: 0.5rem;
+    vertical-align: middle;
+}
+
+.fui-notice .image img {
+    height: 70%;
+    width: auto;
+    float: left;
+    margin-top: 0.15rem;
+}
+
+.fui-notice .image:before {
+    content: " ";
+    position: absolute;
+    width: 0;
+    top: 0.1rem;
+    right: 0;
+    bottom: 0.1rem;
+    border-right: 1px solid #e2e2e2;
+}
+
+.fui-notice .icon {
+    height: 1rem;
+    padding-left: 0.2rem;
+    float: left;
+    color: #fd5454;
+}
+
+.fui-notice .text {
+    height: 1rem;
+    padding-left: 0.2rem;
+    font-size: 0.6rem;
+    color: #333;
+    line-height: 1rem;
+    overflow: hidden;
+}
+
+.fui-notice .text ul li {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.fui-notice a {
+    color: #333;
+}
+
+.fui-notice .text {
+  height: 1rem;
+  padding-left: 0.2rem;
+  font-size: 0.6rem;
+  color: #333;
+  line-height: 1rem;
+  overflow: hidden;
+}
+
+/* 分割线 */
+.fui-line {height: auto; display: block; position: relative; background: inherit;}
+.fui-line:before {content: " "; position: absolute; top: 50%; left: 0; width: 100%; height: 1px; background: #d5d5d5;}
+.fui-line .text {height: 100%; width: auto; margin: auto; background: inherit; font-size: 0.7rem; display: table; position: relative; padding: 0.4rem 0.3rem; }
+.fui-line .text.big { font-size:0.8rem}
+.fui-line .text.large { font-size:1rem}
+
 .iconfont {
 	font-family:"iconfont" !important;
 	font-size:16px;

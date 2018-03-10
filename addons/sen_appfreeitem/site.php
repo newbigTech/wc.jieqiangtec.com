@@ -41,6 +41,8 @@ class sen_appfreeitemModuleSite extends WeModuleSite
                 unset($category[$index]);
             }
         }
+
+        // 幻灯片
         $advs = pdo_fetchall("select * from " . tablename('sen_appfreeitem_adv') . " where enabled=1 and weid= '{$_W['uniacid']}'");
         $rpindex = max(1, intval($_GPC['rpage']));
         $rpsize = 6;
@@ -355,11 +357,16 @@ class sen_appfreeitemModuleSite extends WeModuleSite
         global $_GPC, $_W;
         $pindex = max(1, intval($_GPC["page"]));
         $psize = 10;
+
+        // 幻灯片
+        $advs = pdo_fetchall("select * from " . tablename('sen_appfreeitem_adv') . " where enabled=1 and weid= '{$_W['uniacid']}'");
+
         $operation = !empty($_GPC['op']) ? $_GPC['op'] : 'display';
         if ($operation == 'jpcp') {
             $sql = "SELECT r.*,o.ordersn,p.title,p.thumb,m.nickname,m.avatar FROM ims_sen_appfreeitem_report as r,ims_sen_appfreeitem_order as o,ims_sen_appfreeitem_project as p,ims_mc_members as m where r.is_display=1 and r.oid=o.id and r.pid=p.id and r.from_user=m.uid ORDER BY p.id DESC";
 //            $lists = pdo_fetchall($sql);
             $rlist = pdo_fetchall($sql);
+            // var_dump('$rlist==',$rlist);exit;
             $title = '精品测评';
         } elseif ($operation == 'display') {
 //            $list2 = pdo_fetchall("SELECT * FROM ims_sen_appfreeitem_project where status =4  ORDER BY id DESC  ");
@@ -961,6 +968,8 @@ class sen_appfreeitemModuleSite extends WeModuleSite
     private function checkAuth()
     {
         global $_W;
+        /*// TODO debug
+        $_W['openid'] = 'oMaz50jp9G_xRU_JT1jMaxuS5KdY';*/
         if (empty($_W['openid'])) {
             if (!empty($_W['account']['subscribeurl'])) {
                 message('请先关注公众号' . $_W['account']['name'] . '(' . $_W['account']['account'] . ')', $_W['account']['subscribeurl'], 'error');
@@ -1307,7 +1316,7 @@ class sen_appfreeitemModuleSite extends WeModuleSite
                         message('产品名称必填，请返回修改');
                     }
 
-                    $data = array('weid' => $_W['uniacid'], 'displayorder' => intval($_GPC['displayorder']), 'title' => $_GPC['title'], 'cpnumber' => intval($_GPC['cpnumber']), 'myprice' => intval($_GPC['myprice']), 'price' => $_GPC['price'], 'deal_days' => strtotime($_GPC['deal_days']), 'isrecommand' => intval($_GPC['isrecommand']),'ishot' => intval($_GPC['ishot']), 'wtname' => iserializer($_GPC['wtname']), 'pcate' => intval($_GPC['pcate']), 'ccate' => intval($_GPC['ccate']), 'tjqian' => intval($_GPC['tjqian']), 'tjhou' => intval($_GPC['tjhou']), 'thumb' => $_GPC['thumb'], 'content' => htmlspecialchars_decode($_GPC['content']), 'nosubuser' => intval($_GPC['nosubuser']), 'subsurl' => trim($_GPC['subsurl']), 'direct' => $_GPC['direct'], 'starttime' => strtotime($_GPC['starttime']), 'show_type' => intval($_GPC['show_type']), 'type' => intval($_GPC['type']), 'lianxiren' => $_GPC['lianxiren'], 'tel' => $_GPC['tel'], 'status' => 3, 'createtime' => TIMESTAMP,);
+                    $data = array('weid' => $_W['uniacid'], 'displayorder' => intval($_GPC['displayorder']), 'title' => $_GPC['title'], 'cpnumber' => intval($_GPC['cpnumber']), 'myprice' => intval($_GPC['myprice']), 'price' => $_GPC['price'], 'deal_days' => strtotime($_GPC['deal_days']), 'isrecommand' => intval($_GPC['isrecommand']), 'ishot' => intval($_GPC['ishot']), 'wtname' => iserializer($_GPC['wtname']), 'pcate' => intval($_GPC['pcate']), 'ccate' => intval($_GPC['ccate']), 'tjqian' => intval($_GPC['tjqian']), 'tjhou' => intval($_GPC['tjhou']), 'thumb' => $_GPC['thumb'], 'content' => htmlspecialchars_decode($_GPC['content']), 'nosubuser' => intval($_GPC['nosubuser']), 'subsurl' => trim($_GPC['subsurl']), 'direct' => $_GPC['direct'], 'starttime' => strtotime($_GPC['starttime']), 'show_type' => intval($_GPC['show_type']), 'type' => intval($_GPC['type']), 'lianxiren' => $_GPC['lianxiren'], 'tel' => $_GPC['tel'], 'status' => 3, 'createtime' => TIMESTAMP,);
 
                     // 品牌
                     $brands = array();
@@ -1603,6 +1612,7 @@ class sen_appfreeitemModuleSite extends WeModuleSite
     public function doMobileMyOrder()
     {
         global $_W, $_GPC;
+        // TODO debug
         $this->checkAuth();
         $carttotal = $this->getCartTotal();
         $op = $_GPC['op'];

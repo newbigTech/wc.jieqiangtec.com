@@ -55,135 +55,113 @@ body{background: #f0f0f0;}
     width: 1.2rem;
 	vertical-align: initial;
 }
+
+
+.myoder{margin:10px; -webkit-box-shadow:0 1px 2px 1px rgba(0,0,0,0.2); box-shadow:0 1px 2px 1px rgba(0,0,0,0.2); overflow:hidden; background:#FFF;}
+.myoder .myoder-hd{height:35px; line-height:35px; overflow:hidden; background:#f0f0f0; border-bottom:1px solid #cacaca; padding:0 10px;}
+.myoder .myoder-hd > span{font-size:14px; color:#504040;}
+.myoder .myoder-hd > span.pull-right{font-size:12px; color:#999;}
+.myoder .myoder-detail{min-height:73px; border-bottom:1px solid #f3f3f4; padding:10px; overflow-x:hidden;}
+.myoder .myoder-detail img{width:50px; margin-right:10px; float:left;}
+.myoder .myoder-detail .name a{color:#4d4f5d; display:inline-block; width:200px; font-weight:bold; text-decoration:underline; text-overflow:ellipsis; white-space:nowrap; overflow:hidden;}
+.myoder .myoder-detail .price{font-size:14px;}
+.myoder .myoder-detail .price span{display:inline-block; width:100px;}
+.myoder .myoder-detail .price span.num{width:60px;}
+.myoder .myoder-total{height:65px; padding:5px 10px; color:#b9b9b9; font-weight:bold;}
+.myoder .myoder-total > span{margin-right:5px;}
+.myoder .myoder-total > span .false{color:#e9342a;}
+.myoder .myoder-total > .btn{margin-top:3.5px;}
+.myoder .myoder-express{border-bottom:1px solid #f3f3f4; padding:5px 10px; overflow:hidden; background:#F9F9F9;}
+.myoder .myoder-express > span{display:inline-block; width:50%; float:left;}
+.myoder .myoder-express .express-company{}
+.myoder .myoder-express .express-num{text-align:right;}
+.mystatus div{height:35px;line-height:35px;}
+.btn-sm{height: 35px;line-height: 35px;display: block;text-align: center;background: #52c580;width:34%;color:#fff;    border-radius: 5px;}
+
+.bg{
+    height: 35px;
+line-height: 35px;
+padding: 5px 20px;
+text-align: center;
+color: #fff;
+border-radius: 5px;
+}
+.zjgm{background: #44b549;}
+.sqsy{background: #d9534f;}
+
 </style>
-<section class="index-top">
+<!-- <section class="index-top">
 	<div style="background-color:#fff;overflow:hidden;margin-bottom: 10px;"> <div class="faxianshiyong_nav"> <a style="border-right:0" href="{php echo $this->createMobileUrl('list2')}" class="cur">往期活动</a><a style="border-left:0;border-radius:0 .5rem .5rem 0" href="{php echo $this->createMobileUrl('list')}">免费试用</a></div> </div>
 	
 	<div style="background-color: #fff;">&nbsp;</div>
 	<div class="nav_link" style="padding-bottom:1.5rem;background-color: #fff;"> <a href="{php echo $this->createMobileUrl('list2', array('op' => 'jpcp'))}" class="nav_link_has_border"><img src="{IMG_PATH}text.png" style="cursor:pointer;top:0.3rem">&nbsp;精品测评</a> <a href="{php echo $this->createMobileUrl('myorder')}" style="cursor:pointer"><img style="top:0.5rem;width:1.6rem" src="{IMG_PATH}my.png">&nbsp;我的试用</a> </div>
-	
-</section>
+</section> -->
+
 <section class="index">
-	<div class="oComment_1" style="">
-             <!--banner 开始 -->
-             <div id="slideBox" class="banner">
-                <div class="bd">
-                    <ul>
-                    {loop $advs $adv}
-                        <li>
-                            <a href="{if empty($adv['link'])}#{else}{$adv['link']}{/if}"><img src="{php echo tomedia($adv['thumb']);}"></a>
-                        </li>
-                    {/loop}
-                    </ul>
-                </div>
-                <div class="hd">
-                    <ul></ul>
-                </div>
-				
+    <div class="oComment_1" style="">
+         <!--banner 开始 -->
+         <div id="slideBox" class="banner">
+            <div class="bd">
+                <ul>
+                {loop $advs $adv}
+                    <li>
+                        <a href="{if empty($adv['link'])}#{else}{$adv['link']}{/if}"><img src="{php echo tomedia($adv['thumb']);}"></a>
+                    </li>
+                {/loop}
+                </ul>
             </div>
-            <script type="text/javascript">
-                if($("#slideBox .bd ul").find('li').length>1){
-                    TouchSlide({ 
-                        slideCell:"#slideBox",
-                        titCell:".hd ul", //开启自动分页 autoPage:true ，此时设置 titCell 为导航元素包裹层
-                        mainCell:".bd ul", 
-                        effect:"leftLoop", 
-                        autoPage:true,//自动分页
-                        autoPlay:true //自动播放
-                    });
-                }
-                if($("#slideBox > .hd").find("li").length <=1){
-                    $("#slideBox > .hd").hide();
-                }
-            </script>
-		</div>
- 
-{loop $rlist $item}
-<section class="deal_item_list">
-    <a href="{php echo $this->createMobileUrl('detail', array('id' => $item['id']))}" title="产品名称：{$item['title']}">
-        <div class="deal_item_box">
-            <!--1-->
-            <div class="imgbox">
-				<div class="freetry_item_qishu">
-					{if $item['status'] == 2}
-                        <span class="common common-fail">即将开始</span>
-                    {else}
-						{if time() <= $item['starttime']}
-							<span class="common common-fail">即将开始</span>
-						{else}
-							{if time() < $item['deal_days']}
-							<span class="common common-sprite">活动进行中</span>
-							{else}
-							<span class="common common-success">活动已结束</span>
-							{/if} 
-						{/if}
-						
-                    {/if}
-				</div>
-                <img src="{php echo tomedia($item['thumb'])}" alt="产品名称：{$item['title']}">
-				<div class="freetry_item_pic_timer"><img src="{IMG_PATH}time.png">
-					 <!--开始-->
-					 
-					{if time() <= $item['starttime']}
-					 &nbsp;离产品开始还有：
-						<span class="timer_text left_time" data="{php echo $item['starttime'] - time()}">
-							<em class="s day">--</em>
-							<em class="l">天</em>
-							<em class="s hour">--</em>
-							<em class="l">时</em>
-							<em class="s min">--</em>
-							<em class="l">分</em>
-							<em class="s sec">--</em>
-							<em class="l">秒</em>
-						</span>
-					{else}
-						{if time() < $item['deal_days']}
-							&nbsp;剩余：
-							<span class="timer_text left_time" data="{php echo $item['deal_days'] - time()}">
-								<em class="s day">--</em>
-								<em class="l">天</em>
-								<em class="s hour">--</em>
-								<em class="l">时</em>
-								<em class="s min">--</em>
-								<em class="l">分</em>
-								<em class="s sec">--</em>
-								<em class="l">秒</em>
-							</span>
-						{else}
-						<span class="num">{php echo date('Y-m-d H:i',$item['deal_days'])}</span><br />
-						<span class="til">结束时间</span>
-						{/if}       
-					
-					{/if}
-					 <!--end-->
-					 </img>
-					 
-					 
-				</div>
+            <div class="hd">
+                <ul></ul>
             </div>
-            <div class="clear"></div>
-			<div style=" overflow:hidden; background-color:#fff;">
-				 <p style="text-align: left; margin-top:25px; margin-left:25px;  font-size:1.6rem; width:100%;  white-space:nowrap;overflow:hidden;text-overflow:ellipsis; ">{$item['title']}</p>
-				 <div class="flex_wrap" style="margin-bottom:20px; font-size:1.2rem;">
-					 <div>价值：<span class="c_green">￥{$item['myprice']} </span></div>
-					 <div>产品数量：{$item['cpnumber']}</div>
-					 <div>申请人数：{php echo $this->getprojectorder($item['id'])}</div>
-				 </div>
-				 
-				 <div class="c_lv" style=" line-height:40px;height:40px; text-align:center;color:#fff;border-radius:2px;margin-bottom:12px;margin-left:25px;margin-right:25px; font-size:1.4rem;background:#52C580  ">免费申请</div>
-				 
-			</div>
-			
-           
-            <!--2-->
-            
-            <div class="clear"></div>
-            <!--3-->
             
         </div>
-    </a>
+        <script type="text/javascript">
+            if($("#slideBox .bd ul").find('li').length>1){
+                TouchSlide({ 
+                    slideCell:"#slideBox",
+                    titCell:".hd ul", //开启自动分页 autoPage:true ，此时设置 titCell 为导航元素包裹层
+                    mainCell:".bd ul", 
+                    effect:"leftLoop", 
+                    autoPage:true,//自动分页
+                    autoPlay:true //自动播放
+                });
+            }
+            if($("#slideBox > .hd").find("li").length <=1){
+                $("#slideBox > .hd").hide();
+            }
+        </script>
+    </div>
+
+    <div class="fui-notice">
+        <div class="image">
+            <img src="{IMG_PATH}hotdot.jpg"></div>
+        <div class="icon">
+            <i class="icon icon-notification1" style="font-size: 0.7rem;"></i>
+        </div>
+        <div class="text">
+            <ul style="margin-top: 0px;">
+                <li>
+                    <a href="{php echo $this->createMobileUrl('rule')}">最新公告</a></li>
+            </ul>
+        </div>
+    </div>
 </section>
+ 
+<div style="margin-bottom:40px;">
+{loop $rlist $item}
+<div class="myoder img-rounded">
+    <div class="myoder-hd">
+        <span class="pull-left">评测人：{$item['nickname']}</span>
+        <span class="pull-right">{$item['tijiaotime']}</span>
+    </div>
+    <div class="myoder-detail">
+        <a href="{php echo $this->createMobileUrl('detail', array('id' => $item['id']))}">
+            <img src="{php echo tomedia($item['thumb'])}" style="width:100px;height:100px;">产品名称：{$item['title']}                        <br>{$item['rtitle']}:{$item['content']}</a> 
+    </div>
+
+</div>
 {/loop}
+</div>
    
         
             <div class="blank5"></div>
