@@ -1327,6 +1327,9 @@ class sen_appfreeitemModuleSite extends WeModuleSite
                     $cates = $_GPC['cates'];
                     $data['cates'] = implode(',', $cates);
 
+                    // 邮费
+                    $data['freight'] = $_GPC['freight'];
+
                     if (empty($id)) {
                         pdo_insert('sen_appfreeitem_project', $data);
                         $id = pdo_insertid();
