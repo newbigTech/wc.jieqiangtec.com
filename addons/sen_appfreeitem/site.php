@@ -16,46 +16,6 @@ class sen_appfreeitemModuleSite extends WeModuleSite
         global $_W;
     }
 
-    public function doMobileList()
-    {
-        global $_W, $_GPC;
-        $pindex = max(1, intval($_GPC['page']));
-        $psize = 4;
-        $condition = '';
-        if (!empty($_GPC['ccate'])) {
-            $cid = intval($_GPC['ccate']);
-            $condition .= " AND ccate = '{$cid}'";
-            $_GPC['pcate'] = pdo_fetchcolumn("SELECT parentid FROM " . tablename('sen_appfreeitem_category') . " WHERE id = :id", array(':id' => intval($_GPC['ccate'])));
-        } elseif (!empty($_GPC['pcate'])) {
-            $cid = intval($_GPC['pcate']);
-            $condition .= " AND pcate = '{$cid}'";
-        }
-        if (!empty($_GPC['keyword'])) {
-            $condition .= " AND title LIKE '%{$_GPC['keyword']}%'";
-        }
-        $children = array();
-        $category = pdo_fetchall("SELECT * FROM " . tablename('sen_appfreeitem_category') . " WHERE weid = '{$_W['uniacid']}' and parentid=0 and enabled=1 ORDER BY parentid ASC, displayorder DESC", array(), 'id');
-        foreach ($category as $index => $row) {
-            if (!empty($row['parentid'])) {
-                $children[$row['parentid']][$row['id']] = $row;
-                unset($category[$index]);
-            }
-        }
-
-        // 幻灯片
-        $advs = pdo_fetchall("select * from " . tablename('sen_appfreeitem_adv') . " where enabled=1 and weid= '{$_W['uniacid']}'");
-        $rpindex = max(1, intval($_GPC['rpage']));
-        $rpsize = 6;
-
-        // 首页展示
-        $condition = ' and isrecommand=1';
-        $rlist = pdo_fetchall("SELECT * FROM " . tablename('sen_appfreeitem_project') . " WHERE weid = '{$_W['uniacid']}' AND status >= '2' and status < '4' and isrecommand = '1' $condition ORDER BY displayorder DESC, finish_price DESC LIMIT " . ($rpindex - 1) * $rpsize . ',' . $rpsize);
-        $carttotal = $this->getCartTotal();
-        $moduleconfig = $this->module['config'];
-        $title = !empty($moduleconfig['shopname']) ? $moduleconfig['shopname'] . ' - 首页' : '免费试用产品列表';
-        include $this->template('list');
-    }
-
     public function doMobileShareData()
     {
         global $_W, $_GPC;
@@ -352,6 +312,49 @@ class sen_appfreeitemModuleSite extends WeModuleSite
         include $this->template('news_detail');
     }
 
+    // 首页
+    public function doMobileList()
+    {
+        global $_W, $_GPC;
+        $pindex = max(1, intval($_GPC['page']));
+        $psize = 4;
+        $condition = '';
+        if (!empty($_GPC['ccate'])) {
+            $cid = intval($_GPC['ccate']);
+            $condition .= " AND ccate = '{$cid}'";
+            $_GPC['pcate'] = pdo_fetchcolumn("SELECT parentid FROM " . tablename('sen_appfreeitem_category') . " WHERE id = :id", array(':id' => intval($_GPC['ccate'])));
+        } elseif (!empty($_GPC['pcate'])) {
+            $cid = intval($_GPC['pcate']);
+            $condition .= " AND pcate = '{$cid}'";
+        }
+        if (!empty($_GPC['keyword'])) {
+            $condition .= " AND title LIKE '%{$_GPC['keyword']}%'";
+        }
+        $children = array();
+        $category = pdo_fetchall("SELECT * FROM " . tablename('sen_appfreeitem_category') . " WHERE weid = '{$_W['uniacid']}' and parentid=0 and enabled=1 ORDER BY parentid ASC, displayorder DESC", array(), 'id');
+        foreach ($category as $index => $row) {
+            if (!empty($row['parentid'])) {
+                $children[$row['parentid']][$row['id']] = $row;
+                unset($category[$index]);
+            }
+        }
+
+        // 幻灯片
+        $advs = pdo_fetchall("select * from " . tablename('sen_appfreeitem_adv') . " where enabled=1 and weid= '{$_W['uniacid']}'");
+        $rpindex = max(1, intval($_GPC['rpage']));
+        $rpsize = 6;
+
+        // 首页展示
+        $condition = ' and 1';
+        $_GET['brand_id'] AND $condition .= ' AND brands = ' . $_GET['brand_id'];
+        $rlist = pdo_fetchall("SELECT * FROM " . tablename('sen_appfreeitem_project') . " WHERE weid = '{$_W['uniacid']}' AND status >= '2' and status < '4' and isrecommand = '1' $condition ORDER BY displayorder DESC, finish_price DESC LIMIT " . ($rpindex - 1) * $rpsize . ',' . $rpsize);
+        $carttotal = $this->getCartTotal();
+        $moduleconfig = $this->module['config'];
+        $title = !empty($moduleconfig['shopname']) ? $moduleconfig['shopname'] . ' - 首页' : '免费试用产品列表';
+        include $this->template('list');
+    }
+
+    //  试用秀
     public function doMobilelist2()
     {
         global $_GPC, $_W;
@@ -367,7 +370,7 @@ class sen_appfreeitemModuleSite extends WeModuleSite
 //            $lists = pdo_fetchall($sql);
             $rlist = pdo_fetchall($sql);
             // var_dump('$rlist==',$rlist);exit;
-            $title = '精品测评';
+            $title = '试用秀';
         } elseif ($operation == 'display') {
 //            $list2 = pdo_fetchall("SELECT * FROM ims_sen_appfreeitem_project where status =4  ORDER BY id DESC  ");
             $rlist = pdo_fetchall("SELECT * FROM ims_sen_appfreeitem_project where status =4  ORDER BY id DESC  ");
@@ -375,6 +378,51 @@ class sen_appfreeitemModuleSite extends WeModuleSite
         }
         include $this->template('list2');
     }
+
+    // 品牌馆
+    public function doMobileBrand()
+    {
+        global $_GPC, $_W;
+        // 幻灯片
+        $advs = pdo_fetchall("select * from " . tablename('sen_appfreeitem_adv') . " where enabled=1 and weid= '{$_W['uniacid']}'");
+
+        $title = '品牌馆';
+        if ($_GET['brand_id']) {
+            $brand = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_brand') . ' WHERE uniacid = \'' . $_W['uniacid'] . '\' ORDER BY displayorder DESC, id DESC');
+            // var_dump('$brand==',$brand);exit;
+            include $this->template('brand');
+        } else {
+            $brand = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_brand') . ' WHERE uniacid = \'' . $_W['uniacid'] . '\' ORDER BY displayorder DESC, id DESC');
+            // var_dump('$brand==',$brand);exit;
+            foreach ($brand as $k => $v) {
+                $date = pdo_fetch('SELECT MIN(starttime) as starttime,MAX(deal_days) as deal_days FROM ' . tablename('sen_appfreeitem_project') . ' WHERE brands=' . $v['id'] . ' AND weid = \'' . $_W['uniacid'] . '\' ');
+                $brand[$k]['start_time'] = $date['starttime'];
+                $brand[$k]['deal_days'] = $date['deal_days'];
+
+                // 没有相关品牌产品的时间
+                if (empty($date['starttime']) OR empty($date['deal_days'])) {
+                    unset($brand[$k]);
+                }
+            }
+
+            include $this->template('brand');
+        }
+
+    }
+
+    // 规则公告
+    public function doMobileRule()
+    {
+        global $_GPC, $_W;
+        // 幻灯片
+        $advs = pdo_fetchall("select * from " . tablename('sen_appfreeitem_adv') . " where enabled=1 and weid= '{$_W['uniacid']}'");
+        
+        $id = intval($_GPC['id']);
+        $item = pdo_fetch("SELECT * FROM " . tablename('sen_appfreeitem_rule') . " WHERE wid = :wid", array(':wid' => $_W['uniacid']));
+        $title = "参与规则";
+        include $this->template('rule');
+    }
+
 
     public function doMobileAjaxShare()
     {
@@ -387,6 +435,7 @@ class sen_appfreeitemModuleSite extends WeModuleSite
         }
         exit;
     }
+
 
     public function doMobileCxShare()
     {
@@ -564,15 +613,6 @@ class sen_appfreeitemModuleSite extends WeModuleSite
             }
             message('操作成功！', referer(), 'success');
         }
-        include $this->template('rule');
-    }
-
-    public function doMobileRule()
-    {
-        global $_GPC, $_W;
-        $id = intval($_GPC['id']);
-        $item = pdo_fetch("SELECT * FROM " . tablename('sen_appfreeitem_rule') . " WHERE wid = :wid", array(':wid' => $_W['uniacid']));
-        $title = "参与规则";
         include $this->template('rule');
     }
 
@@ -968,8 +1008,8 @@ class sen_appfreeitemModuleSite extends WeModuleSite
     private function checkAuth()
     {
         global $_W;
-        /*// TODO debug
-        $_W['openid'] = 'oMaz50jp9G_xRU_JT1jMaxuS5KdY';*/
+        // TODO debug
+        // $_W['openid'] = 'oMaz50jp9G_xRU_JT1jMaxuS5KdY';
         if (empty($_W['openid'])) {
             if (!empty($_W['account']['subscribeurl'])) {
                 message('请先关注公众号' . $_W['account']['name'] . '(' . $_W['account']['account'] . ')', $_W['account']['subscribeurl'], 'error');
@@ -1612,13 +1652,17 @@ class sen_appfreeitemModuleSite extends WeModuleSite
         include $this->template('adv', TEMPLATE_INCLUDEPATH, true);
     }
 
+    // 我的订单
     public function doMobileMyOrder()
     {
         global $_W, $_GPC;
         // TODO debug
+        // $_W['fans']['from_user'] = 'oMaz50jp9G_xRU_JT1jMaxuS5KdY';
+
         $this->checkAuth();
         $carttotal = $this->getCartTotal();
         $op = $_GPC['op'];
+
         if ($op == 'confirm') {
             $orderid = intval($_GPC['orderid']);
             $state = intval($_GPC['state']);
@@ -1652,14 +1696,30 @@ class sen_appfreeitemModuleSite extends WeModuleSite
             $pindex = max(1, intval($_GPC['page']));
             $psize = 20;
             $status = intval($_GPC['status']);
-            $state = intval($_GPC['state']);
+            // $state = intval($_GPC['state']);
+
             $where = " weid = '{$_W['uniacid']}' AND from_user = '{$_W['fans']['from_user']}'";
-            if ($status == 2) {
+            /*if ($status == 2) {
                 $where .= " and ( status=1 or status=2 )";
             } else {
                 $where .= " and status=$status";
+            }*/
+
+            // 9：全部  0：试用  1：购买
+            $state = $_GPC['state'];
+            // var_dump($state);exit;
+            if ($state == 1) {
+                $where .= " and state=1";
+            } else {
+                if ($state === '0') {
+                    $where .= " and state=0";
+                } else {
+                    $state = 9;
+                }
             }
+
             $list = pdo_fetchall("SELECT * FROM " . tablename('sen_appfreeitem_order') . " WHERE $where ORDER BY id DESC LIMIT " . ($pindex - 1) * $psize . ',' . $psize, array(), 'id');
+            // var_dump($list);exit;
             $total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('sen_appfreeitem_order') . " WHERE weid = '{$_W['uniacid']}' AND from_user = '{$_W['fans']['from_user']}'");
             $pager = pagination($total, $pindex, $psize);
             $pagetitle = "申请状态";

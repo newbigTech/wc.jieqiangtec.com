@@ -155,7 +155,31 @@ body{background: #f0f0f0;}
     </div>
 </div> -->
 
+<!-- 推荐商品 -->
+<!-- <div class="fui-goods-group block border">
+        <div class="fui-goods-item" data-goodsid="222" data-type="1">
+            <a href="./index.php?i=10&amp;c=entry&amp;m=ewei_shopv2&amp;do=mobile&amp;r=bargain.detail&amp;id=4">
+                <div class="image" data-lazyloaded="true" style="background-image: url(&quot;http://shop.rongec.cn/attachment/images/10/2018/01/c4jD72NJD66KIXsdS6R8Dk2a6JicK2.png&quot;);">
+                    
+                </div>
+            </a>
+            <div class="detail">
+                <a href="./index.php?i=10&amp;c=entry&amp;m=ewei_shopv2&amp;do=mobile&amp;r=bargain.detail&amp;id=4">
+                    <div class="name">
+                        测试商品
+                    </div>
+                </a>
+                <div class="price" style="margin-top: 0.3rem">
+                    <span class="text">￥3.00</span>
+                    <span class="buy" data-type="1">砍价活动</span>
+                </div>
+            </div>
+        </div>
+</div> -->
+
 <!-- 产品列表 -->
+
+
 {loop $rlist $item}
 <section class="deal_item_list">
     <a href="{php echo $this->createMobileUrl('detail', array('id' => $item['id']))}" title="产品名称：{$item['title']}">

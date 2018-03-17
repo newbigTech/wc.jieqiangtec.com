@@ -148,15 +148,17 @@ border-radius: 5px;
 </section>
  
 <div style="margin-bottom:40px;">
-{loop $rlist $item}
+{loop $brand $item}
 <div class="myoder img-rounded">
-    <div class="myoder-hd">
-        <span class="pull-left">评测人：{$item['nickname']}</span>
+    <!-- <div class="myoder-hd">
+        <span class="pull-left">品牌：{$item['name']}</span>
         <span class="pull-right">{$item['tijiaotime']}</span>
-    </div>
+    </div> -->
     <div class="myoder-detail">
-        <a href="{php echo $this->createMobileUrl('detail', array('id' => $item['pid']))}">
-            <img src="{php echo tomedia($item['thumb'])}" style="width:100px;height:100px;">产品名称：{$item['title']}                        <br>{$item['rtitle']}:{$item['content']}</a> 
+        <a href="{php echo $this->createMobileUrl('list', array('brand_id' => $item['id']))}">
+            <img src="{php echo tomedia($item['logo'])}" style="width:100px;height:100px;">名称：{$item['name']}{$item['name_eng']}                        <br />{$item['description']}<br />
+            <span class="pull-left">时间：{php echo date('Y-m-d ',$item['start_time'])}-{php echo date('Y-m-d',$item['deal_days'])}</span>
+        </a> 
     </div>
 
 </div>

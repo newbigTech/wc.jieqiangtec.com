@@ -36,7 +36,7 @@ border-radius: 5px;
 .zjgm{background: #44b549;}
 .sqsy{background: #d9534f;}
 </style>
- <div class="myoder img-rounded" style='text-align:center;color:#aaa;padding:5px;'>
+<!-- <div class="myoder img-rounded" style='text-align:center;color:#aaa;padding:5px;'>
 	 <div style='float:left;margin:auto;width:100%;' class="mystatus">
 		<div {if $status==0}class='sel'{else}class="nosel"{/if} style='border-top-left-radius: 5px;border-bottom-left-radius:5px;border:1px solid #33cdd6;text-align: center;float:left;width:32.5%' onclick="location.href='{php echo $this->createMobileUrl('myorder',array('status'=>0))}'">
 			待处理
@@ -58,7 +58,24 @@ border-radius: 5px;
 			已完成
 		</div>
 	</div>
+</div> -->
+
+<div class="myoder img-rounded" style='text-align:center;color:#aaa;padding:5px;'>
+	 <div style='float:left;margin:auto;width:100%;' class="mystatus">
+		<div {if $state==9}class='sel'{else}class="nosel"{/if} style='border-top-right-radius: 5px;margin-left:-1px;border-bottom-right-radius:5px;text-align: center;border:1px solid #33cdd6;float:left;width:32.6%' onclick="location.href='{php echo $this->createMobileUrl('myorder',array('state'=>9))}'">
+			全部
+		</div>		
+
+		<div {if $state==0}class='sel'{else}class="nosel"{/if} style='border-top-right-radius: 5px;margin-left:-1px;border-bottom-right-radius:5px;text-align: center;border:1px solid #33cdd6;float:left;width:32.6%' onclick="location.href='{php echo $this->createMobileUrl('myorder',array('state'=>0))}'">
+			试用
+		</div>	
+
+		<div {if $state==1}class='sel'{else}class="nosel"{/if} style='border-top-right-radius: 5px;margin-left:-1px;border-bottom-right-radius:5px;text-align: center;border:1px solid #33cdd6;float:left;width:32.6%' onclick="location.href='{php echo $this->createMobileUrl('myorder',array('state'=>1))}'">
+			购买
+		</div>
+	</div>
 </div>
+
 
 {if count($list)<=0}
 <div class="myoder img-rounded" style='text-align:center;color:#aaa;padding:30px;'>
@@ -81,12 +98,27 @@ border-radius: 5px;
 			<img src="{$_W['attachurl']}{$project['thumb']}" style="width:100px;height:100px;"/>产品名称：{$project['title']}
 		</a> 
 		</br>
-		{if $item['state'] == 0}
+		<!-- {if $item['state'] == 0}
 			<span class="bg sqsy">申请试用</span>
 		{/if}
 		{if $item['state'] == 1}
 			<span class="bg zjgm">直接购买</span>
+		{/if} -->
+
+		{if $item['status'] == 0}
+			<span class="bg zjgm">待处理</span>
+		{elseif $item['status'] == 1}
+			<span class="bg zjgm">未通过</span>
+		{elseif $item['status'] == 2}
+			<span class="bg zjgm">待发货</span>
+		{elseif $item['status'] == 3}
+			<span class="bg zjgm">待收货</span>
+		{elseif $item['status'] == 4}
+			<span class="bg zjgm">已收货</span>
+		{elseif $item['status'] == 5}
+			<span class="bg sqsy">已完成</span>
 		{/if}
+
 	</div>
 	<div class="myoder-total">
 		
