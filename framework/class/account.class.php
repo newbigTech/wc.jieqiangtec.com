@@ -1146,7 +1146,7 @@ abstract class WeModuleSite extends WeBase {
 		return null;
 	}
 
-	
+	// 支付流程
 	protected function pay($params = array(), $mine = array()) {
 		global $_W;
 		load()->model('activity');

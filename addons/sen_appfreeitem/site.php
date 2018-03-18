@@ -339,15 +339,35 @@ class sen_appfreeitemModuleSite extends WeModuleSite
             }
         }
 
+        // 类型 9-全部 0-免邮 1-付邮 2-往期
+        $time = time();
+        $type = $_GPC['type'];
+        if ($type == 1 ) {
+            $condition .= " and freight>0 ";
+        } elseif ($type == 2) {
+            $condition .= " and deal_days < $time  ";
+        } else {
+            if ($type === '0') {
+                $condition .= " and freight<=0 ";
+            } else {
+                $type = 9;
+            }
+        }
+
+
         // 幻灯片
         $advs = pdo_fetchall("select * from " . tablename('sen_appfreeitem_adv') . " where enabled=1 and weid= '{$_W['uniacid']}'");
         $rpindex = max(1, intval($_GPC['rpage']));
         $rpsize = 6;
 
         // 首页展示
-        $condition = ' and 1';
+        /*$condition = ' and 1';*/
         $_GET['brand_id'] AND $condition .= ' AND brands = ' . $_GET['brand_id'];
         $rlist = pdo_fetchall("SELECT * FROM " . tablename('sen_appfreeitem_project') . " WHERE weid = '{$_W['uniacid']}' AND status >= '2' and status < '4' and isrecommand = '1' $condition ORDER BY displayorder DESC, finish_price DESC LIMIT " . ($rpindex - 1) * $rpsize . ',' . $rpsize);
+
+        // 热门推荐
+        $hot_list = pdo_fetchall("SELECT * FROM " . tablename('sen_appfreeitem_project') . " WHERE weid = '{$_W['uniacid']}' AND status >= '2' and status < '4' and ishot = '1'  and deal_days > $time  ORDER BY displayorder DESC, id DESC, finish_price DESC LIMIT 4 "  );
+
         $carttotal = $this->getCartTotal();
         $moduleconfig = $this->module['config'];
         $title = !empty($moduleconfig['shopname']) ? $moduleconfig['shopname'] . ' - 首页' : '免费试用产品列表';
@@ -405,7 +425,11 @@ class sen_appfreeitemModuleSite extends WeModuleSite
                 }
             }
 
-            include $this->template('brand');
+            if ($_GET['test']) {
+                include $this->template('brand2');
+            } else {
+                include $this->template('brand');
+            }
         }
 
     }
@@ -416,7 +440,7 @@ class sen_appfreeitemModuleSite extends WeModuleSite
         global $_GPC, $_W;
         // 幻灯片
         $advs = pdo_fetchall("select * from " . tablename('sen_appfreeitem_adv') . " where enabled=1 and weid= '{$_W['uniacid']}'");
-        
+
         $id = intval($_GPC['id']);
         $item = pdo_fetch("SELECT * FROM " . tablename('sen_appfreeitem_rule') . " WHERE wid = :wid", array(':wid' => $_W['uniacid']));
         $title = "参与规则";
@@ -616,14 +640,22 @@ class sen_appfreeitemModuleSite extends WeModuleSite
         include $this->template('rule');
     }
 
+    // 确认付款
     public function doMobileConfirm()
     {
         global $_W, $_GPC;
+
+        /*// TODO debug
+        $_W['fans']['from_user'] = 'oMaz50jp9G_xRU_JT1jMaxuS5KdY';
+        $_W['fans']['nickname'] = 'jieqiang';*/
+
         if (empty($_W['fans']['nickname'])) {
             mc_oauth_userinfo();
         }
         $id = intval($_GPC['id']);
         $op = intval($_GPC['op']);
+
+
         $openid = $_W['fans']['from_user'];
         $pd = pdo_fetch("SELECT * FROM " . tablename('sen_appfreeitem_order') . " WHERE from_user = :from_user and state =:state and pid = :pid", array(':from_user' => $openid, ':state' => '0', ':pid' => $id));
         if ($op == 0) {
@@ -679,6 +711,9 @@ class sen_appfreeitemModuleSite extends WeModuleSite
                 message('抱歉，请您填写收货地址！', $this->createMobileUrl('address', array('from' => 'confirm', 'returnurl' => urlencode($returnurl))), 'error');
             }
             $item_price = $item['price'];
+            // 邮费
+            $freight = $item['freight'];
+
             $dispatchid = intval($_GPC['dispatch']);
             $dispatchprice = 0;
             foreach ($dispatch as $d) {
@@ -687,6 +722,7 @@ class sen_appfreeitemModuleSite extends WeModuleSite
                     $sendtype = $d['dispatchtype'];
                 }
             }
+
             $state;
             if ($op == 0) {
                 $state = 0;
@@ -694,7 +730,7 @@ class sen_appfreeitemModuleSite extends WeModuleSite
                 $state = 1;
             }
             $ordersn = date('md') . random(4, 1);
-            $data = array('weid' => $_W['uniacid'], 'from_user' => $_W['fans']['from_user'], 'ordersn' => $ordersn, 'price' => $item_price + $dispatchprice, 'dispatchprice' => $dispatchprice, 'item_price' => $item_price, 'status' => 0, 'state' => $state, 'sendtype' => intval($sendtype), 'dispatch' => 2, 'return_type' => 2, 'Answer' => iserializer($_GPC['Answer']), 'remark' => $_GPC['remark'], 'addressid' => $address['id'], 'pid' => $id, 'item_id' => $item_id, 'createtime' => TIMESTAMP,);
+            $data = array('weid' => $_W['uniacid'], 'from_user' => $_W['fans']['from_user'], 'ordersn' => $ordersn, 'price' => $item_price + $dispatchprice + $freight, 'freight' => $freight, 'dispatchprice' => $dispatchprice, 'item_price' => $item_price, 'status' => 0, 'state' => $state, 'sendtype' => intval($sendtype), 'dispatch' => 2, 'return_type' => 2, 'Answer' => iserializer($_GPC['Answer']), 'remark' => $_GPC['remark'], 'addressid' => $address['id'], 'pid' => $id, 'item_id' => $item_id, 'createtime' => TIMESTAMP,);
             pdo_insert('sen_appfreeitem_order', $data);
             $orderid = pdo_insertid();
             if ($op == 0) {
@@ -830,6 +866,7 @@ class sen_appfreeitemModuleSite extends WeModuleSite
         }
     }
 
+    // 支付
     public function doMobilePay()
     {
         global $_W, $_GPC;
@@ -858,6 +895,8 @@ class sen_appfreeitemModuleSite extends WeModuleSite
             $params['ordersn'] = $order['ordersn'];
             $params['virtual'] = $order['return_type'] == 2 ? true : false;
         }
+        // var_dump($params);exit;
+        // $this->pay($params);
         include $this->template('pay');
     }
 

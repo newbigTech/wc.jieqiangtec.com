@@ -44,12 +44,16 @@
 			</div>
 			{/if}
 		</div>
- 		<h5>配送方式</h5>
-		<select id='dispatch' name="dispatch" class="form-control">
+ 		<!-- <h5>配送方式</h5> -->
+		<!-- <select id='dispatch' name="dispatch" class="form-control">
 	   	{loop $dispatch $d}
 			<option value="{$d['id']}" price='{$d['price']}'>{$d['dispatchname']} ({$d['price']}元)</option>
 		{/loop}
-		</select>
+		</select> -->
+		<!-- <select id='dispatch' name="dispatch" class="form-control">
+	   	<option value="{$project['freight']}" price='{$project['freight']}'>快递({$project['freight']}元)</option>
+		</select> -->
+
 		{if $_GPC['op'] ==0}
 		{php $i = 1;}
 		{loop $my $d}
@@ -169,7 +173,10 @@
 		});
 		var dispatchprice = parseFloat($("#dispatch").find("option:selected").attr("price"));
 		if(dispatchprice>0){
-			$("#totalprice").html(0 + dispatchprice + " 元 (含运费"+dispatchprice + " 货到付款)");
+			// $("#totalprice").html(0 + dispatchprice + " 元 (含运费"+dispatchprice + " 货到付款)");
+			$("#totalprice").html(0 + dispatchprice + " 元 (含运费"+dispatchprice + ")");
+		}else if({$item['freight']}>0){
+			$("#totalprice").html(0 + {$item['freight']} + " 元 (含运费"+{$item['freight']} + ")");
 		}
 		else{
 			$("#totalprice").html("免费试用");
@@ -207,6 +214,8 @@
 		var dispatchprice = parseFloat($("#dispatch").find("option:selected").attr("price"));
 		if(dispatchprice>0){
 			$("#totalprice").html(price + dispatchprice + " 元 (含运费"+dispatchprice + ")");
+		}else if({$item['freight']}>0){
+			$("#totalprice").html(price + {$item['freight']} + " 元 (含运费"+{$item['freight']} + ")");
 		}
 		else{
 			$("#totalprice").html(price + " 元");

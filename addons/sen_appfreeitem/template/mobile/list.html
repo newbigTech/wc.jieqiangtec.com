@@ -17,17 +17,19 @@ body{background: #f0f0f0;}
     line-height: 3.6rem;
     margin: 1.2rem auto;
     position: relative;
-    width: 60%;
+    /*width: 60%;*/
+    width: 92%;
 }
 .faxianshiyong_nav a {
     border: .1rem solid #52C580;
-    border-radius: .5rem 0 0 .5rem;
+    /*border-radius: .5rem 0 0 .5rem;*/
+    border-radius: .5rem ;
     color: #444;
     display: inline-block;
     font-size: 1.4rem;
     text-align: center;
     text-decoration: none;
-    width: 48%;
+    width: 23%;
 }
 .faxianshiyong_nav a.cur {
     background-color: #52C580;
@@ -56,19 +58,19 @@ body{background: #f0f0f0;}
 	vertical-align: initial;
 }
 
+.big_line{
+    color: red;
+    font-size: 24px;
+}
+
 /*图片样式*/
 .small img {
     width: 20%;
 }
 
 </style>
-<!-- <section class="index-top">
-	<div style="background-color:#fff;overflow:hidden;margin-bottom: 10px;"> <div class="faxianshiyong_nav"> <a style="border-right:0" href="{php echo $this->createMobileUrl('list2')}">往期活动</a><a style="border-left:0;border-radius:0 .5rem .5rem 0" href="{php echo $this->createMobileUrl('list')}" class="cur">免费试用</a></div> </div>
-	
-	<div style="background-color: #fff;">&nbsp;</div>
-	<div class="nav_link" style="padding-bottom:1.5rem;background-color: #fff;"> <a href="{php echo $this->createMobileUrl('list2', array('op' => 'jpcp'))}" class="nav_link_has_border"><img src="{IMG_PATH}text.png" style="cursor:pointer;top:0.3rem">&nbsp;精品测评</a> <a href="{php echo $this->createMobileUrl('myorder')}" style="cursor:pointer"><img style="top:0.5rem;width:1.6rem" src="{IMG_PATH}my.png">&nbsp;我的试用</a> </div>
-	
-</section> -->
+
+{if empty($_GET['brand_id']) }
 <section class="index">
 	<div class="oComment_1" style="">
          <!--banner 开始 -->
@@ -119,65 +121,105 @@ body{background: #f0f0f0;}
     </div>
 </section>
  
+<!-- 导航 -->
+<section class="index-top">
+    <div style="background-color:#fff;overflow:hidden;margin-bottom: 10px;">
+        <div class="faxianshiyong_nav">
+            <a href="{php echo $this->createMobileUrl('list',array('type'=>9))}" {if $type==9}class="cur"{else}class="nosel"{/if} >全部</a>
+            <a href="{php echo $this->createMobileUrl('list',array('type'=>0))}" {if $type==0}class="cur"{else}class="nosel"{/if}>免邮</a>
+            <a href="{php echo $this->createMobileUrl('list',array('type'=>1))}" {if $type==1}class="cur"{else}class="nosel"{/if}>付邮</a>
+            <a href="{php echo $this->createMobileUrl('list',array('type'=>2))}" {if $type==2}class="cur"{else}class="nosel"{/if}>往期</a>
 
-
-
-<!-- <div id="recommand">
-    <div class="fui-line" style="background: #f4f4f4;">
-        <div class="text text-danger">
-            <i class="icon icon-hotfill"></i>店铺推荐</div>
-    </div>
-    <div class="fui-goods-group block border">
-        <div class="fui-goods-item" data-goodsid="222" data-type="1">
-            <a href="./index.php?i=10&amp;c=entry&amp;m=ewei_shopv2&amp;do=mobile&amp;r=bargain.detail&amp;id=4">
-                <div class="image" data-lazyloaded="true" style="background-image: url(&quot;http://shop.rongec.cn/attachment/images/10/2018/01/c4jD72NJD66KIXsdS6R8Dk2a6JicK2.png&quot;);"></div>
-            </a>
-            <div class="detail">
-                <a href="./index.php?i=10&amp;c=entry&amp;m=ewei_shopv2&amp;do=mobile&amp;r=bargain.detail&amp;id=4">
-                    <div class="name">测试商品</div></a>
-                <div class="price" style="margin-top: 0.3rem">
-                    <span class="text">￥3.00</span>
-                    <span class="buy" data-type="1">砍价活动</span></div>
-            </div>
-        </div>
-        <div class="fui-goods-item" data-goodsid="247" data-type="1">
-            <a href="./index.php?i=10&amp;c=entry&amp;m=ewei_shopv2&amp;do=mobile&amp;r=goods.detail&amp;id=247">
-                <div class="image" data-lazyloaded="true" style="background-image: url(&quot;http://shop.rongec.cn/attachment/images/10/2018/01/E3b7BKJkIEgj4NOIJz7oM4IL1OGSi3Bz.jpg&quot;);"></div>
-            </a>
-            <div class="detail">
-                <a href="./index.php?i=10&amp;c=entry&amp;m=ewei_shopv2&amp;do=mobile&amp;r=goods.detail&amp;id=247">
-                    <div class="name">测试数码产品</div></a>
-                <div class="price" style="margin-top: 0.3rem">
-                    <span class="text">￥1299.00</span>
-                    <span class="buy" data-type="1">购买</span></div>
-            </div>
         </div>
     </div>
-</div> -->
+</section>
 
-<!-- 推荐商品 -->
-<!-- <div class="fui-goods-group block border">
-        <div class="fui-goods-item" data-goodsid="222" data-type="1">
-            <a href="./index.php?i=10&amp;c=entry&amp;m=ewei_shopv2&amp;do=mobile&amp;r=bargain.detail&amp;id=4">
-                <div class="image" data-lazyloaded="true" style="background-image: url(&quot;http://shop.rongec.cn/attachment/images/10/2018/01/c4jD72NJD66KIXsdS6R8Dk2a6JicK2.png&quot;);">
+<!-- 热门推荐 -->
+<div class="big_line">热门推荐</div>
+<div class="clear"></div>
+{loop $hot_list $item}
+<section class="deal_item_list">
+    <a href="{php echo $this->createMobileUrl('detail', array('id' => $item['id']))}" title="产品名称：{$item['title']}">
+        <div class="deal_item_box">
+            <div class="imgbox">
+                <div class="small"> 
+                    <img  src="{php echo tomedia($item['thumb'])}" alt="产品名称：{$item['title']}">
+                </div>
+                
+                <div class="freetry_item_pic_timer"><img src="{IMG_PATH}time.png">
+                     <!--开始-->
+                     
+                    {if time() <= $item['starttime']}
+                     &nbsp;离产品开始还有：
+                        <span class="timer_text left_time" data="{php echo $item['starttime'] - time()}">
+                            <em class="s day">--</em>
+                            <em class="l">天</em>
+                            <em class="s hour">--</em>
+                            <em class="l">时</em>
+                            <em class="s min">--</em>
+                            <em class="l">分</em>
+                            <em class="s sec">--</em>
+                            <em class="l">秒</em>
+                        </span>
+                    {else}
+                        {if time() < $item['deal_days']}
+                            &nbsp;剩余：
+                            <span class="timer_text left_time" data="{php echo $item['deal_days'] - time()}">
+                                <em class="s day">--</em>
+                                <em class="l">天</em>
+                                <em class="s hour">--</em>
+                                <em class="l">时</em>
+                                <em class="s min">--</em>
+                                <em class="l">分</em>
+                                <em class="s sec">--</em>
+                                <em class="l">秒</em>
+                            </span>
+                        {else}
+                        <span class="num">{php echo date('Y-m-d H:i',$item['deal_days'])}</span>
+                        <!-- <br /> -->
+                        <span class="til">已结束</span>
+                        {/if}       
                     
-                </div>
-            </a>
-            <div class="detail">
-                <a href="./index.php?i=10&amp;c=entry&amp;m=ewei_shopv2&amp;do=mobile&amp;r=bargain.detail&amp;id=4">
-                    <div class="name">
-                        测试商品
-                    </div>
-                </a>
-                <div class="price" style="margin-top: 0.3rem">
-                    <span class="text">￥3.00</span>
-                    <span class="buy" data-type="1">砍价活动</span>
+                    {/if}
+                     <!--end-->
+                     </img>
+                     
+                     
                 </div>
             </div>
+            <div class="clear"></div>
+            <div style=" overflow:hidden; background-color:#fff;">
+                 <p style="text-align: left; margin-top:25px; margin-left:25px;  font-size:1.6rem; width:100%;  white-space:nowrap;overflow:hidden;text-overflow:ellipsis; ">{$item['title']}</p>
+                 <div class="flex_wrap" style="margin-bottom:20px; font-size:1.2rem;">
+                     <div>价值：<span class="c_green">￥{$item['myprice']} </span></div>
+                     <div>产品数量：{$item['cpnumber']}</div>
+                     <div>申请人数：{php echo $this->getprojectorder($item['id'])}</div>
+                 </div>
+                 
+                {if time() < $item['deal_days']}
+                <div class="c_lv" style=" line-height:40px;height:40px; text-align:center;color:#fff;border-radius:2px;margin-bottom:12px;margin-left:25px;margin-right:25px; font-size:1.4rem;background:#52C580  ">免费申请</div>
+                {else}
+                <div class="c_lv" style=" line-height:40px;height:40px; text-align:center;color:#fff;border-radius:2px;margin-bottom:12px;margin-left:25px;margin-right:25px; font-size:1.4rem;background:#52C580  ">查看详情</div>
+                {/if} 
+            </div>
+            <!--2-->
+            <div class="clear"></div>
+            <!--3-->
         </div>
-</div> -->
+    </a>
+</section>
+{/loop}
+<div class="blank5"></div>
 
-<!-- 产品列表 -->
+
+<!-- 首页推荐 -->
+<div class="big_line">首页推荐</div>
+<div class="clear"></div>
+
+{else}
+<div class="big_line">品牌馆-{php echo $_GET['brand_name']}</div>
+<div class="clear"></div>
+{/if}
 
 
 {loop $rlist $item}
@@ -277,8 +319,8 @@ body{background: #f0f0f0;}
 </section>
 {/loop}
    
-        
-            <div class="blank5"></div>
+<div class="blank5"></div>
+
 </section>
 <script type="text/javascript">
     if($(".left_time").length){
