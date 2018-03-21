@@ -317,7 +317,7 @@ class sen_appfreeitemModuleSite extends WeModuleSite
     {
         global $_W, $_GPC;
         $pindex = max(1, intval($_GPC['page']));
-        $psize = 4;
+        $psize = 20;
         $condition = '';
         if (!empty($_GPC['ccate'])) {
             $cid = intval($_GPC['ccate']);
@@ -342,7 +342,8 @@ class sen_appfreeitemModuleSite extends WeModuleSite
         // 类型 9-全部 0-免邮 1-付邮 2-往期
         $time = time();
         $type = $_GPC['type'];
-        if ($type == 1 ) {
+        // var_dump($type);exit;
+        if ($type == 1) {
             $condition .= " and freight>0 ";
         } elseif ($type == 2) {
             $condition .= " and deal_days < $time  ";
@@ -353,7 +354,6 @@ class sen_appfreeitemModuleSite extends WeModuleSite
                 $type = 9;
             }
         }
-
 
         // 幻灯片
         $advs = pdo_fetchall("select * from " . tablename('sen_appfreeitem_adv') . " where enabled=1 and weid= '{$_W['uniacid']}'");
@@ -366,7 +366,7 @@ class sen_appfreeitemModuleSite extends WeModuleSite
         $rlist = pdo_fetchall("SELECT * FROM " . tablename('sen_appfreeitem_project') . " WHERE weid = '{$_W['uniacid']}' AND status >= '2' and status < '4' and isrecommand = '1' $condition ORDER BY displayorder DESC, finish_price DESC LIMIT " . ($rpindex - 1) * $rpsize . ',' . $rpsize);
 
         // 热门推荐
-        $hot_list = pdo_fetchall("SELECT * FROM " . tablename('sen_appfreeitem_project') . " WHERE weid = '{$_W['uniacid']}' AND status >= '2' and status < '4' and ishot = '1'  and deal_days > $time  ORDER BY displayorder DESC, id DESC, finish_price DESC LIMIT 4 "  );
+        $hot_list = pdo_fetchall("SELECT * FROM " . tablename('sen_appfreeitem_project') . " WHERE weid = '{$_W['uniacid']}' AND status >= '2' and status < '4' and ishot = '1'  and deal_days > $time  ORDER BY displayorder DESC, id DESC, finish_price DESC LIMIT 4 ");
 
         $carttotal = $this->getCartTotal();
         $moduleconfig = $this->module['config'];

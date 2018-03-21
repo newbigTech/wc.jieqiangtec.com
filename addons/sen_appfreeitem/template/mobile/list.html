@@ -1,9 +1,20 @@
 {template 'header'}
 <div class="wraper" style="padding-bottom: 50px;"> 
 <script type="text/javascript" src="{JS_PATH}TouchSlide.1.1.js"></script>
+
+<link rel="stylesheet" href="{CSS_PATH}swiper-4.1.6.min.css">
+<link rel="stylesheet" href="{CSS_PATH}style.min.css">
+
+   <!--[if lt IE 9]>
+      <script src="{JS_PATH}html5shiv.min.js"></script>
+      <script src="{JS_PATH}respond.min.js"></script>
+    <![endif]-->
+
+
 <!--banner 开始 -->
 <style type="text/css">
 body{background: #f0f0f0;}
+/*body{background: #fff;}*/
 
 .freetry_item_pic_timer{background-color:rgba(0,0,0,0.3);bottom:0;color:#fff;font-size:1.4rem;left:0;line-height:3.6rem;position:absolute;text-align:center;width:100%}
 .freetry_item_pic_timer img{display:inline-block;position:relative;top:0.2rem;width:1.2rem}
@@ -68,6 +79,29 @@ body{background: #f0f0f0;}
     width: 20%;
 }
 
+
+/*价格样式*/
+.fui-goods-item .detail .price .text {
+    -webkit-box-flex: 1;
+    -webkit-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+    color: #ff5555;
+    font-size: 0.8rem;
+}
+
+.fui-goods-item .detail .price .buy {
+    display: block;
+    text-align: center;
+    line-height: 1rem;
+    color: #fff;
+    font-size: 0.6rem;
+    background: #fe5455;
+    display: block;
+    font-size: 0.6rem;
+    padding: 0 .25rem;
+}
+
 </style>
 
 {if empty($_GET['brand_id']) }
@@ -105,50 +139,117 @@ body{background: #f0f0f0;}
             }
         </script>
 	</div>
-
-    <div class="fui-notice">
-        <div class="image">
-            <img src="{IMG_PATH}hotdot.jpg"></div>
-        <div class="icon">
-            <i class="icon icon-notification1" style="font-size: 0.7rem;"></i>
-        </div>
-        <div class="text">
-            <ul style="margin-top: 0px;">
-                <li>
-                    <a href="{php echo $this->createMobileUrl('rule')}">最新公告</a></li>
-            </ul>
-        </div>
-    </div>
 </section>
- 
-<!-- 导航 -->
-<section class="index-top">
-    <div style="background-color:#fff;overflow:hidden;margin-bottom: 10px;">
-        <div class="faxianshiyong_nav">
-            <a href="{php echo $this->createMobileUrl('list',array('type'=>9))}" {if $type==9}class="cur"{else}class="nosel"{/if} >全部</a>
-            <a href="{php echo $this->createMobileUrl('list',array('type'=>0))}" {if $type==0}class="cur"{else}class="nosel"{/if}>免邮</a>
-            <a href="{php echo $this->createMobileUrl('list',array('type'=>1))}" {if $type==1}class="cur"{else}class="nosel"{/if}>付邮</a>
-            <a href="{php echo $this->createMobileUrl('list',array('type'=>2))}" {if $type==2}class="cur"{else}class="nosel"{/if}>往期</a>
 
-        </div>
+<!-- 最新公告 -->
+<div class="fui-notice">
+    <div class="image">
+        <img src="{IMG_PATH}hotdot.jpg"></div>
+    <div class="icon">
+        <i class="icon icon-notification1" style="font-size: 0.7rem;"></i>
     </div>
-</section>
+    <div class="text">
+        <ul style="margin-top: 0px;">
+            <li>
+                <a href="{php echo $this->createMobileUrl('rule')}">最新公告</a></li>
+        </ul>
+    </div>
+</div>
+
+<!-- 菜单栏 -->
+<div class="m-menu">
+<div class="m-list" style="background-color:#fff;overflow:hidden;margin-bottom: 10px;">
+  <a href="{php echo $this->createMobileUrl('list',array('type'=>9))}" {if $type==9}class="cur"{else}class="nosel"{/if} >
+    <div class="m-item">
+      <i class="fa fa-telegram fa-3x" style="color:crimson"></i>
+      <span class="m-item-name">全部</span>
+    </div>
+  </a>
+  <a href="{php echo $this->createMobileUrl('list',array('type'=>0))}" {if $type==0}class="cur"{else}class="nosel"{/if}>
+    <div class="m-item">
+      <i class="fa fa-telegram fa-3x"  style="color:darkgreen"></i>
+      <span class="m-item-name">免邮</span>
+    </div>
+  </a>
+  <a href="{php echo $this->createMobileUrl('list',array('type'=>1))}" {if $type==1}class="cur"{else}class="nosel"{/if}>
+    <div class="m-item">
+      <i class="fa fa-telegram fa-3x" style="color:lawngreen"></i>
+      <span class="m-item-name">付邮</span>
+    </div>
+  </a>  
+
+  <a href="{php echo $this->createMobileUrl('list',array('type'=>2))}" {if $type==2}class="cur"{else}class="nosel"{/if}>
+    <div class="m-item">
+      <i class="fa fa-telegram fa-3x" style="color:yellow"></i>
+      <span class="m-item-name">往期</span>
+    </div>
+  </a>
+</div>
+</div>
+
 
 <!-- 热门推荐 -->
-<div class="big_line">热门推荐</div>
-<div class="clear"></div>
-{loop $hot_list $item}
-<section class="deal_item_list">
-    <a href="{php echo $this->createMobileUrl('detail', array('id' => $item['id']))}" title="产品名称：{$item['title']}">
-        <div class="deal_item_box">
-            <div class="imgbox">
-                <div class="small"> 
-                    <img  src="{php echo tomedia($item['thumb'])}" alt="产品名称：{$item['title']}">
-                </div>
-                
-                <div class="freetry_item_pic_timer"><img src="{IMG_PATH}time.png">
+<div class="m-discounts">
+    <h2 class="m-list-title">热门推荐
+      <!-- <a href="" class="m-more">更多>></a> -->
+    </h2>
+    <div class="m-discounts-list">
+      {loop $hot_list $item}
+      <div class="m-discounts-item ">
+        <a href="{php echo $this->createMobileUrl('detail', array('id' => $item['id']))}" title="{$item['title']}">
+            <div class="m-discounts-imgwrap zui-border zui-border-radius">
+              <img src="{php echo tomedia($item['thumb'])}" alt="{$item['title']}">
+              <h3 class="m-discounts-name">{$item['title']}</h3>
+              <!-- <div class="name">{$item['title']}</div>
+              <div class="price" style="margin-top: 0.3rem"> 
+                  <span class="text">￥1299.00</span> 
+                  <span class="buy" data-type="1">购买</span> 
+              </div> -->
+            </div>
+        </a>
+      </div>
+      {/loop}
+    </div>
+</div>
+
+<!-- 首页推荐 -->
+<!-- <div class="big_line">首页推荐</div>
+<div class="clear"></div> -->
+<!-- 商品列表 -->
+<div class="m-goods" >
+    <h2 class="m-list-title">申请专区
+        <!-- <a href="" class="m-more">更多>></a> -->
+    </h2>
+
+{else}
+<!-- <div class="big_line">品牌馆-{php echo $_GET['brand_name']}</div>
+<div class="clear"></div> -->
+<!-- 商品列表 -->
+<div class="m-goods" >
+<h2 class="m-list-title">
+    品牌馆-{php echo $_GET['brand_name']}
+        <!-- <a href="" class="m-more">更多>></a> -->
+</h2>
+{/if}
+
+
+    <div class="m-goods-list" style="background-color:#fff;overflow:hidden;margin-bottom: 10px;">
+        {loop $rlist $item}
+        <div class="m-goods-item zui-border-tb">
+            <div class="m-goods-left">
+                <img src="{php echo tomedia($item['thumb'])}" alt="{$item['title']}"></div>
+            <div class="m-goods-right">
+                <h3 class="m-goods-title">{$item['title']}</h3>
+                <p class="m-goods-des">
+                    <div class="flex_wrap" style="margin-bottom:20px; font-size:1.2rem;">
+                         <div>价值：<span class="c_green">￥{$item['myprice']} </span></div>
+                         <div>产品数量：{$item['cpnumber']}</div>
+                         <div>申请人数：{php echo $this->getprojectorder($item['id'])}</div>
+
+                     </div>
+
+                     <div class="flex_wrap" style="margin-bottom:20px; font-size:1.2rem;">
                      <!--开始-->
-                     
                     {if time() <= $item['starttime']}
                      &nbsp;离产品开始还有：
                         <span class="timer_text left_time" data="{php echo $item['starttime'] - time()}">
@@ -177,149 +278,30 @@ body{background: #f0f0f0;}
                         {else}
                         <span class="num">{php echo date('Y-m-d H:i',$item['deal_days'])}</span>
                         <!-- <br /> -->
-                        <span class="til">已结束</span>
+                        <span class="til">&nbsp;&nbsp;已结束</span>
                         {/if}       
                     
                     {/if}
                      <!--end-->
-                     </img>
-                     
-                     
-                </div>
-            </div>
-            <div class="clear"></div>
-            <div style=" overflow:hidden; background-color:#fff;">
-                 <p style="text-align: left; margin-top:25px; margin-left:25px;  font-size:1.6rem; width:100%;  white-space:nowrap;overflow:hidden;text-overflow:ellipsis; ">{$item['title']}</p>
-                 <div class="flex_wrap" style="margin-bottom:20px; font-size:1.2rem;">
-                     <div>价值：<span class="c_green">￥{$item['myprice']} </span></div>
-                     <div>产品数量：{$item['cpnumber']}</div>
-                     <div>申请人数：{php echo $this->getprojectorder($item['id'])}</div>
-                 </div>
-                 
-                {if time() < $item['deal_days']}
-                <div class="c_lv" style=" line-height:40px;height:40px; text-align:center;color:#fff;border-radius:2px;margin-bottom:12px;margin-left:25px;margin-right:25px; font-size:1.4rem;background:#52C580  ">免费申请</div>
-                {else}
-                <div class="c_lv" style=" line-height:40px;height:40px; text-align:center;color:#fff;border-radius:2px;margin-bottom:12px;margin-left:25px;margin-right:25px; font-size:1.4rem;background:#52C580  ">查看详情</div>
-                {/if} 
-            </div>
-            <!--2-->
-            <div class="clear"></div>
-            <!--3-->
-        </div>
-    </a>
-</section>
-{/loop}
-<div class="blank5"></div>
+                    </div>
 
-
-<!-- 首页推荐 -->
-<div class="big_line">首页推荐</div>
-<div class="clear"></div>
-
-{else}
-<div class="big_line">品牌馆-{php echo $_GET['brand_name']}</div>
-<div class="clear"></div>
-{/if}
-
-
-{loop $rlist $item}
-<section class="deal_item_list">
-    <a href="{php echo $this->createMobileUrl('detail', array('id' => $item['id']))}" title="产品名称：{$item['title']}">
-        <div class="deal_item_box">
-            <!--1-->
-            <div class="imgbox">
-				<!-- <div class="freetry_item_qishu">
-					{if $item['status'] == 2}
-                        <span class="common common-fail">即将开始</span>
+                </p>
+                <a href="{php echo $this->createMobileUrl('detail', array('id' => $item['id']))}" >
+                    <button class="m-btn m-goods-btn">
+                    {if time() <= $item['starttime']}
+                    敬请期待
+                    {elseif time() < $item['deal_days']}
+                    免费申请
                     {else}
-						{if time() <= $item['starttime']}
-							<span class="common common-fail">即将开始</span>
-						{else}
-							{if time() < $item['deal_days']}
-							<span class="common common-sprite">活动进行中</span>
-							{else}
-							<span class="common common-success">活动已结束</span>
-							{/if} 
-						{/if}
-						
-                    {/if}
-				</div> -->
-                <div class="small"> 
-                    <img  src="{php echo tomedia($item['thumb'])}" alt="产品名称：{$item['title']}">
-                </div>
-                
-				<div class="freetry_item_pic_timer"><img src="{IMG_PATH}time.png">
-					 <!--开始-->
-					 
-					{if time() <= $item['starttime']}
-					 &nbsp;离产品开始还有：
-						<span class="timer_text left_time" data="{php echo $item['starttime'] - time()}">
-							<em class="s day">--</em>
-							<em class="l">天</em>
-							<em class="s hour">--</em>
-							<em class="l">时</em>
-							<em class="s min">--</em>
-							<em class="l">分</em>
-							<em class="s sec">--</em>
-							<em class="l">秒</em>
-						</span>
-					{else}
-						{if time() < $item['deal_days']}
-							&nbsp;剩余：
-							<span class="timer_text left_time" data="{php echo $item['deal_days'] - time()}">
-								<em class="s day">--</em>
-								<em class="l">天</em>
-								<em class="s hour">--</em>
-								<em class="l">时</em>
-								<em class="s min">--</em>
-								<em class="l">分</em>
-								<em class="s sec">--</em>
-								<em class="l">秒</em>
-							</span>
-						{else}
-						<span class="num">{php echo date('Y-m-d H:i',$item['deal_days'])}</span>
-                        <!-- <br /> -->
-						<span class="til">已结束</span>
-						{/if}       
-					
-					{/if}
-					 <!--end-->
-					 </img>
-					 
-					 
-				</div>
+                    查看详情
+                    {/if} 
+                    </button>
+                </a>
             </div>
-            <div class="clear"></div>
-			<div style=" overflow:hidden; background-color:#fff;">
-				 <p style="text-align: left; margin-top:25px; margin-left:25px;  font-size:1.6rem; width:100%;  white-space:nowrap;overflow:hidden;text-overflow:ellipsis; ">{$item['title']}</p>
-				 <div class="flex_wrap" style="margin-bottom:20px; font-size:1.2rem;">
-					 <div>价值：<span class="c_green">￥{$item['myprice']} </span></div>
-					 <div>产品数量：{$item['cpnumber']}</div>
-					 <div>申请人数：{php echo $this->getprojectorder($item['id'])}</div>
-				 </div>
-				 
-                {if time() < $item['deal_days']}
-                <div class="c_lv" style=" line-height:40px;height:40px; text-align:center;color:#fff;border-radius:2px;margin-bottom:12px;margin-left:25px;margin-right:25px; font-size:1.4rem;background:#52C580  ">免费申请</div>
-                {else}
-                <div class="c_lv" style=" line-height:40px;height:40px; text-align:center;color:#fff;border-radius:2px;margin-bottom:12px;margin-left:25px;margin-right:25px; font-size:1.4rem;background:#52C580  ">查看详情</div>
-                {/if} 
-
-				 
-				 
-			</div>
-			
-           
-            <!--2-->
-            
-            <div class="clear"></div>
-            <!--3-->
-            
         </div>
-    </a>
-</section>
-{/loop}
-   
-<div class="blank5"></div>
+        {/loop}
+    </div>
+</div>
 
 </section>
 <script type="text/javascript">
