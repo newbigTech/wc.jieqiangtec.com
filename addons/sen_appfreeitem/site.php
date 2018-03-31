@@ -28,6 +28,7 @@ class sen_appfreeitemModuleSite extends WeModuleSite
         echo json_encode($data);
     }
 
+    // 发布产品
     public function doMobilePublish()
     {
         global $_W, $_GPC;
@@ -50,10 +51,12 @@ class sen_appfreeitemModuleSite extends WeModuleSite
                 }
             }
             if ($_GPC['ajax'] == 1) {
+                /*// TODO debug
                 if ($settings['ispublish'] != 1) {
-                    die(json_encode(array('status' => 0, 'info' => '本站暂未开放产品发布', 'jump' => $this->createMobileUrl('list'))));
-                }
-                $insert = array('weid' => $_W['uniacid'], 'from_user' => $_W['openid'], 'displayorder' => 0, 'pcate' => intval($_GPC['cate_id']), 'title' => $_GPC['name'], 'limit_price' => intval($_GPC['limit_price']), 'deal_days' => intval($_GPC['deal_days']), 'thumb' => $_GPC['image'], 'brief' => $_GPC['brief'], 'content' => $_GPC['descript'], 'lianxiren' => $_GPC['lianxiren'], 'qq' => $_GPC['qq'], 'status' => 0, 'createtime' => time(),);
+                    die(json_encode(array('status' => 0, 'info' => '本站暂未开放产品发布111', 'jump' => $this->createMobileUrl('list'))));
+                }*/
+//                $insert = array('weid' => $_W['uniacid'], 'from_user' => $_W['openid'], 'displayorder' => 0, 'pcate' => intval($_GPC['cate_id']), 'title' => $_GPC['name'], 'limit_price' => intval($_GPC['limit_price']), 'deal_days' => intval($_GPC['deal_days']), 'thumb' => $_GPC['image'], 'brief' => $_GPC['brief'], 'content' => $_GPC['descript'], 'lianxiren' => $_GPC['lianxiren'], 'qq' => $_GPC['qq'], 'status' => 0, 'createtime' => time(),);
+                $insert = array('weid' => $_W['uniacid'], 'from_user' => $_W['openid'], 'displayorder' => 0, 'pcate' => intval($_GPC['cate_id']), 'title' => $_GPC['name'], 'price' => intval($_GPC['limit_price']), 'deal_days' => time(), 'thumb' => $_GPC['image'], 'content' => $_GPC['descript'], 'lianxiren' => $_GPC['lianxiren'], 'tel' => $_GPC['tel'], 'status' => 0, 'createtime' => time(),);
                 if (!empty($project_id)) {
                     unset($insert['createtime']);
                     unset($insert['status']);
@@ -79,9 +82,10 @@ class sen_appfreeitemModuleSite extends WeModuleSite
                 }
             }
             if ($_GPC['ajax'] == 1) {
+                /*// TODO debug
                 if ($settings['ispublish'] != 1) {
-                    die(json_encode(array('status' => 0, 'info' => '本站暂未开放产品发布', 'jump' => $this->createMobileUrl('list'))));
-                }
+                    die(json_encode(array('status' => 0, 'info' => '本站暂未开放产品发布222', 'jump' => $this->createMobileUrl('list'))));
+                }*/
                 $insert = array('weid' => $_W['uniacid'], 'pid' => $project_id, 'displayorder' => 0, 'price' => $_GPC['price'], 'description' => $_GPC['description'], 'thumb' => $_GPC['image'][0], 'limit_num' => intval($_GPC['limit_user']), 'return_type' => $_GPC['is_delivery'] == 0 ? 2 : 1, 'delivery_fee' => intval($_GPC['delivery_fee']), 'repaid_day' => intval($_GPC['repaid_day']), 'createtime' => time(),);
                 if (!empty($item_id)) {
                     unset($insert['createtime']);
@@ -90,7 +94,7 @@ class sen_appfreeitemModuleSite extends WeModuleSite
                     pdo_insert('sen_appfreeitem_project_item', $insert);
                     $item_id = pdo_insertid();
                 }
-                die(json_encode(array('status' => 1, 'info' => "保存成功", 'jump' => $this->createMobileUrl('Publish', array('op' => 'post2', 'project_id' => $project_id)))));
+                die(json_encode(array('status' => 1, 'info' => "保存成功,等待审核", 'jump' => $this->createMobileUrl('Publish', array('op' => 'post2', 'project_id' => $project_id)))));
             }
         } elseif ($operation == 'delete_item') {
             $project_id = intval($_GPC['project_id']);
@@ -120,6 +124,7 @@ class sen_appfreeitemModuleSite extends WeModuleSite
                 die(json_encode(array('status' => 1, 'info' => '提交成功，管理员正在审核中', 'jump' => $this->createMobileUrl('list'))));
             }
         }
+
         include $this->template('publish');
     }
 
@@ -145,6 +150,7 @@ class sen_appfreeitemModuleSite extends WeModuleSite
         include $this->template('tip');
     }
 
+    // 后台报告
     public function doWebReport()
     {
         global $_W, $_GPC;
@@ -186,6 +192,7 @@ class sen_appfreeitemModuleSite extends WeModuleSite
                 message("抱歉，测评不存在!", referer(), "error");
             }
             $item['images'] = iunserializer($item['images']);
+            // var_dump($item);exit;
             if (checksubmit()) {
                 $data = array('content' => $_GPC['content'], 'is_display' => intval($_GPC['is_display']),);
                 if (!empty($new['id'])) {
@@ -389,6 +396,9 @@ class sen_appfreeitemModuleSite extends WeModuleSite
             $sql = "SELECT r.*,o.ordersn,p.title,p.thumb,m.nickname,m.avatar FROM ims_sen_appfreeitem_report as r,ims_sen_appfreeitem_order as o,ims_sen_appfreeitem_project as p,ims_mc_members as m where r.is_display=1 and r.oid=o.id and r.pid=p.id and r.from_user=m.uid ORDER BY p.id DESC";
 //            $lists = pdo_fetchall($sql);
             $rlist = pdo_fetchall($sql);
+            foreach ($rlist as $key=>$val){
+                $rlist[$key]['images'] = iunserializer($val['images']);
+            }
             // var_dump('$rlist==',$rlist);exit;
             $title = '试用秀';
         } elseif ($operation == 'display') {
@@ -645,9 +655,9 @@ class sen_appfreeitemModuleSite extends WeModuleSite
     {
         global $_W, $_GPC;
 
-        /*// TODO debug
+        // TODO debug
         $_W['fans']['from_user'] = 'oMaz50jp9G_xRU_JT1jMaxuS5KdY';
-        $_W['fans']['nickname'] = 'jieqiang';*/
+        $_W['fans']['nickname'] = 'jieqiang';
 
         if (empty($_W['fans']['nickname'])) {
             mc_oauth_userinfo();
@@ -768,6 +778,7 @@ class sen_appfreeitemModuleSite extends WeModuleSite
         include $this->template('confirm');
     }
 
+    // 发布报告
     public function doMobileBaogao()
     {
         global $_W, $_GPC;
@@ -776,6 +787,29 @@ class sen_appfreeitemModuleSite extends WeModuleSite
         }
         $id = intval($_GPC['orderid']);
         $openid = $_W['fans']['from_user'];
+
+
+        // 报告详情 report_id
+        if (intval($_GPC['report_id'])){
+            $report_id = intval($_GPC['report_id']);
+            $item = pdo_fetch("SELECT r.*,o.ordersn,p.title,m.nickname,m.avatar FROM ims_sen_appfreeitem_report as r,ims_sen_appfreeitem_order as o,ims_sen_appfreeitem_project as p,ims_mc_members as m where r.id =" . $report_id . " and r.oid=o.id and r.pid=p.id and r.from_user=m.uid ");
+
+            /*
+            if (empty($item)) {
+                $item = array('is_display' => 1,);
+            }
+
+            $item = pdo_fetch("SELECT * FROM " . tablename('sen_appfreeitem_report') . " WHERE weid = :weid and id = :id", array(':weid' => $_W['uniacid'], ':id' => $report_id));*/
+            if (empty($item)) {
+                message("抱歉，测评不存在!", referer(), "error");
+            }
+            $item['images'] = iunserializer($item['images']);
+            // var_dump($item,$new);
+            include $this->template('baogao_detail');
+            exit;
+        }
+
+
         $order = pdo_fetch("SELECT * FROM " . tablename('sen_appfreeitem_order') . " WHERE id = :id", array(':id' => $id));
         if (empty($order)) {
             message("抱歉，该申请不存在!", referer(), "error");
@@ -790,6 +824,8 @@ class sen_appfreeitemModuleSite extends WeModuleSite
         }
         unset($d);
         if (checksubmit('submit')) {
+
+
             $data = array();
             $data['weid'] = $_W['uniacid'];
             $data['from_user'] = $uid['uid'];
@@ -798,18 +834,32 @@ class sen_appfreeitemModuleSite extends WeModuleSite
             $data['pid'] = $order['pid'];
             $data['content'] = $_GPC['content'];
             $data['tijiaotime'] = date('y-m-d h:i:s', time());
-            if (!empty($_GPC['thumb'])) {
+
+            if (empty($data['rtitle'])) {
+                message("请填写标题!", referer(), "error");
+            }
+
+            /*if (!empty($_GPC['thumb'])) {
                 foreach ($_GPC['thumb'] as $thumb) {
                     $th[] = save_media(tomedia($thumb));
                 }
                 $data['images'] = iserializer($th);
+            }*/
+            if (!empty($_GPC['image'])) {
+                foreach ($_GPC['image'] as $thumb) {
+                    $th[] = save_media(tomedia($thumb));
+                }
+                $data['images'] = iserializer($th);
             }
+
+//            var_dump($_REQUEST,$data);exit;
             pdo_insert('sen_appfreeitem_report', $data);
             pdo_update('sen_appfreeitem_order', array('status' => 5));
             message('报告提交成功,返回首页...', $this->createMobileUrl('list'), 'success');
         }
         $carttotal = $this->getCartTotal();
-        $pagetitle = "报告提交";
+        $pagetitle = $title = "报告提交";
+
         include $this->template('baogao');
     }
 
@@ -1048,7 +1098,7 @@ class sen_appfreeitemModuleSite extends WeModuleSite
     {
         global $_W;
         // TODO debug
-        // $_W['openid'] = 'oMaz50jp9G_xRU_JT1jMaxuS5KdY';
+         $_W['openid'] = 'oMaz50jp9G_xRU_JT1jMaxuS5KdY';
         if (empty($_W['openid'])) {
             if (!empty($_W['account']['subscribeurl'])) {
                 message('请先关注公众号' . $_W['account']['name'] . '(' . $_W['account']['account'] . ')', $_W['account']['subscribeurl'], 'error');
@@ -1696,7 +1746,7 @@ class sen_appfreeitemModuleSite extends WeModuleSite
     {
         global $_W, $_GPC;
         // TODO debug
-        // $_W['fans']['from_user'] = 'oMaz50jp9G_xRU_JT1jMaxuS5KdY';
+        $_W['fans']['from_user'] = 'oMaz50jp9G_xRU_JT1jMaxuS5KdY';
 
         $this->checkAuth();
         $carttotal = $this->getCartTotal();

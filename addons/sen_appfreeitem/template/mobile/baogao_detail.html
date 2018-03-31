@@ -1,0 +1,98 @@
+{template 'header'}
+
+<style type="text/css">
+.mainColor {
+    background: #14c682 !important;
+}
+
+.header .m {
+    width: 100%;
+    height: 50px;
+    line-height: 50px;
+    text-align: center;
+    color: white;
+    font-size: 18px;
+}
+</style>
+
+<div class="wraper">
+<script type="text/javascript" src="{JS_PATH}deal_publish.js"></script>
+<script type="text/javascript" src="{JS_PATH}ajaxupload.js"></script>
+<script type="text/javascript">
+    var MAX_FILE_SIZE = "1MB";
+    var UPLOAD_URL ='./index.php?i='+sysinfo.uniacid+'&j='+sysinfo.acid+'&c=utility&a=file&do=upload&type=image' ;
+	var UPLOAD_SWF='{JS_PATH}plupload/Moxie.swf';
+	var UPLOAD_XAP='{JS_PATH}plupload/Moxie.xap';
+	var ALLOW_IMAGE_EXT= "gif,jpg,jpeg,png,bmp";
+	var MAX_IMAGE_SIZE= "3MB";
+	function get_file_fun(name){
+		$("#"+name).ui_upload({multi:false,
+		FileUploaded:function(ajaxobj){
+ 				if(ajaxobj.error==1)
+				{
+					$.show_tip(ajaxobj.info);
+				}else{
+					{if IMS_VERSION == '0.6'}
+					$("#"+name+"_url").val(ajaxobj.result);
+					$("#"+name+"_image").attr('src',tomedia(ajaxobj.result)).attr({width:"80",height:"80"});
+					{else}
+					$("#"+name+"_url").val(ajaxobj.attachment);
+					$("#"+name+"_image").attr('src',ajaxobj.url).attr({width:"80",height:"80"});
+					{/if}
+					$(".fileupload .text").remove();
+ 				}
+			},Error:function(error){
+			$.show_tip(error.message);
+ 		}});
+	}
+
+</script>
+<div class="blank15"></div>
+<section class="project_add">
+	<div id="titlebar" class="header mainColor">
+        <div class="m">
+            <span style="font-size: 18px">{$item['title']}--评测</span></div>
+        <div class="r">
+            <a href="#my-menu"></a>
+        </div>
+    </div>
+	<div class="ul_block">
+		<ul>
+			<li class="webkit-box">
+				<!-- <input maxlength="200" name="rtitle" spellcheck="false" class="textbox webkit-box-flex" type="text" placeholder="标题，4-25个字" value="{$item['rtitle']}" > -->
+				{$item['rtitle']}:{php echo strip_tags($item['content'])}
+			</li>
+
+			<!-- <li class="textarea webkit-box">
+				<textarea placeholder="想对这动态说点啥，10-700个字" name="content" id="content" class="textareabox webkit-box-flex" style="padding:10px;" >{php echo strip_tags($item['content'])}</textarea>
+				{php echo strip_tags($item['content'])}
+			</li> -->
+
+
+			<li class="uploadbox">
+				<!-- <label class="input_lable mr5">产品封面</label> -->
+				<div class="blank0"></div>
+				<label class="fileupload f_l mr10">
+					<div class="pic_show">
+					{loop $item['images'] $i}
+                        <img src="{$i}" style="width:100px;height:100%;">
+                    {/loop}
+					</div>
+				</label>
+				
+			</li>
+
+		</ul>
+		<div class="blank10"></div>
+	</div>
+
+</section>
+<div class="blank15"></div>
+<script type="text/javascript">
+	$(function(){
+		get_file_fun("image_file");
+	});
+</script>
+</div>
+{template 'footerbar'}
+{template 'footer'}

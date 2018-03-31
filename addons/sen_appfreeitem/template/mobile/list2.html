@@ -155,8 +155,15 @@ border-radius: 5px;
         <span class="pull-right">{$item['tijiaotime']}</span>
     </div>
     <div class="myoder-detail">
-        <a href="{php echo $this->createMobileUrl('detail', array('id' => $item['pid']))}">
-            <img src="{php echo tomedia($item['thumb'])}" style="width:100px;height:100px;">产品名称：{$item['title']}                        <br>{$item['rtitle']}:{$item['content']}</a> 
+        <a href="{php echo $this->createMobileUrl('baogao', array('report_id' => $item['id']))}">
+            <img src="{php echo tomedia($item['thumb'])}" style="width:100px;height:100px;">
+            <!-- <img src="{$item['images'][0]}" style="width:100px;height:100px;"> -->
+
+            产品名称：{$item['title']}                        <br>{$item['rtitle']}:{$item['content']}</a> <br>
+            {loop $item['images'] $i}
+                <img src="{$i}" style="width:100px;height:100%;">
+            {/loop}
+
     </div>
 
 </div>
