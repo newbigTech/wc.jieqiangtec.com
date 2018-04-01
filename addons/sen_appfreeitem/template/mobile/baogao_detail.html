@@ -13,38 +13,21 @@
     color: white;
     font-size: 18px;
 }
+
+.report	{
+	background-color:#fff;
+	padding: 5px 0;
+	margin: 0 10px;
+    /*font-size: 12px;*/
+}
+
+.label-info {
+    background-color: #5bc0de;
+}
+
 </style>
 
 <div class="wraper">
-<script type="text/javascript" src="{JS_PATH}deal_publish.js"></script>
-<script type="text/javascript" src="{JS_PATH}ajaxupload.js"></script>
-<script type="text/javascript">
-    var MAX_FILE_SIZE = "1MB";
-    var UPLOAD_URL ='./index.php?i='+sysinfo.uniacid+'&j='+sysinfo.acid+'&c=utility&a=file&do=upload&type=image' ;
-	var UPLOAD_SWF='{JS_PATH}plupload/Moxie.swf';
-	var UPLOAD_XAP='{JS_PATH}plupload/Moxie.xap';
-	var ALLOW_IMAGE_EXT= "gif,jpg,jpeg,png,bmp";
-	var MAX_IMAGE_SIZE= "3MB";
-	function get_file_fun(name){
-		$("#"+name).ui_upload({multi:false,
-		FileUploaded:function(ajaxobj){
- 				if(ajaxobj.error==1)
-				{
-					$.show_tip(ajaxobj.info);
-				}else{
-					{if IMS_VERSION == '0.6'}
-					$("#"+name+"_url").val(ajaxobj.result);
-					$("#"+name+"_image").attr('src',tomedia(ajaxobj.result)).attr({width:"80",height:"80"});
-					{else}
-					$("#"+name+"_url").val(ajaxobj.attachment);
-					$("#"+name+"_image").attr('src',ajaxobj.url).attr({width:"80",height:"80"});
-					{/if}
-					$(".fileupload .text").remove();
- 				}
-			},Error:function(error){
-			$.show_tip(error.message);
- 		}});
-	}
 
 </script>
 <div class="blank15"></div>
@@ -56,22 +39,14 @@
             <a href="#my-menu"></a>
         </div>
     </div>
-	<div class="ul_block">
+	<!-- <div class="ul_block">
 		<ul>
 			<li class="webkit-box">
-				<!-- <input maxlength="200" name="rtitle" spellcheck="false" class="textbox webkit-box-flex" type="text" placeholder="标题，4-25个字" value="{$item['rtitle']}" > -->
-				{$item['rtitle']}:{php echo strip_tags($item['content'])}
+				
+				{$item['rtitle']}
 			</li>
 
-			<!-- <li class="textarea webkit-box">
-				<textarea placeholder="想对这动态说点啥，10-700个字" name="content" id="content" class="textareabox webkit-box-flex" style="padding:10px;" >{php echo strip_tags($item['content'])}</textarea>
-				{php echo strip_tags($item['content'])}
-			</li> -->
-
-
 			<li class="uploadbox">
-				<!-- <label class="input_lable mr5">产品封面</label> -->
-				<div class="blank0"></div>
 				<label class="fileupload f_l mr10">
 					<div class="pic_show">
 					{loop $item['images'] $i}
@@ -79,19 +54,131 @@
                     {/loop}
 					</div>
 				</label>
-				
 			</li>
 
+			<li class="webkit-box">
+				{php echo $item['content']}
+			</li>
 		</ul>
 		<div class="blank10"></div>
+	</div> -->
+
+	<div class="report">
+		<div>
+			<h2>{$item['rtitle']}</h2>
+		</div>
+		<div class="blank10"></div>
+		<div class="uploadbox">
+			<label class="fileupload f_l mr10">
+				<div class="pic_show">
+				{loop $item['images'] $i}
+                    <img src="{$i}" style="width:100px;height:100%;">
+                {/loop}
+				</div>
+			</label>
+		</div>
+		<div class="blank10"></div>
+		<span>
+			{$item['content']}
+		</span>
+		
 	</div>
+	<div class="blank10"></div>
+
+	<!-- 操作 -->
+	<div class="operate">
+		<label data='{$item['zan']}' class='label label-default {if $item['zan']==1}label-info{/if}' onclick="setProperty(this,{$item['id']},'2')">赞(<span class="zan_num">{$item['zan_num']}</span>)</label>
+
+		<label data='{$item['collect']}' class='label label-default {if $item['collect']==1}label-info{/if}' onclick="setProperty(this,{$item['id']},'1')">藏(<span class="collect_num">{$item['collect_num']}</span>)</label>
+
+		<label data='{$item['reply_num']}' class='label label-default {if $item['isrecommand']==1}label-info{/if}' ">回复(<span class="reply_num">{$item['reply_num']}</span>)</label>
+	</div>
+	<div class="blank10"></div>
+
+	<!-- 评论 -->
+	<div class="reply">
+		<textarea name="content" id="reply">
+			
+		</textarea>
+		<label data='{$item['collect']}' class='button' onclick="reply()">
+			回复
+		</label>
+	</div>
+
+	<!-- 回复列表 -->
+	<div class="reply_list">
+		{loop $reply_list $reply}
+		<div class="myoder img-rounded">
+		    <div class="myoder-hd">
+		        <span class="pull-left">{$reply['nickname']}回复：</span>
+		        <span class="pull-right">{$reply['tijiaotime']}</span>
+		    </div>
+		    <div class="myoder-detail">
+		        <h3 class="p1">{$reply['content']}</h3>
+		    </div>
+
+		</div>
+		{/loop}
+	</div>
+
 
 </section>
 <div class="blank15"></div>
 <script type="text/javascript">
-	$(function(){
-		get_file_fun("image_file");
-	});
+	function reply(){
+		$.post("{php echo $this->createMobileUrl('baogao')}"
+			,{report_id:{$item['id']},pid:{$item['pid']},content:$('#reply').val()}
+			,function(d){
+				// 回复成功
+				if(d.result==1){
+					$('.reply_num').html(parseInt($('.reply_num').html())+1);
+					$.show_tip(d.msg);
+					// 刷新当前页面
+					location.reload();
+				}
+			}
+			,"json"
+		);
+	}
+
+
+	function setProperty(obj,id,type){
+		// $(obj).html($(obj).html() + "...");
+		$.post("{php echo $this->createMobileUrl('setreportproperty')}"
+			,{id:id,type:type, data: obj.getAttribute("data")}
+			,function(d){
+				// $(obj).html($(obj).html().replace("...",""));
+				$(obj).attr("data",d.data);
+				// 更改原有值 收藏或点赞成功
+				if(d.data==1){
+					if (type==1) {
+						$('.collect_num').html(parseInt($('.collect_num').html())+1);
+						$.show_tip("收藏成功");
+					}else{
+						$('.zan_num').html(parseInt($('.zan_num').html())+1);
+						$.show_tip("点赞成功");
+					}
+					
+				}else{
+					if (type==1) {
+						$('.collect_num').html(parseInt($('.collect_num').html())-1);
+						$.show_tip("取消收藏成功");
+					}else{
+						$('.zan_num').html(parseInt($('.zan_num').html())-1);
+						$.show_tip("取消点赞成功");
+					}
+				}
+				
+				if(d.result==1){
+					$(obj).toggleClass("label-info");
+				}
+			}
+			,"json"
+		);
+	}
+
+
+
 </script>
 </div>
 {template 'footerbar'}

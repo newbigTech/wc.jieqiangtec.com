@@ -183,7 +183,7 @@ class sen_appfreeitemModuleSite extends WeModuleSite
         $operation = !empty($_GPC['op']) ? $_GPC['op'] : 'display';
         if ($operation == 'post') {
             $id = intval($_GPC['id']);
-            $new = pdo_fetch("SELECT r.*,o.ordersn,p.title,m.nickname,m.avatar FROM ims_sen_appfreeitem_report as r,ims_sen_appfreeitem_order as o,ims_sen_appfreeitem_project as p,ims_mc_members as m where r.id =" . $id . " and r.oid=o.id and r.pid=p.id and r.from_user=m.uid ");
+            $new = pdo_fetch("SELECT r.*,o.ordersn,p.title,m.nickname,m.avatar FROM ims_mc_mapping_fans f, ims_sen_appfreeitem_report as r,ims_sen_appfreeitem_order as o,ims_sen_appfreeitem_project as p,ims_mc_members as m where r.id =" . $id . " and r.oid=o.id and r.pid=p.id AND r.from_user = f.openid AND f.uid = m.uid ");
             if (empty($new)) {
                 $new = array('is_display' => 1,);
             }
@@ -223,7 +223,7 @@ class sen_appfreeitemModuleSite extends WeModuleSite
             }
             $pindex = max(1, intval($_GPC['page']));
             $psize = 20;
-            $sql = "SELECT r.*,o.ordersn,p.title,m.nickname,m.avatar FROM ims_sen_appfreeitem_report as r,ims_sen_appfreeitem_order as o,ims_sen_appfreeitem_project as p,ims_mc_members as m " . $condition . " and r.oid=o.id and r.pid=p.id and r.from_user=m.uid ORDER BY id DESC LIMIT " . ($pindex - 1) * $psize . ',' . $psize;
+            $sql = "SELECT r.*,o.ordersn,p.title,m.nickname,m.avatar FROM ims_mc_mapping_fans f,ims_sen_appfreeitem_report as r,ims_sen_appfreeitem_order as o,ims_sen_appfreeitem_project as p,ims_mc_members as m " . $condition . " and r.oid=o.id and r.pid=p.id AND r.from_user = f.openid AND f.uid = m.uid ORDER BY id DESC LIMIT " . ($pindex - 1) * $psize . ',' . $psize;
             $news = pdo_fetchall($sql, $params);
             $total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('sen_appfreeitem_report') . $condition, $params);
             $pager = pagination($total, $pindex, $psize);
@@ -393,10 +393,10 @@ class sen_appfreeitemModuleSite extends WeModuleSite
 
         $operation = !empty($_GPC['op']) ? $_GPC['op'] : 'display';
         if ($operation == 'jpcp') {
-            $sql = "SELECT r.*,o.ordersn,p.title,p.thumb,m.nickname,m.avatar FROM ims_sen_appfreeitem_report as r,ims_sen_appfreeitem_order as o,ims_sen_appfreeitem_project as p,ims_mc_members as m where r.is_display=1 and r.oid=o.id and r.pid=p.id and r.from_user=m.uid ORDER BY p.id DESC";
+            $sql = "SELECT r.*,o.ordersn,p.title,p.thumb,m.nickname,m.avatar FROM ims_mc_mapping_fans f,ims_sen_appfreeitem_report as r,ims_sen_appfreeitem_order as o,ims_sen_appfreeitem_project as p,ims_mc_members as m where r.is_display=1 and r.parent_id=0 and r.oid=o.id and r.pid=p.id AND r.from_user = f.openid AND f.uid = m.uid ORDER BY  r.id DESC, p.id DESC";
 //            $lists = pdo_fetchall($sql);
             $rlist = pdo_fetchall($sql);
-            foreach ($rlist as $key=>$val){
+            foreach ($rlist as $key => $val) {
                 $rlist[$key]['images'] = iunserializer($val['images']);
             }
             // var_dump('$rlist==',$rlist);exit;
@@ -778,6 +778,67 @@ class sen_appfreeitemModuleSite extends WeModuleSite
         include $this->template('confirm');
     }
 
+    // 设置属性 收藏，点赞，评论
+    public function doMobileSetReportProperty()
+    {
+        global $_GPC, $_W;
+        // TODO debug
+        $_W['openid'] = 'oMaz50jp9G_xRU_JT1jMaxuS5KdY';
+
+        // var_dump($_W);
+        $id = intval($_GPC['id']);
+        $type = $_GPC['type'];
+        $data = intval($_GPC['data']);
+        if (in_array($type, array('1', '2'))) {
+            // 之前有记录
+            if ($data) {
+                pdo_update("sen_appfreeitem_operate", array("is_cancel" => 1), array("report_id" => $id, "weid" => $_W['uniacid'], "type" => $type, "from_user" => $_W['openid']));
+
+                if ($type == 1) {
+//                    pdo_update("sen_appfreeitem_report", array("collect_num" => "collect_num  "-1), array("id" => $id, "weid" => $_W['uniacid']));
+                    pdo_run("UPDATE `ims_sen_appfreeitem_report`
+                                SET `collect_num` = collect_num -1
+                                WHERE
+                                    `id` = '{$id}'
+                                AND `weid` = '{$_W['uniacid']}';");
+
+                } else {
+//                    pdo_update("sen_appfreeitem_report", array("zan_num" => "zan_num  "-1), array("id" => $id, "weid" => $_W['uniacid']));
+                    pdo_run("UPDATE `ims_sen_appfreeitem_report`
+                                SET `zan_num` = zan_num -1
+                                WHERE
+                                    `id` = '{$id}'
+                                AND `weid` = '{$_W['uniacid']}';");
+                }
+
+                $data = 0;
+            } else {
+                pdo_insert('sen_appfreeitem_operate', array("is_cancel" => 0, "report_id" => $id, "weid" => $_W['uniacid'], "type" => $type, "from_user" => $_W['openid'], 'createtime' => time()));
+
+                if ($type == 1) {
+//                    pdo_update("sen_appfreeitem_report", array("collect_num" => "collect_num  "+1 ), array("id" => $id, "weid" => $_W['uniacid']));
+                    pdo_run("UPDATE `ims_sen_appfreeitem_report`
+                                SET `collect_num` = collect_num +1
+                                WHERE
+                                    `id` = '{$id}'
+                                AND `weid` = '{$_W['uniacid']}';");
+                } else {
+//                    pdo_update("sen_appfreeitem_report", array("zan_num" => "zan_num  "+1), array("id" => $id, "weid" => $_W['uniacid']));
+                    pdo_run("UPDATE `ims_sen_appfreeitem_report`
+                                SET `zan_num` = zan_num +1
+                                WHERE
+                                    `id` = '{$id}'
+                                AND `weid` = '{$_W['uniacid']}';");
+                }
+                $data = 1;
+            }
+            die(json_encode(array("result" => 1, "data" => $data)));
+        }
+
+        die(json_encode(array("result" => 0)));
+    }
+
+
     // 发布报告
     public function doMobileBaogao()
     {
@@ -785,30 +846,83 @@ class sen_appfreeitemModuleSite extends WeModuleSite
         if (empty($_W['fans']['nickname'])) {
             mc_oauth_userinfo();
         }
+        // TODO debug
+        $_W['fans']['from_user'] = 'oMaz50jp9G_xRU_JT1jMaxuS5KdY';
+
         $id = intval($_GPC['orderid']);
         $openid = $_W['fans']['from_user'];
-
-
         // 报告详情 report_id
-        if (intval($_GPC['report_id'])){
+        if (intval($_GPC['report_id'])) {
             $report_id = intval($_GPC['report_id']);
-            $item = pdo_fetch("SELECT r.*,o.ordersn,p.title,m.nickname,m.avatar FROM ims_sen_appfreeitem_report as r,ims_sen_appfreeitem_order as o,ims_sen_appfreeitem_project as p,ims_mc_members as m where r.id =" . $report_id . " and r.oid=o.id and r.pid=p.id and r.from_user=m.uid ");
 
-            /*
-            if (empty($item)) {
-                $item = array('is_display' => 1,);
+            // 回复
+            if ($_GPC['content']) {
+                $data = array();
+                $data['weid'] = $_W['uniacid'];
+                $data['from_user'] = $openid;
+                $data['oid'] = $id;
+                $data['pid'] = $_GPC['pid'];
+                $data['content'] = $_GPC['content'];
+                $data['tijiaotime'] = date('y-m-d h:i:s', time());
+                $data['parent_id'] = $report_id;
+
+                pdo_insert('sen_appfreeitem_report', $data);
+                pdo_run("UPDATE `ims_sen_appfreeitem_report`
+                                SET `reply_num` = reply_num +1
+                                WHERE
+                                    `id` = '{$report_id}'
+                                AND `weid` = '{$_W['uniacid']}';");
+
+                die(json_encode(array("result" => 1, 'msg' => '回复成功')));
+                exit;
             }
+            /*$item = pdo_fetch("SELECT r.*,o.ordersn,p.title,p.id as project_id,m.nickname,m.avatar FROM ims_sen_appfreeitem_report as r,ims_sen_appfreeitem_order as o,ims_sen_appfreeitem_project as p,ims_mc_members as m where r.id =" . $report_id . " and r.oid=o.id and r.pid=p.id and r.from_user=m.uid ");*/
 
-            $item = pdo_fetch("SELECT * FROM " . tablename('sen_appfreeitem_report') . " WHERE weid = :weid and id = :id", array(':weid' => $_W['uniacid'], ':id' => $report_id));*/
+            $item = pdo_fetch("SELECT r.*,p.title,p.id as project_id FROM ims_sen_appfreeitem_report as r ,ims_sen_appfreeitem_project as p where r.id =" . $report_id . " and  r.pid=p.id AND parent_id=0 ");
+
             if (empty($item)) {
                 message("抱歉，测评不存在!", referer(), "error");
             }
             $item['images'] = iunserializer($item['images']);
-            // var_dump($item,$new);
+
+            // 判断是否收藏和点赞
+            $operates = pdo_fetchall("SELECT * FROM " . tablename('sen_appfreeitem_operate') . " WHERE weid = :weid and report_id = :report_id and from_user = :from_user and is_cancel = 0 ", array(':weid' => $_W['uniacid'], ':report_id' => $report_id, ':from_user' => $openid));
+            // 类型：1 collect收藏  2 zan 点赞
+            $item['collect'] = $item['zan'] = 0;
+            foreach ($operates as $operate) {
+                if ($operate['type'] == 1) {
+                    $item['collect'] = 1;
+                    break;
+                }
+            }
+            foreach ($operates as $operate) {
+                if ($operate['type'] == 2) {
+                    $item['zan'] = 1;
+                    break;
+                }
+            }
+
+            $sql = "SELECT
+                        r.*, m.avatar,m.nickname
+                    FROM
+                        ims_sen_appfreeitem_report AS r,
+                        ims_mc_members AS m,
+                        ims_mc_mapping_fans f
+                    WHERE
+                        (r.is_display = 1 OR r.from_user= '{$_W['fans']['from_user']}')
+                    AND r.parent_id > 0
+                    AND r.from_user = f.openid
+                    AND f.uid = m.uid
+                    AND r.parent_id=$report_id
+                    ORDER BY
+                        r.id DESC";
+//            $lists = pdo_fetchall($sql);
+            $reply_list = pdo_fetchall($sql);
+
+            $title = "测评详情";
             include $this->template('baogao_detail');
             exit;
         }
-
 
         $order = pdo_fetch("SELECT * FROM " . tablename('sen_appfreeitem_order') . " WHERE id = :id", array(':id' => $id));
         if (empty($order)) {
@@ -818,17 +932,16 @@ class sen_appfreeitemModuleSite extends WeModuleSite
             message("抱歉，该申请还不能提交报告!", referer(), "error");
         }
         $pd = pdo_fetch("SELECT * FROM " . tablename('sen_appfreeitem_report') . " WHERE from_user = :from_user and oid = :oid", array(':from_user' => $openid, ':oid' => $id));
-        $uid = pdo_fetch("SELECT * FROM " . tablename('mc_mapping_fans') . " WHERE uniacid = '{$_W['uniacid']}' and openid = '$openid'");
+        // $uid = pdo_fetch("SELECT * FROM " . tablename('mc_mapping_fans') . " WHERE uniacid = '{$_W['uniacid']}' and openid = '$openid'");
         if ($pd['id'] > 0) {
             message("抱歉，该申请您已经提交过报告了!", referer(), "error");
         }
         unset($d);
         if (checksubmit('submit')) {
-
-
             $data = array();
             $data['weid'] = $_W['uniacid'];
-            $data['from_user'] = $uid['uid'];
+            // $data['from_user'] = $uid['uid'];
+            $data['from_user'] = $openid;
             $data['rtitle'] = $_GPC['rtitle'];
             $data['oid'] = $id;
             $data['pid'] = $order['pid'];
@@ -861,22 +974,6 @@ class sen_appfreeitemModuleSite extends WeModuleSite
         $pagetitle = $title = "报告提交";
 
         include $this->template('baogao');
-    }
-
-    public function doMobileBaogaodetail()
-    {
-        global $_GPC, $_W;
-        $id = intval($_GPC['id']);
-        $item = pdo_fetch("SELECT * FROM " . tablename('sen_appfreeitem_report') . " WHERE weid = :weid and id = :id", array(':weid' => $_W['uniacid'], ':id' => $id));
-        if (empty($item)) {
-            message("抱歉，测评不存在!", referer(), "error");
-        }
-        $item['images'] = iunserializer($item['images']);
-        $itemp = pdo_fetch("SELECT * FROM " . tablename('sen_appfreeitem_project') . " WHERE id = :id", array(':id' => $item['pid']));
-        $sql = "SELECT r.*,o.ordersn,p.title,p.thumb,m.nickname,m.avatar FROM ims_sen_appfreeitem_report as r,ims_sen_appfreeitem_order as o,ims_sen_appfreeitem_project as p,ims_mc_members as m where is_display=1 and r.oid=o.id and r.pid=p.id and r.from_user=m.uid and r.id=" . $id . " ORDER BY p.id DESC";
-        $lists = pdo_fetch($sql);
-        $title = "测评详情";
-        include $this->template('baogaodetail');
     }
 
     public function doMobileMyCart()
@@ -1098,7 +1195,7 @@ class sen_appfreeitemModuleSite extends WeModuleSite
     {
         global $_W;
         // TODO debug
-         $_W['openid'] = 'oMaz50jp9G_xRU_JT1jMaxuS5KdY';
+        $_W['openid'] = 'oMaz50jp9G_xRU_JT1jMaxuS5KdY';
         if (empty($_W['openid'])) {
             if (!empty($_W['account']['subscribeurl'])) {
                 message('请先关注公众号' . $_W['account']['name'] . '(' . $_W['account']['account'] . ')', $_W['account']['subscribeurl'], 'error');
@@ -1541,9 +1638,12 @@ class sen_appfreeitemModuleSite extends WeModuleSite
         include $this->template('project');
     }
 
+
+    // 设置属性
     public function doWebSetProjectProperty()
     {
         global $_GPC, $_W;
+        // var_dump(111);exit;
         if ($_GPC['op'] == 'checkproject') {
             $project_id = intval($_GPC['project_id']);
             $status = intval($_GPC['status']);

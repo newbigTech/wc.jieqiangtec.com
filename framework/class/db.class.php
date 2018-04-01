@@ -105,8 +105,13 @@ class DB
         if (in_array(strtolower(substr($sql, 0, 6)), array('update', 'delete', 'insert', 'replac'))) {
             $this->cacheNameSpace($sql, true);
         }
+
         $starttime = microtime(TRUE);
         if (empty($params)) {
+            $endtime = microtime(TRUE);
+            $runtime = round(($endtime - $starttime), 3);
+            WeUtility::logging('TODO debug3 empty($params) runtime=' . $runtime . 's', array('file' => 'db.class.php query() ', '$sql' => $sql));
+
             $result = $this->pdo->exec($sql);
             if (PDO_DEBUG) {
                 $info = array();
@@ -514,6 +519,7 @@ class DB
             }
             $num++;
         }
+
         unset($sql);
         foreach ($ret as $query) {
             $query = trim($query);

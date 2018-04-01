@@ -5,6 +5,42 @@
 <style type="text/css">
 body{background: #f0f0f0;}
 
+/*单行文本的溢出显示省略号*/
+.p1{
+    /*width: 200px;
+    overflow:hidden;
+    text-overflow:ellipsis; 
+    background: goldenrod;
+    white-space: nowrap;*/
+    /*加宽度width属来兼容部分浏览*/
+
+    /*padding: 5px 0;*/
+    font-size: 12px;
+    color: #666;
+    /*background-color: #f7f7f7;*/
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+}
+
+/*多行文本溢出显示省略号*/
+.p2{
+    width: 220px;
+    height: 58px;
+    overflow:hidden;
+    text-overflow:ellipsis; 
+    background: greenyellow;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+    /*-webkit-line-clamp用来限制在一个块元素显示的文本的行数。 为了实现该效果，它需要组合其他的WebKit属性。常见结合属性：
+    display: -webkit-box; 必须结合的属性 ，将对象作为弹性伸缩盒子模型显示 。
+    -webkit-box-orient 必须结合的属性 ，设置或检索伸缩盒对象的子元素的排列方式 。*/
+}
+
+
 .freetry_item_pic_timer{background-color:rgba(0,0,0,0.3);bottom:0;color:#fff;font-size:1.4rem;left:0;line-height:3.6rem;position:absolute;text-align:center;width:100%}
 .freetry_item_pic_timer img{display:inline-block;position:relative;top:0.2rem;width:1.2rem}
 .imgbox{position:relative;}
@@ -158,8 +194,10 @@ border-radius: 5px;
         <a href="{php echo $this->createMobileUrl('baogao', array('report_id' => $item['id']))}">
             <img src="{php echo tomedia($item['thumb'])}" style="width:100px;height:100px;">
             <!-- <img src="{$item['images'][0]}" style="width:100px;height:100px;"> -->
-
-            产品名称：{$item['title']}                        <br>{$item['rtitle']}:{$item['content']}</a> <br>
+            <h2 class="p1">{$item['title']}</h2>
+            <h3 class="p1">{$item['rtitle']}<br>{$item['content']}</h3>
+        </a> 
+            
             {loop $item['images'] $i}
                 <img src="{$i}" style="width:100px;height:100%;">
             {/loop}
