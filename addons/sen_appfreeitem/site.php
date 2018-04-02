@@ -1841,6 +1841,34 @@ class sen_appfreeitemModuleSite extends WeModuleSite
         include $this->template('adv', TEMPLATE_INCLUDEPATH, true);
     }
 
+    // 我的个人中心
+    public function doMobileMyCenter()
+    {
+        global $_W, $_GPC;
+        // TODO debug
+        $_W['fans']['from_user'] = 'oMaz50jp9G_xRU_JT1jMaxuS5KdY';
+        $this->checkAuth();
+        $type = $_GPC['type'];
+        $pindex = max(1, intval($_GPC['page']));
+        $psize = 20;
+        $where = " weid = '{$_W['uniacid']}' AND from_user = '{$_W['fans']['from_user']}'";
+
+        if($type == 1){
+
+        }elseif($type == 2){
+
+        }elseif($type == 3){
+            $list = pdo_fetchall("SELECT * FROM " . tablename('sen_appfreeitem_report') . " WHERE $where ORDER BY id DESC LIMIT " . ($pindex - 1) * $psize . ',' . $psize, array(), 'id');
+            // var_dump($list);exit;
+            $total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('sen_appfreeitem_report') . " WHERE $where");
+            $pager = pagination($total, $pindex, $psize);
+            $title = "我的评论";
+//             var_dump($project,$pager,$list,$total);exit;
+            include $this->template('center_reply');
+        }
+
+    }
+
     // 我的订单
     public function doMobileMyOrder()
     {
@@ -1850,6 +1878,7 @@ class sen_appfreeitemModuleSite extends WeModuleSite
 
         $this->checkAuth();
         $carttotal = $this->getCartTotal();
+//        var_dump('$carttotal==',$carttotal);exit;
         $op = $_GPC['op'];
 
         if ($op == 'confirm') {

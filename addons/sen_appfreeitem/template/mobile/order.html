@@ -60,18 +60,33 @@ border-radius: 5px;
 	</div>
 </div> -->
 
+
 <div class="myoder img-rounded" style='text-align:center;color:#aaa;padding:5px;'>
 	 <div style='float:left;margin:auto;width:100%;' class="mystatus">
-		<div {if $state==9}class='sel'{else}class="nosel"{/if} style='border-top-right-radius: 5px;margin-left:-1px;border-bottom-right-radius:5px;text-align: center;border:1px solid #33cdd6;float:left;width:32.6%' onclick="location.href='{php echo $this->createMobileUrl('myorder',array('state'=>9))}'">
-			全部
+		<!-- 类型type：1 collect收藏  2 zan 点赞 -->
+	 	<div {if $type==1}class='sel'{else}class="nosel"{/if} style='border-top-right-radius: 5px;margin-left:-1px;border-bottom-right-radius:5px;text-align: center;border:1px solid #33cdd6;float:left;width:32.6%' onclick="location.href='{php echo $this->createMobileUrl('MyCenter',array('type'=>1))}'">
+			我的收藏
+		</div>		
+
+		<div {if $type==2}class='sel'{else}class="nosel"{/if} style='border-top-right-radius: 5px;margin-left:-1px;border-bottom-right-radius:5px;text-align: center;border:1px solid #33cdd6;float:left;width:32.6%' onclick="location.href='{php echo $this->createMobileUrl('MyCenter',array('type'=>2))}'">
+			我的点赞
+		</div>	
+
+		<div {if $type==3}class='sel'{else}class="nosel"{/if} style='border-top-right-radius: 5px;margin-left:-1px;border-bottom-right-radius:5px;text-align: center;border:1px solid #33cdd6;float:left;width:32.6%' onclick="location.href='{php echo $this->createMobileUrl('MyCenter',array('type'=>3))}'">
+			我的评论
+		</div>
+
+
+		<div {if $state==9 && empty($type)}class='sel'{else}class="nosel"{/if} style='border-top-right-radius: 5px;margin-left:-1px;border-bottom-right-radius:5px;text-align: center;border:1px solid #33cdd6;float:left;width:32.6%' onclick="location.href='{php echo $this->createMobileUrl('myorder',array('state'=>9))}'">
+			全部商品
 		</div>		
 
 		<div {if $state==0}class='sel'{else}class="nosel"{/if} style='border-top-right-radius: 5px;margin-left:-1px;border-bottom-right-radius:5px;text-align: center;border:1px solid #33cdd6;float:left;width:32.6%' onclick="location.href='{php echo $this->createMobileUrl('myorder',array('state'=>0))}'">
-			试用
+			试用商品
 		</div>	
 
 		<div {if $state==1}class='sel'{else}class="nosel"{/if} style='border-top-right-radius: 5px;margin-left:-1px;border-bottom-right-radius:5px;text-align: center;border:1px solid #33cdd6;float:left;width:32.6%' onclick="location.href='{php echo $this->createMobileUrl('myorder',array('state'=>1))}'">
-			购买
+			购买商品
 		</div>
 	</div>
 </div>

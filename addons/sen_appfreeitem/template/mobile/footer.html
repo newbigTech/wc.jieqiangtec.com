@@ -115,7 +115,8 @@ sharedata.success = function(){
 	if(sharedata.desc == ''){
 		var _share_content = _removeHTMLTag($('body').html());
 		if(typeof _share_content == 'string'){
-			sharedata.desc = _share_content.replace($_share['title'], '')
+			// sharedata.desc = _share_content.replace({$_share['title']}, '');
+			sharedata.desc = _share_content;
 		}
 	}
 	
