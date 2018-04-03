@@ -11,6 +11,18 @@
 require './framework/bootstrap.inc.php';
 //core();
 //var_dump('TODO jieqiangtest 111222',$host,$bindhost);exit;
+
+$_GPC['image'] = 'images/10/2018/04/lmcyCZKtK480pllc8WE8Kl8T5cPyky.jpg,images/10/2018/04/on19h3nR819N9Un2U3wSIH1snUnNUr.jpg,images/10/2018/04/ao45DTyII88iYIKnyAlKNIO4z4YtKi.jpg,images/10/2018/04/xxV3Idfx848CrF4JJf99rF4k4ZqLD4.jpg';
+if (!empty($_GPC['image'])) {
+    $_GPC['image'] = explode(',',$_GPC['image']);
+    foreach ($_GPC['image'] as $thumb) {
+        $th[] = $thumb;
+    }
+    $data['images'] = iserializer($th);
+}
+var_dump($data['images']);
+exit;
+
 $host = $_SERVER['HTTP_HOST'];
 
 $bindhost = pdo_fetch("SELECT * FROM ".tablename('site_multi')." WHERE bindhostss = :bindhost", array(':bindhost' => $host));

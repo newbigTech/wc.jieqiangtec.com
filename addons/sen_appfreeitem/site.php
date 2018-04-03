@@ -885,6 +885,8 @@ class sen_appfreeitemModuleSite extends WeModuleSite
             }
             $item['images'] = iunserializer($item['images']);
 
+//            var_dump($item['images']);exit;
+
             // 判断是否收藏和点赞
             $operates = pdo_fetchall("SELECT * FROM " . tablename('sen_appfreeitem_operate') . " WHERE weid = :weid and report_id = :report_id and from_user = :from_user and is_cancel = 0 ", array(':weid' => $_W['uniacid'], ':report_id' => $report_id, ':from_user' => $openid));
             // 类型：1 collect收藏  2 zan 点赞
@@ -937,6 +939,8 @@ class sen_appfreeitemModuleSite extends WeModuleSite
             message("抱歉，该申请您已经提交过报告了!", referer(), "error");
         }
         unset($d);
+
+        // 上传
         if (checksubmit('submit')) {
             $data = array();
             $data['weid'] = $_W['uniacid'];
@@ -958,7 +962,10 @@ class sen_appfreeitemModuleSite extends WeModuleSite
                 }
                 $data['images'] = iserializer($th);
             }*/
+
+//            var_dump($_REQUEST,$_GPC['image']);exit;
             if (!empty($_GPC['image'])) {
+                // $_GPC['image'] = explode(',',$_GPC['image']);
                 foreach ($_GPC['image'] as $thumb) {
                     $th[] = save_media(tomedia($thumb));
                 }

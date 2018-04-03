@@ -198,9 +198,15 @@ border-radius: 5px;
             <h3 class="p1">{$item['rtitle']}<br>{$item['content']}</h3>
         </a> 
             
-            {loop $item['images'] $i}
-                <img src="{$i}" style="width:100px;height:100%;">
-            {/loop}
+            <div class="uploadbox">
+                {loop $item['images'] $ii}
+                <label class="fileupload f_l mr10">
+                    <div class="pic_show">
+                        <img src="{$ii}" style="width:100px;height:100%;">
+                    </div>
+                </label>
+                {/loop}
+            </div>
 
     </div>
 

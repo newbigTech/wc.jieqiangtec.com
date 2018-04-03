@@ -17,6 +17,7 @@
 
 <div class="wraper">
 <script type="text/javascript" src="{JS_PATH}deal_publish.js"></script>
+<script type="text/javascript" src="{JS_PATH}edit_deal_item.js"></script>
 <script type="text/javascript" src="{JS_PATH}ajaxupload.js"></script>
 <script type="text/javascript">
     var MAX_FILE_SIZE = "1MB";
@@ -25,46 +26,38 @@
 	var UPLOAD_XAP='{JS_PATH}plupload/Moxie.xap';
 	var ALLOW_IMAGE_EXT= "gif,jpg,jpeg,png,bmp";
 	var MAX_IMAGE_SIZE= "3MB";
-	function get_file_fun(name){
-		$("#"+name).ui_upload({multi:false,
+	/*function get_file_fun(name){
+		$("#"+name).ui_upload({multi:true,
 		FileUploaded:function(ajaxobj){
  				if(ajaxobj.error==1)
 				{
 					$.show_tip(ajaxobj.info);
 				}else{
-					{if IMS_VERSION == '0.6'}
-					$("#"+name+"_url").val(ajaxobj.result);
-					$("#"+name+"_image").attr('src',tomedia(ajaxobj.result)).attr({width:"80",height:"80"});
-					{else}
-					$("#"+name+"_url").val(ajaxobj.attachment);
+
+					var image_file_urls=$("#"+name+"_url").val();
+		            if(image_file_urls==''){
+		                $("#"+name+"_url").val(ajaxobj.attachment);
+		            }else{
+		                $("#"+name+"_url").val(image_file_urls+','+ajaxobj.attachment);
+		            }
+		            console.log('debug image_file_urls=='+image_file_urls);
+
 					$("#"+name+"_image").attr('src',ajaxobj.url).attr({width:"80",height:"80"});
-					{/if}
 					$(".fileupload .text").remove();
  				}
 			},Error:function(error){
 			$.show_tip(error.message);
  		}});
-	}
+	}*/
 
-	/*function get_file_fun(name){
-		$("#"+name).ui_upload({multi:true,
+	function get_file_fun(name){
+		$("#"+name).ui_upload({multi:false,
 			FileUploaded:function(ajaxobj){
 				if($("#image_box .image_item").length>=4) {
 					$.show_tip("最多只能上传4张图片");
-				}
- 				else if(ajaxobj.error==1) {
+				}else if(ajaxobj.error==1) {
 					$.show_tip(ajaxobj.info);
-				}
-				else {
-					{if IMS_VERSION == '0.6'}
-					$("#image_box").append(
-		   				'<div class="image_item">'+
-							'<div class="remove_image bg_red"><i class="fa fa-remove"></i></div>'+
-							'<img src="'+tomedia(ajaxobj.result)+'" width=80 height=80 class="b_radius6" />'+
-							'<input type="hidden" name="image[]" value="'+ajaxobj.result+'"  />'+
-						'</div>'
-					);
-					{else}
+				}else {
 					$("#image_box").append(
 		   				'<div class="image_item">'+
 							'<div class="remove_image bg_red"><i class="fa fa-remove"></i></div>'+
@@ -72,7 +65,6 @@
 							'<input type="hidden" name="image[]" value="'+ajaxobj.attachment+'"  />'+
 						'</div>'
 					);
-					{/if}
 		   			bind_del_image(); // 删除已上传的图片
 		   			hide_imgupload(); // 上传4张图片后，隐藏上传图片按钮
  				}
@@ -80,7 +72,7 @@
 				$.show_tip(error.message);
 	 		}
 	 	});
-	}*/
+	}
 
 </script>
 <div class="blank15"></div>
@@ -108,6 +100,7 @@
 			<li class="uploadbox">
 				<!-- <label class="input_lable mr5">产品封面</label> -->
 				<div class="blank0"></div>
+				<div id="image_box"></div>
 				<label class="fileupload f_l mr10">
 					<div class="pic_show">
 						{if empty($item['thumb'])}
@@ -118,7 +111,8 @@
 						{/if}
 						<img id="image_file_image" src="{php echo tomedia($item['thumb'])}" {if !empty($item['thumb'])}width="80" height="80"{/if} />
 						<input type="button" class="filebox" name="image_file" id="image_file" />
-						<input type="hidden" name="image[]" value="{$item['thumb']}" id="image_file_url" />
+						<!-- <input type="hidden" name="image[]" value="{$item['thumb']}" id="image_file_url" /> -->
+						<!-- <input type="hidden" name="image" value="{$item['thumb']}" id="image_file_url" /> -->
 						<div class="fileuploading"></div>
 					</div>
 				</label>
