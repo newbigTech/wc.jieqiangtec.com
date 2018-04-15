@@ -22,6 +22,39 @@ body {
 	/* iOS 4.1-*/
 }
 
+/*分享弹出层*/
+#cover {
+    z-index: 10000;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    font-size: 1.8rem;
+    display: none;
+    background: rgba(0, 0, 0, 0.8) none repeat scroll 0 0;
+}
+
+#cover .content {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    z-index: 10003;
+    color: #fff;
+    padding: 1rem;
+    padding-top: 4.5rem;
+}
+
+#cover .arrow {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    z-index: 10004;
+    background: url(../images/arrow.png) no-repeat;
+    width: 4.5rem;
+    right: 0;
+}
+
+
 /*分页样式*/
 #pager ul {
 	/*position: fixed;*/

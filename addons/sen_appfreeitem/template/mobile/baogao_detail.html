@@ -153,19 +153,30 @@
 			,"json"
 		);
 	}
-
-
-
 </script>
 </div>
 
-
-<!-- JiaThis Button BEGIN -->
-<div id="share_all"  style="margin: 10px 16px 128px 16px">
-<div class="jiathis_style_m"></div>
-<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_m.js" charset="utf-8"></script>
+<!--分享弹层-->
+<div id='cover'>
+    <div class='fui-mask-m visible'></div>
+    <div class='arrow'></div>
+    <div class='content'>请点击右上角<br/>通过【发送给朋友/分享到朋友圈】<br/>分享好友</div>
 </div>
-<!-- JiaThis Button END -->
+
+<a class="fui-cell-remark share"  id='btn-share'>
+<i class="icon icon-share"></i>
+<p>分享</p>
+</a>
+
+<script type="text/javascript">
+	$('#btn-share').click(function () {
+        $('#cover').fadeIn(200)
+    });
+
+    $('#cover').click(function () {
+        $('#cover').hide()
+    })
+</script>
 
 {template 'footerbar'}
 {template 'footer'}
