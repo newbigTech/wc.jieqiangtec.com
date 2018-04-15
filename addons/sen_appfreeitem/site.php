@@ -787,6 +787,7 @@ class sen_appfreeitemModuleSite extends WeModuleSite
 
         // var_dump($_W);
         $id = intval($_GPC['id']);
+        $pid = intval($_GPC['pid']);
         $type = $_GPC['type'];
         $data = intval($_GPC['data']);
         if (in_array($type, array('1', '2'))) {
@@ -801,7 +802,6 @@ class sen_appfreeitemModuleSite extends WeModuleSite
                                 WHERE
                                     `id` = '{$id}'
                                 AND `weid` = '{$_W['uniacid']}';");
-
                 } else {
 //                    pdo_update("sen_appfreeitem_report", array("zan_num" => "zan_num  "-1), array("id" => $id, "weid" => $_W['uniacid']));
                     pdo_run("UPDATE `ims_sen_appfreeitem_report`
@@ -813,7 +813,7 @@ class sen_appfreeitemModuleSite extends WeModuleSite
 
                 $data = 0;
             } else {
-                pdo_insert('sen_appfreeitem_operate', array("is_cancel" => 0, "report_id" => $id, "weid" => $_W['uniacid'], "type" => $type, "from_user" => $_W['openid'], 'createtime' => time()));
+                pdo_insert('sen_appfreeitem_operate', array("is_cancel" => 0, "report_id" => $id, "pid" => $pid, "weid" => $_W['uniacid'], "type" => $type, "from_user" => $_W['openid'], 'createtime' => time()));
 
                 if ($type == 1) {
 //                    pdo_update("sen_appfreeitem_report", array("collect_num" => "collect_num  "+1 ), array("id" => $id, "weid" => $_W['uniacid']));
@@ -1857,14 +1857,45 @@ class sen_appfreeitemModuleSite extends WeModuleSite
         $this->checkAuth();
         $type = $_GPC['type'];
         $pindex = max(1, intval($_GPC['page']));
-        $psize = 20;
+        $psize = 10;
         $where = " weid = '{$_W['uniacid']}' AND from_user = '{$_W['fans']['from_user']}'";
 
-        if($type == 1){
+        if ($type == 1) {
+            // 收藏
+            /*$list = pdo_fetchall("SELECT * FROM " . tablename('sen_appfreeitem_operate') . " WHERE type=2 ORDER BY id DESC LIMIT " . ($pindex - 1) * $psize . ',' . $psize, array(), 'id');*/
+            $list = pdo_fetchall("SELECT o.*,r.content,r.id as report_id,zan_num,collect_num,reply_num  FROM " . tablename('sen_appfreeitem_operate') . " AS o, " . tablename('sen_appfreeitem_report') . " AS r WHERE  o.weid = '{$_W['uniacid']}' AND o.from_user = '{$_W['fans']['from_user']}' AND type=1 AND o.report_id=r.id  AND is_cancel=0 ORDER BY o.id DESC LIMIT " . ($pindex - 1) * $psize . ',' . $psize, array(), 'o.id');
+            foreach ($list as $k=>$v){
+                // 类型：1 collect收藏  2 zan 点赞
+                $list[$k]['collect'] = 1;
+            }
+            // var_dump($list);exit;
+            $total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('sen_appfreeitem_operate') . " WHERE $where AND type=1   AND is_cancel=0 ");
+            $pager = pagination($total, $pindex, $psize);
+            $title = "我的收藏";
+//             var_dump($project,$pager,$list,$total);exit;
+            include $this->template('center_collect');
 
-        }elseif($type == 2){
+        } elseif ($type == 2) {
+            // 点赞
+            /*$list = pdo_fetchall("SELECT * FROM " . tablename('sen_appfreeitem_operate') . " WHERE type=2 ORDER BY id DESC LIMIT " . ($pindex - 1) * $psize . ',' . $psize, array(), 'id');*/
+            $list = pdo_fetchall("SELECT o.*,r.content,r.id as report_id,zan_num,collect_num,reply_num FROM " . tablename('sen_appfreeitem_operate') . " AS o, " . tablename('sen_appfreeitem_report') . " AS r WHERE  o.weid = '{$_W['uniacid']}' AND o.from_user = '{$_W['fans']['from_user']}' AND type=2 AND o.report_id=r.id  AND is_cancel=0 ORDER BY o.id DESC LIMIT " . ($pindex - 1) * $psize . ',' . $psize, array(), 'o.id');
 
-        }elseif($type == 3){
+            foreach ($list as $k=>$v){
+                // 类型：1 collect收藏  2 zan 点赞
+                $list[$k]['zan'] = 1;
+            }
+
+
+            // var_dump($list);exit;
+            $total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('sen_appfreeitem_operate') . " WHERE $where AND type=2   AND is_cancel=0 ");
+            // var_dump($list,$total);exit;
+            $pager = pagination($total, $pindex, $psize);
+            $title = "我的点赞";
+//             var_dump($project,$pager,$list,$total);exit;
+            include $this->template('center_zan');
+
+        } elseif ($type == 3) {
+            // 评论
             $list = pdo_fetchall("SELECT * FROM " . tablename('sen_appfreeitem_report') . " WHERE $where ORDER BY id DESC LIMIT " . ($pindex - 1) * $psize . ',' . $psize, array(), 'id');
             // var_dump($list);exit;
             $total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('sen_appfreeitem_report') . " WHERE $where");
@@ -1919,7 +1950,7 @@ class sen_appfreeitemModuleSite extends WeModuleSite
             include $this->template('order_detail');
         } else {
             $pindex = max(1, intval($_GPC['page']));
-            $psize = 20;
+            $psize = 10;
             $status = intval($_GPC['status']);
             // $state = intval($_GPC['state']);
 
@@ -1944,9 +1975,10 @@ class sen_appfreeitemModuleSite extends WeModuleSite
             }
 
             $list = pdo_fetchall("SELECT * FROM " . tablename('sen_appfreeitem_order') . " WHERE $where ORDER BY id DESC LIMIT " . ($pindex - 1) * $psize . ',' . $psize, array(), 'id');
-            // var_dump($list);exit;
+
             $total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('sen_appfreeitem_order') . " WHERE weid = '{$_W['uniacid']}' AND from_user = '{$_W['fans']['from_user']}'");
             $pager = pagination($total, $pindex, $psize);
+// var_dump($list,$pager);exit;
             $pagetitle = "申请状态";
             include $this->template('order');
         }

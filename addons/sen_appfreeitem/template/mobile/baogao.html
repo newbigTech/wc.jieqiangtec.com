@@ -53,8 +53,8 @@
 	function get_file_fun(name){
 		$("#"+name).ui_upload({multi:false,
 			FileUploaded:function(ajaxobj){
-				if($("#image_box .image_item").length>=4) {
-					$.show_tip("最多只能上传4张图片");
+				if($("#image_box .image_item").length>=9) {
+					$.show_tip("最多只能上传9张图片");
 				}else if(ajaxobj.error==1) {
 					$.show_tip(ajaxobj.info);
 				}else {

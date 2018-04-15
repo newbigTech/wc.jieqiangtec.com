@@ -122,7 +122,7 @@
 	function setProperty(obj,id,type){
 		// $(obj).html($(obj).html() + "...");
 		$.post("{php echo $this->createMobileUrl('setreportproperty')}"
-			,{id:id,type:type, data: obj.getAttribute("data")}
+			,{id:id,type:type,pid:{$item['pid']}, data: obj.getAttribute("data")}
 			,function(d){
 				// $(obj).html($(obj).html().replace("...",""));
 				$(obj).attr("data",d.data);
@@ -158,5 +158,14 @@
 
 </script>
 </div>
+
+
+<!-- JiaThis Button BEGIN -->
+<div id="share_all"  style="margin: 10px 16px 128px 16px">
+<div class="jiathis_style_m"></div>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jiathis_m.js" charset="utf-8"></script>
+</div>
+<!-- JiaThis Button END -->
+
 {template 'footerbar'}
 {template 'footer'}
