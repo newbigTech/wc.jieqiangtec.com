@@ -656,8 +656,10 @@ class sen_appfreeitemModuleSite extends WeModuleSite
         global $_W, $_GPC;
 
         // TODO debug
-        $_W['fans']['from_user'] = 'oMaz50jp9G_xRU_JT1jMaxuS5KdY';
-        $_W['fans']['nickname'] = 'jieqiang';
+        if ($_GPC['debug']){
+            $_W['fans']['from_user'] = 'oMaz50jp9G_xRU_JT1jMaxuS5KdY';
+            $_W['fans']['nickname'] = 'jieqiang';
+        }
 
         if (empty($_W['fans']['nickname'])) {
             mc_oauth_userinfo();
@@ -783,7 +785,9 @@ class sen_appfreeitemModuleSite extends WeModuleSite
     {
         global $_GPC, $_W;
         // TODO debug
-        $_W['openid'] = 'oMaz50jp9G_xRU_JT1jMaxuS5KdY';
+        if ($_GPC['debug']) {
+            $_W['openid'] = 'oMaz50jp9G_xRU_JT1jMaxuS5KdY';
+        }
 
         // var_dump($_W);
         $id = intval($_GPC['id']);
@@ -847,7 +851,9 @@ class sen_appfreeitemModuleSite extends WeModuleSite
             mc_oauth_userinfo();
         }
         // TODO debug
-        $_W['fans']['from_user'] = 'oMaz50jp9G_xRU_JT1jMaxuS5KdY';
+        if ($_GPC['debug']) {
+            $_W['fans']['from_user'] = 'oMaz50jp9G_xRU_JT1jMaxuS5KdY';
+        }
 
         $id = intval($_GPC['orderid']);
         $openid = $_W['fans']['from_user'];
@@ -1202,7 +1208,10 @@ class sen_appfreeitemModuleSite extends WeModuleSite
     {
         global $_W;
         // TODO debug
-        $_W['openid'] = 'oMaz50jp9G_xRU_JT1jMaxuS5KdY';
+        if ($_GPC['debug']) {
+            $_W['openid'] = 'oMaz50jp9G_xRU_JT1jMaxuS5KdY';
+        }
+
         if (empty($_W['openid'])) {
             if (!empty($_W['account']['subscribeurl'])) {
                 message('请先关注公众号' . $_W['account']['name'] . '(' . $_W['account']['account'] . ')', $_W['account']['subscribeurl'], 'error');
@@ -1853,7 +1862,9 @@ class sen_appfreeitemModuleSite extends WeModuleSite
     {
         global $_W, $_GPC;
         // TODO debug
-        $_W['fans']['from_user'] = 'oMaz50jp9G_xRU_JT1jMaxuS5KdY';
+        if ($_GPC['debug']) {
+            $_W['fans']['from_user'] = 'oMaz50jp9G_xRU_JT1jMaxuS5KdY';
+        }
         $this->checkAuth();
         $type = $_GPC['type'];
         $pindex = max(1, intval($_GPC['page']));
@@ -1912,7 +1923,9 @@ class sen_appfreeitemModuleSite extends WeModuleSite
     {
         global $_W, $_GPC;
         // TODO debug
-        $_W['fans']['from_user'] = 'oMaz50jp9G_xRU_JT1jMaxuS5KdY';
+        if ($_GPC['debug']) {
+            $_W['fans']['from_user'] = 'oMaz50jp9G_xRU_JT1jMaxuS5KdY';
+        }
 
         $this->checkAuth();
         $carttotal = $this->getCartTotal();
