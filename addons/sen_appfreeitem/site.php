@@ -1206,7 +1206,7 @@ class sen_appfreeitemModuleSite extends WeModuleSite
 
     private function checkAuth()
     {
-        global $_W;
+        global $_W,$_GPC;
         // TODO debug
         if ($_GPC['debug']) {
             $_W['openid'] = 'oMaz50jp9G_xRU_JT1jMaxuS5KdY';
@@ -1926,6 +1926,7 @@ class sen_appfreeitemModuleSite extends WeModuleSite
         if ($_GPC['debug']) {
             $_W['fans']['from_user'] = 'oMaz50jp9G_xRU_JT1jMaxuS5KdY';
         }
+//        var_dump($_GPC['debug']);exit;
 
         $this->checkAuth();
         $carttotal = $this->getCartTotal();
