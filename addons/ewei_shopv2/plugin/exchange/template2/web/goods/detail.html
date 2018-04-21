@@ -115,7 +115,7 @@
                 <!--<td colspan="10" style="text-align: center;">暂时没有任何商品!</td>-->
                 <td><input type="checkbox" name="checkbox[]" value="{$value['id']}"></td>
                 <td>{php echo $key+($page-1)*$psize+1;}</td>
-                <td colspan="2"><a data-toggle="ajaxModal" data-href="{php echo webUrl('exchange/history/detail',array('key'=>$value['key'],'status'=>$value['status'],'id'=>$value['id']),1);}">{$value['serial']}</a></td>
+                <td colspan="2"><a data-toggle="ajaxModal" data-href="{php echo webUrl('exchange/history/detail',array('key'=>$value['key'],'status'=>$value['status'],'id'=>$value['id']),1);}">{$value['key']}<!-- {$value['serial']} --></a></td>
                 <td colspan="2">
                     {if $value['type']!=1}{$value['endtime']}{/if}
                     {if $value['type']==1}
