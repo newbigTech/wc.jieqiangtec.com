@@ -9,7 +9,8 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 	{
 		global $_W;
 		global $_GPC;
-		$set = $this->model->getSet();
+        $set = $this->model->getSet();
+		//  var_dump('$set==',$set,$this->model);exit;
 
 		if (!empty($set['sign_rule'])) {
 			$set['sign_rule'] = iunserializer($set['sign_rule']);
