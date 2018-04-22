@@ -331,13 +331,18 @@ alert("最多选10个!")}
 				<label class="col-xs-12 col-sm-2 col-md-2 col-lg-1 control-label">状态</label>
 				<div class="col-xs-12 col-sm-8 col-lg-9">
 					<select name="status" class='form-control'>
-						<option value="1" {if !empty($_GPC['status'])} selected{/if}>开始</option>
-						<option value="0" {if empty($_GPC['status'])} selected{/if}>暂停</option>
+						<option value='' {if $_GPC['status'] === ''} selected{/if}>全部</option>
+						<option value="-1" {if !empty($_GPC['status']) && $_GPC['status'] == -1} selected{/if}>审核不通过</option>
+						<option value="0" {if  $_GPC['status'] == 0 && $_GPC['status'] !== ''} selected{/if}>编辑中</option>
+						<option value="1" {if $_GPC['status'] == 1} selected{/if}>待审核</option>
+						<option value="2" {if $_GPC['status'] == 2} selected{/if}>暂停</option>
+						<option value="3" {if $_GPC['status'] == 3} selected{/if}>进行中</option>
+						<option value="4" {if $_GPC['status'] == 4} selected{/if}>已结束</option>
 					</select>
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="col-xs-12 col-sm-2 col-md-2 col-lg-1 control-label">分类</label>
+				<!-- <label class="col-xs-12 col-sm-2 col-md-2 col-lg-1 control-label">分类</label> -->
 				
 				
 				<div class=" col-xs-12 col-sm-2 col-lg-2">
@@ -388,7 +393,7 @@ alert("最多选10个!")}
 						{if $item['status']=='-1'}审核不通过{else if $item['status']==0}编辑中{else if $item['status']==1}待审核{else if $item['status']==2}暂停{else if $item['status']==3}进行中{else if $item['status']==4}已结束{else}未知{/if}
 					</td>
 					<td style="text-align:right;">
-						<a onclick="checkproject({$item['id']},'{$item['title']}');" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="审核"> <i class="fa fa-circle"></i>
+						<a onclick="checkproject({$item['id']},'{$item['title']}','{$item['status']}');" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="审核"> <i class="fa fa-circle"></i>
 						</a>
 						<a href="{php echo $this->createWebUrl('order', array('project'=>array('parentid' => $item['id']), 'op' => 'display'))}"class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="查看产品申请"> <i class="fa fa-book"></i>
 						</a>
@@ -402,13 +407,13 @@ alert("最多选10个!")}
 				</tr>
 				{/loop}
 			</tbody>
-			<tr>
+			<!-- <tr>
 				<td></td>
 				<td colspan="8">
 					<input name="token" type="hidden" value="{$_W['token']}" />
 					<input type="submit" class="btn btn-primary" name="submit" value="提交" />
 				</td>
-			</tr>
+			</tr> -->
 		</table>
 		{$pager}
 	</div>
@@ -442,8 +447,84 @@ alert("最多选10个!")}
 			,"json"
 		);
 	}
-	function checkproject(id,title){
+	function checkproject(id,title,status){
 		$("#model_space").empty();
+		console.log(status);
+		if (status == '-1') {
+			var checkbox_html = '<div class="modal-body">' + 
+						       '<label>状态：</label>' + 
+						       '<label><input type="radio" name="status" value="-1" checked> 审核不通过</label>&nbsp;&nbsp;' + 
+						       '<label><input type="radio" name="status" value="0" > 编辑中</label>&nbsp;&nbsp;' + 
+						       '<label><input type="radio" name="status" value="1" > 待审核</label>&nbsp;&nbsp;' + 
+						       '<label><input type="radio" name="status" value="2" > 暂停</label>&nbsp;&nbsp;' + 
+						       '<label><input type="radio" name="status" value="3"> 进行中</label>&nbsp;&nbsp;' + 
+							   '<label><input type="radio" name="status" value="4"> 已结束</label>&nbsp;&nbsp;' + 
+						       '<br /><label>留言:</label>' + 
+						       '<textarea style="height:150px;" class="form-control" id="reson" autocomplete="off"></textarea>' + 
+						      '</div>' ;
+		}else if (status == '0'){
+			var checkbox_html = '<div class="modal-body">' + 
+						       '<label>状态：</label>' + 
+						       '<label><input type="radio" name="status" value="-1" > 审核不通过</label>&nbsp;&nbsp;' + 
+						       '<label><input type="radio" name="status" value="0" checked> 编辑中</label>&nbsp;&nbsp;' + 
+						       '<label><input type="radio" name="status" value="1" > 待审核</label>&nbsp;&nbsp;' + 
+						       '<label><input type="radio" name="status" value="2" > 暂停</label>&nbsp;&nbsp;' + 
+						       '<label><input type="radio" name="status" value="3"> 进行中</label>&nbsp;&nbsp;' + 
+							   '<label><input type="radio" name="status" value="4"> 已结束</label>&nbsp;&nbsp;' + 
+						       '<br /><label>留言:</label>' + 
+						       '<textarea style="height:150px;" class="form-control" id="reson" autocomplete="off"></textarea>' + 
+						      '</div>' ;
+		}else if (status == '1'){
+			var checkbox_html = '<div class="modal-body">' + 
+						       '<label>状态：</label>' + 
+						       '<label><input type="radio" name="status" value="-1" > 审核不通过</label>&nbsp;&nbsp;' + 
+						       '<label><input type="radio" name="status" value="0" > 编辑中</label>&nbsp;&nbsp;' + 
+						       '<label><input type="radio" name="status" value="1" checked> 待审核</label>&nbsp;&nbsp;' + 
+						       '<label><input type="radio" name="status" value="2" > 暂停</label>&nbsp;&nbsp;' + 
+						       '<label><input type="radio" name="status" value="3"> 进行中</label>&nbsp;&nbsp;' + 
+							   '<label><input type="radio" name="status" value="4"> 已结束</label>&nbsp;&nbsp;' + 
+						       '<br /><label>留言:</label>' + 
+						       '<textarea style="height:150px;" class="form-control" id="reson" autocomplete="off"></textarea>' + 
+						      '</div>' ;
+		}else if (status == '2'){
+			var checkbox_html = '<div class="modal-body">' + 
+						       '<label>状态：</label>' + 
+						       '<label><input type="radio" name="status" value="-1" > 审核不通过</label>&nbsp;&nbsp;' + 
+						       '<label><input type="radio" name="status" value="0" > 编辑中</label>&nbsp;&nbsp;' + 
+						       '<label><input type="radio" name="status" value="1" > 待审核</label>&nbsp;&nbsp;' + 
+						       '<label><input type="radio" name="status" value="2" checked> 暂停</label>&nbsp;&nbsp;' + 
+						       '<label><input type="radio" name="status" value="3"> 进行中</label>&nbsp;&nbsp;' + 
+							   '<label><input type="radio" name="status" value="4"> 已结束</label>&nbsp;&nbsp;' + 
+						       '<br /><label>留言:</label>' + 
+						       '<textarea style="height:150px;" class="form-control" id="reson" autocomplete="off"></textarea>' + 
+						      '</div>' ;
+		}else if (status == '3'){
+			var checkbox_html = '<div class="modal-body">' + 
+						       '<label>状态：</label>' + 
+						       '<label><input type="radio" name="status" value="-1" > 审核不通过</label>&nbsp;&nbsp;' + 
+						       '<label><input type="radio" name="status" value="0" > 编辑中</label>&nbsp;&nbsp;' + 
+						       '<label><input type="radio" name="status" value="1" > 待审核</label>&nbsp;&nbsp;' + 
+						       '<label><input type="radio" name="status" value="2" > 暂停</label>&nbsp;&nbsp;' + 
+						       '<label><input type="radio" name="status" value="3" checked> 进行中</label>&nbsp;&nbsp;' + 
+							   '<label><input type="radio" name="status" value="4"> 已结束</label>&nbsp;&nbsp;' + 
+						       '<br /><label>留言:</label>' + 
+						       '<textarea style="height:150px;" class="form-control" id="reson" autocomplete="off"></textarea>' + 
+						      '</div>' ;
+		}else if (status == '4'){
+			var checkbox_html = '<div class="modal-body">' + 
+						       '<label>状态：</label>' + 
+						       '<label><input type="radio" name="status" value="-1" > 审核不通过</label>&nbsp;&nbsp;' + 
+						       '<label><input type="radio" name="status" value="0" > 编辑中</label>&nbsp;&nbsp;' + 
+						       '<label><input type="radio" name="status" value="1" > 待审核</label>&nbsp;&nbsp;' + 
+						       '<label><input type="radio" name="status" value="2" > 暂停</label>&nbsp;&nbsp;' + 
+						       '<label><input type="radio" name="status" value="3"> 进行中</label>&nbsp;&nbsp;' + 
+							   '<label><input type="radio" name="status" value="4" checked> 已结束</label>&nbsp;&nbsp;' + 
+						       '<br /><label>留言:</label>' + 
+						       '<textarea style="height:150px;" class="form-control" id="reson" autocomplete="off"></textarea>' + 
+						      '</div>' ;
+		}
+		
+
 		var html = '<div class="modal fade bs-example-modal-lg" tabindex="-1" id="Modal' + id + '" role="dialog" aria-labelledby="myModal">' + 
   						'<div class="modal-dialog modal-lg">' + 
 						    '<div class="modal-content">' + 
@@ -451,15 +532,8 @@ alert("最多选10个!")}
 						        '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>' + 
 						        '<h4 class="modal-title" id="myModalLabel">审核【' + title + '】</h4>' + 
 						      '</div>' + 
-						      '<div class="modal-body">' + 
-						       '<label>订单状态：</label>' + 
-						       '<label><input type="radio" name="status" value="-1"> 审核不通过</label>' + 
-						       '<label><input type="radio" name="status" value="2" checked> 审核通过</label>' + 
-						       '<label><input type="radio" name="status" value="3"> 审核通过并开始产品</label>' + 
-							   '<label><input type="radio" name="status" value="4"> 活动结束</label>' + 
-						       '<br /><label>留言:</label>' + 
-						       '<textarea style="height:150px;" class="form-control" id="reson" autocomplete="off"></textarea>' + 
-						      '</div>' + 
+						      checkbox_html
+						      + 
 						      '<input type="hidden" id="project_id" value="' + id + '">' + 
 						      '<div class="modal-footer">' + 
 						        '<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>' + 

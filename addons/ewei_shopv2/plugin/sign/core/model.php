@@ -43,7 +43,7 @@ class SignModel extends PluginModel
 		else {
 			$set['textmoney'] = $_W['shopset']['trade']['moneytext'];
 		}
-
+        // var_dump('credittext==',$_W['shopset']['trade']['credittext'],$set);exit;
 		return $set;
 	}
 

@@ -980,7 +980,8 @@ class sen_appfreeitemModuleSite extends WeModuleSite
 
 //            var_dump($_REQUEST,$data);exit;
             pdo_insert('sen_appfreeitem_report', $data);
-            pdo_update('sen_appfreeitem_order', array('status' => 5));
+            // pdo_update('sen_appfreeitem_order', array('status' => 5));
+            pdo_update('sen_appfreeitem_order', array('status' => 5), array('id' => $id));
             message('报告提交成功,返回首页...', $this->createMobileUrl('list'), 'success');
         }
         $carttotal = $this->getCartTotal();
@@ -1245,6 +1246,7 @@ class sen_appfreeitemModuleSite extends WeModuleSite
         }
     }
 
+    // 申请管理  订单
     public function doWebOrder()
     {
         global $_W, $_GPC;
@@ -1303,7 +1305,7 @@ class sen_appfreeitemModuleSite extends WeModuleSite
                 $condition .= " AND o.sendtype = '" . intval($sendtype) . "' AND status != '3'";
             }
             if ($_GPC['out_put'] == 'output') {
-                $sql = "select o.* , a.username,a.mobile from " . tablename('sen_appfreeitem_order') . " o" . " left join " . tablename('mc_member_address') . " a on o.addressid = a.id " . " where $condition ORDER BY o.status DESC, o.createtime DESC ";
+                $sql = "select o.* , a.username,a.mobile from " . tablename('sen_appfreeitem_order') . " o" . " left join " . tablename('mc_member_address') . " a on o.addressid = a.id " . " where $condition ORDER BY o.status ASC, o.createtime DESC ";
                 $list = pdo_fetchall($sql, $paras);
                 $paytype = array('0' => array('css' => 'default', 'name' => '未支付'), '1' => array('css' => 'danger', 'name' => '余额支付'), '2' => array('css' => 'info', 'name' => '在线支付'), '3' => array('css' => 'warning', 'name' => '货到付款'));
                 $orderstatus = array('-1' => array('css' => 'default', 'name' => '已取消'), '0' => array('css' => 'danger', 'name' => '待审核'), '1' => array('css' => 'black', 'name' => '未通过'), '2' => array('css' => 'info', 'name' => '待发货'), '3' => array('css' => 'warning', 'name' => '待收货'), '4' => array('css' => 'green', 'name' => '已收货'), '5' => array('css' => 'success', 'name' => '已完成'));
@@ -1368,7 +1370,7 @@ class sen_appfreeitemModuleSite extends WeModuleSite
                 $this->exportexcel($arr, array('订单号', '产品名称', '支持金额', '状态', '真实姓名', '电话号码', '地址', '时间', '邮寄方式'), time());
                 exit();
             }
-            $sql = "select o.* , a.username,a.mobile from " . tablename('sen_appfreeitem_order') . " o" . " left join " . tablename('mc_member_address') . " a on o.addressid = a.id " . " where $condition ORDER BY o.status DESC, o.createtime DESC " . "LIMIT " . ($pindex - 1) * $psize . ',' . $psize;
+            $sql = "select o.* , a.username,a.mobile from " . tablename('sen_appfreeitem_order') . " o" . " left join " . tablename('mc_member_address') . " a on o.addressid = a.id " . " where $condition ORDER BY o.status ASC, o.createtime DESC " . "LIMIT " . ($pindex - 1) * $psize . ',' . $psize;
             $list = pdo_fetchall($sql, $paras);
             $paytype = array('0' => array('css' => 'default', 'name' => '未支付'), '1' => array('css' => 'danger', 'name' => '余额支付'), '2' => array('css' => 'info', 'name' => '在线支付'), '3' => array('css' => 'warning', 'name' => '货到付款'));
             $orderstatus = array('-1' => array('css' => 'default', 'name' => '已取消'), '0' => array('css' => 'danger', 'name' => '待审核'), '1' => array('css' => 'black', 'name' => '未通过'), '2' => array('css' => 'info', 'name' => '待发货'), '3' => array('css' => 'warning', 'name' => '待收货'), '4' => array('css' => 'green', 'name' => '已收货'), '5' => array('css' => 'success', 'name' => '已完成'));
@@ -1502,12 +1504,13 @@ class sen_appfreeitemModuleSite extends WeModuleSite
         include $this->template('order');
     }
 
+    // 管理产品
     public function doWebProject()
     {
         global $_GPC, $_W;
         load()->func('tpl');
         $category = pdo_fetchall("SELECT * FROM " . tablename('sen_appfreeitem_category') . " WHERE weid = '{$_W['uniacid']}' ORDER BY parentid ASC, displayorder DESC", array(), 'id');
-        $dispatch = pdo_fetchall("select id,dispatchname,dispatchtype,firstprice,firstweight,secondprice,secondweight from " . tablename("sen_appfreeitem_dispatch") . " WHERE weid = {$_W['uniacid']} order by displayorder desc");
+        $dispatch = pdo_fetchall("select id,dispatchname,dispatchtype,firstprice,firstweight,secondprice,secondweight from " . tablename("sen_appfreeitem_dispatch") . " WHERE weid = {$_W['uniacid']} order by displayorder desc ");
 
 
         // TODO jieqiang 品牌 分类
@@ -1626,10 +1629,10 @@ class sen_appfreeitemModuleSite extends WeModuleSite
                 $cid = intval($_GPC['cate_1']);
                 $condition .= " AND pcate = '{$cid}'";
             }
-            if (isset($_GPC['status'])) {
+            if (isset($_GPC['status']) && $_GPC['status']!='') {
                 $condition .= " AND status = '" . intval($_GPC['status']) . "'";
             }
-            $list = pdo_fetchall("SELECT * FROM " . tablename('sen_appfreeitem_project') . " WHERE weid = '{$_W['uniacid']}'  $condition ORDER BY status DESC, displayorder DESC, id DESC LIMIT " . ($pindex - 1) * $psize . ',' . $psize);
+            $list = pdo_fetchall("SELECT * FROM " . tablename('sen_appfreeitem_project') . " WHERE weid = '{$_W['uniacid']}'  $condition ORDER BY status ASC, displayorder DESC, id DESC LIMIT " . ($pindex - 1) * $psize . ',' . $psize);
             $total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('sen_appfreeitem_project') . " WHERE weid = '{$_W['uniacid']}'  $condition");
             $pager = pagination($total, $pindex, $psize);
         } elseif ($operation == 'delete') {
