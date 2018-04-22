@@ -869,7 +869,8 @@ class sen_appfreeitemModuleSite extends WeModuleSite
                 $data['oid'] = $id;
                 $data['pid'] = $_GPC['pid'];
                 $data['content'] = $_GPC['content'];
-                $data['tijiaotime'] = date('y-m-d h:i:s', time());
+                // $data['tijiaotime'] = date('y-m-d h:i:s', time());
+                $data['tijiaotime'] = date('Y-m-d H:i:s', time());
                 $data['parent_id'] = $report_id;
 
                 pdo_insert('sen_appfreeitem_report', $data);
@@ -956,7 +957,8 @@ class sen_appfreeitemModuleSite extends WeModuleSite
             $data['oid'] = $id;
             $data['pid'] = $order['pid'];
             $data['content'] = $_GPC['content'];
-            $data['tijiaotime'] = date('y-m-d h:i:s', time());
+            // $data['tijiaotime'] = date('y-m-d h:i:s', time());
+            $data['tijiaotime'] = date('Y-m-d H:i:s', time());
 
             if (empty($data['rtitle'])) {
                 message("请填写标题!", referer(), "error");
@@ -1943,7 +1945,8 @@ class sen_appfreeitemModuleSite extends WeModuleSite
             if (empty($order)) {
                 message('抱歉，您的订单不存或是已经被取消！', $this->createMobileUrl('myorder'), 'error');
             }
-            $shdata = date('y-m-d h:i:s', time());
+            // $shdata = date('y-m-d h:i:s', time());
+            $shdata = date('Y-m-d H:i:s', time());
             if ($state == 0) {
                 pdo_update('sen_appfreeitem_order', array('status' => 4, 'shouhuodata' => $shdata), array('id' => $orderid, 'from_user' => $_W['fans']['from_user']));
             } elseif ($state == 1) {

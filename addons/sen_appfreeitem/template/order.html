@@ -51,9 +51,9 @@
 				<label class="col-xs-12 col-sm-2 col-md-2 col-lg-1 control-label">支付方式</label>
 				<div class="col-sm-8 col-lg-9 col-xs-12">
 					<select name="paytype" class="form-control">
-						<option value="">不限</option>
+						<option value='' {if $_GPC['paytype'] == ''} selected="selected"{/if}>不限</option>
 						{loop $paytype $key $type}
-						<option value="{$key}" {if $_GPC['paytype'] == $key} selected="selected" {/if}>{$type['name']}</option>
+						<option value="{$key}" {if $_GPC['paytype'] == $key && $_GPC['paytype']!==''} selected="selected" {/if}>{$type['name']}</option>
 						{/loop}
 					</select>
 				</div>
@@ -330,7 +330,7 @@
 							{elseif $item['status'] == 2}
 								{if !empty($dispatch)}
 								<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-confirmsend">确认发货</button>
-								<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modal-cancelsend">取消发货</button>
+								<!-- <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modal-cancelsend">取消发货</button> -->
 									{if $item['status'] >= 0}
 									
 									{else}
@@ -369,7 +369,7 @@
 							{elseif $item['status'] == 2}
 							{if !empty($dispatch)}
 							<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-confirmsend">确认发货</button>
-							<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modal-cancelsend">取消发货</button>
+							<!-- <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modal-cancelsend">取消发货</button> -->
 							{/if}
 							{elseif $item['status'] == 3}
 							{if !empty($dispatch)}
