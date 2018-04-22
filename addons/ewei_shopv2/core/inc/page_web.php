@@ -12,6 +12,7 @@ class WebPage extends Page
 		}
 
 		m('system')->set_version();
+//		var_dump('$_W=',$_W);exit;
 	}
 
 	private function init()

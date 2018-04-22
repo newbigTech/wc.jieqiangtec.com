@@ -173,9 +173,8 @@ class Page extends WeModuleSite
         // TODO jieqiang 启用新版  D:\www\users\wc.jieqiangtec.com\addons\ewei_shopv2\core\model\system.php 1338
         // $_W['shopversion'] = 1;
         // $set = array('style'=>'diypage','detail_temp'=>'0');
-        // var_dump('TODO jieqiangtest=$set=',$set);exit;
+        // var_dump('TODO jieqiangtest=$set=',$set,'shopversion==',$_W['shopversion'],'$_W==',$_W);exit;
         $isv3 = $set['style_v3'];
-
 
         if (isset($_W['shopversion'])) {
             $isv3 = $_W['shopversion'];

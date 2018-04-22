@@ -98,7 +98,7 @@
                         {loop $record $key $value}
                         <tr>
                             <td><a class="label label-{if $value['mode']==1}primary{elseif $value['mode']==2}success{elseif $value['mode']==3}danger{elseif $value['mode']==4}warning{elseif $value['mode']==5}default{elseif $value['mode']==6}info{/if}">{if $value['mode']==1}商品{elseif $value['mode']==2}余额{elseif $value['mode']==3}红包{elseif $value['mode']==4}积分{elseif $value['mode']==5}优惠券{elseif $value['mode']==6}组合{/if}</a></td>
-                            <td>{$value['serial']}</td>
+                            <td><!-- {$value['serial']} -->{$value['key']}</td>
                             <td>{$value['title']}</td>
                             <td>{php echo date('Y-m-d H:i',$value['time']);}</td>
                             <td><a href="{php echo webUrl('exchange/history',array('kdtype'=>nickname,'keyword'=>$value['nickname']));}">{$value['nickname']}</a></td>
