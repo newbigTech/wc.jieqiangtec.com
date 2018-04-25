@@ -849,7 +849,7 @@ if($do == 'designer') {
 
 
 
-function manifest_check($id, $m) {
+function manifest_check2($id, $m) {
 	if(is_string($m)) {
 		message('模块配置项定义错误, 具体错误内容为: <br />' . $m);
 	}
