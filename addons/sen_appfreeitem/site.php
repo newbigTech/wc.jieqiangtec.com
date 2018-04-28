@@ -863,24 +863,30 @@ class sen_appfreeitemModuleSite extends WeModuleSite
 
             // 回复
             if ($_GPC['content']) {
-                $data = array();
-                $data['weid'] = $_W['uniacid'];
-                $data['from_user'] = $openid;
-                $data['oid'] = $id;
-                $data['pid'] = $_GPC['pid'];
-                $data['content'] = $_GPC['content'];
-                // $data['tijiaotime'] = date('y-m-d h:i:s', time());
-                $data['tijiaotime'] = date('Y-m-d H:i:s', time());
-                $data['parent_id'] = $report_id;
+                $key = '小姐|吸毒|黄色';
+                $res = $this->check_work($key,$_GPC['content']);
+                if ($res){
+                    die(json_encode(array("result" => 1, 'msg' => '包含敏感词'.$res)));
+                }else{
+                    $data = array();
+                    $data['weid'] = $_W['uniacid'];
+                    $data['from_user'] = $openid;
+                    $data['oid'] = $id;
+                    $data['pid'] = $_GPC['pid'];
+                    $data['content'] = $_GPC['content'];
+                    // $data['tijiaotime'] = date('y-m-d h:i:s', time());
+                    $data['tijiaotime'] = date('Y-m-d H:i:s', time());
+                    $data['parent_id'] = $report_id;
 
-                pdo_insert('sen_appfreeitem_report', $data);
-                pdo_run("UPDATE `ims_sen_appfreeitem_report`
+                    pdo_insert('sen_appfreeitem_report', $data);
+                    pdo_run("UPDATE `ims_sen_appfreeitem_report`
                                 SET `reply_num` = reply_num +1
                                 WHERE
                                     `id` = '{$report_id}'
                                 AND `weid` = '{$_W['uniacid']}';");
 
-                die(json_encode(array("result" => 1, 'msg' => '回复成功')));
+                    die(json_encode(array("result" => 1, 'msg' => '回复成功')));
+                }
                 exit;
             }
             /*$item = pdo_fetch("SELECT r.*,o.ordersn,p.title,p.id as project_id,m.nickname,m.avatar FROM ims_sen_appfreeitem_report as r,ims_sen_appfreeitem_order as o,ims_sen_appfreeitem_project as p,ims_mc_members as m where r.id =" . $report_id . " and r.oid=o.id and r.pid=p.id and r.from_user=m.uid ");*/
@@ -957,6 +963,14 @@ class sen_appfreeitemModuleSite extends WeModuleSite
             $data['oid'] = $id;
             $data['pid'] = $order['pid'];
             $data['content'] = $_GPC['content'];
+
+            $key = '小姐|吸毒|黄色';
+            $res = $this->check_work($key,$_GPC['content']);
+            if ($res){
+                // die(json_encode(array("result" => 1, 'msg' => '包含敏感词'.$res)));
+                message('包含敏感词'.$res, referer(), "error");
+            }
+
             // $data['tijiaotime'] = date('y-m-d h:i:s', time());
             $data['tijiaotime'] = date('Y-m-d H:i:s', time());
 
@@ -2181,6 +2195,24 @@ class sen_appfreeitemModuleSite extends WeModuleSite
 
         return $allcategory;
     }
+
+
+    // 检测敏感词
+    function check_work($key = '',$content = ''){
+        $user_arr = explode('|', $key);
+        $r = array();
+        foreach ($user_arr as $value) {
+            if (strpos($content, $value) !== false){
+                $r[] = $value;
+            }
+        }
+        if ($r){
+            return implode(",", $r);
+        }else {
+            return false;
+        }
+    }
+
 }
 
 ?>

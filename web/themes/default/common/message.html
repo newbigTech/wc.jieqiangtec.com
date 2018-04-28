@@ -55,11 +55,11 @@
 		{if $redirect}
 			setTimeout(function(){
 				window.location.href= "{$redirect}"; 
-			},0)	
+			},3000)
 		{else}
 			setTimeout(function(){
 				window.history.back(-1);
-			},0)
+			},3000)
 		{/if}
 		
 	</script>

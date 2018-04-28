@@ -8,10 +8,15 @@ $config = array();
 //$config['db']['master']['password'] = 'jieqiang520';
 //$config['db']['master']['port'] = '3306';
 
-$config['db']['master']['host'] = '39.106.104.26';
+/*$config['db']['master']['host'] = '39.106.104.26';
 $config['db']['master']['username'] = 'root';
 $config['db']['master']['password'] = 'Rhl20180101';
-$config['db']['master']['port'] = '3506';
+$config['db']['master']['port'] = '3506';*/
+$config['db']['master']['host'] = '127.0.0.1';
+$config['db']['master']['username'] = 'root';
+$config['db']['master']['password'] = 'root';
+$config['db']['master']['port'] = '3306';
+
 
 $config['db']['master']['database'] = 'wc2';
 $config['db']['master']['charset'] = 'utf8';
