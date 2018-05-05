@@ -183,7 +183,8 @@ class sen_appfreeitemModuleSite extends WeModuleSite
         $operation = !empty($_GPC['op']) ? $_GPC['op'] : 'display';
         if ($operation == 'post') {
             $id = intval($_GPC['id']);
-            $new = pdo_fetch("SELECT r.*,o.ordersn,p.title,m.nickname,m.avatar FROM ims_mc_mapping_fans f, ims_sen_appfreeitem_report as r,ims_sen_appfreeitem_order as o,ims_sen_appfreeitem_project as p,ims_mc_members as m where r.id =" . $id . " and r.oid=o.id and r.pid=p.id AND r.from_user = f.openid AND f.uid = m.uid ");
+            /*$new = pdo_fetch("SELECT r.*,o.ordersn,p.title,m.nickname,m.avatar FROM ims_mc_mapping_fans f, ims_sen_appfreeitem_report as r,ims_sen_appfreeitem_order as o,ims_sen_appfreeitem_project as p,ims_mc_members as m where r.id =" . $id . " and r.oid=o.id and r.pid=p.id AND r.from_user = f.openid AND f.uid = m.uid ");*/
+            $new = pdo_fetch("SELECT r.*,p.title,m.nickname,m.avatar FROM ims_mc_mapping_fans f, ims_sen_appfreeitem_report as r,ims_sen_appfreeitem_order as o,ims_sen_appfreeitem_project as p,ims_mc_members as m where r.id =" . $id . "  and r.pid=p.id AND r.from_user = f.openid AND f.uid = m.uid ");
             if (empty($new)) {
                 $new = array('is_display' => 1,);
             }
@@ -223,7 +224,18 @@ class sen_appfreeitemModuleSite extends WeModuleSite
             }
             $pindex = max(1, intval($_GPC['page']));
             $psize = 20;
-            $sql = "SELECT r.*,o.ordersn,p.title,m.nickname,m.avatar FROM ims_mc_mapping_fans f,ims_sen_appfreeitem_report as r,ims_sen_appfreeitem_order as o,ims_sen_appfreeitem_project as p,ims_mc_members as m " . $condition . " and r.oid=o.id and r.pid=p.id AND r.from_user = f.openid AND f.uid = m.uid ORDER BY id DESC LIMIT " . ($pindex - 1) * $psize . ',' . $psize;
+            /*$sql = "SELECT r.*,o.ordersn,p.title,m.nickname,m.avatar FROM ims_mc_mapping_fans f,ims_sen_appfreeitem_report as r,ims_sen_appfreeitem_order as o,ims_sen_appfreeitem_project as p,ims_mc_members as m " . $condition . " and r.oid=o.id and r.pid=p.id AND r.from_user = f.openid AND f.uid = m.uid ORDER BY id DESC LIMIT " . ($pindex - 1) * $psize . ',' . $psize;*/
+            // $sql = "SELECT r.*,p.title,m.nickname,m.avatar FROM ims_mc_mapping_fans f,ims_sen_appfreeitem_report as r,ims_sen_appfreeitem_project as p,ims_mc_members as m " . $condition . " and  r.pid=p.id AND r.from_user = f.openid AND f.uid = m.uid ORDER BY id DESC LIMIT " . ($pindex - 1) * $psize . ',' . $psize;
+
+            $sql = "SELECT
+	r.*, o.ordersn,p.title,m.nickname,
+	m.avatar
+FROM
+	ims_sen_appfreeitem_report AS r
+LEFT JOIN ims_sen_appfreeitem_order AS o ON r.oid = o.id
+LEFT JOIN ims_sen_appfreeitem_project AS p ON r.pid = p.id
+LEFT JOIN ims_mc_mapping_fans f ON r.from_user = f.openid
+LEFT JOIN ims_mc_members AS m ON f.uid = m.uid ORDER BY id DESC LIMIT ". ($pindex - 1) * $psize . ',' . $psize;
             $news = pdo_fetchall($sql, $params);
             $total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('sen_appfreeitem_report') . $condition, $params);
             $pager = pagination($total, $pindex, $psize);
@@ -634,12 +646,13 @@ class sen_appfreeitemModuleSite extends WeModuleSite
         }
     }
 
+    // 规则填写
     public function doWebRule()
     {
         global $_GPC, $_W;
         $item = pdo_fetch("SELECT * FROM " . tablename('sen_appfreeitem_rule') . " WHERE wid = :wid", array(':wid' => $_W['uniacid']));
         if (checksubmit()) {
-            $data = array('wid' => $_W['uniacid'], 'content' => htmlspecialchars_decode($_GPC['content']),);
+            $data = array('wid' => $_W['uniacid'], 'content' => htmlspecialchars_decode($_GPC['content']), 'sensitive_words' => htmlspecialchars_decode($_GPC['sensitive_words']), 'add_time' => time());
             if (empty($item['content'])) {
                 pdo_insert('sen_appfreeitem_rule', $data);
             } else {
@@ -863,10 +876,12 @@ class sen_appfreeitemModuleSite extends WeModuleSite
 
             // 回复
             if ($_GPC['content']) {
-                $key = '小姐|吸毒|黄色';
+                /*$key = '小姐|吸毒|黄色';
+                $item = pdo_fetch("SELECT sensitive_words FROM " . tablename('sen_appfreeitem_rule') . " WHERE wid = :wid", array(':wid' => $_W['uniacid']));*/
+                $key = pdo_getcolumn('sen_appfreeitem_rule',array('wid'=>$_W['uniacid']),'sensitive_words');
                 $res = $this->check_work($key,$_GPC['content']);
                 if ($res){
-                    die(json_encode(array("result" => 1, 'msg' => '包含敏感词'.$res)));
+                    die(json_encode(array("result" => 1, 'msg' => '包含敏感词：'.$res)));
                 }else{
                     $data = array();
                     $data['weid'] = $_W['uniacid'];
@@ -964,11 +979,12 @@ class sen_appfreeitemModuleSite extends WeModuleSite
             $data['pid'] = $order['pid'];
             $data['content'] = $_GPC['content'];
 
-            $key = '小姐|吸毒|黄色';
+            // $key = '小姐|吸毒|黄色';
+            $key = pdo_getcolumn('sen_appfreeitem_rule',array('wid'=>$_W['uniacid']),'sensitive_words');
             $res = $this->check_work($key,$_GPC['content']);
             if ($res){
                 // die(json_encode(array("result" => 1, 'msg' => '包含敏感词'.$res)));
-                message('包含敏感词'.$res, referer(), "error");
+                message('包含敏感词：'.$res, referer(), "error");
             }
 
             // $data['tijiaotime'] = date('y-m-d h:i:s', time());

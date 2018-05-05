@@ -57,6 +57,7 @@ function pdo_getslice($tablename, $condition = array(), $limit = array(), &$tota
 	return pdo()->getslice($tablename, $condition, $limit, $total, $fields, $keyfield, $orderby);
 }
 
+// 获取单个字段值
 function pdo_getcolumn($tablename, $condition = array(), $field) {
 	return pdo()->getcolumn($tablename, $condition, $field);
 }

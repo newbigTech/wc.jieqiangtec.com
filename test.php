@@ -12,6 +12,11 @@ require './framework/bootstrap.inc.php';
 //core();
 //var_dump('TODO jieqiangtest 111222',$host,$bindhost);exit;
 
+//$item = pdo_fetch("SELECT sensitive_words FROM " . tablename('sen_appfreeitem_rule') . " WHERE wid = :wid", array(':wid' => 10));
+
+$item = pdo_getcolumn('sen_appfreeitem_rule',array('wid'=>10),'sensitive_words');
+var_dump('$item==',$item);exit;
+
 $_GPC['image'] = 'images/10/2018/04/lmcyCZKtK480pllc8WE8Kl8T5cPyky.jpg,images/10/2018/04/on19h3nR819N9Un2U3wSIH1snUnNUr.jpg,images/10/2018/04/ao45DTyII88iYIKnyAlKNIO4z4YtKi.jpg,images/10/2018/04/xxV3Idfx848CrF4JJf99rF4k4ZqLD4.jpg';
 if (!empty($_GPC['image'])) {
     $_GPC['image'] = explode(',',$_GPC['image']);
