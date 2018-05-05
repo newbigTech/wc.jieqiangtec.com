@@ -9,10 +9,11 @@ load()->model('module');
 load()->model('extension');
 
 $eid = intval($_GPC['eid']);
-
+//var_dump('$eid==',$eid);exit;
 
 if (!empty($eid)) {
 	$entry = module_entry($eid);
+    // var_dump('$entry==',$entry);exit;
 } else {
 	$entry = pdo_get('modules_bindings', array('module' => trim($_GPC['m']), 'do' => trim($_GPC['do'])));
 	if (empty($entry)) {
@@ -80,7 +81,8 @@ if (!is_error($site)) {
 	}
 	$method = 'doWeb' . ucfirst($entry['do']);
 
-//    var_dump($method,$site,$site->doWebWeb());exit;
+    // var_dump($method,$site,$site->doWebWeb());exit;
+    // var_dump('$site->$method()==',$method,$site,$site->$method());exit;
 	exit($site->$method());
 }
 itoast("访问的方法 {$method} 不存在.", referer(), 'error');
