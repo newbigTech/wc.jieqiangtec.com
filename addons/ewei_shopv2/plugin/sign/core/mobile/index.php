@@ -36,7 +36,8 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 		$this->model->setShare($set);
 		$texts = array('sign' => $set['textsign'], 'signed' => $set['textsigned'], 'signold' => $set['textsignold'], 'credit' => $set['textcredit'], 'color' => $set['maincolor']);
 		// var_dump('$texts==',$texts);exit;
-        //  var_dump('$this->footerMenus(null, false, $texts)==',$this->footerMenus(null, false, $texts));exit;
+//        var_dump('$this->footerMenus(null1, false, $texts)==',$this->footerMenus(1, false, $texts));exit;
+        // var_dump('$this->footerMenus(null1, false, $texts)==',$this->footerMenus(null, false, $texts));exit;
 		include $this->template();
 	}
 

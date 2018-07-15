@@ -185,6 +185,7 @@ class MobilePage extends Page
 
     public function footerMenus($diymenuid = NULL, $ismerch = false, $texts = array())
     {
+
         global $_W;
         global $_GPC;
         $params = array(':uniacid' => $_W['uniacid'], ':openid' => $_W['openid']);
@@ -216,7 +217,6 @@ class MobilePage extends Page
             if (!empty($_GPC['merchid']) && (($_W['routes'] == 'shop.category') || ($_W['routes'] == 'goods'))) {
                 $pageid = 'merch';
             }
-
             if (($pageid == 'merch') && !empty($_GPC['merchid']) && p('merch')) {
                 $merchdata = p('merch')->getSet('diypage', $_GPC['merchid']);
 
@@ -228,6 +228,7 @@ class MobilePage extends Page
                 }
             } else {
                 $diypagedata = m('common')->getPluginset('diypage');
+                // var_dump('$diypagedata==',$diypagedata,$pageid);exit;
 
                 if (!empty($diypagedata['menu'])) {
                     $diymenuid = $diypagedata['menu'][$pageid];
@@ -240,7 +241,7 @@ class MobilePage extends Page
 
         if (!empty($diymenuid)) {
             $menu = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_diypage_menu') . ' WHERE id=:id and uniacid=:uniacid limit 1 ', array(':id' => $diymenuid, ':uniacid' => $_W['uniacid']));
-
+            // var_dump('$menu==',$menu);exit;
             if (!empty($menu)) {
                 $menu = $menu['data'];
                 $menu = base64_decode($menu);

@@ -210,7 +210,7 @@ class Page extends WeModuleSite
 
         $name = 'ewei_shopv2';
         $moduleroot = IA_ROOT . '/addons/ewei_shopv2';
-
+        // var_dump('TODO jieqiangtest defined(\'IN_SYS\')=',defined('IN_SYS'),$isv3,$account);exit;
         if (defined('IN_SYS')) {
             if (!$isv3) {
                 $compile = IA_ROOT . '/data/tpl/web/' . $_W['template'] . '/' . $name . '/' . $filename . '.tpl.php';
@@ -287,7 +287,7 @@ class Page extends WeModuleSite
 
             $compile = IA_ROOT . '/data/tpl/app/' . $name . '/' . $template . '/mobile/' . $filename . '.tpl.php';
             $source = IA_ROOT . '/addons/' . $name . '/template/mobile/' . $template . '/' . $filename . '.html';
-
+            /*var_dump('TODO jieqiangtest defined(\'IN_SYS\')=',defined('IN_SYS'),$isv3,$account,$template,$compile,'$source',$source);exit;*/
             if (!is_file($source)) {
                 $source = IA_ROOT . '/addons/' . $name . '/template/mobile/' . $template . '/' . $filename . '/index.html';
             }
@@ -323,6 +323,8 @@ class Page extends WeModuleSite
             }
         }
 
+        // D:/www/users/wc.jieqiangtec.com/addons/ewei_shopv2/plugin/diypage/template/mobile/default/menu.html
+        // var_dump('TODO jieqiangtest defined(\'IN_SYS\')=',defined('IN_SYS'),$isv3,$account,$template,$compile,'$source',$source);exit;
         if (!is_file($source)) {
             exit('Error: template source \'' . $filename . '\' is not exist!');
         }
