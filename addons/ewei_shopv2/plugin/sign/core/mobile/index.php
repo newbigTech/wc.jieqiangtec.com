@@ -11,7 +11,8 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 		global $_GPC;
         $set = $this->model->getSet();
 		//  var_dump('$set==',$set,$this->model);exit;
-
+        // TODO
+		// $this->footerMenus(null, false, $texts);
 		if (!empty($set['sign_rule'])) {
 			$set['sign_rule'] = iunserializer($set['sign_rule']);
 			$set['sign_rule'] = htmlspecialchars_decode($set['sign_rule']);
@@ -34,6 +35,8 @@ class Index_EweiShopV2Page extends PluginMobileLoginPage
 		$json = json_encode($json_arr);
 		$this->model->setShare($set);
 		$texts = array('sign' => $set['textsign'], 'signed' => $set['textsigned'], 'signold' => $set['textsignold'], 'credit' => $set['textcredit'], 'color' => $set['maincolor']);
+		// var_dump('$texts==',$texts);exit;
+        //  var_dump('$this->footerMenus(null, false, $texts)==',$this->footerMenus(null, false, $texts));exit;
 		include $this->template();
 	}
 

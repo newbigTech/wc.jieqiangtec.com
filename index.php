@@ -8,7 +8,7 @@ ini_set("display_errors", "On");
 error_reporting(E_ALL);
 // var_dump('TODO jieqiangtest 111');exit;
 require './framework/bootstrap.inc.php';
-
+libxml_disable_entity_loader(true);
 $host = $_SERVER['HTTP_HOST'];
 if (!empty($host)) {
 	$bindhost = pdo_fetch("SELECT * FROM ".tablename('site_multi')." WHERE bindhost = :bindhost", array(':bindhost' => $host));

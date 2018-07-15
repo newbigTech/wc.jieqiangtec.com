@@ -169,7 +169,6 @@ class Page extends WeModuleSite
         global $_W;
         global $_GPC;
         $set = m('common')->getSysset('template');
-
         // TODO jieqiang 启用新版  D:\www\users\wc.jieqiangtec.com\addons\ewei_shopv2\core\model\system.php 1338
         // $_W['shopversion'] = 1;
         // $set = array('style'=>'diypage','detail_temp'=>'0');
@@ -332,6 +331,7 @@ class Page extends WeModuleSite
             shop_template_compile($source, $compile, true);
         }
 
+        // var_dump('$compile==',$compile);exit;
         // var_dump('TODO jieqiangtest $compile=',$compile);exit;
         return $compile;
     }
