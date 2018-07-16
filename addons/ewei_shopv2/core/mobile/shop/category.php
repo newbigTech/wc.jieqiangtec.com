@@ -18,6 +18,7 @@ class Category_EweiShopV2Page extends MobilePage
 		}
 
 		$category = $this->getCategory($category_set['level'], $merchid);
+		// var_dump('$category==',$category,$merchid);exit;
 		$set = m('common')->getSysset('category');
 		include $this->template();
 	}
@@ -26,6 +27,7 @@ class Category_EweiShopV2Page extends MobilePage
 	{
 		$level = intval($level);
 		$category = m('shop')->getCategory();
+        // var_dump('$category11==',$category,$merchid);exit;
 		$category_parent = array();
 		$category_children = array();
 		$category_grandchildren = array();

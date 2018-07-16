@@ -108,6 +108,7 @@ function cache_clean($key = '') {
 
 
 function cache_prefix($key) {
+    // var_dump($GLOBALS['_W']['config']['setting']['authkey'] . $key);exit;
 	return $GLOBALS['_W']['config']['setting']['authkey'] . $key;
 }
 
