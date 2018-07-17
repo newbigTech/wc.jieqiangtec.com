@@ -23,7 +23,7 @@ class Log_EweiShopV2Page extends PluginMobileLoginPage
 
 		$_W['shopshare'] = array('title' => $this->set['share_title'], 'imgUrl' => tomedia($this->set['share_icon']), 'link' => mobileUrl('creditshop', array(), true), 'desc' => $this->set['share_desc']);
 		$com = p('commission');
-
+		// var_dump($com);exit;
 		if ($com) {
 			$cset = $com->getSet();
 
@@ -108,6 +108,7 @@ class Log_EweiShopV2Page extends PluginMobileLoginPage
 			unset($row);
 		}
 
+		// var_dump('$list==',$list);exit;
 		show_json(1, array('list' => $list, 'pagesize' => $psize, 'total' => $total));
 	}
 
