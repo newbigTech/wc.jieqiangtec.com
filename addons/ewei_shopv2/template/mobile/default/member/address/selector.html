@@ -33,9 +33,6 @@
 			<div class="title"><span class='realname'>{$address['realname']}</span> <span class='mobile'>{$address['mobile']}</span></div>
 			<div class="text">
 			    <span class='address'>
-					{if !empty($address['isdefault'])}
-					<span class="tacitlyapprove">默认</span>
-					{/if}
 					{$address['province']}{$address['city']}{$address['area']}{if !empty($new_area) && !empty($address_street)} {$address['street']}{/if} {$address['address']}
 				</span>
 			</div>
