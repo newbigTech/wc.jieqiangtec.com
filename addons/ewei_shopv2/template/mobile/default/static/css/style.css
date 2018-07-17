@@ -178,7 +178,8 @@ a {
     -ms-flex: 1;
     flex: 1;
     color: #ff5555;
-    font-size: 0.8rem;
+    /*font-size: 0.8rem;*/
+    font-size: 0.56rem;
 }
 .fui-goods-item .detail .price .minprice {
     font-size: 0.8rem;
