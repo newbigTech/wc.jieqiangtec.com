@@ -14,11 +14,14 @@
 {if !empty($page['data']['page']['followbar'])}
     {php $this->followBar(true, $page['merch'])}
 {/if}
-{if !is_weixin()}
+
+{if is_weixin()}
     <div class="fui-header">
-        <div class="fui-header-left">
+        <div class="fui-header-left"><?php  // var_dump($page);exit;?>
             {if $page['type']==1}
             <a href="{php echo mobileUrl()}" class="external"><i class="icon icon-home"></i> </a>
+            {else}
+            <a class="back" onclick='location.back()'></a>
             {/if}
         </div>
         <div class="title">{if !empty($page)&&!empty($page['data']['page']['title'])}{$page['data']['page']['title']}{else}{$_W['shopset']['shop']['name']}{/if}</div>
