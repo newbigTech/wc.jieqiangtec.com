@@ -1,4 +1,3 @@
-test
 [31-Jan-2018 22:14:02] WARNING: [pool www] child 8627 said into stderr: "NOTICE: PHP message: PHP Strict Standards:  Non-static method BaseCommon::GetProductPictureShortPath() should not be called statically, assuming $this from incompatible context in /www/docs/erp.jieqiangtec.com/Core/BaseCommon.class.php on line 10"
 
 
