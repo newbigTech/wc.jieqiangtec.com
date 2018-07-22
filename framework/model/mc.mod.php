@@ -1620,7 +1620,8 @@ function mc_init_fans_info($openid, $force_init_member = false)
         'groupid' => !empty($fans['tagid_list']) ? (',' . join(',', $fans['tagid_list']) . ',') : '',
     );
     if (!empty($fans['headimgurl'])) {
-        $fans['headimgurl'] = rtrim($fans['headimgurl'], '0') . 132;
+//        $fans['headimgurl'] = rtrim($fans['headimgurl'], '0') . 132;
+        $fans['headimgurl'] = rtrim($fans['headimgurl'], '0') ;
     }
     if ($force_init_member) {
         $member_update_info = array(
