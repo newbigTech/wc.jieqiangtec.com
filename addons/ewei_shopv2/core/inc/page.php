@@ -300,6 +300,7 @@ class Page extends WeModuleSite
                 $source = IA_ROOT . '/addons/' . $name . '/template/mobile/default/' . $filename . '/index.html';
             }
 
+            // var_dump('!is_file($source)==',!is_file($source),$source);exit;
             if (!is_file($source)) {
                 $names = explode('/', $filename);
                 $pluginname = $names[0];
@@ -320,6 +321,9 @@ class Page extends WeModuleSite
                 if (!is_file($source)) {
                     $source = $moduleroot . '/plugin/' . $pluginname . '/template/mobile/' . $ptemplate . '/' . $pfilename . '/index.html';
                 }
+                // var_dump('!is_file($source)==',!is_file($source),$source);exit;
+
+
             }
         }
 
@@ -329,6 +333,7 @@ class Page extends WeModuleSite
             exit('Error: template source \'' . $filename . '\' is not exist!');
         }
 
+        // var_dump('$compile==',$compile,$source,DEVELOPMENT || !is_file($compile) || (filemtime($compile) < filemtime($source)));exit;
         if (DEVELOPMENT || !is_file($compile) || (filemtime($compile) < filemtime($source))) {
             shop_template_compile($source, $compile, true);
         }
