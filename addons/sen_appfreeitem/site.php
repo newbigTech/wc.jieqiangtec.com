@@ -12,6 +12,39 @@ include '../addons/sen_appfreeitem/inc/core/function/functions.php';
 
 // 引入民生加密类
 include '../addons/sen_appfreeitem/inc/core/class/decryptAndCheck.class.php';
+include '../addons/sen_appfreeitem/inc/core/class/php_java.php';
+
+/*try
+{
+    $ret = lajp_call("cfca.sadk.cmbc.tools.php.PHPDecryptKit::SignAndEncryptMessage", base64_encode($orderid));
+    // echo "{$ret}<br>";
+}
+catch(Exception $e)
+{
+    echo "Err:{$e}<br>";
+}
+
+$order_info = array('orderid' => $ret);
+var_dump($order_info);
+
+// 解密
+$base64Encode  = $_REQUEST['base64Encode'];
+$base64Encode  = trim($base64Encode);
+try
+{
+
+$ret = lajp_call("cfca.sadk.cmbc.tools.php.PHPDecryptKit::DecryptAndVerifyMessage", $base64Encode);
+echo "{$ret}<br>";
+// echo "{$base64Encode}<br>";
+}
+catch(Exception $e)
+{
+    echo "Err:{$e}<br>";
+}
+
+exit;*/
+
+
 
 class sen_appfreeitemModuleSite extends WeModuleSite
 {
@@ -464,6 +497,7 @@ class sen_appfreeitemModuleSite extends WeModuleSite
     {
         global $_W, $_GPC;
 
+        // var_dump('购买==',$_W, $_GPC);exit;
         // TODO debug
         if ($_GPC['debug']) {
             $_W['fans']['from_user'] = 'oMaz50jp9G_xRU_JT1jMaxuS5KdY';
@@ -575,7 +609,39 @@ class sen_appfreeitemModuleSite extends WeModuleSite
                 }
                 message('申请成功,现在跳转到审核页面...', $this->createMobileUrl('myorder'), 'success');
             } elseif ($op == 1) {
-                message('提交订单成功,现在跳转到付款页面...', $this->createMobileUrl('pay', array('orderid' => $orderid)), 'success');
+                // message('提交订单成功,现在跳转到付款页面...', $this->createMobileUrl('pay', array('orderid' => $orderid)), 'success');
+                // 跳转到民生页面
+                //需要签名的数据，base64格式
+                // $base64Plain  = $_REQUEST['base64Plain'];
+                try
+                {
+                    $ret = lajp_call("cfca.sadk.cmbc.tools.php.PHPDecryptKit::SignAndEncryptMessage", base64_encode($orderid));
+                    // echo "{$ret}<br>";
+                }
+                catch(Exception $e)
+                {
+                    echo "Err:{$e}<br>";
+                }
+
+                $order_info = array('orderid' => $ret);
+                $eof = <<<EOT
+                <html>
+                <head>
+                <meta http-equiv="Content-Type" content="text/html; charset=utf8" />
+                <title>支付</title>
+                <script type="text/javascript" src="../addons/sen_appfreeitem/template/style/js/cmbcForClient.js"></script>
+                </head>
+                <body>
+                <script >
+                // loginForComm("http://197.3.176.26:8000/ecshopMerchantTest/index.jsp", "{$url}");
+                submitOrderForCash({$order_info})
+                </script>
+                </body>
+                </html>
+EOT;
+                echo $eof;
+                exit;
+
             }
         }
         $profile = fans_search($_W['fans']['from_user'], array('resideprovince', 'residecity', 'residedist', 'address', 'nickname', 'mobile'));
@@ -2036,10 +2102,10 @@ LEFT JOIN ims_mc_members AS m ON f.uid = m.uid ORDER BY id DESC LIMIT " . ($pind
         /*var_dump('TODO debug $_W, $_GPC==', $_W, $_GPC, '$_SESSION==', $_SESSION);
         exit;*/
         // TODO debug
-        unset($_SESSION['openid']);
+        /*unset($_SESSION['openid']);
         if ($_GPC['debug']) {
             $_SESSION['openid'] = 'oMaz50jp9G_xRU_JT1jMaxuS5KdY';
-        }
+        }*/
 
         // var_dump($_SERVER);
         $url = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
@@ -2048,6 +2114,8 @@ LEFT JOIN ims_mc_members AS m ON f.uid = m.uid ORDER BY id DESC LIMIT " . ($pind
         if (empty($_SESSION['openid'])) {
             // 判断是否有民生信息返回
             $chiperTxt = $_REQUEST['chiperTxt'];
+            WeUtility::logging('民生信息返回$chiperTxt=='.$chiperTxt);
+
             // $chiperTxt = 'plxIaWGVLEwO9uWJRklDyDhWprbTb9rfaHsnGCs/jJ2YabAwvz99ZkBpoahObXxj';
             // $chiperTxt = 'plxIaWGVLEwO9uWJRklDyDhWprbTb9rfaHsnGCs/jJ2YabAwvz99ZkBpoahObXxj22';
             if ($chiperTxt) {
@@ -2058,6 +2126,8 @@ LEFT JOIN ims_mc_members AS m ON f.uid = m.uid ORDER BY id DESC LIMIT " . ($pind
 //返回： $encryptContent对应的明文或者null
 //$plainTxt = DecryptAndCheck::checkWithTimeStamp($chiperTxt, $keyStr, 500000000.1);
                 $plainTxt = DecryptAndCheck::checkWithTimeStamp($chiperTxt, $keyStr, 500000000000.1); // 15.854896	年(yr)
+                WeUtility::logging('民生信息返回$chiperTxt=='.$chiperTxt.'==解码$plainTxt=='.$plainTxt);
+
                 // var_dump($chiperTxt,$plainTxt,$res,$plainTxt[0],$_SESSION['openid']);exit;
                 if (!$plainTxt) {
                     echo '联合登录有误，请<a href="' . $return_url . '">返回</a>重新操作';
@@ -2068,6 +2138,14 @@ LEFT JOIN ims_mc_members AS m ON f.uid = m.uid ORDER BY id DESC LIMIT " . ($pind
                     // 解密成功
                     $res = explode('|', $plainTxt);
                     var_dump('接口返回成功', '返回文本：' . $plainTxt, '|分割：', $res, $plainTxt[0], $_SESSION['openid']);
+
+                    // 写入数据库
+                    $pitem = pdo_fetch("SELECT * FROM " . tablename('mc_members') . " WHERE out_uid=:out_uid ", array(':out_uid' => $res[0]));
+                    if (empty($pitem)) {
+                        $data = array('out_uid' => $res[0], 'mobile' => $res[1],'out_uid' => $res[2], 'createtime' => time(),);
+                        pdo_insert('mc_members', $data);
+                    }
+
                     exit;
                     $_SESSION['openid'] = $res[0];
                 }
@@ -2090,7 +2168,7 @@ LEFT JOIN ims_mc_members AS m ON f.uid = m.uid ORDER BY id DESC LIMIT " . ($pind
                 </html>
 EOT;
                 echo $eof;
-                exit;
+                // exit;
             }
 
 
