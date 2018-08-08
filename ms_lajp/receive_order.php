@@ -10,6 +10,12 @@ $base64Encode = 'MIIESAYKKoEcz1UGAQQCA6CCBDgwggQ0AgECMYGdMIGaAgECgBTWsfSf9q0WjX4
 
 $base64Encode = base64_encode($base64Encode);
 $res = $obj_order->ChinaPayReceive($base64Encode);
+
+/*结果信息按照顺序，并且每项以“|”分隔：
+订单号|行内外标示|商户代码|交易金额|交易日期|交易时间|订单状态|商户预留信息|备注
+返回格式示例：*/
+//$res = '010010000001|0|01001|111.23|20021010|121212|0|这是一个支付|备注';
+
 $res_arr = explode('|', $res);
 var_dump('$res_arr==', $res_arr);
 exit;
@@ -28,8 +34,10 @@ class Order
         } else {
             echo "初始化失败";
         }
-
+        // $res = '010010000001|0|01001|111.23|20021010|121212|0|这是一个支付|备注';
         var_dump('解密信息$res==', $res);
+        return $res;
+
         exit;
     }
 
