@@ -1,0 +1,138 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>民生银行JAVA版服务器证书应用工具包（商户专用版）PHP调用方式演示Demo</title>
+    <script language="javascript" type="text/javascript">
+ 
+    </script>
+
+    <script type="text/javascript" src="./js/cmbcForClient.js"></script>
+</head>
+<body>
+    <div id="FakeCryptoAgent"></div>
+
+    <input type="button" value="登录" onclick="testFunc('loginForComm')"/>
+    <input type="button" value="弹出提示信息，有两个按钮" onclick="testFunc('confirmInfo')"/>
+    <input type="button" value="弹出提示信息，一个按钮" onclick="testFunc('alertInfo')" />
+
+
+
+
+
+    <script type="text/javascript">
+      
+
+      
+
+
+      function testFunc(a){
+      if(a == "confirmInfo"){
+                 var cfg = {
+            'title' : '提示', // 提示框标题
+            'msg' : '没有符合条件的下挂账户！您可以通过“民生账户-账户管理”功能添加账户。', // 提示信息内容
+            'ok_btn' : 'true', // 显示ok按钮
+            'ok_text' : '点击跳转账户管理', // ok按钮的内容
+            'ok_func' : 'skip()', // 点击ok按钮调用的方法
+            'cancle_text' : '返回', // 显示取现按钮
+            'cancle_func' : 'goBack()'  // 点击取现按钮,客户端回调服务器的方法
+            };
+            confirmInfo (cfg);
+                 
+              }
+      }
+
+      function testFunc(a){
+             if(a == "alertInfo"){
+                 alert("请输入信用卡查询密码!");
+                 // alertInfo("请输入信用卡查询密码!");
+             }
+      }
+
+      function testFunc(a){
+          if(a == "loginForComm"){
+             loginForComm("http://197.3.176.26:8000/ecshopMerchantTest/index.jsp", "http://197.3.176.26:8000/ecshopMerchantTest/shopPage1.jsp");
+          }
+      }
+
+
+    </script>
+
+
+
+
+
+
+    
+    	<fieldset>
+        <h3>
+               <a href="sadkInitialize.php">调用配置文件方式初始化</a>
+         </h3>
+       </fieldset>
+       
+       <br/>
+       
+    
+    	<fieldset>
+        <h3>
+               <a href="sadkUninitialize.php">反初始化</a>
+         </h3>
+       </fieldset>
+     
+    
+    <br />
+    
+    	<fieldset>
+        <h3>
+        	 <form name="MyForm" method="post" action="sadkInitializeByParam.php">
+               <p>输入参数方式初始化</p>
+               <br/>
+               私钥: <input type="text" value="testData/sm2/33005.sm2" name="privatePath" />
+               <br/>
+               私钥密码:<input type="text" value="123123" name="privatePassword" />
+               <br/>
+               民生公钥:<input type="text" value="testData/sm2/bank.cer" name="publicPath" />
+               
+               <br/>
+               <input type="submit" />
+           </form>
+        </h3>
+      </fieldset>
+      
+     <br />
+    
+    	<fieldset>
+        <h3>
+        	 <form name="MyForm" method="post" action="sadkSign.php">
+               <p>签名和加密消息</p>
+               <br/>
+               待签名加密的明文，base64格式: <input type="text" value="YWJj" name="base64Plain" size="200"/>
+               
+               
+               <br/>
+               <input type="submit" />
+           </form>
+        </h3>
+      </fieldset>
+   
+      <br />
+    
+    	<fieldset>
+        <h3>
+        	 <form name="MyForm" method="post" action="sadkVerify.php">
+               <p>解密和验证签名</p>
+               <br/>
+               待解密和验证签名的密文，base64格式:
+                <textarea type="text"  name="base64Encode" rows="20" cols="100">
+                 	MIIE+AYKKoEcz1UGAQQCA6CCBOgwggTkAgECMYGdMIGaAgECgBRcVeKIRSfHcq36riVfvgbaa7sX1jANBgkqgRzPVQGCLQMFAARw4FofyZZmkfcNU+AFlBKFIOtz0zprUZLvn4IfnfNZix+wOwUyGKVty0Ha6nSOkWiLEcdUvZk8CWkLBhly0nqiAKRtQh38jlJFDiP5rTw2nFh6yAhwH2lqFC9MtIOzxWfiO93qDbWqUXXW3Tqzs6xRjzCCBD0GCiqBHM9VBgEEAgEwGwYHKoEcz1UBaAQQR2PIcTVNl3dl2HQGWro/YICCBBBa5doaP4DHfNODRna4Lhj4A7Dt7h5qIv3/xMYF4dLIPntIn8gNmC30UcbnY5ey99reFvPPOiID5RTDzoKcjZf7ROkPhwkU4qkOK9PaHMsM7CjWnkoTh8BWXw/ljx/HeZRo5yBvt+nJP9J2Z1I5fdVhQvpNNdMad9GCfnPN3Ysk0oqx/4ge+Cbt2FX0zs4fwGjIyi9zRBX14kS0wdkj8GVG2wcCFUfnZrLV8DTiUXbxBxPuwKI0psLx1SSoBmVnsWwJ8bVJBtiGlTQdtt2lbsSpOyFKJqw7ibEWI1Mc+zkyKC+kKM6ZMLL4dJLiEhNDWJLxejQJI3KM/ombP+nILcR9tq05mufJw2yE/0TGeqsnIqm9gOLdIQ+zICyWky2QpxPi5toYxjo+1/okkM1y2VosX9DsMZBi5r1W6D18mBWQ8xOHc+Ubj0anfaquhM8RE6DBE06q1xE0O1b1GcNsonhFxrG/045QEMe3BsSVXUWl/liD4cy30s8E4kNWvA6yxMy9KxHlJTws8eT4SpWOh/dbWZoBz/l0bHGRCWOPZ59v1CMaYrvhxFS6OfUtrcumyUT6iGnto7YIIQPvBKSaUaY97KCiRB6mvf2UPCZEkeY2cTiCxOGVrDpEnGTmu1zXsnD0TMdarc7cYGBzefF7IiVsFwQobHjzNfB1UqxbVe4lYuPqhNL5Z1UqK0ybE9p/K+Q7Ebv951Sxa/EseRbKW3JehIsrDY3PbiF46wcGvUiNkKCSw71m8Fuu15yc3fUVnwmg2IGZKbm07IqkQ30ycgEgVoeFTtdxaNjmRnbGOiEGNHipQ/gSi9VpcEl9xV9TYFcFUbWEujiFbuoDj8RBM1dH0xrIGetmtjRZHEyqqzCDN+YLP2FoXFlLoFwuUNfaSQTW6TfcPZK7BZ4VizwKBuE5n78sryNlal4vrTmBRcWCdgoOzypgsNJCdWmlAGL0jhtnTxKJeX/rXYpf6SrFYhX0exTmL3OhoAfoLWGr4dTvmzAF0cO1/eWk2Mo3vM9kymFJypUab49agPbDyYvODhpK4NiSlSbPonKrN0s2+lfUVbpf3D+v/TskMPYOKYmthGz0IwUh2mF8GHkvUoDVFNeDeGO2s9sL4mAl7R+PQuSO7s9gK1XSLZVcCaE4ebX7/TuIWgsozAiH49/FvMIOMBx21bFHxVsri3uOY8bDBdkpOuQK67Is7o5zLyHLt546c4k5wvrL96b7crcAw8AmS2r0Dw6pWIDYM7zxDIOsxLLX12aLOKcNvxt4jmi3ZzmxhYU4pXV+ChrNrJuc6h4EvuJVQauOuA8XnmzGEMJ1yhzUqY2MNQoZ7x0SYgndgDczUJQKk76WVX8JU0VYiSiYo2rXezx+KEzgRA2M791FAaDaDA==
+                </textarea>
+               
+               <br/>
+               <input type="submit" />
+           </form>
+        </h3>
+      </fieldset>
+   
+    
+   
+</body>
+</html>
