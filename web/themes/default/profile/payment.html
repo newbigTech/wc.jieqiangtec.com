@@ -105,7 +105,7 @@
 		</tr>
 		<tr>
 			<td>
-				银联支付
+				民生支付
 			</td>
 			<td>
 				<div class="related-info">
@@ -118,6 +118,9 @@
 				<div class="link-group"><a href="javascript:;" data-toggle="modal" data-target="#yinlian">修改</a></div>
 			</td>
 		</tr>
+
+
+		
 		<tr>
 			<td >
 				百度钱包支付
@@ -470,25 +473,25 @@
 		</div>
 	</div>
 
-	<!--银联支付-->
+	<!--民生支付-->
 	<div class="modal fade" id="yinlian" tabindex="-1" role="dialog" aria-hidden="true">
 		<div class="we7-modal-dialog modal-dialog">
 			<form action="{php echo url('profile/payment/save_setting', array('type' => 'unionpay'))}" enctype="multipart/form-data" method="post" id="form1" >
 				<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-					<div class="modal-title">银联支付</div>
+					<div class="modal-title">民生支付</div>
 				</div>
 				<div class="modal-body">
 					<div class="we7-form">
 						<div class="form-group">
-							<label for="" class="control-label col-sm-2">银联支付</label>
+							<label for="" class="control-label col-sm-2">民生支付</label>
 							<div class="form-controls col-sm-10">
 								<input id='radio-133' type="radio" name='unionpay[switch]' {if $pay_setting['unionpay']['switch'] === true}checked{/if} value="true"/>
 								<label for="radio-133">开启 </label>
 								<input id='radio-266' type="radio" name='unionpay[switch]' {if $pay_setting['unionpay']['switch'] !== true}checked{/if} value="false"/>
 								<label for="radio-266">关闭 </label>
-								<span class="help-block">是否使用银联支付</span>
+								<span class="help-block">是否使用民生支付</span>
 							</div>
 						</div>
 						<div class="form-group">
@@ -520,6 +523,9 @@
 			</form>
 		</div>
 	</div>
+
+
+
 
 	<!--百度钱包-->
 	<div class="modal fade" id="baidu" tabindex="-1" role="dialog" aria-hidden="true">
