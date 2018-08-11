@@ -1,3 +1,16 @@
+( ! ) Warning: DOMDocument::loadXML() [<a href='domdocument.loadxml'>domdocument.loadxml</a>]: Opening and ending tag mismatch: author line 10 and url in Entity, line: 11 in D:\www\users\wc.jieqiangtec.com\framework\model\extension.mod.php on line 59
+Call Stack
+# Time  Memory  Function  Location
+1 0.0003  341504  {main}( ) ..\index.php:0
+2 0.0134  484568  require( 'D:\www\users\wc.jieqiangtec.com\web\source\system\module.ctrl.php' )  ..\index.php:193
+3 0.0136  504160  module_get_all_unistalled( )  ..\module.ctrl.php:582
+4 5.2343  513752  cache_build_uninstalled_module( ) ..\module.mod.php:314
+5 31.2331 569072  ext_module_manifest( )  ..\cache.mod.php:331
+6 31.2333 582232  ext_module_manifest_parse( )  ..\extension.mod.php:197
+7 31.2334 582472  loadXML ( )
+
+
+
 [31-Jan-2018 22:14:02] WARNING: [pool www] child 8627 said into stderr: "NOTICE: PHP message: PHP Strict Standards:  Non-static method BaseCommon::GetProductPictureShortPath() should not be called statically, assuming $this from incompatible context in /www/docs/erp.jieqiangtec.com/Core/BaseCommon.class.php on line 10"
 
 
