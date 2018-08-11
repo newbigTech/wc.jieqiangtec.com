@@ -40,3 +40,5 @@ include_once IA_ROOT . '/payment/unionpay/upacp_sdk_php/utf8/func/common.php';
 include_once IA_ROOT . '/payment/unionpay/upacp_sdk_php/utf8/func/secureUtil.php';
 include_once IA_ROOT . '/payment/unionpay/upacp_sdk_php/utf8/func/PublicEncrypte.php';
 include_once IA_ROOT . '/payment/unionpay/upacp_sdk_php/utf8/func/PinBlock.php';
+include_once IA_ROOT . '/payment/unionpay/ms_lajp/php_java.php';
+//include_once IA_ROOT . '/ms_lajp/php_java.php';

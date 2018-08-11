@@ -6,7 +6,36 @@
 error_reporting(0);
 define('IN_MOBILE', true);
 require '../../framework/bootstrap.inc.php';
-$_W['uniacid'] = intval($_POST['reqReserved']);
+if (!$_GET['payresult']){
+    WeUtility::logging('TODO 民生异步返回',  array('file'=>'D:\www\users\wc.jieqiangtec.com\payment\unionpay\notify.php','payresult'=>$_GET['payresult']));
+}else{
+    // 解密
+    $base64Encode  = trim($_GET['payresult']);
+    try
+    {
+        /**
+         * 解密和验证签名
+         *
+         * @param base64EnvelopeMessage
+         *            BASE64字符串密文消息
+         * @return 执行结果（BASE64字符串）
+         *
+         */
+        $ret = lajp_call("cfca.sadk.cmbc.tools.php.PHPDecryptKit::DecryptAndVerifyMessage", $base64Encode);
+        $ret = explode('|',$ret);
+
+        // echo "{$ret}<br>";
+        // echo "{$base64Encode}<br>";
+    }
+    catch(Exception $e)
+    {
+        // echo "Err:{$e}<br>";
+        WeUtility::logging('TODO 民生支付异步返回日志', array('error' => $e));
+    }
+}
+
+
+$_W['uniacid'] = intval($ret[0]);
 load()->web('common');
 load()->classs('coupon');
 $_W['uniaccount'] = $_W['account'] = uni_fetch($_W['uniacid']);
@@ -17,15 +46,15 @@ if(!is_array($setting['payment'])) {
 }
 $payment = $setting['payment']['unionpay'];
 require '__init.php';
-
-if (!empty($_POST) && verify($_POST) && $_POST['respMsg'] == 'success') {
+// 返回成功
+if ($ret[6] == 0) {
 	$sql = 'SELECT * FROM ' . tablename('core_paylog') . ' WHERE `uniontid`=:uniontid';
 	$params = array();
-	$params[':uniontid'] = $_POST['orderId'];
+	$params[':uniontid'] = $ret['orderId'];
 	$log = pdo_fetch($sql, $params);
 	if(!empty($log) && $log['status'] == '0') {
 		$log['tag'] = iunserializer($log['tag']);
-		$log['tag']['queryId'] = $_POST['queryId'];
+		$log['tag']['queryId'] = $ret[0];
 
 		$record = array();
 		$record['status'] = 1;
