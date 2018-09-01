@@ -8,7 +8,7 @@ rem
 rem -----------------------------------------------------------
 
 rem java服务中需要的jar文件或classpath路径，如业务程序、第三方jar文件log4j等
-set classpath=lajp-10.05.jar;test_service
+set classpath=lajp-10.05.jar;CMBC-3.1.0.8.jar;CFCADecryptKit-CMBC-3.0.0.3.jar;log4j-1.2.14.jar;
 
 rem 自动启动类和方法，LAJP服务启动时会自动加载并执行
 rem set AUTORUN_CLASS=com.foo.AutoRunClass
