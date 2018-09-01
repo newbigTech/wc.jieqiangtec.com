@@ -1,6 +1,6 @@
 ﻿<?php
 
-require_once "cryptAES.class.php";
+require_once "CryptAES.class.php";
 
 //函数功能：使用AES解密，得到以竖线分割的字符串，取出最后一段的时间戳，与当前时间相比。如果之差的绝对值小于$timeStamp，则返回AES解密的报文，否则返回null；异常时也返回null
 //入参：  $encryptContent:密文    $keyStr:密钥    $timeStamp：允许的时间差（单位毫秒）
