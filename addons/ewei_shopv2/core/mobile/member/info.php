@@ -120,11 +120,11 @@ class Info_EweiShopV2Page extends MobileLoginPage
 			$avatar = trim($_GPC['avatar']);
 
 			if (empty($nickname)) {
-				show_json(0, '请填写昵称');
+				show_json(0, '请填写昵称1');
 			}
 
 			if (empty($avatar)) {
-				show_json(0, '请上传头像');
+				show_json(0, '请上传头像2');
 			}
 
 			pdo_update('ewei_shop_member', array('avatar' => $avatar, 'nickname' => $nickname), array('id' => $member['id'], 'uniacid' => $_W['uniacid']));

@@ -13,6 +13,7 @@ $sl = $_GPC['ps'];
 $params = @json_decode(base64_decode($sl), true);
 
 $setting = uni_setting($_W['uniacid'], array('payment'));
+//var_dump('$setting==',$setting);exit;
 if (!is_array($setting['payment'])) {
     exit('没有设定支付参数.');
 }
@@ -75,6 +76,8 @@ if (!empty($paylog) && $paylog['status'] != '0') {
     exit('这个订单已经支付成功, 不需要重复支付.');
 }
 $auth = sha1($sl . $paylog['uniacid'] . $_W['config']['setting']['authkey']);
+
+//var_dump('$auth==',$auth,$_GPC['auth']);
 if ($auth != $_GPC['auth']) {
     exit('参数传输错误.');
 }
@@ -136,7 +139,7 @@ $params = array(
     'Channel' => '3',
 //借贷标示
     'LoanFlag' => '',
-    'ProductType' => '1',
+    'ProductType' => '1', // 商品类型写1
     'ProductName' => '商品名称_测试物品',
     'Remark' => '这是一个测试备注',
 );
@@ -155,10 +158,11 @@ try {
      * @return base64EnvelopeMessage BASE64编码的签名加密结果
      *
      */
-    // var_dump($params);exit;
+    // var_dump('$params==',$params);exit;
     //按民生付要求对单信息进行组装
     $params = implode('|', $params);
 
+    // 注：商户上送支付订单密文时，需在密文后面拼入”|1.0.0”字符串。
     $ret = lajp_call("cfca.sadk.cmbc.tools.php.PHPDecryptKit::SignAndEncryptMessage", base64_encode($params));
     // echo "{$ret}<br>";
 } catch (Exception $e) {
@@ -173,12 +177,12 @@ $html_form = <<<EOT
                 <head>
                 <meta http-equiv="Content-Type" content="text/html; charset=utf8" />
                 <title>支付</title>
-                <script type="text/javascript" src="../../payment/unionpay/ms_lajp/js/cmbcForClient.js"></script>
+                <script type="text/javascript" src="./ms_lajp/cmbcForClient.js"></script>
                 </head>
                 <body>
                 <script >
                 // loginForComm("http://197.3.176.26:8000/ecshopMerchantTest/index.jsp", "{$url}");
-                submitOrderForCash({$ret})
+                submitOrderForCash("{$ret}");
                 </script>
                 </body>
                 </html>

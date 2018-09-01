@@ -11,8 +11,11 @@ include '../addons/sen_appfreeitem/inc/core/function/qiniu.mod.php';
 include '../addons/sen_appfreeitem/inc/core/function/functions.php';
 
 // 引入民生加密类
-include '../addons/sen_appfreeitem/inc/core/class/decryptAndCheck.class.php';
-include '../addons/sen_appfreeitem/inc/core/class/php_java.php';
+//include '../addons/sen_appfreeitem/inc/core/class/decryptAndCheck.class.php';
+//include '../addons/sen_appfreeitem/inc/core/class/php_java.php';
+include_once IA_ROOT . '/payment/unionpay/ms_lajp/decryptAndCheck.class.php';
+include_once IA_ROOT . '/payment/unionpay/ms_lajp/php_java.php';
+//$ms_login_url = "http://197.3.176.26:8000/ecshopMerchantTest/index.jsp";
 
 /*try
 {
@@ -43,7 +46,6 @@ catch(Exception $e)
 }
 
 exit;*/
-
 
 
 class sen_appfreeitemModuleSite extends WeModuleSite
@@ -273,6 +275,8 @@ class sen_appfreeitemModuleSite extends WeModuleSite
         /*$condition = ' and 1';*/
         $_GET['brand_id'] AND $condition .= ' AND brands = ' . $_GET['brand_id'];
         $rlist = pdo_fetchall("SELECT * FROM " . tablename('sen_appfreeitem_project') . " WHERE weid = '{$_W['uniacid']}' AND status >= '2' and status < '4' and isrecommand = '1' $condition ORDER BY displayorder DESC, finish_price DESC LIMIT " . ($rpindex - 1) * $rpsize . ',' . $rpsize);
+
+
 
         // 热门推荐
         $hot_list = pdo_fetchall("SELECT * FROM " . tablename('sen_appfreeitem_project') . " WHERE weid = '{$_W['uniacid']}' AND status >= '2' and status < '4' and ishot = '1'  and deal_days > $time  ORDER BY displayorder DESC, id DESC, finish_price DESC LIMIT 4 ");
@@ -609,39 +613,7 @@ class sen_appfreeitemModuleSite extends WeModuleSite
                 }
                 message('申请成功,现在跳转到审核页面...', $this->createMobileUrl('myorder'), 'success');
             } elseif ($op == 1) {
-                // message('提交订单成功,现在跳转到付款页面...', $this->createMobileUrl('pay', array('orderid' => $orderid)), 'success');
-                // 跳转到民生页面
-                //需要签名的数据，base64格式
-                // $base64Plain  = $_REQUEST['base64Plain'];
-                try
-                {
-                    $ret = lajp_call("cfca.sadk.cmbc.tools.php.PHPDecryptKit::SignAndEncryptMessage", base64_encode($orderid));
-                    // echo "{$ret}<br>";
-                }
-                catch(Exception $e)
-                {
-                    echo "Err:{$e}<br>";
-                }
-
-                $order_info = array('orderid' => $ret);
-                $eof = <<<EOT
-                <html>
-                <head>
-                <meta http-equiv="Content-Type" content="text/html; charset=utf8" />
-                <title>支付</title>
-                <script type="text/javascript" src="../addons/sen_appfreeitem/template/style/js/cmbcForClient.js"></script>
-                </head>
-                <body>
-                <script >
-                // loginForComm("http://197.3.176.26:8000/ecshopMerchantTest/index.jsp", "{$url}");
-                submitOrderForCash({$order_info})
-                </script>
-                </body>
-                </html>
-EOT;
-                echo $eof;
-                exit;
-
+                message('提交订单成功,现在跳转到付款页面...', $this->createMobileUrl('pay', array('orderid' => $orderid)), 'success');
             }
         }
         $profile = fans_search($_W['fans']['from_user'], array('resideprovince', 'residecity', 'residedist', 'address', 'nickname', 'mobile'));
@@ -940,9 +912,9 @@ EOT;
             $params['virtual'] = true;
         } else {
             $order = pdo_fetch("SELECT * FROM " . tablename('sen_appfreeitem_order') . " WHERE id = :id", array(':id' => $orderid));
-            if ($order['status'] != '0') {
+            /*if ($order['status'] != '0') {
                 message('抱歉，您的订单已经付款或是被关闭，请重新进入付款！', $this->createMobileUrl('myorder'), 'error');
-            }
+            }*/
             $params['tid'] = $orderid;
             $params['user'] = $_W['fans']['from_user'];
             $params['fee'] = $order['price'];
@@ -950,8 +922,11 @@ EOT;
             $params['ordersn'] = $order['ordersn'];
             $params['virtual'] = $order['return_type'] == 2 ? true : false;
         }
-        // var_dump($params);exit;
-        // $this->pay($params);
+
+        $res = $this->pay($params);
+        var_dump($params, $res);
+        exit;
+
         include $this->template('pay');
     }
 
@@ -1033,10 +1008,12 @@ EOT;
         // TODO debug
         if ($_GPC['debug']) {
             $_W['fans']['from_user'] = 'oMaz50jp9G_xRU_JT1jMaxuS5KdY';
+        }else{
+            $this->checkAuthSession();
         }
 //        var_dump($_GPC['debug']);exit;
 
-        $this->checkAuthSession();
+
         $carttotal = $this->getCartTotal();
 //        var_dump('$carttotal==',$carttotal);exit;
         $op = $_GPC['op'];
@@ -1101,7 +1078,10 @@ EOT;
 
             $total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('sen_appfreeitem_order') . " WHERE weid = '{$_W['uniacid']}' AND from_user = '{$_W['fans']['from_user']}'");
             $pager = pagination($total, $pindex, $psize);
-// var_dump($list,$pager);exit;
+
+            $res_json = array('code'=>200,'msg'=>'请求成功','data'=>array('total'=>$total,'pindex'=>$pindex,'psize'=>$psize,'list'=>$list));
+            /*$res_json_order = $this->echojson(200,'请求成功',array('total'=>$total,'pindex'=>$pindex,'psize'=>$psize,'list'=>$list));
+            echo($res_json_order);exit;*/
             $pagetitle = "申请状态";
             include $this->template('order');
         }
@@ -2018,6 +1998,7 @@ LEFT JOIN ims_mc_members AS m ON f.uid = m.uid ORDER BY id DESC LIMIT " . ($pind
         return $item;
     }
 
+    // 支付结果
     public function payResult($params)
     {
         global $_W;
@@ -2088,9 +2069,9 @@ LEFT JOIN ims_mc_members AS m ON f.uid = m.uid ORDER BY id DESC LIMIT " . ($pind
         }
         if ($params['from'] == 'return') {
             if ($params['type'] == $credit) {
-                message('支付成功！', $this->createMobileUrl('myorder'), 'success');
+                message('支付成功1！', $this->createMobileUrl('myorder'), 'success');
             } else {
-                message('支付成功！', '../../app/' . $this->createMobileUrl('myorder'), 'success');
+                message('支付成功2！', '../../app/' . $this->createMobileUrl('myorder'), 'success');
             }
         }
     }
@@ -2114,7 +2095,7 @@ LEFT JOIN ims_mc_members AS m ON f.uid = m.uid ORDER BY id DESC LIMIT " . ($pind
         if (empty($_SESSION['openid'])) {
             // 判断是否有民生信息返回
             $chiperTxt = $_REQUEST['chiperTxt'];
-            WeUtility::logging('民生信息返回$chiperTxt=='.$chiperTxt);
+            WeUtility::logging('民生信息返回$chiperTxt==' . $chiperTxt);
 
             // $chiperTxt = 'plxIaWGVLEwO9uWJRklDyDhWprbTb9rfaHsnGCs/jJ2YabAwvz99ZkBpoahObXxj';
             // $chiperTxt = 'plxIaWGVLEwO9uWJRklDyDhWprbTb9rfaHsnGCs/jJ2YabAwvz99ZkBpoahObXxj22';
@@ -2126,7 +2107,7 @@ LEFT JOIN ims_mc_members AS m ON f.uid = m.uid ORDER BY id DESC LIMIT " . ($pind
 //返回： $encryptContent对应的明文或者null
 //$plainTxt = DecryptAndCheck::checkWithTimeStamp($chiperTxt, $keyStr, 500000000.1);
                 $plainTxt = DecryptAndCheck::checkWithTimeStamp($chiperTxt, $keyStr, 500000000000.1); // 15.854896	年(yr)
-                WeUtility::logging('民生信息返回$chiperTxt=='.$chiperTxt.'==解码$plainTxt=='.$plainTxt);
+                WeUtility::logging('民生信息返回$chiperTxt==' . $chiperTxt . '==解码$plainTxt==' . $plainTxt);
 
                 // var_dump($chiperTxt,$plainTxt,$res,$plainTxt[0],$_SESSION['openid']);exit;
                 if (!$plainTxt) {
@@ -2137,16 +2118,14 @@ LEFT JOIN ims_mc_members AS m ON f.uid = m.uid ORDER BY id DESC LIMIT " . ($pind
                 } else {
                     // 解密成功
                     $res = explode('|', $plainTxt);
-                    var_dump('接口返回成功', '返回文本：' . $plainTxt, '|分割：', $res, $plainTxt[0], $_SESSION['openid']);
+                    var_dump('接口返回成功', '返回文本：' . $plainTxt, '|分割：', $res, $plainTxt[0], $_SESSION['openid']);exit;
 
                     // 写入数据库
                     $pitem = pdo_fetch("SELECT * FROM " . tablename('mc_members') . " WHERE out_uid=:out_uid ", array(':out_uid' => $res[0]));
                     if (empty($pitem)) {
-                        $data = array('out_uid' => $res[0], 'mobile' => $res[1],'out_uid' => $res[2], 'createtime' => time(),);
+                        $data = array('out_uid' => $res[0], 'mobile' => $res[1], 'out_uid' => $res[2], 'createtime' => time(),);
                         pdo_insert('mc_members', $data);
                     }
-
-                    exit;
                     $_SESSION['openid'] = $res[0];
                 }
             } else {
@@ -2158,17 +2137,17 @@ LEFT JOIN ims_mc_members AS m ON f.uid = m.uid ORDER BY id DESC LIMIT " . ($pind
                 <head>
                 <meta http-equiv="Content-Type" content="text/html; charset=utf8" />
                 <title>登录</title>
-                <script type="text/javascript" src="../addons/sen_appfreeitem/template/style/js/cmbcForClient.js"></script>
+                <script type="text/javascript" src="../payment/unionpay/ms_lajp/cmbcForClient.js"></script>
                 </head>
                 <body>
                 <script >
-                loginForComm("http://197.3.176.26:8000/ecshopMerchantTest/index.jsp", "{$url}");
+                loginForComm("{$return_url}", "{$url}");
                 </script>
                 </body>
                 </html>
 EOT;
                 echo $eof;
-                // exit;
+                exit;
             }
 
 
@@ -2394,6 +2373,14 @@ EOT;
         } else {
             return false;
         }
+    }
+
+
+    function echojson($code = '', $msg = 0, $data = array()) {
+        header('Response-Server: ' . SERVER_NAME);
+        $arr = array('code' => $code, 'msg' => $msg, 'data' => $data);
+        return json_encode($arr);
+        exit();
     }
 
 }

@@ -6,8 +6,11 @@
 error_reporting(0);
 define('IN_MOBILE', true);
 require '../../framework/bootstrap.inc.php';
+// 民生加解密类
+include_once IA_ROOT . '/payment/unionpay/ms_lajp/php_java.php';
+WeUtility::logging('TODO 民生异步返回',  array('file'=>'D:\www\users\wc.jieqiangtec.com\payment\unionpay\notify.php','payresult'=>$_GET['payresult']));
 if (!$_GET['payresult']){
-    WeUtility::logging('TODO 民生异步返回',  array('file'=>'D:\www\users\wc.jieqiangtec.com\payment\unionpay\notify.php','payresult'=>$_GET['payresult']));
+    echo '参数错误';exit;
 }else{
     // 解密
     $base64Encode  = trim($_GET['payresult']);
@@ -23,6 +26,7 @@ if (!$_GET['payresult']){
          */
         $ret = lajp_call("cfca.sadk.cmbc.tools.php.PHPDecryptKit::DecryptAndVerifyMessage", $base64Encode);
         $ret = explode('|',$ret);
+        // var_dump('TODO 民生支付异步返回日志$ret==',$ret);exit;
 
         // echo "{$ret}<br>";
         // echo "{$base64Encode}<br>";
@@ -45,8 +49,10 @@ if(!is_array($setting['payment'])) {
 	exit('没有设定支付参数.');
 }
 $payment = $setting['payment']['unionpay'];
+
 require '__init.php';
 // 返回成功
+
 if ($ret[6] == 0) {
 	$sql = 'SELECT * FROM ' . tablename('core_paylog') . ' WHERE `uniontid`=:uniontid';
 	$params = array();
