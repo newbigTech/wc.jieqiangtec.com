@@ -422,6 +422,11 @@ class sen_appfreeitemModuleSite extends WeModuleSite
         $sql = "select * from " . tablename('sen_appfreeitem_order_ws') . " WHERE weid='{$_W['uniacid']}' AND pid='{$id}' AND status=1 LIMIT 10";
         $wslist = pdo_fetchall($sql);
         $title = "产品展示";
+
+        // 热门推荐
+        $time = time();
+        $hot_list = pdo_fetchall("SELECT * FROM " . tablename('sen_appfreeitem_project') . " WHERE weid = '{$_W['uniacid']}' AND status >= '2' and status < '4' and ishot = '1'  and deal_days > $time  ORDER BY displayorder DESC, id DESC, finish_price DESC LIMIT 4 ");
+
         include $this->template('detail');
     }
 

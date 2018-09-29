@@ -1,315 +1,173 @@
-{template 'header'}
-<style>.c_green{color:#52C580}</style>
-<div class="wraper"> 
-<!-- 点击查看大图 开始 -->
-<div class="outerdiv" id="outerdiv" onclick="close_magicZoom(this);">
-    <div id="innerdiv" class="innerdiv">
-    	<img id="bigimg" src="" />
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta content="telephone=no" name="format-detection">
+    <meta content="email=no" name="format-detection">
+    <title>{$item['title']}详情</title>
+    <!-- <link rel="dns-prefetch" href=""> -->
+    <link rel="stylesheet" href="{STATIC_RESOURCE_VERTWO}css/lib/reset.css">
+    <link rel="stylesheet" href="{STATIC_RESOURCE_VERTWO}libs//swiper/swiper.min.css" />
+    <link rel="stylesheet" href="{STATIC_RESOURCE_VERTWO}css/index.css" />
+    <script src="{STATIC_RESOURCE_VERTWO}js/lib/flexible-163.js"></script>
+    <script src="{STATIC_RESOURCE_VERTWO}js/lib/jquery-2.2.4.min.js"></script>
+    <script src="{STATIC_RESOURCE_VERTWO}libs//swiper/swiper.min.js"></script>
+</head>
+
+<body ontouchstart class="detail">
+    <!-- 返回上一页 -->
+    <div class="header">
+        <a class="go-back" href="javascript:void(0)" onclick="history.go(-1)">返回</a>
+        <h1 class="title">{$item['title']}</h1>
+        <span class="service">服务声明</span>
     </div>
-    <div class="blank"></div>
-	<div class="closebigimg">点击任意位置关闭</div>
-</div>
-<!-- 点击查看大图 结束 -->
 
-<!-- 中间 开始 -->
-<div class="mod">
-	<section class="deal_box">
-		<!--1-->
-    	<div class="imgboxdt">
-		    <a class="" href="#" title="产品名称：{$item['title']}">
-		    	<img src="{$_W['attachurl']}{$item['thumb']}" alt="" />	  				
-			</a>
-    	</div>
-    	<a href="javascript:void(0);" title="{$item['title']}" class="deal_title sizing" style="text-align:left;">{$item['title']}</a>
-    	<!--2-->
-    	
-    	<div class="blank5"></div>
-     	<!--3-->
-    	<div class="deal_content_box pd" style="border-bottom: 1px solid #e5e5e5;padding-bottom:20px;">
-               
-                <div class="blank">
-                </div>
-				{if $item['status']==3}
-					{if time() <= $item['starttime']}
-					<div class="div_dt" style="width:100%;border-right:0">
-						<div class="f_999">离产品开始还有</div>
-						<div class="left_time" data="{php echo $item['starttime'] - time()}">
-							<em class="s day">--</em>
-							<em class="l">天</em>
-							<em class="s hour">--</em>
-							<em class="l">时</em>
-							<em class="s min">--</em>
-							<em class="l">分</em>
-							<em class="s sec">--</em>
-							<em class="l">秒</em>
-						</div>
-					</div>
-					{else}
-					<div class="div_dt" style="    width: 49%;">
-						<span class="num">价值：<span class="c_green">￥{$item['myprice']} </span></span><br />
-						<span class="til">数量：<span class="c_green">{$item['cpnumber']}</span></span>
-					</div>
-					
-					<div class="div_dt" style="border:none;width: 49%;">
-						<span class="til">申请人数</span><br />
-						<span class="num">{php echo $this->getprojectorder($item['id'])}</span>
-					</div>
-					<div class="clear"></div>
-					<div class="div_dt" style="width:100%;border-right:0;border-top: 1px solid #e5e5e5;padding-top: 20px;">
-						<span>距离申请结束：</span>
-						<span class="left_time" data="{php echo $item['deal_days'] - time()}">
-							<em class="s day c_green">--</em>
-							<em class="l">天</em>
-							<em class="s hour c_green">--</em>
-							<em class="l">时</em>
-							<em class="s min c_green">--</em>
-							<em class="l">分</em>
-							<em class="s sec c_green">--</em>
-							<em class="l">秒</em>
-						</span>
-					</div>
-					{/if}
-				 {elseif $item['status'] == 4}
-					<div class="div_dt" style="    width: 49%;">
-						<span class="num">价值：<span class="c_green">￥{$item['myprice']} </span></span><br />
-						<span class="til">数量：<span class="c_green">{$item['cpnumber']}</span></span>
-					</div>
-					
-					<div class="div_dt" style="border:none;width: 49%;">
-						<span class="til">申请人数</span><br />
-						<span class="num">{php echo $this->getprojectorder($item['id'])}</span>
-					</div>
-				 {/if}
-                <div class="blank"></div>
+    <div class="wrapper">
+        <!-- 主体内容部分s -->
+        <div class="container">
+            <!-- 倒计时 -->
+            <div class="timer-box">
+                <p>剩余：1 天 0 时 0 分 0 秒后结束</p>
             </div>
-	</section>
-	<section class="detailmain" style="padding:0px;">
-		<div style="height: 50px;line-height: 50px;border-bottom: 1px solid #e5e5e5;width: 100%;text-align:center; "><span>产品介绍</span></div>
-		<div style="padding:15px;">
-			{$item['content']}
-		</div>
-	</section>
-			{if $item['status'] == 3}
-			{if time() <= $item['starttime']}
-                 <section class="detailborder">
-				
-    	<div class="blank"></div>
-	</section>
-                {else}
-                <section class="detailborder foot">
-			<div class="">
-	    		<div class="webkit-box">
-	    			<div class="Returntitle webkit-box-flex">
-				       
-				    </div>
-					{if $item['direct']==1}
-					<a href="javascript:check_m('{php echo $this->createMobileUrl('confirm',array('id'=>$item['id'], 'item_id'=>$row['id'],'op'=>'1'));}',{$item['status']});" class="ui-button ui-small-button theme_color" style="width:34%;border-radius: 0px;background:#FEBF00;">立即购买</a>
-					{/if}
-					<?php $mydetail = $this->getprojectdetail($item['id'])?>
-					{if !empty($mydetail)}
-						<a class="ui-button ui-small-button theme_color" style="width:34%;border-radius: 0px;background-color: #B1B1B1;">已申请</a>
-					{else}	
-					
-						
-							<a href="javascript:;" onclick="share();" class="ui-button ui-small-button theme_color" style="width:34%;border-radius: 0px;">免费申请</a>
-						
-					{/if}
-	    		</div>
-		    </div>			 	
-    	<div class="blank"></div>
-	</section>
-                {/if}
-		{elseif $item['status'] == 4}
-			<section class="detailborder foot">
-			<div class="">
-	    		<div class="webkit-box">
-	    			<div class="Returntitle webkit-box-flex">
-				       
-				    </div>
-					
-				    <a href="javascript:check_m('{php echo $this->createMobileUrl('list');}',{$item['status']});" class="ui-button ui-small-button theme_color" style="width:34%;border-radius: 0px;background-color: #B1B1B1;">活动结束</a>
-											
-	    		</div>
-		    </div>			 	
-    	<div class="blank"></div>
-	</section>
-		{/if}
-	
-</div>
-<!-- 中间 结束 --> 
-<script>
-function share(){
-	 $.ajax({
-            type:"POST",
-            url:"{$_W['siteroot']}app/index.php?i={$_W['uniacid']}&c=entry&do=ajaxshare&m=sen_appfreeitem",
-            data:{},
-            dataType: "json",
-            success:function(msg){
-				if(msg==1){
-					cxshare();
-				}else{
-					location.href = "{php echo $this->createMobileUrl('confirm',array('id'=>$item['id'], 'item_id'=>$row['id'],'op'=>'0'));}";
-				}
-				
+            <!-- 顶部轮播 -->
+            <div class="banner-box swiper-container">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide">
+                        <a href="" title="">
+                            <img class="banner-img" src="{$_W['attachurl']}{$item['thumb']}" alt="{$item['title']}">
+                        </a>
+                    </div>
+                    <!-- <div class="swiper-slide">
+                        <a href="" title="">
+                            <img class="banner-img" src="{STATIC_RESOURCE_VERTWO}images/banner-detail-pic.jpg" alt="">
+                        </a>
+                    </div> -->
+                </div>
+                <!-- 分页器 -->
+                <div class="swiper-pagination"></div>
+            </div>
+
+            <!-- 商品信息 -->
+            <div class="infos-box">
+            	<!-- 暂时无内容 -->
+                <!-- <div class="infos-bd">
+                    <span class="info-ico">免费试用</span>
+                    <h2 class="info-name">{$item['title']}</h2>
+                    <p class="info-tip">要点描述副标题，绽放水润光泽绽放细嫩柔滑要点描述副标题， 绽放水润光泽绽放细嫩柔滑要点描述副标题，绽放水润光泽绽放。</p>
+                </div> -->
+                <div class="infos-other">
+                    <span class="infos-count">限量<em>{$item['cpnumber']}</em>份</span>
+                    <span class="infos-person">{php echo $this->getprojectorder($item['id'])}人申请</span>
+                    <span class="infos-price">￥{$item['myprice']}</span>
+                </div>
+                <div class="infos-ft">
+                    <a class="info-apply" href="" title="试用流程">试用流程</a>
+                </div>
+            </div>
+
+            <!-- 商品详情 -->
+            <div class="detail-box">
+                <!-- <h3 class="detail-hd"><img src="{STATIC_RESOURCE_VERTWO}images/title-detail.png" alt="商品详情"></h3>
+                <div class="detail-bd">
+                    <p><img src="{STATIC_RESOURCE_VERTWO}images/detail-pic.jpg" alt=""></p>
+                </div> -->
+                <div class="detail-bd">
+                    <p>
+	                    {$item['content']}
+	                </p>
+                </div> 
+                
+            </div>
+
+
+
+            <!-- 精选推荐 -->
+            <div class="floor-box tj-box">
+                <h3 class="floor-hd"><img src="{STATIC_RESOURCE_VERTWO}images/title-tj.png" alt="精选推荐"></h3>
+                <div class="floor-bd">
+                    {loop $hot_list $hot_item}
+                    <!-- 产品1 -->
+                    <div class="floor-bd-item">
+                        <a class="item-link" href="{php echo $this->createMobileUrl('detail', array('id' => $hot_item['id']))}">
+                            <!-- 产品主图 -->
+                            <div class="item-view">
+                                <img class="item-img" src="{php echo tomedia($hot_item['thumb'])}" alt="{$hot_item['title']}">
+                            </div>
+                            <!-- 产品详情 -->
+                            <div class="item-detail">
+                                <p class="item-brand">品牌</p>
+                                <p class="item-name">{$hot_item['title']}</p>
+                                <p class="item-price">
+                                    <span class="price-now">¥{$hot_item['myprice']}</span>
+                                    <del class="price-old">¥{$hot_item['price']}</del>
+                                </p>
+                                <p class="item-cart">
+                                    <span class="iconfont btn btn-car">&#xe60f;</span>
+                                </p>
+                            </div>
+                        </a>
+                    </div>
+                    {/loop}
+                </div>
+            </div>
+
+
+
+            <div class="cart-box">
+                <!-- 立即购买 -->
+                <a class="cart-hd" href="" title="立即购买">
+                <span class="iconfont">&#xe60f;</span>立即购买</a>
+                <!-- 申请试用 -->
+                <a class="apply-hd" href="" title="申请试用">申请试用</a>
+            </div>
+
+
+        </div>
+    </div>
+
+
+
+    <script>
+        $(function() {
+        	// alert( '{php echo date('Y/m/d,H:i:s',$item['deal_days'])}' );
+            //头部轮播
+            var slideBanner = new Swiper('.banner-box', {
+                autoplayDisableOnInteraction: false,
+                autoplay: 3000,
+                visibilityFullFit: true,
+                // loop: true,
+                // pagination: '.swiper-pagination'
+            });
+
+            // 倒计时
+            function checkTime(i){
+                if( i<10 ){
+                    i = '0' + i;
+                }
+                return i;
             }
+
+            function showTime() {
+            　　var nowtime=new Date(),
+            　　//endtime=new Date('2019/1/1,00:00:00'),//设置结束时间
+        		endtime=new Date('{php echo date('Y/m/d,H:i:s',$item['deal_days'])}'),//设置结束时间
+        　　　　lefttime=parseInt((endtime.getTime()-nowtime.getTime())/1000),
+        　　　　d=checkTime(Math.floor(lefttime/(60*60*24))),
+        　　　　h=checkTime(Math.floor(lefttime/(60*60)%24)),
+        　　　　m=checkTime(Math.floor(lefttime/60%60)),
+        　　　　s=checkTime(Math.floor(lefttime%60));
+                $('.timer-box p').html('剩余：'+ d + '天' + h + '时' + m + '分' + s+ '秒后结束')
+            　　setTimeout(showTime, 1000);
+            }
+            showTime();
+
         });
-}
+    </script>
 
-function cxshare(){
-	$.ajax({
-            type:"POST",
-            url:"{$_W['siteroot']}app/index.php?i={$_W['uniacid']}&c=entry&id={$item['id']}&do=cxshare&m=sen_appfreeitem",
-            data:{},
-            dataType: "json",
-            success:function(msg){
-				if(msg['count']==1){
-					location.href = "{php echo $this->createMobileUrl('confirm',array('id'=>$item['id'], 'item_id'=>$row['id'],'op'=>'0'));}";
-				}else{
-					alert(msg['content']);
-				}
-				
-            }
-        });
-}		
-$(document).ready(function(){
- 	bind_attention_focus();
-});
+</body>
 
-function bind_attention_focus(){
-	$(".attention_focus_deal").bind("click",function(){
-		attention_focus_deal($(this).attr("id"));
-	});
-}
-function attention_focus_deal(id){
-	var ajaxurl = "{php echo $this->createMobileUrl('mycart',array('op'=>'add'))}&pid="+id;
-	$.ajax({ 
-		url: ajaxurl,
-		dataType: "json",
-		type: "POST",
-		success: function(ajaxobj){
-			if(ajaxobj.status==1){
-				$(".attention_focus_deal").removeClass("gz");
-				$(".attention_focus_deal").addClass("qxgz");
-				$(".attention_focus_deal").html('<font size="2.5"><i class="fa fa-star "></i></font> 取消关注');
-			}else if(ajaxobj.status==2)	{
-				$(".attention_focus_deal").removeClass("qxgz");
-				$(".attention_focus_deal").addClass("gz");	
-				$(".attention_focus_deal").html('<font size="2.5"><i class="fa fa-star-o "></i></font> 关注');
-			}else if(ajaxobj.status==3)	{
-				$.showErr(ajaxobj.info);							
-			}else{
-				$.showErr("请先登录",function(){
-			 		location.href="{php echo url('auth/login');}";
-				});
-			}
-		},
-		error:function(ajaxobj)
-		{
-	//			if(ajaxobj.responseText!='')
-	//			alert(ajaxobj.responseText);
-		}
-	});
-}
-
-	
-
-	function bind_ajax_form_dedicate(str)
-	{
-		$(str).find(".ui-button").bind("click",function(){
-			var $obj=$(this);
-			var $dedicate_form=$obj.parent(str);
-			var $dedicate_dedicate_money=$dedicate_form.find("input[name='pay_money']");
-			$dedicate_form.find(".dedicate_tip").hide();
-			if((isNaN($dedicate_dedicate_money.val()) || parseFloat($dedicate_dedicate_money.val())<=0) || $dedicate_dedicate_money.val()==''){
-				$dedicate_form.find(".dedicate_tip").show();
-				$dedicate_dedicate_money.focus();
-				return false;
-			}
-			$(str).submit();
-		});
-	}
-
-	// 显隐详情
-	$("#detailmain_a").bind('click',function(){
-		if($("#deal_info_box").is(":hidden")){
-			$("#deal_info_box").show();
-			$(this).find("#view_details").text("收起详情");
-			$(this).find(".fa").removeClass("fa-angle-right").addClass("fa-angle-down");
-		}else{
-			$("#deal_info_box").hide();
-			$(this).find("#view_details").text("展开详情");
-			$(this).find(".fa").removeClass("fa-angle-down").addClass("fa-angle-right");
-		}
-	});
-	$("#detailmain_aa").bind('click',function(){
-		$("#deal_info_box").hide();
-		$("#view_details").text("展开详情");
-	});
-</script>
-<script type="text/javascript">
-    if($(".left_time").length){
-        leftTimeAct(".left_time");
-    }
-    // 未开始产品倒计时
-    function leftTimeAct(left_time){
-        var leftTimeActInv = null;
-        clearTimeout(leftTimeActInv);
-        $(left_time).each(function(){
-            var leftTime = parseInt($(this).attr("data"));
-            if(leftTime > 0)
-            {
-                var day  =  parseInt(leftTime / 24 /3600);
-                var hour = parseInt((leftTime % (24 *3600)) / 3600);
-                var min = parseInt((leftTime % 3600) / 60);
-                var sec = parseInt((leftTime % 3600) % 60);
-                $(this).find(".day").html((day<10?"0"+day:day));
-                $(this).find(".hour").html((hour<10?"0"+hour:hour));
-                $(this).find(".min").html((min<10?"0"+min:min));
-                $(this).find(".sec").html((sec<10?"0"+sec:sec));
-                leftTime = leftTime-1;
-                $(this).attr("data",leftTime);
-            }
-            else{
-                $(this).parent(".div_dt").hide();
-                $(this).parent().next().show();
-                return false;
-            }
-        });
-        leftTimeActInv = setTimeout(function(){
-            leftTimeAct(left_time);
-        },1000);
-    }
-	
-</script>
-</div>
-
-<!-- JiaThis Button BEGIN -->
-<div id="share_all"  style="margin: 10px 16px 128px 16px">
-<div id='cover'>
-    <div class='fui-mask-m visible'></div>
-    <div class='arrow'></div>
-    <div class='content'>请点击右上角<br/>通过【发送给朋友/分享到朋友圈】<br/>分享好友</div>
-</div>
-
-<a class="fui-cell-remark share"  id='btn-share'>
-<i class="icon icon-share"></i>
-<p>分享</p>
-</a>
-</div>
-<!-- JiaThis Button END -->
-
-<!--分享弹层-->
-
-
-<script type="text/javascript">
-	$('#btn-share').click(function () {
-        $('#cover').fadeIn(200)
-    });
-
-    $('#cover').click(function () {
-        $('#cover').hide()
-    })
-</script>
-
-
-{template 'footer'}
+</html>
