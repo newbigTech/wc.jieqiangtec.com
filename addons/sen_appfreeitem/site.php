@@ -1,6 +1,9 @@
 <?php
 defined('IN_IA') or exit('Access Denied');
 define('ZC_ROOT', IA_ROOT . '/addons/sen_appfreeitem');
+
+// 定义静态资源
+define('STATIC_RESOURCE_VERTWO', '../addons/sen_appfreeitem/template/style/vertwo/');
 define('CSS_PATH', '../addons/sen_appfreeitem/template/style/css/');
 define('JS_PATH', '../addons/sen_appfreeitem/template/style/js/');
 define('IMG_PATH', '../addons/sen_appfreeitem/template/style/images/');
@@ -274,13 +277,24 @@ class sen_appfreeitemModuleSite extends WeModuleSite
         // 首页展示
         /*$condition = ' and 1';*/
         $_GET['brand_id'] AND $condition .= ' AND brands = ' . $_GET['brand_id'];
-        $rlist = pdo_fetchall("SELECT * FROM " . tablename('sen_appfreeitem_project') . " WHERE weid = '{$_W['uniacid']}' AND status >= '2' and status < '4' and isrecommand = '1' $condition ORDER BY displayorder DESC, finish_price DESC LIMIT " . ($rpindex - 1) * $rpsize . ',' . $rpsize);
+		// 免费试用
+        $free_list = pdo_fetchall("SELECT * FROM " . tablename('sen_appfreeitem_project') . " WHERE weid = '{$_W['uniacid']}' AND status >= '2' and status < '4' and deal_days > $time and freight<=0 $condition ORDER BY displayorder DESC, finish_price DESC LIMIT " . ($rpindex - 1) * $rpsize . ',' . $rpsize);
+
+		// 付邮试用
+        $pay_list = pdo_fetchall("SELECT * FROM " . tablename('sen_appfreeitem_project') . " WHERE weid = '{$_W['uniacid']}' AND status >= '2' and status < '4' and deal_days > $time and freight>0 $condition ORDER BY displayorder DESC, finish_price DESC LIMIT " . ($rpindex - 1) * $rpsize . ',' . $rpsize);
+
+		// 往期试用
+        $discount_list = pdo_fetchall("SELECT * FROM " . tablename('sen_appfreeitem_project') . " WHERE weid = '{$_W['uniacid']}' AND status >= '2' and status < '4' and deal_days < $time $condition ORDER BY displayorder DESC, finish_price DESC LIMIT " . ($rpindex - 1) * $rpsize . ',' . $rpsize);
 
 
 
         // 热门推荐
         $hot_list = pdo_fetchall("SELECT * FROM " . tablename('sen_appfreeitem_project') . " WHERE weid = '{$_W['uniacid']}' AND status >= '2' and status < '4' and ishot = '1'  and deal_days > $time  ORDER BY displayorder DESC, id DESC, finish_price DESC LIMIT 4 ");
 
+        // 最新公告
+        $notice_info = pdo_fetch("SELECT * FROM " . tablename('sen_appfreeitem_rule') . " WHERE wid = '{$_W['uniacid']}' ");
+        // var_dump($notice_info);
+        
         $carttotal = $this->getCartTotal();
         $moduleconfig = $this->module['config'];
         $title = !empty($moduleconfig['shopname']) ? $moduleconfig['shopname'] . ' - 首页' : '免费试用产品列表';
@@ -2089,10 +2103,11 @@ LEFT JOIN ims_mc_members AS m ON f.uid = m.uid ORDER BY id DESC LIMIT " . ($pind
         }*/
 
         // var_dump($_SERVER);
-        $url = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-        $return_url = getenv("HTTP_REFERER");
+        $to_url = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+        $before_url = getenv("HTTP_REFERER");
 
-        if (empty($_SESSION['openid'])) {
+        // 空的外部id
+        if (empty($_SESSION['openid']) || empty($_SESSION['out_uid'])) {
             // 判断是否有民生信息返回
             $chiperTxt = $_REQUEST['chiperTxt'];
             WeUtility::logging('民生信息返回$chiperTxt==' . $chiperTxt);
@@ -2111,7 +2126,7 @@ LEFT JOIN ims_mc_members AS m ON f.uid = m.uid ORDER BY id DESC LIMIT " . ($pind
 
                 // var_dump($chiperTxt,$plainTxt,$res,$plainTxt[0],$_SESSION['openid']);exit;
                 if (!$plainTxt) {
-                    echo '联合登录有误，请<a href="' . $return_url . '">返回</a>重新操作';
+                    echo '联合登录有误，请<a href="' . $before_url . '">返回</a>重新操作';
                     exit;
                     // echo"<script>alert('联合登录有误，返回重新操作');history.go(-1);</script>";
                     // var_dump('TODO debug $plainTxt==', $plainTxt);
@@ -2123,10 +2138,10 @@ LEFT JOIN ims_mc_members AS m ON f.uid = m.uid ORDER BY id DESC LIMIT " . ($pind
                     // 写入数据库
                     $pitem = pdo_fetch("SELECT * FROM " . tablename('mc_members') . " WHERE out_uid=:out_uid ", array(':out_uid' => $res[0]));
                     if (empty($pitem)) {
-                        $data = array('out_uid' => $res[0], 'mobile' => $res[1], 'out_uid' => $res[2], 'createtime' => time(),);
+                        $data = array('out_uid' => $res[0], 'mobile' => $res[1], 'createtime' => time(),);
                         pdo_insert('mc_members', $data);
                     }
-                    $_SESSION['openid'] = $res[0];
+                    $_SESSION['openid'] = $_SESSION['out_uid'] = $res[0];
                 }
             } else {
                 // 引入登录js
@@ -2141,7 +2156,7 @@ LEFT JOIN ims_mc_members AS m ON f.uid = m.uid ORDER BY id DESC LIMIT " . ($pind
                 </head>
                 <body>
                 <script >
-                loginForComm("{$return_url}", "{$url}");
+                loginForComm("{$before_url}", "{$to_url}");
                 </script>
                 </body>
                 </html>
