@@ -1,156 +1,125 @@
-{template 'header'}
-<style type='text/css'>
-	.sel { background:#33cdd6; color:#fff;}
-	.nosel { background:#fff;color:#000}
-</style>
-<style type="text/css">
-.myoder{margin:10px; -webkit-box-shadow:0 1px 2px 1px rgba(0,0,0,0.2); box-shadow:0 1px 2px 1px rgba(0,0,0,0.2); overflow:hidden; background:#FFF;}
-.myoder .myoder-hd{height:35px; line-height:35px; overflow:hidden; background:#f0f0f0; border-bottom:1px solid #cacaca; padding:0 10px;}
-.myoder .myoder-hd > span{font-size:14px; color:#504040;}
-.myoder .myoder-hd > span.pull-right{font-size:12px; color:#999;}
-.myoder .myoder-detail{min-height:73px; border-bottom:1px solid #f3f3f4; padding:10px; overflow-x:hidden;}
-.myoder .myoder-detail img{width:50px; margin-right:10px; float:left;}
-.myoder .myoder-detail .name a{color:#4d4f5d; display:inline-block; width:200px; font-weight:bold; text-decoration:underline; text-overflow:ellipsis; white-space:nowrap; overflow:hidden;}
-.myoder .myoder-detail .price{font-size:14px;}
-.myoder .myoder-detail .price span{display:inline-block; width:100px;}
-.myoder .myoder-detail .price span.num{width:60px;}
-.myoder .myoder-total{height:65px; padding:5px 10px; color:#b9b9b9; font-weight:bold;}
-.myoder .myoder-total > span{margin-right:5px;}
-.myoder .myoder-total > span .false{color:#e9342a;}
-.myoder .myoder-total > .btn{margin-top:3.5px;}
-.myoder .myoder-express{border-bottom:1px solid #f3f3f4; padding:5px 10px; overflow:hidden; background:#F9F9F9;}
-.myoder .myoder-express > span{display:inline-block; width:50%; float:left;}
-.myoder .myoder-express .express-company{}
-.myoder .myoder-express .express-num{text-align:right;}
-.mystatus div{height:35px;line-height:35px;}
-.btn-sm{height: 35px;line-height: 35px;display: block;text-align: center;background: #52c580;width:34%;color:#fff;    border-radius: 5px;}
+<!DOCTYPE html>
+<html>
 
-.bg{
-	height: 35px;
-line-height: 35px;
-padding: 5px 20px;
-text-align: center;
-color: #fff;
-border-radius: 5px;
-}
-.zjgm{background: #44b549;}
-.sqsy{background: #d9534f;}
-</style>
-<!-- <div class="myoder img-rounded" style='text-align:center;color:#aaa;padding:5px;'>
-	 <div style='float:left;margin:auto;width:100%;' class="mystatus">
-		<div {if $status==0}class='sel'{else}class="nosel"{/if} style='border-top-left-radius: 5px;border-bottom-left-radius:5px;border:1px solid #33cdd6;text-align: center;float:left;width:32.5%' onclick="location.href='{php echo $this->createMobileUrl('myorder',array('status'=>0))}'">
-			待处理
-		</div>
-		<div {if $status==1}class='sel'{else}class="nosel"{/if} style='border:1px solid #33cdd6;margin-left:-1px;float:left;width:32.5%;text-align: center;' onclick="location.href='{php echo $this->createMobileUrl('myorder',array('status'=>1,'state'=>0))}'">
-			未通过
-		</div>
-		<div {if $status==2}class='sel'{else}class="nosel"{/if} style='border-top-right-radius: 5px;margin-left:-1px;border-bottom-right-radius:5px;text-align: center;border:1px solid #33cdd6;float:left;width:32.5%' onclick="location.href='{php echo $this->createMobileUrl('myorder',array('status'=>2,'state'=>1))}'">
-			待发货
-		</div>
-		<div style="height: 5px;overflow: hidden;width: 100%;"></div>
-		<div {if $status==3}class='sel'{else}class="nosel"{/if} style='border-top-left-radius: 5px;border-bottom-left-radius:5px;border:1px solid #33cdd6;text-align: center;float:left;width:32.5%' onclick="location.href='{php echo $this->createMobileUrl('myorder',array('status'=>3))}'">
-			待收货
-		</div>
-		<div {if $status==4}class='sel'{else}class="nosel"{/if} style='border:1px solid #33cdd6;margin-left:-1px;float:left;width:32.5%;text-align: center;' onclick="location.href='{php echo $this->createMobileUrl('myorder',array('status'=>4))}'">
-			已收货
-		</div>
-		<div {if $status==5}class='sel'{else}class="nosel"{/if} style='border-top-right-radius: 5px;margin-left:-1px;border-bottom-right-radius:5px;text-align: center;border:1px solid #33cdd6;float:left;width:32.5%' onclick="location.href='{php echo $this->createMobileUrl('myorder',array('status'=>5))}'">
-			已完成
-		</div>
-	</div>
-</div> -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta content="telephone=no" name="format-detection">
+    <meta content="email=no" name="format-detection">
+    <title>个人中心</title>
+    <!-- <link rel="dns-prefetch" href=""> -->
+    <link rel="stylesheet" href="{STATIC_RESOURCE_VERTWO}css/lib/reset.css">
+    <link rel="stylesheet" href="{STATIC_RESOURCE_VERTWO}css/index.css" />
+    <script src="{STATIC_RESOURCE_VERTWO}js/lib/flexible-163.js"></script>
+    <script src="{STATIC_RESOURCE_VERTWO}js/lib/jquery-2.2.4.min.js"></script>
+    <script src="{STATIC_RESOURCE_VERTWO}js/index.js"></script>
+</head>
+
+<body ontouchstart class="my-person">
+    <!-- 返回上一页 -->
+    <div class="header">
+        <a class="go-back" href="javascript:void(0)" onclick="history.go(-1)">返回</a>
+        <h1 class="title">个人中心</h1>
+        <span class="service">服务声明</span>
+    </div>
+
+    <div class="wrapper">
+        <!-- 主体内容部分s -->
+        <div class="container">
+
+            <div class="banner-box">
+                <a href="" title="">
+                    <img class="banner-img" src="{STATIC_RESOURCE_VERTWO}images/banner-pic.jpg" alt="">
+                </a>
+            </div>
+
+            <!-- 我的试用 -->
+            <div class="part-box">
+                <!-- 标题 -->
+                <div class="part-title">
+                    <span class="title-l">我的试用</span>
+                    <span class="title-r"><a href="{php echo $this->createMobileUrl('myorder',array('state'=>0))}">查看全部试用</a></span>
+                </div>
+                <!-- 列表 -->
+                <div class="part-list">
+                    <div class="list-item">
+                        <!-- 试用列表 -->
+                        <div class="item-con flex">
+                            <span class="item-flex apply">申请中...</span>
+                            <span class="item-flex apply-fail">申请失败</span>
+                            <span class="item-flex apply-success">申请成功</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 我的订单 -->
+            <div class="part-box">
+                <!-- 标题 -->
+                <div class="part-title">
+                    <span class="title-l">我的订单</span>
+                    <span class="title-r"><a href="{php echo $this->createMobileUrl('myorder',array('state'=>1))}">查看全部订单</a></span>
+                </div>
+                <!-- 列表 -->
+                <div class="part-list">
+                    <div class="list-item">
+                        <!-- 订单列表 -->
+                        <div class="item-con flex">
+                            <span class="item-flex wait-pay">待付款</span>
+                            <span class="item-flex wait-goods">待收货</span>
+                            <span class="item-flex wait-recevice">已签收</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 收货地址 -->
+            <div class="part-box address-box">
+                <!-- 标题 -->
+                <div class="part-title">
+                    <span class="title-l">管理我的收货地址</span>
+                    <span class="title-r"><a href="{php echo $this->createMobileUrl('address',array('from'=>confirm))}">查看全部地址</a></span>
+                </div>
+                <!-- 列表 -->
+                <!-- <div class="part-list">
+                    <div class="list-item">
+                        <div class="item-con item-title">
+                            <div class="item-left">
+                                <span class="item-option item-name">管丽丽</span>
+                                <span class="item-option item-tel">13899908887</span>
+                            </div>
+                            <div class="item-right">
+                                <span class="item-option item-add">新增</span>
+                                <span class="item-option item-editor">修改</span>
+                            </div>
+                        </div>
+                        <div class="item-con item-des">北京市丰台区丰台南路99号丰台大厦B座18层08室 北京市丰台区丰台南路99号丰台大厦B座18层08室</div>
+                        <div class="item-con item-bottom">
+                            <span>设为默认</span>
+                        </div>
+                    </div>
+                </div> -->
+            </div>
 
 
-<div class="myoder img-rounded" style='text-align:center;color:#aaa;padding:5px;'>
-	 <div style='float:left;margin:auto;width:100%;' class="mystatus">
-		<!-- 类型type：1 collect收藏  2 zan 点赞 -->
-	 	<div {if $type==1}class='sel'{else}class="nosel"{/if} style='border-top-right-radius: 5px;margin-left:-1px;border-bottom-right-radius:5px;text-align: center;border:1px solid #33cdd6;float:left;width:32.6%' onclick="location.href='{php echo $this->createMobileUrl('MyCenter',array('type'=>1))}'">
-			我的收藏
-		</div>		
+        </div>
+    </div>
 
-		<div {if $type==2}class='sel'{else}class="nosel"{/if} style='border-top-right-radius: 5px;margin-left:-1px;border-bottom-right-radius:5px;text-align: center;border:1px solid #33cdd6;float:left;width:32.6%' onclick="location.href='{php echo $this->createMobileUrl('MyCenter',array('type'=>2))}'">
-			我的点赞
-		</div>	
-
-		<div {if $type==3}class='sel'{else}class="nosel"{/if} style='border-top-right-radius: 5px;margin-left:-1px;border-bottom-right-radius:5px;text-align: center;border:1px solid #33cdd6;float:left;width:32.6%' onclick="location.href='{php echo $this->createMobileUrl('MyCenter',array('type'=>3))}'">
-			我的评论
-		</div>
+    <!-- 返回顶部 -->
+    <div id="goTop"></div>
 
 
-		<div {if $state==9 && empty($type)}class='sel'{else}class="nosel"{/if} style='border-top-right-radius: 5px;margin-left:-1px;border-bottom-right-radius:5px;text-align: center;border:1px solid #33cdd6;float:left;width:32.6%' onclick="location.href='{php echo $this->createMobileUrl('myorder',array('state'=>9))}'">
-			全部商品
-		</div>		
 
-		<div {if $state==0}class='sel'{else}class="nosel"{/if} style='border-top-right-radius: 5px;margin-left:-1px;border-bottom-right-radius:5px;text-align: center;border:1px solid #33cdd6;float:left;width:32.6%' onclick="location.href='{php echo $this->createMobileUrl('myorder',array('state'=>0))}'">
-			试用商品
-		</div>	
+<script>
+$(function () {
 
-		<div {if $state==1}class='sel'{else}class="nosel"{/if} style='border-top-right-radius: 5px;margin-left:-1px;border-bottom-right-radius:5px;text-align: center;border:1px solid #33cdd6;float:left;width:32.6%' onclick="location.href='{php echo $this->createMobileUrl('myorder',array('state'=>1))}'">
-			购买商品
-		</div>
-	</div>
-</div>
+    
 
+});
+</script>
 
-{if count($list)<=0}
-<div class="myoder img-rounded" style='text-align:center;color:#aaa;padding:30px;'>
-	您暂时没有任何订单!
-</div>
-{/if}
-<div style='margin-bottom:40px;'>
-{loop $list $item}
-<div class="myoder img-rounded">
-	<div class="myoder-hd">
-		<span class="pull-left">订单编号：{$item['ordersn']}</span>
-		<span class="pull-right">{php echo date('Y-m-d H:i', $item['createtime'])}
-		
-		</span>
-	</div>
-	{php $project = $this->getproject($item['pid']);}
-	{php $p_item = $this->getitem($item['item_id']);}
-	<div class="myoder-detail">
-		<a href="{php echo $this->createMobileUrl('detail', array('id' => $project['id']))}">
-			<img src="{$_W['attachurl']}{$project['thumb']}" style="width:100px;height:100px;"/>产品名称：{$project['title']}
-		</a> 
-		</br>
-		<!-- {if $item['state'] == 0}
-			<span class="bg sqsy">申请试用</span>
-		{/if}
-		{if $item['state'] == 1}
-			<span class="bg zjgm">直接购买</span>
-		{/if} -->
+</body>
 
-		{if $item['status'] == 0}
-			<span class="bg zjgm">待处理</span>
-		{elseif $item['status'] == 1}
-			<span class="bg zjgm">未通过</span>
-		{elseif $item['status'] == 2}
-			<span class="bg zjgm">待发货</span>
-		{elseif $item['status'] == 3}
-			<span class="bg zjgm">待收货</span>
-		{elseif $item['status'] == 4}
-			<span class="bg zjgm">已收货</span>
-		{elseif $item['status'] == 5}
-			<span class="bg sqsy">已完成</span>
-		{/if}
-
-	</div>
-	<div class="myoder-total">
-		
-		<div style="height:30px;">
-		{if $item['status'] == 3}
-		<a  href="{php echo $this->createMobileUrl('myorder', array('orderid' => $item['id'], 'op' => 'confirm', 'state' => $item['state']))}" style="float:left;" class="btn btn-success pull-right btn-sm" >确认收货</a>
-		{/if}
-		{if $item['status'] == 4 && $item['state'] == 0}
-		<a href="{php echo $this->createMobileUrl('baogao', array('orderid' => $item['id']))}" style="float:left;color:#fff;background: #FEBF00;" class="btn btn-info pull-right btn-sm">去写报告</a>
-		{/if}
-		
-		<a href="{php echo $this->createMobileUrl('myorder', array('orderid' => $item['id'], 'op' => 'detail'))}" style="color:#fff;"  class="btn btn-success pull-right btn-sm" >订单详情</a></div>
-	</div>
-</div>
-{/loop}</div>
-
-<div id="pager">{$pager}</div>
-
-{template 'footer'}
-{template 'footerbar'}
+</html>

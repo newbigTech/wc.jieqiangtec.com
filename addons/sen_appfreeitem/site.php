@@ -1035,11 +1035,11 @@ class sen_appfreeitemModuleSite extends WeModuleSite
         $carttotal = $this->getCartTotal();
         // var_dump('$carttotal==',$carttotal);exit;
         $op = $_GPC['op'];
-
         if($op == 'confirm'){
             $orderid = intval($_GPC['orderid']);
             $state   = intval($_GPC['state']);
             $order   = pdo_fetch("SELECT * FROM " . tablename('sen_appfreeitem_order') . " WHERE id = :id AND from_user = :from_user", array(':id' => $orderid, ':from_user' => $_W['fans']['from_user']));
+
             if(empty($order)){
                 message('抱歉，您的订单不存或是已经被取消！', $this->createMobileUrl('myorder'), 'error');
             }
@@ -1101,7 +1101,19 @@ class sen_appfreeitemModuleSite extends WeModuleSite
             /*$res_json_order = $this->echojson(200,'请求成功',array('total'=>$total,'pindex'=>$pindex,'psize'=>$psize,'list'=>$list));
             echo($res_json_order);exit;*/
             $pagetitle = "申请状态";
-            include $this->template('order');
+
+            // 9：全部  0：试用  1：购买
+            // var_dump($state);exit;
+            if($state == 1){
+                include $this->template('order_buy');
+            }else{
+                if($state === '0'){
+                    include $this->template('order_try');
+                }else{
+                    include $this->template('order');
+                }
+            }
+
         }
     }
 
@@ -1166,9 +1178,14 @@ class sen_appfreeitemModuleSite extends WeModuleSite
             die(json_encode(array("result" => 1, "maxid" => 0)));
         }else{
             $profile   = fans_search($_W['fans']['from_user'], array('resideprovince', 'residecity', 'residedist', 'address', 'realname', 'mobile'));
+
+            // TODO debug
+            // $_W['member']['uid'] = 0;
             $address   = pdo_fetchall("SELECT * FROM " . tablename('mc_member_address') . " WHERE uid = :uid", array(':uid' => $_W['member']['uid']));
             $carttotal = $this->getCartTotal();
             $title     = $pagetitle = "信息维护";
+            // var_dump($address,$_W);exit;
+
             include $this->template('address');
         }
     }
