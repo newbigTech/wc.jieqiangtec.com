@@ -119,10 +119,20 @@
 
             <div class="cart-box">
                 <!-- 立即购买 -->
-                <a class="cart-hd" href="" title="立即购买">
-                <span class="iconfont">&#xe60f;</span>立即购买</a>
+                <!-- <a class="cart-hd" href="" title="立即购买"><span class="iconfont">&#xe60f;</span>立即购买</a> -->
+
+                {if $item['direct']==1}
+                <a href="javascript:check_m('{php echo $this->createMobileUrl('confirm',array('id'=>$item['id'], 'item_id'=>$row['id'],'op'=>'1'));}',{$item['status']});" class="cart-hd"><span class="iconfont">&#xe60f;</span>立即购买</a>
+                {/if}
                 <!-- 申请试用 -->
-                <a class="apply-hd" href="" title="申请试用">申请试用</a>
+                <!-- <a class="apply-hd" href="" title="申请试用">申请试用</a> -->
+                <?php $mydetail = $this->getprojectdetail($item['id'])?>
+                {if !empty($mydetail)}
+                    <a class="apply-hd">已申请</a>
+                {else}  
+                    <a href="javascript:;" onclick="share();" class="apply-hd">免费申请</a>
+                {/if}
+
             </div>
 
 
@@ -132,6 +142,44 @@
 
 
     <script>
+
+        function check_m(url,status){
+            var check_login=$("input[name='check_login']").val();
+            if(check_login){
+                if (status < 3) {
+                    $.show_tip("本体验产品尚未开始");
+                }if (status == 4) {
+                    $.show_tip("本体验产品已经结束");
+                }else{
+                    window.location.href=url;
+                }
+            }else{
+                if ({$_W['uniacid']} == 10) {
+                    window.location.href="{$_W['siteroot']}app/index.php?i={$_W['uniacid']}&c=entry&do=myorder&m=sen_appfreeitem";
+                }else{
+                    window.location.href="{php echo url('mc/bond/mobile');}";
+                }
+            }
+        }
+
+
+        function share(){
+             $.ajax({
+                    type:"POST",
+                    url:"{$_W['siteroot']}app/index.php?i={$_W['uniacid']}&c=entry&do=ajaxshare&m=sen_appfreeitem",
+                    data:{},
+                    dataType: "json",
+                    success:function(msg){
+                        if(msg==1){
+                            cxshare();
+                        }else{
+                            location.href = "{php echo $this->createMobileUrl('confirm',array('id'=>$item['id'], 'item_id'=>$row['id'],'op'=>'0'));}";
+                        }
+                        
+                    }
+                });
+        }
+
         $(function() {
         	// alert( '{php echo date('Y/m/d,H:i:s',$item['deal_days'])}' );
             //头部轮播

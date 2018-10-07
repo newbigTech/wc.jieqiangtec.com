@@ -4,6 +4,7 @@ define('ZC_ROOT', IA_ROOT . '/addons/sen_appfreeitem');
 
 // 定义静态资源
 define('STATIC_RESOURCE_VERTWO', '../addons/sen_appfreeitem/template/style/vertwo/');
+//var_dump('STATIC_RESOURCE_VERTWO==',STATIC_RESOURCE_VERTWO);exit;
 define('CSS_PATH', '../addons/sen_appfreeitem/template/style/css/');
 define('JS_PATH', '../addons/sen_appfreeitem/template/style/js/');
 define('IMG_PATH', '../addons/sen_appfreeitem/template/style/images/');
@@ -1167,7 +1168,7 @@ class sen_appfreeitemModuleSite extends WeModuleSite
                 if(!empty($address)){
                     pdo_delete("mc_member_address", array('id' => $id, 'uniacid' => $_W['uniacid'], 'uid' => $_W['member']['uid']));
                     if($address['isdefault'] == 1){
-                        $maxid = pdo_fetchcolumn("select max(id) as maxid from " . tablename('mc_member_address') . " where uniaicd='{$_W['uniacid']}' and uid='{$_W['member']['uid']}' limit 1 ");
+                        $maxid = pdo_fetchcolumn("select max(id) as maxid from " . tablename('mc_member_address') . " where uniacid='{$_W['uniacid']}' and uid='{$_W['member']['uid']}' limit 1 ");
                         if(!empty($maxid)){
                             pdo_update('mc_member_address', array('isdefault' => 1), array('id' => $maxid, 'uniacid' => $_W['uniacid'], 'uid' => $_W['member']['uid']));
                             die(json_encode(array("result" => 1, "maxid" => $maxid)));
