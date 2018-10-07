@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta content="telephone=no" name="format-detection">
+    <meta content="email=no" name="format-detection">
+    <title>我的订单</title>
+    <!-- <link rel="dns-prefetch" href=""> -->
+    <link rel="stylesheet" href="{STATIC_RESOURCE_VERTWO}css/lib/reset.css">
+    <link rel="stylesheet" href="{STATIC_RESOURCE_VERTWO}libs//swiper/swiper.min.css" />
+    <link rel="stylesheet" href="{STATIC_RESOURCE_VERTWO}css/index.css" />
+    <script src="{STATIC_RESOURCE_VERTWO}js/lib/flexible-163.js"></script>
+    <script src="{STATIC_RESOURCE_VERTWO}js/lib/jquery-2.2.4.min.js"></script>
+    <script src="{STATIC_RESOURCE_VERTWO}libs//swiper/swiper.min.js"></script>
+    <script src="{STATIC_RESOURCE_VERTWO}js/index.js"></script>
+</head>
+
+<body ontouchstart class="my-order">
+    <!-- 返回上一页 -->
+    <div class="header">
+        <a class="go-back" href="javascript:void(0)" onclick="history.go(-1)">返回</a>
+        <h1 class="title">我的订单</h1>
+        <span class="service">服务声明</span>
+    </div>
+
+    <div class="wrapper">
+        <!-- 主体内容部分s -->
+        <div class="container">
+
+            <div class="tab-hd">
+                <ul>
+                    <li class="tab-hd-item active"><span>全部</span></li>
+                    <li class="tab-hd-item"><span>待付款</span></li>
+                    <li class="tab-hd-item"><span>待收货</span></li>
+                    <li class="tab-hd-item"><span>已签收</span></li>
+                </ul>
+            </div>
+
+            <div class="banner-box">
+                <a href="" title="">
+                    <img class="banner-img" src="{STATIC_RESOURCE_VERTWO}images/banner-pic.jpg" alt="">
+                </a>
+            </div>
+
+            <div class="swiper-container tab-bd">
+                <div class="swiper-wrapper" style="float:left; height:auto;">
+
+                    <!-- 全部 -->
+                    <div class="swiper-slide tab-bd-item">
+                        {loop $list $item}
+
+                        {php $project = $this->getproject($item['pid']);}
+                        {php $p_item = $this->getitem($item['item_id']);}
+                        <!-- 产品1 -->
+                        <div class="tab-item-con">
+                            <a class="item-link" href="">
+                                <div class="item-side">
+                                    <img class="item-img" src="{$_W['attachurl']}{$project['thumb']}" alt="{$project['title']}">
+                                </div>
+                                <div class="item-detail">
+                                    <p class="item-name">{$project['title']}</p>
+                                    <p class="item-price">
+                                        <span class="price-now">¥{$item['myprice']}</span>
+                                        <del class="price-old">¥{$item['price']}</del>
+                                    </p>
+                                    <p class="item-btn">
+                                        <!-- <span class="btn btn-black">待付款</span>
+                                        <span class="btn btn-link fr">确认收货</span> -->
+                                        {if $item['status'] == 0}
+                                            <span class="btn btn-black">待处理</span>
+                                        {elseif $item['status'] == 1}
+                                            <span class="btn btn-black">未通过</span>
+                                        {elseif $item['status'] == 2}
+                                            <span class="btn btn-link">待发货</span>
+                                        {elseif $item['status'] == 3}
+                                            <span class="btn btn-link"><a  href="{php echo $this->createMobileUrl('myorder', array('orderid' => $item['id'], 'op' => 'confirm', 'state' => $item['state']))}" >待收货</a></span>
+                                        {elseif $item['status'] == 4}
+                                            <span class="btn btn-link">已收货</span>
+                                        {elseif $item['status'] == 5}
+                                            <span class="btn btn-link">已完成</span>
+                                        {/if}
+
+                                    </p>
+                                </div>
+                            </a>
+                        </div>
+                        {/loop}
+
+                    </div>
+
+                    <!-- 待付款 -->
+                    <div class="swiper-slide tab-bd-item">
+
+                        <!-- 产品1 -->
+                        <div class="tab-item-con">
+                            <a class="item-link" href="">
+                                <div class="item-side">
+                                    <img class="item-img" src="{STATIC_RESOURCE_VERTWO}images/goods-pic.jpg" alt="">
+                                </div>
+                                <div class="item-detail">
+                                    <p class="item-name">待付款标题：CAMELBAK OCTANE 18X 水袋包  COACH 蔻驰 F54008 女士长款钱包标题：CAMELBAK OCTANE 18X 水袋包  COACH 蔻驰 F54008 女士长款钱包</p>
+                                    <p class="item-price">
+                                        <span class="price-now">¥99.88</span>
+                                        <del class="price-old">¥577.02</del>
+                                    </p>
+                                    <p class="item-btn">
+                                        <span class="btn btn-black">待付款</span>
+                                        <span class="btn btn-link fr">确认收货</span>
+                                    </p>
+                                </div>
+                            </a>
+                        </div>
+                        
+
+                    </div>
+
+                    <!-- 待收货 -->
+                    <div class="swiper-slide tab-bd-item">
+
+                        <!-- 产品1 -->
+                        <div class="tab-item-con">
+                            <a class="item-link" href="">
+                                <div class="item-side">
+                                    <img class="item-img" src="{STATIC_RESOURCE_VERTWO}images/goods-pic.jpg" alt="">
+                                </div>
+                                <div class="item-detail">
+                                    <p class="item-name">待收货标题：CAMELBAK OCTANE 18X 水袋包  COACH 蔻驰 F54008 女士长款钱包标题：CAMELBAK OCTANE 18X 水袋包  COACH 蔻驰 F54008 女士长款钱包</p>
+                                    <p class="item-price">
+                                        <span class="price-now">¥99.88</span>
+                                        <del class="price-old">¥577.02</del>
+                                    </p>
+                                    <p class="item-btn">
+                                        <span class="btn btn-black">待付款</span>
+                                        <span class="btn btn-link fr">确认收货</span>
+                                    </p>
+                                </div>
+                            </a>
+                        </div>
+                        
+
+                    </div>
+
+                    <!-- 已签收 -->
+                    <div class="swiper-slide tab-bd-item">
+
+                        <!-- 产品1 -->
+                        <div class="tab-item-con">
+                            <a class="item-link" href="">
+                                <div class="item-side">
+                                    <img class="item-img" src="{STATIC_RESOURCE_VERTWO}images/goods-pic.jpg" alt="">
+                                </div>
+                                <div class="item-detail">
+                                    <p class="item-name">已签收标题：CAMELBAK OCTANE 18X 水袋包  COACH 蔻驰 F54008 女士长款钱包标题：CAMELBAK OCTANE 18X 水袋包  COACH 蔻驰 F54008 女士长款钱包</p>
+                                    <p class="item-price">
+                                        <span class="price-now">¥99.88</span>
+                                        <del class="price-old">¥577.02</del>
+                                    </p>
+                                    <p class="item-btn">
+                                        <span class="btn btn-black">待付款</span>
+                                        <span class="btn btn-link fr">确认收货</span>
+                                    </p>
+                                </div>
+                            </a>
+                        </div>
+                        
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </div>
+    </div>
+
+    <!-- 返回顶部 -->
+    <div id="goTop"></div>
+
+
+<script>
+$(function(){
+    
+    
+});
+</script>
+
+</body>
+
+</html>
