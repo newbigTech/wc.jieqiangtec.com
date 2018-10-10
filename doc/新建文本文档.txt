@@ -1,4 +1,10 @@
+git.exe push --progress "origin" master:master
+fatal: unable to access 'https://github.com/1569501393/wc.jieqiangtec.com.git/': Empty reply from server
+git did not exit cleanly (exit code 128) (28439 ms @ 2018/8/6 21:28:35)
 
+git push 提交时显示 Empty reply from server的解决办法
+https://www.cnblogs.com/team42/p/6941678.html
+git fetch origin --prune
 
 
 项目管理：jira
