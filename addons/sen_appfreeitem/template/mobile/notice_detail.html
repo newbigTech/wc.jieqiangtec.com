@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta content="telephone=no" name="format-detection">
+    <meta content="email=no" name="format-detection">
+    <title>{$notice['title']}详情</title>
+    <!-- <link rel="dns-prefetch" href=""> -->
+    <link rel="stylesheet" href="{STATIC_RESOURCE_VERTWO}css/lib/reset.css">
+    <link rel="stylesheet" href="{STATIC_RESOURCE_VERTWO}libs//swiper/swiper.min.css" />
+    <link rel="stylesheet" href="{STATIC_RESOURCE_VERTWO}css/index.css" />
+    <script src="{STATIC_RESOURCE_VERTWO}js/lib/flexible-163.js"></script>
+    <script src="{STATIC_RESOURCE_VERTWO}js/lib/jquery-2.2.4.min.js"></script>
+    <script src="{STATIC_RESOURCE_VERTWO}libs//swiper/swiper.min.js"></script>
+</head>
+
+<body ontouchstart class="detail">
+    <!-- 返回上一页 -->
+    <div class="header">
+        <a class="go-back" href="javascript:void(0)" onclick="history.go(-1)">返回</a>
+        <h1 class="title">{$notice['title']}</h1>
+        <span class="service">服务声明</span>
+    </div>
+
+    <div class="wrapper">
+    	<h1 class="title">{php echo date('Y-m-d H:i:s',$notice['createtime'])}</h1>
+        <!-- 主体内容部分 -->
+        <div class="container">
+            <!-- 公告详情 -->
+            <div class="detail-box">
+                <h3 class="detail-hd"><img src="{$_W['attachurl']}{$notice['thumb']}" alt="{$notice['title']}"></h3>
+                <div class="detail-bd">
+                    {$notice['detail']}
+                </div> 
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
