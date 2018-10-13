@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns="http://www.shuotupu.com" versionCode="0.6,0.7,0.8,1.0">
 	<application setting="true">
 		<name><![CDATA[申请试用]]></name>
@@ -30,7 +30,8 @@
 			<entry title="配送方式" do="dispatch" state="" direct="false" />
 			<entry title="调查问题" do="category" state="" direct="false" />
 			<entry title="项目管理" do="project" state="" direct="false" />
-			<entry title="申请管理" do="order" state="" direct="false" />
+      <entry title="申请管理" do="order" state="" direct="false" />
+			<entry title="公告管理" do="notice" state="" direct="false" />
 		</menu>
 	</bindings>
 	<permissions>

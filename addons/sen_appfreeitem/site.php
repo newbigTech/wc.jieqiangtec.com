@@ -19,38 +19,6 @@ include '../addons/sen_appfreeitem/inc/core/function/functions.php';
 //include '../addons/sen_appfreeitem/inc/core/class/php_java.php';
 include_once IA_ROOT . '/payment/unionpay/ms_lajp/decryptAndCheck.class.php';
 include_once IA_ROOT . '/payment/unionpay/ms_lajp/php_java.php';
-//$ms_login_url = "http://197.3.176.26:8000/ecshopMerchantTest/index.jsp";
-
-/*try
-{
-    $ret = lajp_call("cfca.sadk.cmbc.tools.php.PHPDecryptKit::SignAndEncryptMessage", base64_encode($orderid));
-    // echo "{$ret}<br>";
-}
-catch(Exception $e)
-{
-    echo "Err:{$e}<br>";
-}
-
-$order_info = array('orderid' => $ret);
-var_dump($order_info);
-
-// 解密
-$base64Encode  = $_REQUEST['base64Encode'];
-$base64Encode  = trim($base64Encode);
-try
-{
-
-$ret = lajp_call("cfca.sadk.cmbc.tools.php.PHPDecryptKit::DecryptAndVerifyMessage", $base64Encode);
-echo "{$ret}<br>";
-// echo "{$base64Encode}<br>";
-}
-catch(Exception $e)
-{
-    echo "Err:{$e}<br>";
-}
-
-exit;*/
-
 
 class sen_appfreeitemModuleSite extends WeModuleSite
 {
@@ -292,8 +260,10 @@ class sen_appfreeitemModuleSite extends WeModuleSite
         $hot_list = pdo_fetchall("SELECT * FROM " . tablename('sen_appfreeitem_project') . " WHERE weid = '{$_W['uniacid']}' AND status >= '2' and status < '4' and ishot = '1'  and deal_days > $time  ORDER BY displayorder DESC, id DESC, finish_price DESC LIMIT 4 ");
 
         // 最新公告
-        $notice_info = pdo_fetch("SELECT * FROM " . tablename('sen_appfreeitem_rule') . " WHERE wid = '{$_W['uniacid']}' ");
-        // var_dump($notice_info);
+        // $notice_info = pdo_fetch("SELECT * FROM " . tablename('sen_appfreeitem_rule') . " WHERE wid = '{$_W['uniacid']}' ");
+        $notice_list = pdo_fetchall("SELECT * FROM " . tablename('sen_appfreeitem_notice') . " WHERE uniacid = '{$_W['uniacid']}' AND status=1 ORDER BY id DESC LIMIT 10  ");
+
+         // var_dump($notice_list);
 
         $carttotal    = $this->getCartTotal();
         $moduleconfig = $this->module['config'];
@@ -411,6 +381,8 @@ class sen_appfreeitemModuleSite extends WeModuleSite
         global $_GPC, $_W;
         $id   = intval($_GPC['id']);
         $item = pdo_fetch("SELECT * FROM " . tablename('sen_appfreeitem_project') . " WHERE weid = :weid AND id = :id", array(':weid' => $_W['uniacid'], ':id' => $id));
+
+        var_dump('$item==',$item);
         if(empty($item)){
             message("抱歉，产品不存在!", referer(), "error");
         }
@@ -538,7 +510,7 @@ class sen_appfreeitemModuleSite extends WeModuleSite
         $pd     = pdo_fetch("SELECT * FROM " . tablename('sen_appfreeitem_order') . " WHERE from_user = :from_user and state =:state and pid = :pid", array(':from_user' => $openid, ':state' => '0', ':pid' => $id));
         if($op == 0){
             if(!empty($pd)){
-                message("抱歉，你已经提交过申请,请耐心等待!", referer(), "error");
+                message("抱歉，你已经提交过申请,请耐心等待11!", referer(), "error");
             }
         }
         $settings = $this->module['config'];
@@ -636,6 +608,11 @@ class sen_appfreeitemModuleSite extends WeModuleSite
             }
         }
         $profile   = fans_search($_W['fans']['from_user'], array('resideprovince', 'residecity', 'residedist', 'address', 'nickname', 'mobile'));
+
+        // var_dump('uid===',$_W['member']['uid'],$_W['member']);exit;
+        if($_SESSION['debug']){
+            $_W['member']['uid'] = 0;
+        }
         $row       = pdo_fetch("SELECT * FROM " . tablename('mc_member_address') . " WHERE isdefault = 1 and uid = :uid limit 1", array(':uid' => $_W['member']['uid']));
         $carttotal = $this->getCartTotal();
         if($op == 0){
@@ -1025,11 +1002,12 @@ class sen_appfreeitemModuleSite extends WeModuleSite
         // $_W['session_id'] = "{$_W['uniacid']}-" . random(20) ;
 
         // TODO debug
-        if($_GPC['debug']){
+        /*if($_GPC['debug']){
             $_W['fans']['from_user'] = 'oMaz50jp9G_xRU_JT1jMaxuS5KdY';
         }else{
             $this->checkAuthSession();
-        }
+        }*/
+        $this->checkAuthSession();
         // var_dump($_GPC['debug']);exit;
 
 
@@ -1068,18 +1046,7 @@ class sen_appfreeitemModuleSite extends WeModuleSite
             $dispatch = pdo_fetch("select id,dispatchname from " . tablename('sen_appfreeitem_dispatch') . " where id=:id limit 1", array(":id" => $item['dispatch']));
             include $this->template('order_detail');
         }else{
-            $pindex = max(1, intval($_GPC['page']));
-            $psize  = 10;
-            $status = intval($_GPC['status']);
-            // $state = intval($_GPC['state']);
-
-            $where = " weid = '{$_W['uniacid']}' AND from_user = '{$_W['fans']['from_user']}'";
-            /*if ($status == 2) {
-                $where .= " and ( status=1 or status=2 )";
-            } else {
-                $where .= " and status=$status";
-            }*/
-
+            // 我的订单
             // 9：全部  0：试用  1：购买
             $state = $_GPC['state'];
             // var_dump($state);exit;
@@ -1093,18 +1060,36 @@ class sen_appfreeitemModuleSite extends WeModuleSite
                 }
             }
 
-            $list = pdo_fetchall("SELECT * FROM " . tablename('sen_appfreeitem_order') . " WHERE $where ORDER BY id DESC LIMIT " . ($pindex - 1) * $psize . ',' . $psize, array(), 'id');
-
-            $total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('sen_appfreeitem_order') . " WHERE weid = '{$_W['uniacid']}' AND from_user = '{$_W['fans']['from_user']}'");
-            $pager = pagination($total, $pindex, $psize);
-
-            $res_json = array('code' => 200, 'msg' => '请求成功', 'data' => array('total' => $total, 'pindex' => $pindex, 'psize' => $psize, 'list' => $list));
             /*$res_json_order = $this->echojson(200,'请求成功',array('total'=>$total,'pindex'=>$pindex,'psize'=>$psize,'list'=>$list));
             echo($res_json_order);exit;*/
             $pagetitle = "申请状态";
 
             // 9：全部  0：试用  1：购买
-            // var_dump($state);exit;
+            // var_dump($state,'$total==',$total);exit;
+            if($state == 1 || $state === '0'){
+                $status = intval($_GPC['status']);
+                $pindex = max(1, intval($_GPC['page']));
+                $psize  = 3;
+                $where = " weid = '{$_W['uniacid']}' AND from_user = '{$_W['fans']['from_user']}'";
+                if ($status) {
+                    $where .= " and status=$status";
+                }
+
+                $list = pdo_fetchall("SELECT * FROM " . tablename('sen_appfreeitem_order') . " WHERE $where ORDER BY id DESC LIMIT " . ($pindex - 1) * $psize . ',' . $psize, array(), 'id');
+
+                // var_dump('$list==',$list);exit;
+                /*$total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('sen_appfreeitem_order') . " WHERE weid = '{$_W['uniacid']}' AND from_user = '{$_W['fans']['from_user']}'");*/
+
+                $total = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('sen_appfreeitem_order') .' WHERE '. $where);
+
+                $pager = pagination($total, $pindex, $psize);
+                // 分页接口
+                if($pindex>1){
+                    $res_json_order = $this->echojson(200,'请求成功',array('total'=>$total,'pindex'=>$pindex,'psize'=>$psize,'list'=>$list));
+                    // echo($res_json_order);exit;
+                }
+            }
+
             if($state == 1){
                 include $this->template('order_buy');
             }else{
@@ -1178,7 +1163,7 @@ class sen_appfreeitemModuleSite extends WeModuleSite
             }
             die(json_encode(array("result" => 1, "maxid" => 0)));
         }else{
-            $profile   = fans_search($_W['fans']['from_user'], array('resideprovince', 'residecity', 'residedist', 'address', 'realname', 'mobile'));
+            $profile = fans_search($_W['fans']['from_user'], array('resideprovince', 'residecity', 'residedist', 'address', 'realname', 'mobile'));
 
             // TODO debug
             // $_W['member']['uid'] = 0;
@@ -1961,6 +1946,7 @@ LEFT JOIN ims_mc_members AS m ON f.uid = m.uid ORDER BY id DESC LIMIT " . ($pind
         include $this->template('express', TEMPLATE_INCLUDEPATH, true);
     }
 
+    // 幻灯片管理
     public function doWebAdv()
     {
         global $_W, $_GPC;
@@ -1993,6 +1979,66 @@ LEFT JOIN ims_mc_members AS m ON f.uid = m.uid ORDER BY id DESC LIMIT " . ($pind
             message('请求方式不存在');
         }
         include $this->template('adv', TEMPLATE_INCLUDEPATH, true);
+    }
+
+
+    // 公告管理
+    public function doWebNotice()
+    {
+        global $_W, $_GPC;
+        load()->func('tpl');
+        $operation = !empty($_GPC['op']) ? $_GPC['op'] : 'display';
+        if($operation == 'display'){
+            $list = pdo_fetchall("SELECT * FROM " . tablename('sen_appfreeitem_notice') . " WHERE uniacid = '{$_W['uniacid']}' ORDER BY displayorder DESC");
+            // var_dump('$list==',$list);exit;
+        }elseif($operation == 'post'){
+            $id = intval($_GPC['id']);
+            if(checksubmit('submit')){
+                $data = array('uniacid' => $_W['uniacid'], 'title' => $_GPC['title'],  'detail' => htmlspecialchars_decode($_GPC['detail']),  'createtime' => time(), 'link' => $_GPC['link'], 'status' => intval($_GPC['status']), 'displayorder' => intval($_GPC['displayorder']), 'thumb' => $_GPC['thumb']);
+                if(!empty($id)){
+                    pdo_update('sen_appfreeitem_notice', $data, array('id' => $id));
+                }else{
+                    pdo_insert('sen_appfreeitem_notice', $data);
+                    $id = pdo_insertid();
+                }
+                message('更新公告成功！', $this->createWebUrl('notice', array('op' => 'display')), 'success');
+            }
+            $notice = pdo_fetch("select * from " . tablename('sen_appfreeitem_notice') . " where id=:id and uniacid=:uniacid limit 1", array(":id" => $id, ":uniacid" => $_W['uniacid']));
+        }elseif($operation == 'delete'){
+            $id  = intval($_GPC['id']);
+            $notice = pdo_fetch("SELECT id  FROM " . tablename('sen_appfreeitem_notice') . " WHERE id = '$id' AND uniacid=" . $_W['uniacid'] . "");
+            if(empty($notice)){
+                message('抱歉，公告不存在或是已经被删除！', $this->createWebUrl('notice', array('op' => 'display')), 'error');
+            }
+            pdo_delete('sen_appfreeitem_notice', array('id' => $id));
+            message('公告删除成功！', $this->createWebUrl('notice', array('op' => 'display')), 'success');
+        }else{
+            message('请求方式不存在');
+        }
+        // var_dump($this->template('notice'));exit;
+
+        include $this->template('notice');
+    }
+
+    // 公告管理
+    public function doMobileNotice()
+    {
+        global $_W, $_GPC;
+        load()->func('tpl');
+        $operation = !empty($_GPC['op']) ? $_GPC['op'] : 'display';
+        if($_GPC['id']){
+            $id = intval($_GPC['id']);
+            $notice = pdo_fetch("select * from " . tablename('sen_appfreeitem_notice') . " where id=:id and status=:status and uniacid=:uniacid limit 1", array(":id" => $id, ":uniacid" => $_W['uniacid'], ":status" => 1));
+            if(empty($notice)){
+                message("抱歉，公告不存在!", referer(), "error");
+            }
+            include $this->template('notice_detail');
+        }elseif($operation == 'display'){
+            $list = pdo_fetchall("SELECT * FROM " . tablename('sen_appfreeitem_notice') . " WHERE uniacid = '{$_W['uniacid']}' AND status=1 ORDER BY displayorder DESC");
+            include $this->template('notice');
+        }else{
+            message('请求方式不存在');
+        }
     }
 
 
@@ -2120,9 +2166,12 @@ LEFT JOIN ims_mc_members AS m ON f.uid = m.uid ORDER BY id DESC LIMIT " . ($pind
         exit;*/
         // TODO debug
         // unset($_SESSION['openid']);
-        if ($_GPC['debug'] OR $_SESSION['debug']) {
-            $_SESSION['openid'] = 'oMaz50jp9G_xRU_JT1jMaxuS5KdY';
-            $_SESSION['debug'] = 1;
+        if($_GPC['debug'] OR $_SESSION['debug']){
+            // $_W['fans']['from_user'] = 'oMaz50jp9G_xRU_JT1jMaxuS5KdY';
+            $_SESSION['openid'] = $_W['fans']['from_user'] ='oMaz50jp9G_xRU_JT1jMaxuS5KdY';
+            $_SESSION['debug']  = 1;
+            // 地址
+            $_W['member']['uid'] = 0;
             return 1;
         }
 
