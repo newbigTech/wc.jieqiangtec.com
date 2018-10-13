@@ -23,7 +23,7 @@
     <div class="header">
         <a class="go-back" href="javascript:void(0)" onclick="history.go(-1)">返回</a>
         <h1 class="title">{php echo $title ? $title : '免费试用';}</h1>
-        <span class="service">服务声明</span>
+        <a href=""><span class="service">服务声明</span</a>
     </div>
 
     <div class="wrapper">
@@ -47,10 +47,14 @@
 
             <!-- 公告 -->
             <div class="notice-box">
+                {loop $notice_list $notice}
                 <div class="notice-hd iconfont">&#xe64c;</div>
-                <div class="notice-bd">
-                    {$notice_info['content']}
-                </div>
+                <a href="">
+                    <div class="notice-bd">
+                       {$notice['title']}
+                    </div>
+                </a>
+                {/loop}
             </div>
 
             <div class="tab-hd">
