@@ -22,7 +22,7 @@
     <div class="header">
         <a class="go-back" href="javascript:void(0)" onclick="history.go(-1)">返回</a>
         <h1 class="title">个人中心</h1>
-        <span class="service">服务声明</span>
+        <a href="{php echo $this->createMobileUrl('rule')}"><span class="service">服务声明</span</a>
     </div>
 
     <div class="wrapper">
@@ -40,16 +40,16 @@
                 <!-- 标题 -->
                 <div class="part-title">
                     <span class="title-l">我的试用</span>
-                    <span class="title-r"><a href="{php echo $this->createMobileUrl('myorder',array('state'=>0))}">查看全部试用</a></span>
+                    <span class="title-r"><a class="link" title="查看全部试用" href="{php echo $this->createMobileUrl('myorder',array('state'=>0))}">查看全部试用</a></span>
                 </div>
                 <!-- 列表 -->
                 <div class="part-list">
                     <div class="list-item">
                         <!-- 试用列表 -->
                         <div class="item-con flex">
-                            <span class="item-flex apply">申请中...</span>
-                            <span class="item-flex apply-fail">申请失败</span>
-                            <span class="item-flex apply-success">申请成功</span>
+                            <span class="item-flex apply"><a class="link" title="申请中" href="{php echo $this->createMobileUrl('myorder',array('state'=>0,'status'=>0))}">申请中</a></span>
+                            <span class="item-flex apply-fail"><a class="link" title="申请失败" href="{php echo $this->createMobileUrl('myorder',array('state'=>0,'status'=>1))}">申请失败</a></span>
+                            <span class="item-flex apply-success"><a class="link" title="申请成功" href="{php echo $this->createMobileUrl('myorder',array('state'=>0,'status'=>5))}">申请成功</a></span>
                         </div>
                     </div>
                 </div>
@@ -60,16 +60,16 @@
                 <!-- 标题 -->
                 <div class="part-title">
                     <span class="title-l">我的订单</span>
-                    <span class="title-r"><a href="{php echo $this->createMobileUrl('myorder',array('state'=>1))}">查看全部订单</a></span>
+                    <span class="title-r"><a class="link" href="{php echo $this->createMobileUrl('myorder',array('state'=>1))}">查看全部订单</a></span>
                 </div>
                 <!-- 列表 -->
                 <div class="part-list">
                     <div class="list-item">
                         <!-- 订单列表 -->
                         <div class="item-con flex">
-                            <span class="item-flex wait-pay">待付款</span>
-                            <span class="item-flex wait-goods">待收货</span>
-                            <span class="item-flex wait-recevice">已签收</span>
+                            <span class="item-flex wait-pay"><a class="link" href="{php echo $this->createMobileUrl('myorder',array('state'=>1,'status'=>2))}">待发货</a></span>
+                            <span class="item-flex wait-goods"><a class="link" href="{php echo $this->createMobileUrl('myorder',array('state'=>1,'status'=>3))}">待收货</a></span>
+                            <span class="item-flex wait-recevice"><a class="link" href="{php echo $this->createMobileUrl('myorder',array('state'=>1,'status'=>4))}">已签收</a></span>
                         </div>
                     </div>
                 </div>
@@ -80,7 +80,7 @@
                 <!-- 标题 -->
                 <div class="part-title">
                     <span class="title-l">管理我的收货地址</span>
-                    <span class="title-r"><a href="{php echo $this->createMobileUrl('address',array('from'=>confirm))}">查看全部地址</a></span>
+                    <span class="title-r"><a class="link" href="{php echo $this->createMobileUrl('address',array('from'=>confirm))}">查看全部地址</a></span>
                 </div>
                 <!-- 列表 -->
                 <!-- <div class="part-list">

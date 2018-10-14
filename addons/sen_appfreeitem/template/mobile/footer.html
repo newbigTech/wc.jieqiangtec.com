@@ -5,7 +5,9 @@
     </a>
     <a href="javascript:void(0);" id="gotop" class="gotop"><img src="{IMG_PATH}top.png" style="width:40px"></a>
 </div>
-<input type="hidden" name="check_login" value="{$_W['openid']}">
+<!-- 判断登录 假装已登录value=1-->
+<!-- <input type="hidden" name="check_login" value="{$_W['openid']}"> -->
+<input type="hidden" name="check_login" value="1">
 </body>
 <script type="text/javascript">
 	// 滑动触发
@@ -40,8 +42,13 @@
 				window.location.href=url;
 			}
 		}else{
-			$.showErr("请先绑定手机号再进行免费申请",function(){
-				window.location.href="{php echo url('mc/bond/mobile');}";
+			$.showErr("请先登录后再进行免费申请",function(){
+				if ({$_W['uniacid']} == 10) {
+					window.location.href="{$_W['siteroot']}app/index.php?i={$_W['uniacid']}&c=entry&do=myorder&m=sen_appfreeitem";
+				}else{
+					window.location.href="{php echo url('mc/bond/mobile');}";
+				}
+				// loginForComm("http://197.3.176.26:8000/ecshopMerchantTest/index.jsp", "{$url}");
 			});
 		}
 	}

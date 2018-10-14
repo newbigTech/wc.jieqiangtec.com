@@ -23,7 +23,7 @@
     <div class="header">
         <a class="go-back" href="javascript:void(0)" onclick="history.go(-1)">返回</a>
         <h1 class="title">{php echo $title ? $title : '免费试用';}</h1>
-        <a href=""><span class="service">服务声明</span</a>
+        <a href="{php echo $this->createMobileUrl('rule')}"><span class="service">服务声明</span</a>
     </div>
 
     <div class="wrapper">
@@ -47,15 +47,16 @@
 
             <!-- 公告 -->
             <div class="notice-box">
-                {loop $notice_list $notice}
                 <div class="notice-hd iconfont">&#xe64c;</div>
-                <a href="">
-                    <div class="notice-bd">
-                       {$notice['title']}
-                    </div>
-                </a>
-                {/loop}
+                <div class="notice-bd">
+                    <ul>
+                        {loop $notice_list $notice}
+                        <li><a href="{php echo $this->createMobileUrl('notice', array('id' => $notice['id']))}" title="{$notice['title']}">{$notice['title']}</a></li>
+                        {/loop}
+                    </ul>
+                </div>
             </div>
+
 
             <div class="tab-hd">
                 <ul>
@@ -291,6 +292,22 @@
                 loop: true,
                 pagination: '.swiper-pagination'
             });
+
+
+            // 公告轮播
+            setInterval(function(){
+                var leiHei = $('.notice-bd').find('ul:first').find('li').height()
+                $('.notice-bd').find('ul:first').animate({
+                    marginTop: -leiHei
+                },
+                500,
+                function() {
+                    $(this).css({
+                        marginTop: '0'
+                    }).find('li:first').appendTo(this);
+                });
+            }, 2000)
+
 
             // 活动说明的显示隐藏
             $('.part-hd .part-hd-title').on('click', function() {

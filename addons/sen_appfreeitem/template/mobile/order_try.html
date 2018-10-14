@@ -8,7 +8,7 @@
     <meta content="black" name="apple-mobile-web-app-status-bar-style">
     <meta content="telephone=no" name="format-detection">
     <meta content="email=no" name="format-detection">
-    <title>我的试用</title>
+    <title>我的订单</title>
     <!-- <link rel="dns-prefetch" href=""> -->
     <link rel="stylesheet" href="{STATIC_RESOURCE_VERTWO}css/lib/reset.css">
     <link rel="stylesheet" href="{STATIC_RESOURCE_VERTWO}libs//swiper/swiper.min.css" />
@@ -16,27 +16,26 @@
     <script src="{STATIC_RESOURCE_VERTWO}js/lib/flexible-163.js"></script>
     <script src="{STATIC_RESOURCE_VERTWO}js/lib/jquery-2.2.4.min.js"></script>
     <script src="{STATIC_RESOURCE_VERTWO}libs//swiper/swiper.min.js"></script>
-    <script src="{STATIC_RESOURCE_VERTWO}js/index.js"></script>
 </head>
 
 <body ontouchstart class="my-order">
     <!-- 返回上一页 -->
     <div class="header">
         <a class="go-back" href="javascript:void(0)" onclick="history.go(-1)">返回</a>
-        <h1 class="title">我的试用</h1>
-        <a href="{php echo $this->createMobileUrl('rule')}"><span class="service">服务声明</span</a>
+        <h1 class="title">我的订单</h1>
+        <a href="{php echo $this->createMobileUrl('rule')}"><span class="service">服务声明</span></a>
     </div>
 
     <div class="wrapper">
-        <!-- 主体内容部分s -->
+        <!-- 主体内容部分 -->
         <div class="container">
 
             <div class="tab-hd">
                 <ul>
                     <li class="tab-hd-item active"><span>全部</span></li>
-                    <li class="tab-hd-item"><span>待付款</span></li>
-                    <li class="tab-hd-item"><span>待收货</span></li>
-                    <li class="tab-hd-item"><span>已签收</span></li>
+                    <li class="tab-hd-item"><span>申请中</span></li>
+                    <li class="tab-hd-item"><span>申请成功</span></li>
+                    <li class="tab-hd-item"><span>申请失败</span></li>
                 </ul>
             </div>
 
@@ -46,227 +45,217 @@
                 </a>
             </div>
 
-            <div class="swiper-container tab-bd">
-                <div class="swiper-wrapper" style="float:left; height:auto;">
-
-                    <!-- 全部 -->
-                    <div class="swiper-slide tab-bd-item">
-                        {loop $list $item}
-                        {php $project = $this->getproject($item['pid']);}
-                        {php $p_item = $this->getitem($item['item_id']);}
-                        <!-- 产品1 -->
-                        <div class="tab-item-con">
-                            {if $item['status'] == 0}
-                            <div class="item-link" >
-                                <div class="item-side">
-                                    <img class="item-img" src="{$_W['attachurl']}{$project['thumb']}" alt="{$project['title']}">
-                                </div>
-                                <div class="item-detail">
-                                    <p class="item-name">{$project['title']}</p>
-                                    <p class="item-price">
-                                        <span class="price-now">¥{$item['price']}</span>
-                                        <del class="price-old">¥{$item['price']}</del>
-                                    </p>
-                                    <p class="item-btn">
-                                        <span class="btn btn-black">待处理</span>
-                                    </p>
-                                </div>
-                            </div>
-
-                            {elseif $item['status'] == 1}
-
-                            <div class="item-link" >
-                                <div class="item-side">
-                                    <img class="item-img" src="{$_W['attachurl']}{$project['thumb']}" alt="{$project['title']}">
-                                </div>
-                                <div class="item-detail">
-                                    <p class="item-name">{$project['title']}</p>
-                                    <p class="item-price">
-                                        <span class="price-now">¥{$item['price']}</span>
-                                        <del class="price-old">¥{$item['price']}</del>
-                                    </p>
-                                    <p class="item-btn">
-                                        <span class="btn btn-black">未通过</span>
-                                    </p>
-                                </div>
-                            </div>
-
-                            {elseif $item['status'] == 2}
-
-                            <div class="item-link" >
-                                <div class="item-side">
-                                    <img class="item-img" src="{$_W['attachurl']}{$project['thumb']}" alt="{$project['title']}">
-                                </div>
-                                <div class="item-detail">
-                                    <p class="item-name">{$project['title']}</p>
-                                    <p class="item-price">
-                                        <span class="price-now">¥{$item['price']}</span>
-                                        <del class="price-old">¥{$item['price']}</del>
-                                    </p>
-                                    <p class="item-btn">
-                                        <span class="btn btn-link">待发货</span>
-                                    </p>
-                                </div>
-                            </div>
-
-                            {elseif $item['status'] == 3}
-                            <div class="item-link" >
-                            <a class="item-link" href="{php echo $this->createMobileUrl('myorder', array('orderid' => $item['id'], 'op' => 'confirm', 'state' => $item['state']))}">
-                                <div class="item-side">
-                                    <img class="item-img" src="{$_W['attachurl']}{$project['thumb']}" alt="{$project['title']}">
-                                </div>
-                                <div class="item-detail">
-                                    <p class="item-name">{$project['title']}</p>
-                                    <p class="item-price">
-                                        <span class="price-now">¥{$item['price']}</span>
-                                        <del class="price-old">¥{$item['price']}</del>
-                                    </p>
-                                    <p class="item-btn">
-                                        <span class="btn btn-link">待收货</span>
-                                    </p>
-                                </div>
-                            </div>
-
-                            {elseif $item['status'] == 4}
-                            <div class="item-link" >
-                                <div class="item-side">
-                                    <img class="item-img" src="{$_W['attachurl']}{$project['thumb']}" alt="{$project['title']}">
-                                </div>
-                                <div class="item-detail">
-                                    <p class="item-name">{$project['title']}</p>
-                                    <p class="item-price">
-                                        <span class="price-now">¥{$item['price']}</span>
-                                        <del class="price-old">¥{$item['price']}</del>
-                                    </p>
-                                    <p class="item-btn">
-                                        <span class="btn btn-link">已收货</span>
-                                    </p>
-                                </div>
-                            </div>
-
-                            {elseif $item['status'] == 5}
-
-                            <div class="item-link" >
-                                <div class="item-side">
-                                    <img class="item-img" src="{$_W['attachurl']}{$project['thumb']}" alt="{$project['title']}">
-                                </div>
-                                <div class="item-detail">
-                                    <p class="item-name">{$project['title']}</p>
-                                    <p class="item-price">
-                                        <span class="price-now">¥{$item['price']}</span>
-                                        <del class="price-old">¥{$item['price']}</del>
-                                    </p>
-                                    <p class="item-btn">
-                                        <span class="btn btn-link">已完成</span>
-                                    </p>
-                                </div>
-                            </div>
-                            {/if}
-                        </div>
-                        {/loop}
-
-                    </div>
-
-                    <!-- 待付款 -->
-                    <div class="swiper-slide tab-bd-item">
-
-                        <!-- 产品1 -->
-                        <div class="tab-item-con">
-                            <a class="item-link" href="">
-                                <div class="item-side">
-                                    <img class="item-img" src="{STATIC_RESOURCE_VERTWO}images/goods-pic.jpg" alt="">
-                                </div>
-                                <div class="item-detail">
-                                    <p class="item-name">待付款标题：CAMELBAK OCTANE 18X 水袋包  COACH 蔻驰 F54008 女士长款钱包标题：CAMELBAK OCTANE 18X 水袋包  COACH 蔻驰 F54008 女士长款钱包</p>
-                                    <p class="item-price">
-                                        <span class="price-now">¥99.88</span>
-                                        <del class="price-old">¥577.02</del>
-                                    </p>
-                                    <p class="item-btn">
-                                        <span class="btn btn-black">待付款</span>
-                                        <span class="btn btn-link fr">确认收货</span>
-                                    </p>
-                                </div>
-                            </a>
-                        </div>
-                        
-
-                    </div>
-
-                    <!-- 待收货 -->
-                    <div class="swiper-slide tab-bd-item">
-
-                        <!-- 产品1 -->
-                        <div class="tab-item-con">
-                            <a class="item-link" href="">
-                                <div class="item-side">
-                                    <img class="item-img" src="{STATIC_RESOURCE_VERTWO}images/goods-pic.jpg" alt="">
-                                </div>
-                                <div class="item-detail">
-                                    <p class="item-name">待收货标题：CAMELBAK OCTANE 18X 水袋包  COACH 蔻驰 F54008 女士长款钱包标题：CAMELBAK OCTANE 18X 水袋包  COACH 蔻驰 F54008 女士长款钱包</p>
-                                    <p class="item-price">
-                                        <span class="price-now">¥99.88</span>
-                                        <del class="price-old">¥577.02</del>
-                                    </p>
-                                    <p class="item-btn">
-                                        <span class="btn btn-black">待付款</span>
-                                        <span class="btn btn-link fr">确认收货</span>
-                                    </p>
-                                </div>
-                            </a>
-                        </div>
-                        
-
-                    </div>
-
-                    <!-- 已签收 -->
-                    <div class="swiper-slide tab-bd-item">
-
-                        <!-- 产品1 -->
-                        <div class="tab-item-con">
-                            <a class="item-link" href="">
-                                <div class="item-side">
-                                    <img class="item-img" src="{STATIC_RESOURCE_VERTWO}images/goods-pic.jpg" alt="">
-                                </div>
-                                <div class="item-detail">
-                                    <p class="item-name">已签收标题：CAMELBAK OCTANE 18X 水袋包  COACH 蔻驰 F54008 女士长款钱包标题：CAMELBAK OCTANE 18X 水袋包  COACH 蔻驰 F54008 女士长款钱包</p>
-                                    <p class="item-price">
-                                        <span class="price-now">¥99.88</span>
-                                        <del class="price-old">¥577.02</del>
-                                    </p>
-                                    <p class="item-btn">
-                                        <span class="btn btn-black">待付款</span>
-                                        <span class="btn btn-link fr">确认收货</span>
-                                    </p>
-                                </div>
-                            </a>
-                        </div>
-                        
-
-                    </div>
-
-                </div>
+            <div class="tab-bd">
 
             </div>
-
-
         </div>
-
-
     </div>
 
 
     <!-- 返回顶部 -->
     <div id="goTop"></div>
 
-    <!-- 分页 -->
-    <div>{$pager}</div>
+    
 
 
 <script>
 $(function(){
-    
-    
+
+    function getInfos(el,status,page,change){
+        // 首次切换置空
+        if (change) {
+            $(el).html('')
+        }
+
+        $.ajax({
+            // url: 'http://shop.rongec.cn/test.php',
+            url: '{php echo $this->createMobileUrl('myorder',array('state'=>0,'is_ajax'=>1))}',
+            // url: '/data/orders.json',
+            type: 'GET',
+            dataType: 'json',
+            async:false,
+            data:{'status':status,'pindex':page}
+            // data:{}
+        })
+        .done(function(data) {
+            // console.log(data)
+            var skuData = data.data.list;
+            var skuInfos = [];
+            // console.log(skuData);
+
+            // 空数组说明加载完毕
+            if (skuData == false) {
+                // alert('数据加载完毕');
+                // $(el).append('<div class="tab-bd-item" >数据加载完毕</div>');
+                return false;
+            }
+
+
+            var tmp = '';
+            for ( var key in skuData ){
+                skuInfos.push(skuData[key]);
+                // console.log(skuData[key]);
+            }
+            // console.log(skuInfos);
+            for (var i = 0; i < skuInfos.length; i++) {
+                var skuId = skuInfos[i].id;  // 产品订单id
+                var skuName = skuInfos[i].title;  // 产品名称
+                var skuImg = skuInfos[i].thumb;  // 产品图片
+                var skuPrice = skuInfos[i].price;  // 市场价格
+                var skuMyPrice = skuInfos[i].myprice;  // 实际价格
+                var skuStatus = skuInfos[i].status;  // 订单状态
+                var skuState = skuInfos[i].state;  // 订单状态
+
+                tmp += '<div class="tab-bd-item" skuId="'+ skuId +'">';
+
+                // 待收货
+                if (skuStatus == 3) {
+                    // var confirm_url = "{php echo $this->createMobileUrl('myorder', array('orderid' => "+skuId+", 'op' => 'confirm', 'state' => "+skuState+"))}";
+                    var confirm_url = "index.php?i=10&c=entry&orderid="+skuId+"&op=confirm&state="+skuState+"&do=myorder&m=sen_appfreeitem";
+                    // console.log(confirm_url+skuId+'=skuState='+skuState);
+                    tmp += '<a class="item-link" href='+confirm_url+' title="'+ skuName +'">';
+                }else{
+                    tmp += '<div class="item-link"'+ skuName +'">';
+                }
+                // 主图
+                tmp += '<div class="item-side">';
+                tmp += '<img class="item-img" src="'+ skuImg +'" alt="'+ skuName +'">';
+                tmp += '</div>';
+                // 描述
+                tmp += '<div class="item-detail">';
+                tmp += '<p class="item-name">'+ skuName +'</p>';
+                tmp += '<p class="item-price">';
+                tmp += '<span class="price-now">¥'+skuMyPrice+'</span>';
+                tmp += '<del class="price-old">¥'+skuPrice+'</del>';
+                tmp += '</p>';
+                tmp += '<p class="item-btn">';
+                switch ( skuStatus ){
+                    case '0':
+                        tmp += '<span class="btn btn-black">申请中</span>';
+                        break;
+                    case '1':
+                        tmp += '<span class="btn btn-black">申请失败</span>';
+                        break;
+                    // case '2':
+                    //     tmp += '<span class="btn btn-black">待发货</span>';
+                    //     break;
+                    // case '3':
+                    //     tmp += '<span class="btn btn-link">待收货</span>';
+                    //     break;
+                    // case '4':
+                    //     tmp += '<span class="btn btn-link">已签收</span>';
+                    //     break;
+                    case '5':
+                        tmp += '<span class="btn btn-link">申请成功</span>';
+                        break;
+                    default:
+                        tmp += '<span class="btn btn-black">其它</span>';
+                        break;
+                }
+                // tmp += '<span class="btn btn-link fr">确认收货</span>';
+                tmp += '</p>';
+                tmp += '</div>';
+                // 待收货
+                if (skuStatus == 3) {
+                    tmp += '</a>';
+                }else{
+                    tmp += '</div>';
+                }
+                tmp += '</div>';
+            }
+            // console.log(tmp);
+            // if (change) {
+            //     $(el).html('')
+            // }
+            $(el).append(tmp);
+        })
+        .fail(function() {
+            console.log("获取数据失败");
+        })
+        .always(function() {
+            // console.log("complete");
+        });
+
+    }
+    // 第一次自动加载
+    localStorage.setItem('status',9);
+    getInfos('.tab-bd',localStorage.getItem('status'),1,true);
+
+    var tabHei = $('.tab-hd').height();
+    var page = 1; //分页码
+    var pageStatus = false; //分页开关
+
+
+    //点击导航切换
+    $('.tab-hd li').on('click',function(){
+        $(window).scrollTop(0);
+        $('.tab-hd .active').removeClass('active');
+        $(this).addClass("active");
+        var INDEX = $(this).index();
+        // console.log(INDEX)
+        switch( INDEX ){
+            case 0:
+                // 全部
+                localStorage.setItem('status',9);
+                getInfos('.tab-bd',localStorage.getItem('status'),page,true);
+                // console.log('全部' + localStorage.getItem('status'))
+                break;
+            case 1:
+                // 申请中
+                localStorage.setItem('status',0);
+                getInfos('.tab-bd',localStorage.getItem('status'),page,true);
+                // console.log('待发货' + localStorage.getItem('status'))
+                break;
+            case 2:
+                // 申请成功
+                localStorage.setItem('status',5);
+                getInfos('.tab-bd',localStorage.getItem('status'),page,true);
+                // console.log('待收货' + localStorage.getItem('status'))
+                break;
+            case 3:
+                // 申请失败
+                // localStorage.setItem('status',4);
+                localStorage.setItem('status',1);
+                getInfos('.tab-bd',localStorage.getItem('status'),page,true);
+                // console.log('已完成' + localStorage.getItem('status'))
+                break;
+            default:
+                localStorage.setItem('status',9);
+                getInfos('.tab-bd',localStorage.getItem('status'),page,true);
+                // console.log('全部' + localStorage.getItem('status'))
+                break;
+        }
+    });
+
+    // 翻页及tab切换固定
+    $(window).scroll(function() {
+        if( $(window).scrollTop() > tabHei ) {
+            $('.tab-hd').css({
+                position: 'fixed',
+                left: 0,
+                top: 0
+            });
+        } else {
+            $('.tab-hd').css({
+                position: 'relative'
+            });
+        }
+
+        //翻页
+        var $scrollTop = $(window).scrollTop();    //滚动条距离顶部的高度
+        var $scrollHeight = $(document).height();   //当前页面的总高度
+        var $clientHeight = $(window).height();    //当前可视的页面高度
+        var status = localStorage.getItem('status');
+        if ($scrollTop + $clientHeight >= $scrollHeight) {
+            page++;
+            getInfos('.tab-bd',status,page);
+            // console.log(status + '第' + page + '页');
+        } else if($scrollTop<=0){
+            page = 1;
+            getInfos('.tab-bd',status,page);
+        }
+    });
+
 });
 </script>
 

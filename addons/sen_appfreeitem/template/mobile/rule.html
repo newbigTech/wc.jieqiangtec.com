@@ -1,116 +1,101 @@
-{template 'header'}
-<div class="wraper" style="padding-bottom: 50px;"> 
-<script type="text/javascript" src="{JS_PATH}TouchSlide.1.1.js"></script>
-<!--banner 开始 -->
-<style type="text/css">
-body{background: #f0f0f0;}
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>服务声明</title>
+<meta name="viewport" content="width=device-width,height=device-height,inital-scale=1.0,maximum-scale=1.0,user-scalable=no;">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="format-detection" content="telephone=no">
+<meta charset="utf-8">
+<link rel="stylesheet" href="{STATIC_RESOURCE_VERTWO}css/notice.css" />
 
-.freetry_item_pic_timer{background-color:rgba(0,0,0,0.3);bottom:0;color:#fff;font-size:1.4rem;left:0;line-height:3.6rem;position:absolute;text-align:center;width:100%}
-.freetry_item_pic_timer img{display:inline-block;position:relative;top:0.2rem;width:1.2rem}
-.imgbox{position:relative;}
-.freetry_item_qishu{left:1.5rem;margin-top:1.5rem;overflow:hidden;position:absolute;top:1.5rem}
-.flex_wrap{color:#9b9b9b;display:flex;font-size:1.2rem;justify-content:center;margin-top:15px;overflow:hidden;padding-left:1%}
-.flex_wrap div{float:left;text-align:center;width:33%}
-.c_green{color:#52C580}
-.faxianshiyong_nav {
-    height: 3.6rem;
-    line-height: 3.6rem;
-    margin: 1.2rem auto;
+<style type="text/css">
+.header {
+    /*overflow: hidden;
     position: relative;
-    width: 60%;
-}
-.faxianshiyong_nav a {
-    border: .1rem solid #52C580;
-    border-radius: .5rem 0 0 .5rem;
-    color: #444;
-    display: inline-block;
-    font-size: 1.4rem;
+    height: .88rem;*/
+    background-color: #3c3d41;
     text-align: center;
-    text-decoration: none;
-    width: 48%;
-}
-.faxianshiyong_nav a.cur {
-    background-color: #52C580;
-    border-color: #52C580;
     color: #fff;
 }
-.nav_link {
-    color: #444;
-    flex-direction: row;
-    font-size: 1.4rem;
-    line-height: 2rem;
-    overflow: hidden;
-	    padding-bottom: 1.5rem;
+
+
+.header .go-back {
+    position: absolute;
+    left: .2rem;
+    top: 0;
+    width: .4rem;
+    height: .88rem;
+    line-height: .88rem;
+    color: #fff;
+    background: url({STATIC_RESOURCE_VERTWO}images/ico/ico-back.png) no-repeat left center;
+    background-size: .19rem .35rem;
+    font-size: 0;
 }
-.nav_link a {
+
+/*头部标题*/
+.page_title {
     float: left;
-    position: relative;
+    width: 100%;
     text-align: center;
-    width: 50%;
+    font-size: 150%;
+    padding-top: 2%;
 }
-.nav_link img {
-    display: inline-block;
-    position: relative;
-    top: 0.2rem;
-    width: 1.2rem;
-	vertical-align: initial;
-}
+
 </style>
-<!-- <section class="index-top">
-	<div style="background-color:#fff;overflow:hidden;margin-bottom: 10px;"> <div class="faxianshiyong_nav"> <a style="border-right:0" href="{php echo $this->createMobileUrl('list2')}">往期活动</a><a style="border-left:0;border-radius:0 .5rem .5rem 0" href="{php echo $this->createMobileUrl('list')}" class="cur">免费试用</a></div> </div>
-	
-	<div style="background-color: #fff;">&nbsp;</div>
-	<div class="nav_link" style="padding-bottom:1.5rem;background-color: #fff;"> <a href="{php echo $this->createMobileUrl('list2', array('op' => 'jpcp'))}" class="nav_link_has_border"><img src="{IMG_PATH}text.png" style="cursor:pointer;top:0.3rem">&nbsp;精品测评</a> <a href="{php echo $this->createMobileUrl('myorder')}" style="cursor:pointer"><img style="top:0.5rem;width:1.6rem" src="{IMG_PATH}my.png">&nbsp;我的试用</a> </div>
-	
-</section> -->
-<section class="index">
+<script>
+function $(xixi) {
+return document.getElementById(xixi);
+}
+//转换字号
+function doZoom(size){
+    if(size==16){
+        $("contentText").style.fontSize = size + "px";
+        $("fs12").style.display = "";
+        $("fs14").style.display = "none";
+    }
+    if(size==24){
+        $("contentText").style.fontSize = size + "px";
+        $("fs12").style.display = "none";
+        $("fs14").style.display = "";
+    }
+}
+</script>
 
-    <div class="oComment_1" style="">
-         <!--banner 开始 -->
-         <div id="slideBox" class="banner">
-            <div class="bd">
-                <ul>
-                {loop $advs $adv}
-                    <li>
-                        <a href="{if empty($adv['link'])}#{else}{$adv['link']}{/if}"><img src="{php echo tomedia($adv['thumb']);}"></a>
-                    </li>
-                {/loop}
-                </ul>
-            </div>
-            <div class="hd">
-                <ul></ul>
-            </div>
-            
+</head>
+<body>
+<!-- header 开始 -->
+        <div class="header black_gradient">
+            <a href="javascript:void(0)" onclick="history.go(-1)"   class="go-back"><</a>
+            <div class="page_title">官方公告</div>
+            <!-- <div class="textAa">
+                <div class=fontSize id=fs12 style="DISPLAY: none">
+                <a href="javascript:doZoom(24)" class="bigA">A</a> 
+                <div class="smallSize">A</div>
+                </div>
+                <div class=fontSize id=fs14>
+                <span class="bigSize">A</span> 
+                <a href="javascript:doZoom(16)" class="smalA">A</a>
+               </div>
+           </div> -->
+            <div class="clear"></div>
         </div>
-        <script type="text/javascript">
-            if($("#slideBox .bd ul").find('li').length>1){
-                TouchSlide({ 
-                    slideCell:"#slideBox",
-                    titCell:".hd ul", //开启自动分页 autoPage:true ，此时设置 titCell 为导航元素包裹层
-                    mainCell:".bd ul", 
-                    effect:"leftLoop", 
-                    autoPage:true,//自动分页
-                    autoPlay:true //自动播放
-                });
-            }
-            if($("#slideBox > .hd").find("li").length <=1){
-                $("#slideBox > .hd").hide();
-            }
-        </script>
-    </div>
-    
-	<section class="detailmain" style="padding:0px; margin:10px;border: 1px solid gray;border-radius: .5rem;">
-		
-		<div style="padding:15px;">
-			{$item['content']}
-		</div>
-	</section>
- 
-
-        
-            <div class="blank5"></div>
-</section>
+<!-- header 结束 -->
+<!--公告文章 开始--> 
+<div class="ggNeirong">
+<div class="gg_title">
+<h1>服务声明</h1>
+<!-- <span>{php echo date('Y-m-d H:i:s',$notice['createtime'])}<em class="newName">官方发布</em></span> -->
 </div>
-{template 'footerbar'}
-{template 'footer'}
+<div class="gg_texgt" id="contentText">
 
+{if $notice['thumb']}
+<img src="{$_W['attachurl']}{$notice['thumb']}" alt="{$notice['title']}">
+{/if}
+
+{$item['content']}
+</div>
+</div> 
+<!--公告文章 结束-->    
+</body>
+</html>
