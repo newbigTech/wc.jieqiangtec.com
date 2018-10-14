@@ -32,10 +32,10 @@
 
             <div class="tab-hd">
                 <ul>
-                    <li class="tab-hd-item active"><span>全部</span></li>
-                    <li class="tab-hd-item"><span>待发货</span></li>
-                    <li class="tab-hd-item"><span>待收货</span></li>
-                    <li class="tab-hd-item"><span>已完成</span></li>
+                    <li class="tab-hd-item {if $_GPC['status']==9}active{/if}"><span>全部</span></li>
+                    <li class="tab-hd-item {if $_GPC['status']==2}active{/if}"><span>待发货</span></li>
+                    <li class="tab-hd-item {if $_GPC['status']==3}active{/if}"><span>待收货</span></li>
+                    <li class="tab-hd-item{if $_GPC['status']==5}active{/if}"><span>已完成</span></li>
                 </ul>
             </div>
 
@@ -178,7 +178,7 @@ $(function(){
 
     }
     // 第一次自动加载
-    localStorage.setItem('status',9);
+    localStorage.setItem('status',{$_GPC['status']});
     getInfos('.tab-bd',localStorage.getItem('status'),1,true);
 
     var tabHei = $('.tab-hd').height();

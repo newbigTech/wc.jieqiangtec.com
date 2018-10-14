@@ -172,13 +172,15 @@ class sen_appfreeitemModuleSite extends WeModuleSite
     {
         global $_W, $_GPC;
         $cateid    = intval($_GPC['cateid']);
-        $condition = " WHERE uniacid = '{$_W['uniacid']}' ";
+        // $condition = " WHERE uniacid = '{$_W['uniacid']}' ";
+        $condition = " WHERE weid = '{$_W['uniacid']}' ";
         if(!empty($cateid)){
             $condition .= " AND cateid = '{$cateid}'";
         }
         $pindex    = max(1, intval($_GPC['page']));
         $psize     = 20;
-        $sql       = 'SELECT * FROM ' . tablename('sen_appfreeitem_report') . $condition . " ORDER BY displayorder DESC LIMIT " . ($pindex - 1) * $psize . ',' . $psize;
+        $sql       = 'SELECT * FROM ' . tablename('sen_appfreeitem_report') . $condition . " ORDER BY id DESC LIMIT " . ($pindex - 1) * $psize . ',' . $psize;
+        $params = array();
         $news      = pdo_fetchall($sql, $params);
         $total     = pdo_fetchcolumn('SELECT COUNT(*) FROM ' . tablename('sen_appfreeitem_report') . $condition, $params);
         $pager     = pagination($total, $pindex, $psize);
@@ -380,6 +382,7 @@ class sen_appfreeitemModuleSite extends WeModuleSite
         }
     }
 
+    // 产品详情
     public function doMobileDetail()
     {
         global $_GPC, $_W;
@@ -571,7 +574,6 @@ class sen_appfreeitemModuleSite extends WeModuleSite
                 }
             }
 
-            $state;
             if($op == 0){
                 $state = 0;
             }elseif($op == 1){
@@ -608,10 +610,7 @@ class sen_appfreeitemModuleSite extends WeModuleSite
         $profile = fans_search($_W['fans']['from_user'], array('resideprovince', 'residecity', 'residedist', 'address', 'nickname', 'mobile'));
 
         // var_dump('uid===',$_SESSION['out_uid'],$_W['member']);exit;
-        /*if($_GPC['debug'] || $_SESSION['debug']){
-            $_SESSION['out_uid'] = 0;
-        }*/
-        $row = pdo_fetch("SELECT * FROM " . tablename('mc_member_address') . " WHERE isdefault = 1 and uid = :uid limit 1", array(':uid' => $_SESSION['out_uid']));
+        $row = pdo_fetch("SELECT * FROM " . tablename('mc_member_address') . " WHERE isdefault = 1 and uid = :uid and uniacid = :uniacid limit 1", array(':uid' => $_SESSION['out_uid'],':uniacid' => $_W['uniacid']));
         // var_dump($row,$_SESSION['out_uid'],$_SESSION);exit;
         $carttotal = $this->getCartTotal();
         if($op == 0){
@@ -626,11 +625,6 @@ class sen_appfreeitemModuleSite extends WeModuleSite
     public function doMobileSetReportProperty()
     {
         global $_GPC, $_W;
-        // TODO debug
-        if($_GPC['debug'] || $_SESSION['debug']){
-            $_W['openid'] = 'oMaz50jp9G_xRU_JT1jMaxuS5KdY';
-        }
-
         // var_dump($_W);
         $id   = intval($_GPC['id']);
         $pid  = intval($_GPC['pid']);
@@ -692,10 +686,6 @@ class sen_appfreeitemModuleSite extends WeModuleSite
         if(empty($_W['fans']['nickname'])){
             mc_oauth_userinfo();
         }
-        /*// TODO debug
-        if($_GPC['debug'] || $_SESSION['debug']){
-            $_W['fans']['from_user'] = 'oMaz50jp9G_xRU_JT1jMaxuS5KdY';
-        }*/
 
         $id     = intval($_GPC['orderid']);
         $openid = $_W['fans']['from_user'];
@@ -1031,21 +1021,18 @@ class sen_appfreeitemModuleSite extends WeModuleSite
             include $this->template('order_detail');
         }else{
             // 我的订单
-            // 9：全部  0：试用  1：购买
+            // $state 9：全部  0：试用  1：购买
             $state = $_GPC['state'];
             /*$res_json_order = $this->echojson(200,'请求成功',array('total'=>$total,'pindex'=>$pindex,'psize'=>$psize,'list'=>$list));
             echo($res_json_order);exit;*/
             $pagetitle = "申请状态";
 
-            // 9：全部  0：试用  1：购买
-            // var_dump($state,'$total==',$total);exit;
             if($state == 1 || $state === '0'){
                 $status = intval($_GPC['status']);
                 $pindex = max(1, intval($_GPC['pindex']));
                 $psize  = 10;
                 $where  = " weid = '{$_W['uniacid']}' AND from_user = '{$_W['fans']['from_user']}'";
 
-                // var_dump($state);exit;
                 if($state == 1){
                     $where .= " and state=1";
                 }else{
@@ -1163,13 +1150,10 @@ class sen_appfreeitemModuleSite extends WeModuleSite
         }else{
             $profile = fans_search($_W['fans']['from_user'], array('resideprovince', 'residecity', 'residedist', 'address', 'realname', 'mobile'));
 
-            // TODO debug
-            // $_SESSION['out_uid'] = 0;
             $address   = pdo_fetchall("SELECT * FROM " . tablename('mc_member_address') . " WHERE uid = :uid AND  uniacid = :uniacid", array(':uid' => $_SESSION['out_uid'],':uniacid' => $_W['uniacid']));
             $carttotal = $this->getCartTotal();
-            $title     = $pagetitle = "信息维护";
+            $title     = $pagetitle = "地址维护";
             // var_dump($address,$_W);exit;
-
             include $this->template('address');
         }
     }
