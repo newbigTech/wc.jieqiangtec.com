@@ -21,9 +21,10 @@ include_once IA_ROOT . '/payment/unionpay/ms_lajp/decryptAndCheck.class.php';
 include_once IA_ROOT . '/payment/unionpay/ms_lajp/php_java.php';
 
 // TODO debug模拟用户登录模式
-$_SESSION['debug'] = 1 ;
-//unset($_SESSION['out_uid'],$_SESSION['openid']);
-var_dump('$_SESSION==',$_SESSION);
+$_SESSION['debug'] = 1;
+// unset($_SESSION['out_uid'], $_SESSION['openid']);
+// var_dump('$_SESSION==', $_SESSION);
+
 //exit;
 
 class sen_appfreeitemModuleSite extends WeModuleSite
@@ -72,7 +73,6 @@ class sen_appfreeitemModuleSite extends WeModuleSite
                 if ($settings['ispublish'] != 1) {
                     die(json_encode(array('status' => 0, 'info' => '本站暂未开放产品发布111', 'jump' => $this->createMobileUrl('list'))));
                 }*/
-                // $insert = array('weid' => $_W['uniacid'], 'from_user' => $_W['openid'], 'displayorder' => 0, 'pcate' => intval($_GPC['cate_id']), 'title' => $_GPC['name'], 'limit_price' => intval($_GPC['limit_price']), 'deal_days' => intval($_GPC['deal_days']), 'thumb' => $_GPC['image'], 'brief' => $_GPC['brief'], 'content' => $_GPC['descript'], 'lianxiren' => $_GPC['lianxiren'], 'qq' => $_GPC['qq'], 'status' => 0, 'createtime' => time(),);
                 $insert = array('weid' => $_W['uniacid'], 'from_user' => $_W['openid'], 'displayorder' => 0, 'pcate' => intval($_GPC['cate_id']), 'title' => $_GPC['name'], 'price' => intval($_GPC['limit_price']), 'deal_days' => time(), 'thumb' => $_GPC['image'], 'content' => $_GPC['descript'], 'lianxiren' => $_GPC['lianxiren'], 'tel' => $_GPC['tel'], 'status' => 0, 'createtime' => time(),);
                 if(!empty($project_id)){
                     unset($insert['createtime']);
@@ -268,8 +268,6 @@ class sen_appfreeitemModuleSite extends WeModuleSite
         // 最新公告
         // $notice_info = pdo_fetch("SELECT * FROM " . tablename('sen_appfreeitem_rule') . " WHERE wid = '{$_W['uniacid']}' ");
         $notice_list = pdo_fetchall("SELECT * FROM " . tablename('sen_appfreeitem_notice') . " WHERE uniacid = '{$_W['uniacid']}' AND status=1 ORDER BY id DESC LIMIT 10  ");
-
-        // var_dump($notice_list);
 
         $carttotal    = $this->getCartTotal();
         $moduleconfig = $this->module['config'];
@@ -497,20 +495,14 @@ class sen_appfreeitemModuleSite extends WeModuleSite
     public function doMobileConfirm()
     {
         global $_W, $_GPC;
-
         // var_dump('购买==',$_W, $_GPC);exit;
-        // TODO debug
-        if($_GPC['debug'] || $_SESSION['debug']){
-            $_W['fans']['from_user'] = 'oMaz50jp9G_xRU_JT1jMaxuS5KdY';
-            $_W['fans']['nickname']  = 'jieqiang';
-        }
 
-        if(empty($_W['fans']['nickname'])){
+        // TODO 屏蔽
+        /*if(empty($_W['fans']['nickname'])){
             mc_oauth_userinfo();
-        }
+        }*/
         $id = intval($_GPC['id']);
         $op = intval($_GPC['op']);
-
 
         $openid = $_W['fans']['from_user'];
         $pd     = pdo_fetch("SELECT * FROM " . tablename('sen_appfreeitem_order') . " WHERE from_user = :from_user and state =:state and pid = :pid", array(':from_user' => $openid, ':state' => '0', ':pid' => $id));
@@ -541,7 +533,7 @@ class sen_appfreeitemModuleSite extends WeModuleSite
         $my        = array();
         $item      = pdo_fetch("SELECT * FROM " . tablename('sen_appfreeitem_project') . " WHERE id = :id", array(':id' => $id));
         $my        = iunserializer($item['wtname']);
-        $returnurl = $this->createMobileUrl("confirm", array("id" => $id, "item_id" => $item_id));
+        $returnurl = $this->createMobileUrl("confirm", array("id" => $id));
         $dispatch  = pdo_fetchall("select id,dispatchname,dispatchtype,firstprice,firstweight,secondprice,secondweight from " . tablename("sen_appfreeitem_dispatch") . " WHERE weid = {$_W['uniacid']} order by displayorder desc");
         foreach($dispatch as & $d){
             $weight = 0;
@@ -615,11 +607,12 @@ class sen_appfreeitemModuleSite extends WeModuleSite
         }
         $profile = fans_search($_W['fans']['from_user'], array('resideprovince', 'residecity', 'residedist', 'address', 'nickname', 'mobile'));
 
-        // var_dump('uid===',$_W['member']['uid'],$_W['member']);exit;
-        if($_GPC['debug'] || $_SESSION['debug']){
-            $_W['member']['uid'] = 0;
-        }
-        $row       = pdo_fetch("SELECT * FROM " . tablename('mc_member_address') . " WHERE isdefault = 1 and uid = :uid limit 1", array(':uid' => $_W['member']['uid']));
+        // var_dump('uid===',$_SESSION['out_uid'],$_W['member']);exit;
+        /*if($_GPC['debug'] || $_SESSION['debug']){
+            $_SESSION['out_uid'] = 0;
+        }*/
+        $row = pdo_fetch("SELECT * FROM " . tablename('mc_member_address') . " WHERE isdefault = 1 and uid = :uid limit 1", array(':uid' => $_SESSION['out_uid']));
+        // var_dump($row,$_SESSION['out_uid'],$_SESSION);exit;
         $carttotal = $this->getCartTotal();
         if($op == 0){
             $title = "提交申请";
@@ -699,10 +692,10 @@ class sen_appfreeitemModuleSite extends WeModuleSite
         if(empty($_W['fans']['nickname'])){
             mc_oauth_userinfo();
         }
-        // TODO debug
+        /*// TODO debug
         if($_GPC['debug'] || $_SESSION['debug']){
             $_W['fans']['from_user'] = 'oMaz50jp9G_xRU_JT1jMaxuS5KdY';
-        }
+        }*/
 
         $id     = intval($_GPC['orderid']);
         $openid = $_W['fans']['from_user'];
@@ -927,7 +920,7 @@ class sen_appfreeitemModuleSite extends WeModuleSite
         }
 
         $res = $this->pay($params);
-        var_dump($params, $res);
+        // var_dump($params, $res);
         exit;
 
         include $this->template('pay');
@@ -1004,7 +997,7 @@ class sen_appfreeitemModuleSite extends WeModuleSite
         global $_W, $_GPC;
         $this->checkAuthSession();
         $carttotal = $this->getCartTotal();
-        $op = $_GPC['op'];
+        $op        = $_GPC['op'];
         if($op == 'confirm'){
             $orderid = intval($_GPC['orderid']);
             $state   = intval($_GPC['state']);
@@ -1119,7 +1112,7 @@ class sen_appfreeitemModuleSite extends WeModuleSite
         $operation = $_GPC['op'];
         if($operation == 'post'){
             $id   = intval($_GPC['id']);
-            $data = array('uniacid' => $_W['uniacid'], 'uid' => $_W['member']['uid'], 'username' => $_GPC['username'], 'mobile' => $_GPC['mobile'], 'province' => $_GPC['province'], 'city' => $_GPC['city'], 'district' => $_GPC['district'], 'address' => $_GPC['address'],);
+            $data = array('uniacid' => $_W['uniacid'], 'uid' => $_SESSION['out_uid'], 'username' => $_GPC['username'], 'mobile' => $_GPC['mobile'], 'province' => $_GPC['province'], 'city' => $_GPC['city'], 'district' => $_GPC['district'], 'address' => $_GPC['address'],);
             if(empty($_GPC['username']) || empty($_GPC['mobile']) || empty($_GPC['address'])){
                 message('请输完善您的资料！');
             }
@@ -1129,7 +1122,7 @@ class sen_appfreeitemModuleSite extends WeModuleSite
                 pdo_update('mc_member_address', $data, array('id' => $id));
                 message($id, '', 'ajax');
             }else{
-                pdo_update('mc_member_address', array('isdefault' => 0), array('uniacid' => $_W['uniacid'], 'uid' => $_W['member']['uid']));
+                pdo_update('mc_member_address', array('isdefault' => 0), array('uniacid' => $_W['uniacid'], 'uid' => $_SESSION['out_uid']));
                 $data['isdefault'] = 1;
                 pdo_insert('mc_member_address', $data);
                 $id = pdo_insertid();
@@ -1141,10 +1134,10 @@ class sen_appfreeitemModuleSite extends WeModuleSite
             }
         }elseif($operation == 'default'){
             $id      = intval($_GPC['id']);
-            $address = pdo_fetch("select isdefault from " . tablename('mc_member_address') . " where id='{$id}' and uniacid='{$_W['uniacid']}' and uid='{$_W['member']['uid']}' limit 1 ");
+            $address = pdo_fetch("select isdefault from " . tablename('mc_member_address') . " where id='{$id}' and uniacid='{$_W['uniacid']}' and uid='{$_SESSION['out_uid']}' limit 1 ");
             if(!empty($address) && empty($address['isdefault'])){
-                pdo_update('mc_member_address', array('isdefault' => 0), array('uniacid' => $_W['uniacid'], 'uid' => $_W['member']['uid']));
-                pdo_update('mc_member_address', array('isdefault' => 1), array('uniacid' => $_W['uniacid'], 'uid' => $_W['member']['uid'], 'id' => $id));
+                pdo_update('mc_member_address', array('isdefault' => 0), array('uniacid' => $_W['uniacid'], 'uid' => $_SESSION['out_uid']));
+                pdo_update('mc_member_address', array('isdefault' => 1), array('uniacid' => $_W['uniacid'], 'uid' => $_SESSION['out_uid'], 'id' => $id));
             }
             message(1, '', 'ajax');
         }elseif($operation == 'detail'){
@@ -1154,13 +1147,13 @@ class sen_appfreeitemModuleSite extends WeModuleSite
         }elseif($operation == 'remove'){
             $id = intval($_GPC['id']);
             if(!empty($id)){
-                $address = pdo_fetch("select isdefault from " . tablename('mc_member_address') . " where id='{$id}' and uniacid='{$_W['uniacid']}' and uid='{$_W['member']['uid']}' limit 1 ");
+                $address = pdo_fetch("select isdefault from " . tablename('mc_member_address') . " where id='{$id}' and uniacid='{$_W['uniacid']}' and uid='{$_SESSION['out_uid']}' limit 1 ");
                 if(!empty($address)){
-                    pdo_delete("mc_member_address", array('id' => $id, 'uniacid' => $_W['uniacid'], 'uid' => $_W['member']['uid']));
+                    pdo_delete("mc_member_address", array('id' => $id, 'uniacid' => $_W['uniacid'], 'uid' => $_SESSION['out_uid']));
                     if($address['isdefault'] == 1){
-                        $maxid = pdo_fetchcolumn("select max(id) as maxid from " . tablename('mc_member_address') . " where uniacid='{$_W['uniacid']}' and uid='{$_W['member']['uid']}' limit 1 ");
+                        $maxid = pdo_fetchcolumn("select max(id) as maxid from " . tablename('mc_member_address') . " where uniacid='{$_W['uniacid']}' and uid='{$_SESSION['out_uid']}' limit 1 ");
                         if(!empty($maxid)){
-                            pdo_update('mc_member_address', array('isdefault' => 1), array('id' => $maxid, 'uniacid' => $_W['uniacid'], 'uid' => $_W['member']['uid']));
+                            pdo_update('mc_member_address', array('isdefault' => 1), array('id' => $maxid, 'uniacid' => $_W['uniacid'], 'uid' => $_SESSION['out_uid']));
                             die(json_encode(array("result" => 1, "maxid" => $maxid)));
                         }
                     }
@@ -1171,11 +1164,11 @@ class sen_appfreeitemModuleSite extends WeModuleSite
             $profile = fans_search($_W['fans']['from_user'], array('resideprovince', 'residecity', 'residedist', 'address', 'realname', 'mobile'));
 
             // TODO debug
-            // $_W['member']['uid'] = 0;
-            $address   = pdo_fetchall("SELECT * FROM " . tablename('mc_member_address') . " WHERE uid = :uid", array(':uid' => $_W['member']['uid']));
+            // $_SESSION['out_uid'] = 0;
+            $address   = pdo_fetchall("SELECT * FROM " . tablename('mc_member_address') . " WHERE uid = :uid AND  uniacid = :uniacid", array(':uid' => $_SESSION['out_uid'],':uniacid' => $_W['uniacid']));
             $carttotal = $this->getCartTotal();
             $title     = $pagetitle = "信息维护";
-            var_dump($address,$_W);exit;
+            // var_dump($address,$_W);exit;
 
             include $this->template('address');
         }
@@ -2175,20 +2168,22 @@ LEFT JOIN ims_mc_members AS m ON f.uid = m.uid ORDER BY id DESC LIMIT " . ($pind
             /*$_SESSION['openid'] = $_W['fans']['from_user'] = 'oMaz50jp9G_xRU_JT1jMaxuS5KdY';
             $_SESSION['debug']  = 1;
             // 地址
-            $_W['member']['uid'] = 0;*/
+            $_SESSION['out_uid'] = 0;*/
 
 
             // 解密成功
-            $res = array(rand(1,3),'18959269002','name');
+            $rand = rand(1, 3);
+            $res = array($rand, '1895926900'.$rand, 'name_'.$rand);
             // var_dump($res);exit;
 
             // 写入数据库
-            $pitem = pdo_fetch("SELECT * FROM " . tablename('mc_members') . " WHERE out_uid=:out_uid ", array(':out_uid' => $res[0]));
+            $pitem = pdo_fetch("SELECT * FROM " . tablename('mc_members') . " WHERE out_uid=:out_uid AND  uniacid=:uniacid  ", array(':out_uid' => $res[0], ':uniacid' => $_W['uniacid']));
             if(empty($pitem)){
-                $data = array('out_uid' => $res[0], 'mobile' => $res[1], 'createtime' => time(),);
+                $data = array('out_uid' => $res[0], 'mobile' => $res[1], 'createtime' => time(), 'uniacid' => $_W['uniacid']);
                 pdo_insert('mc_members', $data);
             }
-            $_SESSION['openid'] = $_SESSION['out_uid'] = $res[0];
+            $_SESSION['openid']      = $_SESSION['out_uid'] = $res[0];
+            $_W['fans']['from_user'] = $res[2];
 
             return 1;
         }
@@ -2228,12 +2223,13 @@ LEFT JOIN ims_mc_members AS m ON f.uid = m.uid ORDER BY id DESC LIMIT " . ($pind
                     exit;
 
                     // 写入数据库
-                    $pitem = pdo_fetch("SELECT * FROM " . tablename('mc_members') . " WHERE out_uid=:out_uid ", array(':out_uid' => $res[0]));
+                    $pitem = pdo_fetch("SELECT * FROM " . tablename('mc_members') . " WHERE out_uid=:out_uid AND  uniacid=:uniacid  ", array(':out_uid' => $res[0], ':uniacid' => $_W['uniacid']));
                     if(empty($pitem)){
-                        $data = array('out_uid' => $res[0], 'mobile' => $res[1], 'createtime' => time(),);
+                        $data = array('out_uid' => $res[0], 'mobile' => $res[1], 'createtime' => time(), 'uniacid' => $_W['uniacid']);
                         pdo_insert('mc_members', $data);
                     }
-                    $_SESSION['openid'] = $_SESSION['out_uid'] = $res[0];
+                    $_SESSION['openid']      = $_SESSION['out_uid'] = $res[0];
+                    $_W['fans']['from_user'] = $res[2];
                 }
             }else{
                 // 引入登录js
