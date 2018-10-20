@@ -21,7 +21,7 @@ include_once IA_ROOT . '/payment/unionpay/ms_lajp/decryptAndCheck.class.php';
 include_once IA_ROOT . '/payment/unionpay/ms_lajp/php_java.php';
 
 // TODO debug模拟用户登录模式
-$_SESSION['debug'] = 1;
+$_SESSION['debug'] = 0;
 // unset($_SESSION['out_uid'], $_SESSION['openid']);
 // var_dump('$_SESSION==', $_SESSION);
 
@@ -2179,7 +2179,8 @@ LEFT JOIN ims_mc_members AS m ON f.uid = m.uid ORDER BY id DESC LIMIT " . ($pind
         // 空的外部id
         if(empty($_SESSION['openid']) || empty($_SESSION['out_uid'])){
             // 判断是否有民生信息返回
-            $chiperTxt = $_REQUEST['chiperTxt'];
+            // $chiperTxt = $_REQUEST['chiperTxt'];
+            $chiperTxt = $_REQUEST['param'];
             WeUtility::logging('民生信息返回$chiperTxt==' . $chiperTxt);
 
             // $chiperTxt = 'plxIaWGVLEwO9uWJRklDyDhWprbTb9rfaHsnGCs/jJ2YabAwvz99ZkBpoahObXxj';
@@ -2226,9 +2227,9 @@ LEFT JOIN ims_mc_members AS m ON f.uid = m.uid ORDER BY id DESC LIMIT " . ($pind
                 <title>登录</title>
                 <script type="text/javascript" src="../payment/unionpay/ms_lajp/cmbcForClient.js"></script>
                 </head>
-                <body>
+                <body onload="loginForComm('{$before_url}', '{$to_url}')">
                 <script >
-                loginForComm("{$before_url}", "{$to_url}");
+                // loginForComm("{$before_url}", "{$to_url}");
                 </script>
                 </body>
                 </html>
