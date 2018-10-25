@@ -63,9 +63,10 @@ $(function(){
 
     function getInfos(el,status,page,change){
         // 首次切换置空
-        /*if (change) {
-            $(el).html('')
-        }*/
+        if (change) {
+            $(el).html('');
+            page = 1;
+        }
 
         $.ajax({
             // url: 'http://shop.rongec.cn/test.php',
