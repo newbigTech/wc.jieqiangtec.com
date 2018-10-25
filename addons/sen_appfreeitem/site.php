@@ -21,7 +21,7 @@ include_once IA_ROOT . '/payment/unionpay/ms_lajp/decryptAndCheck.class.php';
 include_once IA_ROOT . '/payment/unionpay/ms_lajp/php_java.php';
 
 // TODO debug模拟用户登录模式
-$_SESSION['debug'] = 0;
+$_SESSION['debug'] = 1;
 // unset($_SESSION['out_uid'], $_SESSION['openid']);
 // var_dump('$_SESSION==', $_SESSION);
 
@@ -559,7 +559,7 @@ class sen_appfreeitemModuleSite extends WeModuleSite
         if(checksubmit('submit')){
             $address = pdo_fetch("SELECT * FROM " . tablename('mc_member_address') . " WHERE id = :id", array(':id' => intval($_GPC['address'])));
             if(empty($address)){
-                message('抱歉，请您填写收货地址！', $this->createMobileUrl('address', array('from' => 'confirm', 'returnurl' => urlencode($returnurl))), 'error');
+                message('抱歉，请您填写签收地址！', $this->createMobileUrl('address', array('from' => 'confirm', 'returnurl' => urlencode($returnurl))), 'error');
             }
             $item_price = $item['price'];
             // 邮费
@@ -1003,7 +1003,7 @@ class sen_appfreeitemModuleSite extends WeModuleSite
             }elseif($state == 1){
                 pdo_update('sen_appfreeitem_order', array('status' => 5, 'shouhuodata' => $shdata), array('id' => $orderid, 'from_user' => $_W['fans']['from_user']));
             }
-            message('确认收货完成！', $this->createMobileUrl('myorder'), 'success');
+            message('确认签收完成！', $this->createMobileUrl('myorder'), 'success');
         }else if($op == 'detail'){
             $orderid          = intval($_GPC['orderid']);
             $pid              = pdo_fetch("SELECT * FROM " . tablename('sen_appfreeitem_order') . " WHERE id = :id", array(':id' => $orderid));
@@ -1416,7 +1416,7 @@ LEFT JOIN ims_mc_members AS m ON f.uid = m.uid ORDER BY id DESC LIMIT " . ($pind
                 $sql         = "select o.* , a.username,a.mobile from " . tablename('sen_appfreeitem_order') . " o" . " left join " . tablename('mc_member_address') . " a on o.addressid = a.id " . " where $condition ORDER BY o.status ASC, o.createtime DESC ";
                 $list        = pdo_fetchall($sql, $paras);
                 $paytype     = array('0' => array('css' => 'default', 'name' => '未支付'), '1' => array('css' => 'danger', 'name' => '余额支付'), '2' => array('css' => 'info', 'name' => '在线支付'), '3' => array('css' => 'warning', 'name' => '货到付款'));
-                $orderstatus = array('-1' => array('css' => 'default', 'name' => '已取消'), '0' => array('css' => 'danger', 'name' => '待审核'), '1' => array('css' => 'black', 'name' => '未通过'), '2' => array('css' => 'info', 'name' => '待发货'), '3' => array('css' => 'warning', 'name' => '待收货'), '4' => array('css' => 'green', 'name' => '已收货'), '5' => array('css' => 'success', 'name' => '已完成'));
+                $orderstatus = array('-1' => array('css' => 'default', 'name' => '已取消'), '0' => array('css' => 'danger', 'name' => '待审核'), '1' => array('css' => 'black', 'name' => '未通过'), '2' => array('css' => 'info', 'name' => '待发货'), '3' => array('css' => 'warning', 'name' => '待签收'), '4' => array('css' => 'green', 'name' => '已签收'), '5' => array('css' => 'success', 'name' => '已完成'));
                 $start       = array('0' => array('css' => 'danger', 'name' => '申请试用'), '1' => array('css' => 'info', 'name' => '直接购买'));
                 foreach($list as & $value){
                     $s                  = $value['status'];
@@ -1481,7 +1481,7 @@ LEFT JOIN ims_mc_members AS m ON f.uid = m.uid ORDER BY id DESC LIMIT " . ($pind
             $sql         = "select o.* , a.username,a.mobile from " . tablename('sen_appfreeitem_order') . " o" . " left join " . tablename('mc_member_address') . " a on o.addressid = a.id " . " where $condition ORDER BY o.status ASC, o.createtime DESC " . "LIMIT " . ($pindex - 1) * $psize . ',' . $psize;
             $list        = pdo_fetchall($sql, $paras);
             $paytype     = array('0' => array('css' => 'default', 'name' => '未支付'), '1' => array('css' => 'danger', 'name' => '余额支付'), '2' => array('css' => 'info', 'name' => '在线支付'), '3' => array('css' => 'warning', 'name' => '货到付款'));
-            $orderstatus = array('-1' => array('css' => 'default', 'name' => '已取消'), '0' => array('css' => 'danger', 'name' => '待审核'), '1' => array('css' => 'black', 'name' => '未通过'), '2' => array('css' => 'info', 'name' => '待发货'), '3' => array('css' => 'warning', 'name' => '待收货'), '4' => array('css' => 'green', 'name' => '已收货'), '5' => array('css' => 'success', 'name' => '已完成'));
+            $orderstatus = array('-1' => array('css' => 'default', 'name' => '已取消'), '0' => array('css' => 'danger', 'name' => '待审核'), '1' => array('css' => 'black', 'name' => '未通过'), '2' => array('css' => 'info', 'name' => '待发货'), '3' => array('css' => 'warning', 'name' => '待签收'), '4' => array('css' => 'green', 'name' => '已签收'), '5' => array('css' => 'success', 'name' => '已完成'));
             $state       = array('0' => array('css' => 'danger', 'name' => '申请试用'), '1' => array('css' => 'info', 'name' => '直接购买'));
             foreach($list as & $value){
                 $s                  = $value['status'];
@@ -1557,7 +1557,7 @@ LEFT JOIN ims_mc_members AS m ON f.uid = m.uid ORDER BY id DESC LIMIT " . ($pind
             }
             if(checksubmit('querenshouhuo')){
                 pdo_update('sen_appfreeitem_order', array('status' => 4, 'remark' => $_GPC['remark']), array('id' => $id));
-                message('确认收货操作成功！', referer(), 'success');
+                message('确认签收操作成功！', referer(), 'success');
             }
             if(checksubmit('confrimpay')){
                 if($item['state'] == 0){

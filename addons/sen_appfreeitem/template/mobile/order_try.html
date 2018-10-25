@@ -64,7 +64,8 @@ $(function(){
     function getInfos(el,status,page,change){
         // 首次切换置空
         if (change) {
-            $(el).html('')
+            $(el).html('');
+            page = 1;
         }
 
         $.ajax({
@@ -82,6 +83,8 @@ $(function(){
             var skuData = data.data.list;
             var skuInfos = [];
             // console.log(skuData);
+            // TODO page
+            // $(el).append('<br />page=='+page+'==change=='+change);
 
             // 空数组说明加载完毕
             if (skuData == false) {
@@ -108,7 +111,7 @@ $(function(){
 
                 tmp += '<div class="tab-bd-item" skuId="'+ skuId +'">';
 
-                // 待收货
+                // 待签收
                 if (skuStatus == 3) {
                     // var confirm_url = "{php echo $this->createMobileUrl('myorder', array('orderid' => "+skuId+", 'op' => 'confirm', 'state' => "+skuState+"))}";
                     var confirm_url = "index.php?i=10&c=entry&orderid="+skuId+"&op=confirm&state="+skuState+"&do=myorder&m=sen_appfreeitem";
@@ -140,7 +143,7 @@ $(function(){
                     //     tmp += '<span class="btn btn-black">待发货</span>';
                     //     break;
                     // case '3':
-                    //     tmp += '<span class="btn btn-link">待收货</span>';
+                    //     tmp += '<span class="btn btn-link">待签收</span>';
                     //     break;
                     // case '4':
                     //     tmp += '<span class="btn btn-link">已签收</span>';
@@ -152,10 +155,10 @@ $(function(){
                         tmp += '<span class="btn btn-black">其它</span>';
                         break;
                 }
-                // tmp += '<span class="btn btn-link fr">确认收货</span>';
+                // tmp += '<span class="btn btn-link fr">确认签收</span>';
                 tmp += '</p>';
                 tmp += '</div>';
-                // 待收货
+                // 待签收
                 if (skuStatus == 3) {
                     tmp += '</a>';
                 }else{
@@ -183,12 +186,14 @@ $(function(){
     getInfos('.tab-bd',localStorage.getItem('status'),1,true);
 
     var tabHei = $('.tab-hd').height();
-    var page = 1; //分页码
+    // var page = 1; //分页码
+    page = 1; //分页码
     var pageStatus = false; //分页开关
 
 
     //点击导航切换
     $('.tab-hd li').on('click',function(){
+        // $(el).append('<br />点击导航切换click page=='+page+'==change=='+change);
         $(window).scrollTop(0);
         $('.tab-hd .active').removeClass('active');
         $(this).addClass("active");
@@ -211,7 +216,7 @@ $(function(){
                 // 申请成功
                 localStorage.setItem('status',5);
                 getInfos('.tab-bd',localStorage.getItem('status'),page,true);
-                // console.log('待收货' + localStorage.getItem('status'))
+                // console.log('待签收' + localStorage.getItem('status'))
                 break;
             case 3:
                 // 申请失败
@@ -230,6 +235,7 @@ $(function(){
 
     // 翻页及tab切换固定
     $(window).scroll(function() {
+        // var page = 1;
         if( $(window).scrollTop() > tabHei ) {
             $('.tab-hd').css({
                 position: 'fixed',
@@ -252,7 +258,7 @@ $(function(){
             getInfos('.tab-bd',status,page);
             // console.log(status + '第' + page + '页');
         } else if($scrollTop<=0){
-            // page = 1;
+            page = 1;
             // getInfos('.tab-bd',status,page);
         }
     });
