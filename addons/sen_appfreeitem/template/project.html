@@ -215,14 +215,11 @@
 			<label class="col-xs-12 col-sm-3 col-md-2 control-label">是否开启直接购买</label>
 			<div class="col-sm-9 col-xs-12">
 				<label class='radio-inline'>
-					<input type='radio' name='direct' onclick="xs(1);" value=1' {if $item['direct']==1}checked{/if} /> 是
-				</label>
-				<label class='radio-inline'>
-					<input type='radio' name='direct' onclick="xs(0);" value=0' {if $item['direct']==0}checked{/if} /> 否
+					<input type='radio' name='direct' onclick="xs(1);" value=1' {if ($item['direct']==1) || empty($item) }checked{/if} /> 是
 				</label>
 			</div>
 		</div>
-		<div class="form-group" id="jg" style="{if $item['direct']==1}display:block;{/if}{if $item['direct']==0}display:none;{/if}">
+		<div class="form-group" id="jg" style="display:block">
 			<label class="col-xs-12 col-sm-3 col-md-2 control-label">直接购买价格</label>
 			<div class="col-sm-6 col-xs-6">
 				<input type="text" name="price" id="price" class="form-control" value="{$item['price']}" />

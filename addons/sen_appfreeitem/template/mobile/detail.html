@@ -128,10 +128,10 @@
                 <!-- <a class="apply-hd" href="" title="申请试用">申请试用</a> -->
                 <?php $mydetail = $this->getprojectdetail($item['id'])?>
                 {if !empty($mydetail)}
-                    <a class="apply-hd">已申请</a>
+                    <a class="apply-hd" {if $item['direct']!==1}style="width: 100%;"{/if}>已申请</a>
                 {else}  
 
-                    <a href="{php echo $this->createMobileUrl('confirm',array('id'=>$item['id'], 'item_id'=>$row['id'],'op'=>'0'));}"  class="apply-hd">免费申请</a>
+                    <a href="{php echo $this->createMobileUrl('confirm',array('id'=>$item['id'], 'item_id'=>$row['id'],'op'=>'0'));}"  class="apply-hd" {if $item['direct']!==1}style="width: 100%;"{/if}>免费申请</a>
                 {/if}
 
             </div>
