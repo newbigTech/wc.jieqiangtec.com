@@ -22,7 +22,7 @@ if(!in_array($_SERVER['REMOTE_ADDR'], array('127.0.0.1', ''))){
     }
 }*/
 
-if(!in_array($a, array('index', 'category', 'detail', 'category', 'orders', 'cancel', 'express', 'confirm', 'buy'))){
+if(!in_array($a, array('index', 'category', 'detail', 'category', 'orders', 'cancel', 'express', 'confirm', 'buy', 'pay'))){
     echo_json('501', '非法访问_未授权');
 }
 
@@ -51,13 +51,16 @@ if($a == 'index'){
 }elseif($a == 'confirm'){
     // 收货确认通知接口
     $good->confirm();
+}elseif($a == 'pay'){
+    // 支付订单接口
+    $good->pay(349, $memeber);
 }
 
 class Goods
 {
     // 是否调试模式 本地开启调试模式
     public $g_debug   = 1;
-    public $g_uniacid = 10;
+    public $g_uniacid = 6; // 6:adjyc 10:融惠联
 
     // 商品列表接口
     public function main()
@@ -102,7 +105,7 @@ class Goods
         if(!$id){
             echo_json('501', '参数错误', $data);
         }
-        $data['detail'] = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_goods') . ' WHERE id = :id and uniacid = :uniacid', array(':id' => $id, ':uniacid' => 10));
+        $data['detail'] = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_goods') . ' WHERE id = :id and uniacid = :uniacid', array(':id' => $id, ':uniacid' => $this->g_uniacid));
         echo_json('200', 'success', $data);
     }
 
@@ -151,7 +154,7 @@ class Goods
         if(!$id){
             echo_json('501', '参数错误_没有订单号id', $data);
         }
-        $data['detail'] = pdo_fetch('SELECT id,status,paytype,isverify,sendtype,sendtime,expresscom,expresssn,express,printstate FROM ' . tablename('ewei_shop_order') . ' WHERE id = :id and uniacid = :uniacid', array(':id' => $id, ':uniacid' => 10));
+        $data['detail'] = pdo_fetch('SELECT id,status,paytype,isverify,sendtype,sendtime,expresscom,expresssn,express,printstate FROM ' . tablename('ewei_shop_order') . ' WHERE id = :id and uniacid = :uniacid', array(':id' => $id, ':uniacid' => $this->g_uniacid));
         echo_json('200', 'success', $data);
     }
 
@@ -261,7 +264,7 @@ class Goods
             $openid = $_GPC['uid'];
         }
 
-        $uniacid = $this->g_uniacid;
+        $this->g_uniacid = $this->g_uniacid;
 
         // 获取用户信息
         $member = pdo_fetch('select * from ' . tablename('ewei_shop_member') . ' where  openid=:openid and uniacid=:uniacid limit 1', array(':uniacid' => $this->g_uniacid, ':openid' => $openid));
@@ -269,33 +272,37 @@ class Goods
         //        var_dump('$member==',$member,$_W['shopset']['wap']['open']);exit;
 
         if(!empty($_W['shopset']['wap']['open']) && !empty($_W['shopset']['wap']['mustbind']) && empty($member['mobileverify'])){
-            show_json(0, array('message' => '请先绑定手机', 'url' => mobileUrl('member/bind', NULL, true)));
+            echo_json(0, array('message' => '请先绑定手机', 'url' => mobileUrl('member/bind', NULL, true)));
         }
 
         // 绑定用户信息
         $member_param = array();
         $this->bindMember($member_param);
 
-//        var_dump('$member22==', $member, $_W['shopset']['wap']['open']);
-//        exit;
+        //        var_dump('$member22==', $member, $_W['shopset']['wap']['open']);
+        //        exit;
 
         $allow_sale   = true;
         $package      = array();
         $packageprice = 0;
 
-        $merch_array            = array();
-        $ismerch                = 0;
-        $discountprice_array    = array();
-        $dispatchid             = intval($_GPC['dispatchid']);
-        $dispatchtype           = intval($_GPC['dispatchtype']);
-        $carrierid              = intval($_GPC['carrierid']);
-        $goods                  = $_GPC['goods'];
+        $merch_array         = array();
+        $ismerch             = 0;
+        $discountprice_array = array();
+        $level               = $this->getLevel($openid);
+        $dispatchid          = intval($_GPC['dispatchid']);
+        $dispatchtype        = intval($_GPC['dispatchtype']);
+        $carrierid           = intval($_GPC['carrierid']);
+        $goods               = $_GPC['goods'];
 
         $allow_sale = false;
 
         if(empty($goods) || !is_array($goods)){
-            show_json(0, '未找到任何商品');
+            // echo_json(0, '未找到任何商品');
+            echo_json('201', '未找到任何商品', $data);
         }
+
+        //        var_dump('$goods==',$goods);exit;
 
         $liveid = intval($_GPC['liveid']);
 
@@ -320,8 +327,8 @@ class Goods
         $seckill_dispatchprice = 0;
         $buyagain_sale         = true;
         $buyagainprice         = 0;
-//        $sale_plugin           = com('sale');
-        $saleset               = false;
+        //        $sale_plugin           = com('sale');
+        $saleset = false;
 
         $isvirtual         = false;
         $isverify          = false;
@@ -346,8 +353,8 @@ class Goods
         }
 
 
-
         $goods = $this->wholesaleprice($goods);
+        //        var_dump('$goods==',$goods,$_REQUEST);exit;
 
         foreach($goods as $g){
             if(empty($g)){
@@ -363,20 +370,24 @@ class Goods
             }
 
             if(empty($goodsid)){
-                show_json(0, '参数错误');
+                echo_json(0, '参数错误');
             }
 
             $sql_condition = '';
 
             $threensql = '';
 
-            $sql                 = 'SELECT id as goodsid,' . $sql_condition . 'title,type,intervalfloor,intervalprice, weight,total,issendfree,isnodiscount, thumb,marketprice,liveprice,cash,isverify,verifytype,' . ' goodssn,productsn,sales,istime,timestart,timeend,hasoption,isendtime,usetime,endtime,ispresell,presellprice,preselltimeend,' . ' usermaxbuy,minbuy,maxbuy,unit,buylevels,buygroups,deleted,unite_total,' . ' status,deduct,manydeduct,`virtual`,discounts,deduct2,ednum,edmoney,edareas,edareas_code,diyformtype,diyformid,diymode,' . ' dispatchtype,dispatchid,dispatchprice,merchid,merchsale,cates,' . ' isdiscount,isdiscount_time,isdiscount_discounts, virtualsend,' . ' buyagain,buyagain_islong,buyagain_condition, buyagain_sale ,verifygoodslimittype,verifygoodslimitdate  ' . $threensql . ' FROM ' . tablename('ewei_shop_goods') . ' where id=:id and uniacid=:uniacid  limit 1';
-            $data                = pdo_fetch($sql, array(':uniacid' => $uniacid, ':id' => $goodsid));
+            $sql  = 'SELECT id as goodsid,' . $sql_condition . 'title,type,intervalfloor,intervalprice, weight,total,issendfree,isnodiscount, thumb,marketprice,liveprice,cash,isverify,verifytype,' . ' goodssn,productsn,sales,istime,timestart,timeend,hasoption,isendtime,usetime,endtime,ispresell,presellprice,preselltimeend,' . ' usermaxbuy,minbuy,maxbuy,unit,buylevels,buygroups,deleted,unite_total,' . ' status,deduct,manydeduct,`virtual`,discounts,deduct2,ednum,edmoney,edareas,edareas_code,diyformtype,diyformid,diymode,' . ' dispatchtype,dispatchid,dispatchprice,merchid,merchsale,cates,' . ' isdiscount,isdiscount_time,isdiscount_discounts, virtualsend,' . ' buyagain,buyagain_islong,buyagain_condition, buyagain_sale ,verifygoodslimittype,verifygoodslimitdate  ' . $threensql . ' FROM ' . tablename('ewei_shop_goods') . ' where id=:id and uniacid=:uniacid  limit 1';
+            $data = pdo_fetch($sql, array(':uniacid' => $this->g_uniacid, ':id' => $goodsid));
 
+            // var_dump('$data==',$data,$_REQUEST);exit;
+
+            // ispresell	v2 是否预售商品 preselltimeend	v2 预售结束时间
             if((0 < $data['ispresell']) && (($data['preselltimeend'] == 0) || (time() < $data['preselltimeend']))){
                 $data['marketprice'] = $data['presellprice'];
             }
 
+            // type	类型 1 实体物品 2 虚拟物品 3 虚拟物品(卡密) 4 批发 10 话费流量充值 20 充值卡
             if($data['type'] != 5){
                 $isonlyverifygoods = false;
             }else{
@@ -384,66 +395,31 @@ class Goods
                     $verifygoodslimitdate = intval($data['verifygoodslimitdate']);
 
                     if($verifygoodslimitdate < time()){
-                        show_json(0, '商品:"' . $data['title'] . '"的使用时间已失效,无法购买!');
+                        echo_json(0, '商品:"' . $data['title'] . '"的使用时间已失效,无法购买!');
                     }
 
                     if(($verifygoodslimitdate - 7200) < time()){
-                        show_json(0, '商品:"' . $data['title'] . '"的使用时间即将失效,无法购买!');
+                        echo_json(0, '商品:"' . $data['title'] . '"的使用时间即将失效,无法购买!');
                     }
                 }
             }
 
-            if(!empty($liveid)){
-                $isLiveGoods = p('live')->isLiveGoods($data['goodsid'], $liveid);
 
-                if(!empty($isLiveGoods)){
-                    $data['marketprice'] = price_format($isLiveGoods['liveprice']);
-                }
-            }
-
+            // status	状态 0 下架 1 上架 2 赠品上架
             if($data['status'] == 2){
                 $data['marketprice'] = 0;
             }
 
-            if(!empty($_SESSION['exchange']) && p('exchange')){
-                if(empty($data['status']) || !empty($data['deleted'])){
-                    show_json(0, $data['title'] . '<br/> 已下架!');
-                }
-            }
+            // var_dump('$data==',$data,$_REQUEST);exit;
 
             if(!empty($data['hasoption'])){
                 $opdata = m('goods')->getOption($data['goodsid'], $optionid);
                 if(empty($opdata) || empty($optionid)){
-                    show_json(0, '商品' . $data['title'] . '的规格不存在,请到购物车删除该商品重新选择规格!');
+                    echo_json(0, '商品' . $data['title'] . '的规格不存在,请到购物车删除该商品重新选择规格!');
                 }
             }
 
-            $rank    = intval($_SESSION[$goodsid . '_rank']);
-            $log_id  = intval($_SESSION[$goodsid . '_log_id']);
-            $join_id = intval($_SESSION[$goodsid . '_join_id']);
-
-
-            if($data['seckillinfo'] && ($data['seckillinfo']['status'] == 0)){
-                $data['is_task_goods'] = 0;
-                $tgoods                = false;
-            }else{
-                $task_goods_data = m('goods')->getTaskGoods($openid, $goodsid, $rank, $log_id, $join_id, $optionid);
-
-                if(empty($task_goods_data['is_task_goods'])){
-                    $data['is_task_goods'] = 0;
-                }else{
-                    $allow_sale                   = false;
-                    $tgoods['title']              = $data['title'];
-                    $tgoods['openid']             = $openid;
-                    $tgoods['goodsid']            = $goodsid;
-                    $tgoods['optionid']           = $optionid;
-                    $tgoods['total']              = $goodstotal;
-                    $data['is_task_goods']        = $task_goods_data['is_task_goods'];
-                    $data['is_task_goods_option'] = $task_goods_data['is_task_goods_option'];
-                    $data['task_goods']           = $task_goods_data['task_goods'];
-                }
-            }
-
+            // var_dump('$data==',$data,$_REQUEST);exit;
             $merchid                          = $data['merchid'];
             $merch_array[$merchid]['goods'][] = $data['goodsid'];
 
@@ -464,68 +440,61 @@ class Goods
             }
 
             $unit = (empty($data['unit']) ? '件' : $data['unit']);
-            if($data['seckillinfo'] && ($data['seckillinfo']['status'] == 0)){
-                $check_buy = plugin_run('seckill::checkBuy', $data['seckillinfo'], $data['title'], $data['unit']);
-
-                if(is_error($check_buy)){
-                    show_json(-1, $check_buy['message']);
-                }
-            }else{
-                if($data['type'] != 4){
-                    if(0 < $data['minbuy']){
-                        if($goodstotal < $data['minbuy']){
-                            show_json(0, $data['title'] . '<br/> ' . $data['minbuy'] . $unit . '起售!');
-                        }
-                    }
-
-                    if(0 < $data['maxbuy']){
-                        if($data['maxbuy'] < $goodstotal){
-                            show_json(0, $data['title'] . '<br/> 一次限购 ' . $data['maxbuy'] . $unit . '!');
-                        }
+            //            var_dump('$data==',$data,$unit);exit;
+            if($data['type'] != 4){
+                if(0 < $data['minbuy']){
+                    if($goodstotal < $data['minbuy']){
+                        echo_json(0, $data['title'] . '<br/> ' . $data['minbuy'] . $unit . '起售!');
                     }
                 }
 
-                if(0 < $data['usermaxbuy']){
-                    $order_goodscount = pdo_fetchcolumn('select ifnull(sum(og.total),0)  from ' . tablename('ewei_shop_order_goods') . ' og ' . ' left join ' . tablename('ewei_shop_order') . ' o on og.orderid=o.id ' . ' where og.goodsid=:goodsid and  o.status>=0 and o.openid=:openid  and og.uniacid=:uniacid ', array(':goodsid' => $data['goodsid'], ':uniacid' => $uniacid, ':openid' => $openid));
-
-                    if($data['usermaxbuy'] <= $order_goodscount){
-                        show_json(0, $data['title'] . '<br/> 最多限购 ' . $data['usermaxbuy'] . $unit . '!');
+                if(0 < $data['maxbuy']){
+                    if($data['maxbuy'] < $goodstotal){
+                        echo_json(0, $data['title'] . '<br/> 一次限购 ' . $data['maxbuy'] . $unit . '!');
                     }
                 }
+            }
 
-                if(!empty($data['is_task_goods'])){
-                    if($data['task_goods']['total'] < $goodstotal){
-                        show_json(0, $data['title'] . '<br/> 任务活动优惠限购 ' . $data['task_goods']['total'] . $unit . '!');
-                    }
+            if(0 < $data['usermaxbuy']){
+                $order_goodscount = pdo_fetchcolumn('select ifnull(sum(og.total),0)  from ' . tablename('ewei_shop_order_goods') . ' og ' . ' left join ' . tablename('ewei_shop_order') . ' o on og.orderid=o.id ' . ' where og.goodsid=:goodsid and  o.status>=0 and o.openid=:openid  and og.uniacid=:uniacid ', array(':goodsid' => $data['goodsid'], ':uniacid' => $this->g_uniacid, ':openid' => $openid));
+
+                if($data['usermaxbuy'] <= $order_goodscount){
+                    echo_json(0, $data['title'] . '<br/> 最多限购 ' . $data['usermaxbuy'] . $unit . '!');
+                }
+            }
+
+            if(!empty($data['is_task_goods'])){
+                if($data['task_goods']['total'] < $goodstotal){
+                    echo_json(0, $data['title'] . '<br/> 任务活动优惠限购 ' . $data['task_goods']['total'] . $unit . '!');
+                }
+            }
+
+            if($data['istime'] == 1){
+                if(time() < $data['timestart']){
+                    echo_json(0, $data['title'] . '<br/> 限购时间未到!');
                 }
 
-                if($data['istime'] == 1){
-                    if(time() < $data['timestart']){
-                        show_json(0, $data['title'] . '<br/> 限购时间未到!');
-                    }
-
-                    if($data['timeend'] < time()){
-                        show_json(0, $data['title'] . '<br/> 限购时间已过!');
-                    }
+                if($data['timeend'] < time()){
+                    echo_json(0, $data['title'] . '<br/> 限购时间已过!');
                 }
+            }
+            $levelid = intval($member['level']);
+            $groupid = intval($member['groupid']);
+            //            var_dump('$levelid==',$levelid,$levelid,$member);exit;
 
-                $levelid = intval($member['level']);
-                $groupid = intval($member['groupid']);
+            if($data['buylevels'] != ''){
+                $buylevels = explode(',', $data['buylevels']);
 
-                if($data['buylevels'] != ''){
-                    $buylevels = explode(',', $data['buylevels']);
-
-                    if(!in_array($levelid, $buylevels)){
-                        show_json(0, '您的会员等级无法购买<br/>' . $data['title'] . '!');
-                    }
+                if(!in_array($levelid, $buylevels)){
+                    echo_json(0, '您的会员等级无法购买<br/>' . $data['title'] . '!');
                 }
+            }
 
-                if($data['buygroups'] != ''){
-                    $buygroups = explode(',', $data['buygroups']);
+            if($data['buygroups'] != ''){
+                $buygroups = explode(',', $data['buygroups']);
 
-                    if(!in_array($groupid, $buygroups)){
-                        show_json(0, '您所在会员组无法购买<br/>' . $data['title'] . '!');
-                    }
+                if(!in_array($groupid, $buygroups)){
+                    echo_json(0, '您所在会员组无法购买<br/>' . $data['title'] . '!');
                 }
             }
 
@@ -550,17 +519,19 @@ class Goods
                 }
 
                 if($data['marketprice'] == 0){
-                    show_json(0, $data['title'] . '<br/> ' . $data['minbuy'] . $unit . '起批!');
+                    echo_json(0, $data['title'] . '<br/> ' . $data['minbuy'] . $unit . '起批!');
                 }
             }
 
+            //            var_dump('$optionid==',$optionid);exit;
+
             if(!empty($optionid)){
-                $option = pdo_fetch('select id,title,marketprice,liveprice,presellprice,goodssn,productsn,stock,`virtual`,weight' . $sql_condition . ' from ' . tablename('ewei_shop_goods_option') . ' where id=:id and goodsid=:goodsid and uniacid=:uniacid  limit 1', array(':uniacid' => $uniacid, ':goodsid' => $goodsid, ':id' => $optionid));
+                $option = pdo_fetch('select id,title,marketprice,liveprice,presellprice,goodssn,productsn,stock,`virtual`,weight' . $sql_condition . ' from ' . tablename('ewei_shop_goods_option') . ' where id=:id and goodsid=:goodsid and uniacid=:uniacid  limit 1', array(':uniacid' => $this->g_uniacid, ':goodsid' => $goodsid, ':id' => $optionid));
 
                 if(!empty($option)){
                     if(!empty($_SESSION['exchange']) && p('exchange')){
                         if($option['exchange_stock'] <= 0){
-                            show_json(-1, $data['title'] . '<br/>' . $option['title'] . ' 库存不足!');
+                            echo_json(-1, $data['title'] . '<br/>' . $option['title'] . ' 库存不足!');
                         }else{
                             pdo_query('UPDATE ' . tablename('ewei_shop_goods_option') . ' SET exchange_stock = exchange_stock - 1 WHERE id = :id AND uniacid = :uniacid', array(':id' => $optionid, ':uniacid' => $this->g_uniacid));
                         }
@@ -575,12 +546,12 @@ class Goods
 
                             if($stock_num != -1){
                                 if(empty($stock_num)){
-                                    show_json(-1, $data['title'] . '<br/>' . $option['title'] . ' 库存不足!stock=' . $stock_num);
+                                    echo_json(-1, $data['title'] . '<br/>' . $option['title'] . ' 库存不足!stock=' . $stock_num);
                                 }
 
                                 if(!empty($data['unite_total'])){
                                     if(($stock_num - intval($total_array[$goodsid]['total'])) < 0){
-                                        show_json(-1, $data['title'] . '<br/>总库存不足!当前总库存为' . $stock_num);
+                                        echo_json(-1, $data['title'] . '<br/>总库存不足!当前总库存为' . $stock_num);
                                     }
                                 }
                             }
@@ -603,7 +574,7 @@ class Goods
                         $packageoption = array();
 
                         if($packageid){
-                            $packageoption       = pdo_fetch('select packageprice from ' . tablename('ewei_shop_package_goods_option') . "\r\n                                where uniacid = " . $uniacid . ' and goodsid = ' . $goodsid . ' and optionid = ' . $optionid . ' and pid = ' . $packageid . ' ');
+                            $packageoption       = pdo_fetch('select packageprice from ' . tablename('ewei_shop_package_goods_option') . "\r\n                                where uniacid = " . $this->g_uniacid . ' and goodsid = ' . $goodsid . ' and optionid = ' . $optionid . ' and pid = ' . $packageid . ' ');
                             $data['marketprice'] = $packageoption['packageprice'];
                             $packageprice        += $packageoption['packageprice'];
                         }
@@ -626,7 +597,7 @@ class Goods
             }else{
                 if($data['stock'] != -1){
                     if(empty($data['stock'])){
-                        show_json(0, $data['title'] . '<br/>库存不足!');
+                        echo_json(0, $data['title'] . '<br/>库存不足!');
                     }
                 }
             }
@@ -636,62 +607,45 @@ class Goods
             $data['diyformfields'] = iserializer(array());
 
 
+            $gprice     = $data['marketprice'] * $goodstotal;
+            $goodsprice += $gprice;
+            $prices     = $this->getGoodsDiscountPrice($data, $level);
+            //            var_dump('$data22==',$data, $level,$prices);exit;
 
-            if($data['seckillinfo'] && ($data['seckillinfo']['status'] == 0)){
-                $data['ggprice']              = $gprice = $data['seckillinfo']['price'] * $goodstotal;
-                $seckill_payprice             += $gprice;
-                $seckill_price                += ($data['marketprice'] * $goodstotal) - $gprice;
-                $goodsprice                   += $data['marketprice'] * $goodstotal;
-                $data['taskdiscountprice']    = 0;
-                $data['lotterydiscountprice'] = 0;
-                $data['discountprice']        = 0;
-                $data['discountprice']        = 0;
-                $data['discounttype']         = 0;
-                $data['isdiscountunitprice']  = 0;
-                $data['discountunitprice']    = 0;
-                $data['price0']               = 0;
-                $data['price1']               = 0;
-                $data['price2']               = 0;
-                $data['buyagainprice']        = 0;
-            }else{
-                $gprice                       = $data['marketprice'] * $goodstotal;
-                $goodsprice                   += $gprice;
-                $prices                       = m('order')->getGoodsDiscountPrice($data, $level);
-                $data['ggprice']              = $prices['price'];
-                $data['taskdiscountprice']    = $prices['taskdiscountprice'];
-                $data['lotterydiscountprice'] = $prices['lotterydiscountprice'];
-                $data['discountprice']        = $prices['discountprice'];
-                $data['discountprice']        = $prices['discountprice'];
-                $data['discounttype']         = $prices['discounttype'];
-                $data['isdiscountunitprice']  = $prices['isdiscountunitprice'];
-                $data['discountunitprice']    = $prices['discountunitprice'];
-                $data['price0']               = $prices['price0'];
-                $data['price1']               = $prices['price1'];
-                $data['price2']               = $prices['price2'];
-                $data['buyagainprice']        = $prices['buyagainprice'];
-                $buyagainprice                += $prices['buyagainprice'];
-                $taskdiscountprice            += $prices['taskdiscountprice'];
-                $lotterydiscountprice         += $prices['lotterydiscountprice'];
+            $data['ggprice']              = $prices['price'];
+            $data['taskdiscountprice']    = $prices['taskdiscountprice'];
+            $data['lotterydiscountprice'] = $prices['lotterydiscountprice'];
+            $data['discountprice']        = $prices['discountprice'];
+            $data['discountprice']        = $prices['discountprice'];
+            $data['discounttype']         = $prices['discounttype'];
+            $data['isdiscountunitprice']  = $prices['isdiscountunitprice'];
+            $data['discountunitprice']    = $prices['discountunitprice'];
+            $data['price0']               = $prices['price0'];
+            $data['price1']               = $prices['price1'];
+            $data['price2']               = $prices['price2'];
+            $data['buyagainprice']        = $prices['buyagainprice'];
+            $buyagainprice                += $prices['buyagainprice'];
+            $taskdiscountprice            += $prices['taskdiscountprice'];
+            $lotterydiscountprice         += $prices['lotterydiscountprice'];
 
-                if($prices['discounttype'] == 1){
-                    $isdiscountprice += $prices['isdiscountprice'];
-                    $discountprice   += $prices['discountprice'];
+            if($prices['discounttype'] == 1){
+                $isdiscountprice += $prices['isdiscountprice'];
+                $discountprice   += $prices['discountprice'];
 
-                    if(!empty($data['merchsale'])){
-                        $merchisdiscountprice                                  += $prices['isdiscountprice'];
-                        $discountprice_array[$merchid]['merchisdiscountprice'] += $prices['isdiscountprice'];
-                    }
-
-                    $discountprice_array[$merchid]['isdiscountprice'] += $prices['isdiscountprice'];
-                }else{
-                    if($prices['discounttype'] == 2){
-                        $discountprice                                  += $prices['discountprice'];
-                        $discountprice_array[$merchid]['discountprice'] += $prices['discountprice'];
-                    }
+                if(!empty($data['merchsale'])){
+                    $merchisdiscountprice                                  += $prices['isdiscountprice'];
+                    $discountprice_array[$merchid]['merchisdiscountprice'] += $prices['isdiscountprice'];
                 }
 
-                $discountprice_array[$merchid]['ggprice'] += $prices['ggprice'];
+                $discountprice_array[$merchid]['isdiscountprice'] += $prices['isdiscountprice'];
+            }else{
+                if($prices['discounttype'] == 2){
+                    $discountprice                                  += $prices['discountprice'];
+                    $discountprice_array[$merchid]['discountprice'] += $prices['discountprice'];
+                }
             }
+
+            $discountprice_array[$merchid]['ggprice'] += $prices['ggprice'];
 
             $threenprice = json_decode($data['threen'], 1);
             if($threenprice && !empty($threenprice['price'])){
@@ -704,6 +658,7 @@ class Goods
 
             $merch_array[$merchid]['ggprice'] += $data['ggprice'];
             $totalprice                       += $data['ggprice'];
+            //            var_dump('$data223==',$data, $level,$prices);exit;
 
             // isverify	支持线下核销 Null 0 1 不支持 2 支持
             if($data['isverify'] == 2){
@@ -733,29 +688,17 @@ class Goods
                 }
             }
 
-            if($data['seckillinfo'] && ($data['seckillinfo']['status'] == 0)){
-            }else{
-                /*if((0 < floatval($data['buyagain'])) && empty($data['buyagain_sale'])){
-                    if(m('goods')->canBuyAgain($data)){
-                        $data['deduct'] = 0;
-                        $saleset        = false;
-                    }
-                }*/
-
-
-            }
-
             $virtualsales += $data['sales'];
             $allgoods[]   = $data;
         }
 
         $grprice = $totalprice;
         if((1 < count($goods)) && !empty($tgoods)){
-            show_json(0, '任务活动优惠商品' . $tgoods['title'] . '不能放入购物车下单,请单独购买');
+            echo_json(0, '任务活动优惠商品' . $tgoods['title'] . '不能放入购物车下单,请单独购买');
         }
 
         if(empty($allgoods)){
-            show_json(0, '未找到任何商品');
+            echo_json(0, '未找到任何商品');
         }
 
         $couponid = intval($_GPC['couponid']);
@@ -771,46 +714,59 @@ class Goods
                 $ref = com_run('wxcard::wxCardConsume', $wxcode, $wxcardid);
 
                 if(is_wxerror($ref)){
-                    show_json(0, '您的卡券未到使用日期或已经超出使用次数限制!');
+                    echo_json(0, '您的卡券未到使用日期或已经超出使用次数限制!');
                 }
             }else{
-                show_json(0, '您的卡券未到使用日期或已经超出使用次数限制!');
+                echo_json(0, '您的卡券未到使用日期或已经超出使用次数限制!');
             }
         }
 
         $deductenough = 0;
-        $couponprice     = 0;
+        $couponprice  = 0;
+
 
         // 快递地址
         $addressid = intval($_GPC['addressid']);
         $address   = false;
+
+        //        var_dump('$data223==',$data, $addressid);exit;
+
         if(!empty($addressid) && ($dispatchtype == 0) && !$isonlyverifygoods){
-            $address = pdo_fetch('select * from ' . tablename('ewei_shop_member_address') . ' where id=:id and openid=:openid and uniacid=:uniacid   limit 1', array(':uniacid' => $uniacid, ':openid' => $openid, ':id' => $addressid));
+            $address = pdo_fetch('select * from ' . tablename('ewei_shop_member_address') . ' where id=:id and openid=:openid and uniacid=:uniacid   limit 1', array(':uniacid' => $this->g_uniacid, ':openid' => $openid, ':id' => $addressid));
 
             if(empty($address)){
-                show_json(0, '未找到地址');
+                echo_json(0, '未找到地址');
             }else{
                 if(empty($address['province']) || empty($address['city'])){
-                    show_json(0, '地址请选择省市信息');
+                    echo_json(0, '地址请选择省市信息');
                 }
             }
         }
 
-        if(!$isvirtual && !$isverify && !$isonlyverifygoods && ($dispatchtype == 0) && !$isonlyverifygoods){
-            if(empty($addressid)){
-                show_json(0, '请选择地址');
-            }
+        //        var_dump('$data2235==',$data, $addressid,!$isvirtual && !$isverify && !$isonlyverifygoods && ($dispatchtype == 0) && !$isonlyverifygoods);exit;
 
-            // 商品价格
-            $dispatch_array        = m('order')->getOrderDispatchPrice($allgoods, $member, $address, $saleset, $merch_array, 2);
+
+        if(!$isvirtual && !$isverify && !$isonlyverifygoods && ($dispatchtype == 0) && !$isonlyverifygoods){
+
+            // TODO debug 地址没有
+            /*if(empty($addressid)){
+                echo_json(0, '请选择地址');
+            }*/
+
+            //            var_dump('$data2235==',$data, $addressid,!$isvirtual && !$isverify && !$isonlyverifygoods && ($dispatchtype == 0) && !$isonlyverifygoods);exit;
+
+            // TODO debug商品价格
+            //            $dispatch_array        = $this->getOrderDispatchPrice($allgoods, $member, $address, $saleset, $merch_array, 2);
+
             $dispatch_price        = $dispatch_array['dispatch_price'] - $dispatch_array['seckill_dispatch_price'];
             $seckill_dispatchprice = $dispatch_array['seckill_dispatch_price'];
             $nodispatch_array      = $dispatch_array['nodispatch_array'];
 
             if(!empty($nodispatch_array['isnodispatch'])){
-                show_json(0, $nodispatch_array['nodispatch']);
+                echo_json(0, $nodispatch_array['nodispatch']);
             }
         }
+
 
         if($isonlyverifygoods){
             $addressid = 0;
@@ -821,6 +777,8 @@ class Goods
         if($saleset && empty($saleset['dispatchnodeduct'])){
             $deductprice2 += $dispatch_price;
         }
+
+        //        var_dump('empty($goods[0][\'bargain_id\'])==',empty($goods[0]['bargain_id']));exit;
 
         if(empty($goods[0]['bargain_id'])){
             $deductcredit  = 0;
@@ -847,6 +805,9 @@ class Goods
         $verifyinfo  = array();
         $verifycode  = '';
         $verifycodes = array();
+
+        //        var_dump('$isverify==',$isverify || $dispatchtype);exit;
+
         if($isverify || $dispatchtype){
             if($isverify){
                 if(($verifytype == 0) || ($verifytype == 1)){
@@ -914,33 +875,19 @@ class Goods
             $totalprice = 0;
         }
 
+
         if(($ismerch == 0) || (($ismerch == 1) && (count($merch_array) == 1))){
             $multiple_order = 0;
         }else{
             $multiple_order = 1;
         }
 
+        //        var_dump('$ismerch==',$ismerch);exit;
+
         if(0 < $ismerch){
-            $ordersn = m('common')->createNO('order', 'ordersn', 'ME');
+            $ordersn = $this->createNO('order', 'ordersn', 'ME');
         }else{
-            $ordersn = m('common')->createNO('order', 'ordersn', 'SH');
-        }
-
-        if(!empty($goods[0]['bargain_id']) && p('bargain')){
-            $bargain_act = pdo_fetch('SELECT * FROM ' . tablename('ewei_shop_bargain_actor') . ' WHERE id = :id AND openid = :openid ', array(':id' => $goods[0]['bargain_id'], ':openid' => $_W['openid']));
-
-            if(empty($bargain_act)){
-                exit('没有这个商品');
-            }
-
-            $totalprice = $bargain_act['now_price'] + $dispatch_price;
-            $goodsprice = $bargain_act['now_price'];
-
-            if(!pdo_update('ewei_shop_bargain_actor', array('status' => 1), array('id' => $goods[0]['bargain_id'], 'openid' => $_W['openid']))){
-                exit('下单失败');
-            }
-
-            $ordersn = substr_replace($ordersn, 'KJ', 0, 2);
+            $ordersn = $this->createNO('order', 'ordersn', 'SH');
         }
 
         $is_package = 0;
@@ -956,7 +903,7 @@ class Goods
         $order                         = array();
         $order['ismerch']              = $ismerch;
         $order['parentid']             = 0;
-        $order['uniacid']              = $uniacid;
+        $order['uniacid']              = $this->g_uniacid;
         $order['openid']               = $openid;
         $order['ordersn']              = $ordersn;
         $order['price']                = $totalprice;
@@ -977,12 +924,6 @@ class Goods
         $order['addressid']            = empty($dispatchtype) ? $addressid : 0;
         $order['goodsprice']           = $goodsprice;
         $order['dispatchprice']        = $dispatch_price + $seckill_dispatchprice;
-        if(!is_null($_SESSION['exchangeprice']) && !empty($_SESSION['exchange']) && p('exchange')){
-            $order['price']         = $_SESSION['exchangeprice'] + $_SESSION['exchangepostage'];
-            $order['ordersn']       = m('common')->createNO('order', 'ordersn', 'DH');
-            $order['goodsprice']    = $_SESSION['exchangeprice'];
-            $order['dispatchprice'] = $_SESSION['exchangepostage'];
-        }
 
         $order['dispatchtype']         = $dispatchtype;
         $order['dispatchid']           = $dispatchid;
@@ -1015,6 +956,8 @@ class Goods
             $order['ccard'] = 1;
         }
 
+        //        var_dump('$multiple_order==',$multiple_order);exti;
+
         if($multiple_order == 0){
             $order_merchid          = current(array_keys($merch_array));
             $order['merchid']       = intval($order_merchid);
@@ -1030,9 +973,6 @@ class Goods
             $order['isvirtual']     = $isvirtual ? 1 : 0;
             $order['isvirtualsend'] = $isvirtualsend ? 1 : 0;
             $order['invoicename']   = trim($_GPC['invoicename']);
-        }else{
-            $order['isparent'] = 1;
-            $order['merchid']  = 0;
         }
 
         if(!empty($address)){
@@ -1046,21 +986,19 @@ class Goods
             pdo_update('ewei_shop_bargain_actor', array('order' => $orderid), array('id' => $goods[0]['bargain_id'], 'openid' => $_W['openid']));
         }
 
+
+        //        var_dump('$multiple_order==',$multiple_order);exit;
         if($multiple_order == 0){
             $exchangepriceset = $_SESSION['exchangepriceset'];
             $exchangetitle    = '';
 
             foreach($allgoods as $goods){
                 $order_goods = array();
-                if(!empty($bargain_act) && p('bargain')){
-                    $goods['total']   = 1;
-                    $goods['ggprice'] = $bargain_act['now_price'];
-                    pdo_query('UPDATE ' . tablename('ewei_shop_goods') . ' SET sales = sales + 1 WHERE id = :id AND uniacid = :uniacid', array(':id' => $goods['goodsid'], ':uniacid' => $uniacid));
-                }
+
 
                 $order_goods['merchid']    = $goods['merchid'];
                 $order_goods['merchsale']  = $goods['merchsale'];
-                $order_goods['uniacid']    = $uniacid;
+                $order_goods['uniacid']    = $this->g_uniacid;
                 $order_goods['orderid']    = $orderid;
                 $order_goods['goodsid']    = $goods['goodsid'];
                 $order_goods['price']      = $goods['marketprice'] * $goods['total'];
@@ -1072,21 +1010,6 @@ class Goods
                 $order_goods['productsn']  = $goods['productsn'];
                 $order_goods['realprice']  = $goods['ggprice'];
                 $exchangetitle             .= $goods['title'];
-                if(p('exchange') && is_array($exchangepriceset)){
-                    $order_goods['realprice'] = 0;
-
-                    foreach($exchangepriceset as $ke => $va){
-                        if(empty($goods['optionid']) && is_array($va) && ($goods['goodsid'] == $va[0]) && ($va[1] == 0)){
-                            $order_goods['realprice'] = $va[2];
-                            break;
-                        }
-
-                        if(!empty($goods['optionid']) && is_array($va) && ($goods['optionid'] == $va[0]) && ($va[1] == 1)){
-                            $order_goods['realprice'] = $va[2];
-                            break;
-                        }
-                    }
-                }
 
                 $order_goods['oldprice'] = $goods['ggprice'];
 
@@ -1109,156 +1032,19 @@ class Goods
                     $order_goods['diyformfields'] = $goods['diyformfields'];
                 }
 
-                if(0 < floatval($goods['buyagain'])){
-                    if(!m('goods')->canBuyAgain($goods)){
-                        $order_goods['canbuyagain'] = 1;
-                    }
-                }
-
-                if($goods['seckillinfo'] && ($goods['seckillinfo']['status'] == 0)){
-                    $order_goods['seckill']        = 1;
-                    $order_goods['seckill_taskid'] = $goods['seckillinfo']['taskid'];
-                    $order_goods['seckill_roomid'] = $goods['seckillinfo']['roomid'];
-                    $order_goods['seckill_timeid'] = $goods['seckillinfo']['timeid'];
-                }
-
                 pdo_insert('ewei_shop_order_goods', $order_goods);
-                if($goods['seckillinfo'] && ($goods['seckillinfo']['status'] == 0)){
-                    plugin_run('seckill::setSeckill', $goods['seckillinfo'], $goods, $_W['openid'], $orderid, 0, $order['createtime']);
-                }
-            }
-        }else{
-            $og_array      = array();
-            $ch_order_data = m('order')->getChildOrderPrice($order, $allgoods, $dispatch_array, $merch_array, $sale_plugin, $discountprice_array);
 
-            foreach($merch_array as $key => $value){
-                $merchid = $key;
-
-                if(!empty($merchid)){
-                    $order_head = 'ME';
-                }else{
-                    $order_head = 'SH';
-                }
-
-                $order['ordersn']              = m('common')->createNO('order', 'ordersn', $order_head);
-                $order['merchid']              = $merchid;
-                $order['parentid']             = $orderid;
-                $order['isparent']             = 0;
-                $order['merchshow']            = 1;
-                $order['dispatchprice']        = $dispatch_array['dispatch_merch'][$merchid];
-                $order['olddispatchprice']     = $dispatch_array['dispatch_merch'][$merchid];
-                $order['merchisdiscountprice'] = $discountprice_array[$merchid]['merchisdiscountprice'];
-                $order['isdiscountprice']      = $discountprice_array[$merchid]['isdiscountprice'];
-                $order['discountprice']        = $discountprice_array[$merchid]['discountprice'];
-                $order['price']                = $ch_order_data[$merchid]['price'];
-                $order['grprice']              = $ch_order_data[$merchid]['grprice'];
-                $order['goodsprice']           = $ch_order_data[$merchid]['goodsprice'];
-                $order['deductprice']          = $ch_order_data[$merchid]['deductprice'];
-                $order['deductcredit']         = $ch_order_data[$merchid]['deductcredit'];
-                $order['deductcredit2']        = $ch_order_data[$merchid]['deductcredit2'];
-                $order['merchdeductenough']    = $ch_order_data[$merchid]['merchdeductenough'];
-                $order['deductenough']         = $ch_order_data[$merchid]['deductenough'];
-                $order['coupongoodprice']      = $discountprice_array[$merchid]['coupongoodprice'];
-                $order['couponprice']          = $discountprice_array[$merchid]['deduct'];
-
-                if(empty($order['couponprice'])){
-                    $order['couponid']      = 0;
-                    $order['couponmerchid'] = 0;
-                }else{
-                    if(0 < $couponmerchid){
-                        if($merchid == $couponmerchid){
-                            $order['couponid']      = $couponid;
-                            $order['couponmerchid'] = $couponmerchid;
-                        }else{
-                            $order['couponid']      = 0;
-                            $order['couponmerchid'] = 0;
-                        }
-                    }
-                }
-
-                pdo_insert('ewei_shop_order', $order);
-                $ch_orderid                       = pdo_insertid();
-                $merch_array[$merchid]['orderid'] = $ch_orderid;
-
-                if(0 < $couponmerchid){
-                    if($merchid == $couponmerchid){
-                        $couponorderid = $ch_orderid;
-                    }
-                }
-
-                foreach($value['goods'] as $k => $v){
-                    $og_array[$v] = $ch_orderid;
-                }
-            }
-
-            foreach($allgoods as $goods){
-                $goodsid                        = $goods['goodsid'];
-                $order_goods                    = array();
-                $order_goods['parentorderid']   = $orderid;
-                $order_goods['merchid']         = $goods['merchid'];
-                $order_goods['merchsale']       = $goods['merchsale'];
-                $order_goods['orderid']         = $og_array[$goodsid];
-                $order_goods['uniacid']         = $uniacid;
-                $order_goods['goodsid']         = $goodsid;
-                $order_goods['price']           = $goods['marketprice'] * $goods['total'];
-                $order_goods['total']           = $goods['total'];
-                $order_goods['optionid']        = $goods['optionid'];
-                $order_goods['createtime']      = time();
-                $order_goods['optionname']      = $goods['optiontitle'];
-                $order_goods['goodssn']         = $goods['goodssn'];
-                $order_goods['productsn']       = $goods['productsn'];
-                $order_goods['realprice']       = $goods['ggprice'];
-                $order_goods['oldprice']        = $goods['ggprice'];
-                $order_goods['isdiscountprice'] = $goods['isdiscountprice'];
-                $order_goods['openid']          = $openid;
-
-                if(0 < floatval($goods['buyagain'])){
-                    if(!m('goods')->canBuyAgain($goods)){
-                        $order_goods['canbuyagain'] = 1;
-                    }
-                }
-
-                pdo_insert('ewei_shop_order_goods', $order_goods);
             }
         }
 
-
-        if(com('coupon') && !empty($orderid)){
-            com('coupon')->addtaskdata($orderid);
-        }
-
-        if(is_array($carrier)){
-            $up = array('realname' => $carrier['carrier_realname'], 'carrier_mobile' => $carrier['carrier_mobile']);
-            pdo_update('ewei_shop_member', $up, array('id' => $member['id'], 'uniacid' => $this->g_uniacid));
-
-            if(!empty($member['uid'])){
-                load()->model('mc');
-                mc_update($member['uid'], $up);
-            }
-        }
 
         if($_GPC['fromcart'] == 1){
-            pdo_query('update ' . tablename('ewei_shop_member_cart') . ' set deleted=1 where  openid=:openid and uniacid=:uniacid and selected=1 ', array(':uniacid' => $uniacid, ':openid' => $openid));
+            pdo_query('update ' . tablename('ewei_shop_member_cart') . ' set deleted=1 where  openid=:openid and uniacid=:uniacid and selected=1 ', array(':uniacid' => $this->g_uniacid, ':openid' => $openid));
         }
 
-        if(p('quick') && !empty($_GPC['fromquick'])){
-            pdo_update('ewei_shop_quick_cart', array('deleted' => 1), array('quickid' => intval($_GPC['fromquick']), 'uniacid' => $this->g_uniacid, 'openid' => $_W['openid']));
-        }
-
-        if(0 < $deductcredit){
-            m('member')->setCredit($openid, 'credit1', 0 - $deductcredit, array('0', $_W['shopset']['shop']['name'] . '购物积分抵扣 消费积分: ' . $deductcredit . ' 抵扣金额: ' . $deductmoney . ' 订单号: ' . $ordersn));
-        }
-
-        if(0 < $buyagainprice){
-            m('goods')->useBuyAgain($orderid);
-        }
-
-        if(0 < $deductcredit2){
-            m('member')->setCredit($openid, 'credit2', 0 - $deductcredit2, array('0', $_W['shopset']['shop']['name'] . '购物余额抵扣: ' . $deductcredit2 . ' 订单号: ' . $ordersn));
-        }
 
         if(empty($virtualid)){
-            m('order')->setStocksAndCredits($orderid, 0);
+            $this->setStocksAndCredits($orderid, 0);
         }else{
             if(isset($allgoods[0])){
                 $vgoods = $allgoods[0];
@@ -1266,48 +1052,300 @@ class Goods
             }
         }
 
-        $plugincoupon = com('coupon');
+        $this->pay($orderid, $member);
 
-        if($plugincoupon){
-            if((0 < $couponmerchid) && ($multiple_order == 1)){
-                $oid = $couponorderid;
-            }else{
-                $oid = $orderid;
+        echo_json(200, 'buy success', array('orderid' => $orderid));
+    }
+
+    // 支付订单
+    public function pay1($orderid = '349', $member)
+    {
+        global $_W;
+        global $_GPC;
+
+        //        $order = pdo_fetch('select * from ' . tablename('ewei_shop_order') . ' where id=:id and uniacid=:uniacid and openid=:openid limit 1', array(':id' => $orderid, ':uniacid' => $this->g_uniacid, ':openid' => $openid));
+
+        $order = pdo_fetch('select * from ' . tablename('ewei_shop_order') . ' where id=:id and uniacid=:uniacid limit 1', array(':id' => $orderid, ':uniacid' => $this->g_uniacid));
+
+        // istrade	v2 0 普通 1 门店预约订单
+        // status 状态 -1取消状态（交易关闭），0普通状态（没付款: 待付款 ; 付了款: 待发货），1 买家已付款（待发货），2 卖家已发货（待收货），3 成功（可评价: 等待评价 ; 不可评价 : 交易完成）4 退款申请
+        $log = pdo_fetch('SELECT * FROM ' . tablename('core_paylog') . ' WHERE `uniacid`=:uniacid AND `module`=:module AND `tid`=:tid limit 1', array(':uniacid' => $this->g_uniacid, ':module' => 'ewei_shopv2', ':tid' => $order['ordersn']));
+
+
+        $seckill_goods = pdo_fetchall('select goodsid,optionid,seckill from  ' . tablename('ewei_shop_order_goods') . ' where orderid=:orderid and uniacid=:uniacid and seckill=1 ', array(':uniacid' => $this->g_uniacid, ':orderid' => $orderid));
+
+        if(!empty($log) && ($log['status'] == '0')){
+            pdo_delete('core_paylog', array('plid' => $log['plid']));
+            $log = NULL;
+        }
+
+        // 插入支付记录
+        if(empty($log)){
+            $log = array('uniacid' => $this->g_uniacid, 'openid' => $member['uid'], 'module' => 'ewei_shopv2', 'tid' => $order['ordersn'], 'fee' => $order['price'], 'status' => 0);
+            pdo_insert('core_paylog', $log);
+            $plid = pdo_insertid();
+        }
+
+        $set = $this->getSysset(array('shop', 'pay'), $this->g_uniacid);
+
+        //        var_dump('$set==',$set);exit;
+
+        $set['pay']['weixin']     = !empty($set['pay']['weixin_sub']) ? 1 : $set['pay']['weixin'];
+        $set['pay']['weixin_jie'] = !empty($set['pay']['weixin_jie_sub']) ? 1 : $set['pay']['weixin_jie'];
+        $param_title              = $set['shop']['name'] . '订单';
+        $credit                   = array('success' => false);
+        if(isset($set['pay']) && ($set['pay']['credit'] == 1)){
+            $credit = array('success' => true, 'current' => $member['credit2']);
+        }
+
+        $order['price'] = floatval($order['price']);
+
+        $setting = uni_setting($this->g_uniacid, array('payment'));
+
+        $sec = $this->getSec($this->g_uniacid);
+        $sec = iunserializer($sec['sec']);
+
+        $wechat = array('success' => false);
+        $jie    = intval($_GPC['jie']);
+
+        $alipay = array('success' => false);
+
+        /*var_dump('$seckill_goods==',empty($seckill_goods) && empty($ispeerpay));exit;*/
+
+        if(empty($seckill_goods) && empty($ispeerpay)){
+
+            var_dump('pay==', isset($set['pay']) && ($set['pay']['alipay'] == 1));
+            exit;
+
+
+            list(, $payment) = m('common')->public_build();
+
+            if($payment['type'] == '4'){
+                $params = array('service' => 'pay.alipay.native', 'body' => $param_title, 'out_trade_no' => $log['tid'], 'total_fee' => $order['price']);
+
+                if(!empty($order['ordersn2'])){
+                    $params['out_trade_no'] = $log['tid'] . '_B';
+                }else{
+                    $params['out_trade_no'] = $log['tid'] . '_borrow';
+                }
+
+                $AliPay = m('pay')->build($params, $payment, 0);
+                if(!empty($AliPay) && !is_error($AliPay)){
+                    $alipay['url']     = urlencode($AliPay['code_url']);
+                    $alipay['success'] = true;
+                }
             }
 
-            $plugincoupon->useConsumeCoupon($oid);
+            if(!empty($order['addressid'])){
+                $cash = array('success' => ($order['cash'] == 1) && isset($set['pay']) && ($set['pay']['cash'] == 1) && ($order['isverify'] == 0) && ($order['isvirtual'] == 0));
+            }
+
+            $haveverifygood = m('order')->checkhaveverifygoods($orderid);
+        }else{
+            $cash = array('success' => false);
         }
 
-        if(!empty($tgoods)){
-            $rank    = intval($_SESSION[$tgoods['goodsid'] . '_rank']);
-            $log_id  = intval($_SESSION[$tgoods['goodsid'] . '_log_id']);
-            $join_id = intval($_SESSION[$tgoods['goodsid'] . '_join_id']);
-            m('goods')->getTaskGoods($tgoods['openid'], $tgoods['goodsid'], $rank, $log_id, $join_id, $tgoods['optionid'], $tgoods['total']);
-            $_SESSION[$tgoods['goodsid'] . '_rank']    = 0;
-            $_SESSION[$tgoods['goodsid'] . '_log_id']  = 0;
-            $_SESSION[$tgoods['goodsid'] . '_join_id'] = 0;
+        $payinfo = array('orderid' => $orderid, 'ordersn' => $log['tid'], 'credit' => $credit, 'alipay' => $alipay, 'wechat' => $wechat, 'cash' => $cash, 'money' => $order['price']);
+
+        if(is_h5app()){
+            $payinfo = array('wechat' => !empty($sec['app_wechat']['merchname']) && !empty($set['pay']['app_wechat']) && !empty($sec['app_wechat']['appid']) && !empty($sec['app_wechat']['appsecret']) && !empty($sec['app_wechat']['merchid']) && !empty($sec['app_wechat']['apikey']) && (0 < $order['price']) ? true : false, 'alipay' => !empty($set['pay']['app_alipay']) && !empty($sec['app_alipay']['public_key']) ? true : false, 'mcname' => $sec['app_wechat']['merchname'], 'aliname' => empty($_W['shopset']['shop']['name']) ? $sec['app_wechat']['merchname'] : $_W['shopset']['shop']['name'], 'ordersn' => $log['tid'], 'money' => $order['price'], 'attach' => $this->g_uniacid . ':0', 'type' => 0, 'orderid' => $orderid, 'credit' => $credit, 'cash' => $cash);
+
+            if(!empty($order['ordersn2'])){
+                $var                = sprintf('%02d', $order['ordersn2']);
+                $payinfo['ordersn'] .= 'GJ' . $var;
+            }
         }
 
-        m('notice')->sendOrderMessage($orderid);
-        com_run('printer::sendOrderMessage', $orderid);
-        $pluginc = p('commission');
+        return true;
 
-        if($pluginc){
-            if($multiple_order == 0){
-                $pluginc->checkOrderConfirm($orderid);
-            }else{
-                if(!empty($merch_array)){
-                    foreach($merch_array as $key => $value){
-                        $pluginc->checkOrderConfirm($value['orderid']);
+    }
+
+    // 支付订单
+    public function pay($orderid, $member)
+    {
+        global $_W;
+        global $_GPC;
+
+        $order = pdo_fetch('select * from ' . tablename('ewei_shop_order') . ' where id=:id and uniacid=:uniacid limit 1', array(':id' => $orderid, ':uniacid' => $this->g_uniacid));
+
+        $_SESSION['peerpay'] = NULL;
+
+        $set                      = $this->getSysset(array('shop', 'pay'));
+        $set['pay']['weixin']     = !empty($set['pay']['weixin_sub']) ? 1 : $set['pay']['weixin'];
+        $set['pay']['weixin_jie'] = !empty($set['pay']['weixin_jie_sub']) ? 1 : $set['pay']['weixin_jie'];
+        // $member = m('member')->getMember($openid, true);
+
+        $go_flag = 0;
+        if(empty($order['istrade']) && (1 <= $order['status'])){
+            $go_flag = 1;
+        }
+
+        if(!empty($order['istrade'])){
+            if((1 < $order['status']) || (($order['status'] == 1) && ($order['tradestatus'] == 2))){
+                $go_flag = 1;
+            }
+        }
+
+        //        var_dump('$order==',$order);exit;
+
+        //        $type = $_GPC['type'];
+        $type = 'credit';
+
+        if(!in_array($type, array('wechat', 'alipay', 'credit', 'cash'))){
+            echo_json(0, '未找到支付方式');
+        }
+
+
+        // 插入支付记录
+        if(empty($log)){
+            $log = array('uniacid' => $this->g_uniacid, 'openid' => $member['uid'], 'module' => 'ewei_shopv2', 'tid' => $order['ordersn'], 'fee' => $order['price'], 'status' => 0);
+            pdo_insert('core_paylog', $log);
+            $plid = pdo_insertid();
+
+            $log = pdo_fetch('SELECT * FROM ' . tablename('core_paylog') . ' WHERE `uniacid`=:uniacid AND `module`=:module AND `tid`=:tid limit 1', array(':uniacid' => $this->g_uniacid, ':module' => 'ewei_shopv2', ':tid' => $order['ordersn']));
+
+        }
+
+
+        //        var_dump('$log==',(empty($order['isnewstore']) || empty($order['storeid'])) && empty($order['istrade']),'$order==',$order);exit;
+
+
+        if((empty($order['isnewstore']) || empty($order['storeid'])) && empty($order['istrade'])){
+            $order_goods = pdo_fetchall('select og.id,g.title, og.goodsid,og.optionid,g.total as stock,og.total as buycount,g.status,g.deleted,g.maxbuy,g.usermaxbuy,g.istime,g.timestart,g.timeend,g.buylevels,g.buygroups,g.totalcnf,og.seckill from  ' . tablename('ewei_shop_order_goods') . ' og ' . ' left join ' . tablename('ewei_shop_goods') . ' g on og.goodsid = g.id ' . ' where og.orderid=:orderid and og.uniacid=:uniacid ', array(':uniacid' => $this->g_uniacid, ':orderid' => $orderid));
+
+            //            var_dump('$order_goods==',$order_goods);exit;
+
+            foreach($order_goods as $data){
+                if(empty($data['status']) || !empty($data['deleted'])){
+                    echo_json(0, $data['title'] . '<br/> 已下架!');
+                }
+
+                $unit = (empty($data['unit']) ? '件' : $data['unit']);
+
+
+                if(0 < $data['minbuy']){
+                    echo_json(0, $data['title'] . '<br/> ' . $data['min'] . $unit . '起售!', mobileUrl('order'));
+                }
+
+                if(0 < $data['maxbuy']){
+                    echo_json(0, $data['title'] . '<br/> 一次限购 ' . $data['maxbuy'] . $unit . '!');
+                }
+
+                //                var_dump('$order_goods==',$order_goods,$data);exit;
+
+                if(0 < $data['usermaxbuy']){
+                    $order_goodscount = pdo_fetchcolumn('select ifnull(sum(og.total),0)  from ' . tablename('ewei_shop_order_goods') . ' og ' . ' left join ' . tablename('ewei_shop_order') . ' o on og.orderid=o.id ' . ' where og.goodsid=:goodsid and  o.status>=1 and o.openid=:openid  and og.uniacid=:uniacid ', array(':goodsid' => $data['goodsid'], ':uniacid' => $this->g_uniacid, ':openid' => $openid));
+
+                    if($data['usermaxbuy'] <= $order_goodscount){
+                        echo_json(0, $data['title'] . '<br/> 最多限购 ' . $data['usermaxbuy'] . $unit);
+                    }
+                }
+
+                if($data['istime'] == 1){
+                    if(time() < $data['timestart']){
+                        echo_json(0, $data['title'] . '<br/> 限购时间未到!');
+                    }
+
+                    if($data['timeend'] < time()){
+                        echo_json(0, $data['title'] . '<br/> 限购时间已过!');
+                    }
+                }
+
+                if($data['buylevels'] != ''){
+                    $buylevels = explode(',', $data['buylevels']);
+
+                    if(!in_array($member['level'], $buylevels)){
+                        echo_json(0, '您的会员等级无法购买<br/>' . $data['title'] . '!');
+                    }
+                }
+
+                if($data['buygroups'] != ''){
+                    $buygroups = explode(',', $data['buygroups']);
+
+                    if(!in_array($member['groupid'], $buygroups)){
+                        echo_json(0, '您所在会员组无法购买<br/>' . $data['title'] . '!');
+                    }
+                }
+
+
+                if($data['totalcnf'] == 1){
+                    if(!empty($data['optionid'])){
+                        $option = pdo_fetch('select id,title,marketprice,goodssn,productsn,stock,`virtual` from ' . tablename('ewei_shop_goods_option') . ' where id=:id and goodsid=:goodsid and uniacid=:uniacid  limit 1', array(':uniacid' => $this->g_uniacid, ':goodsid' => $data['goodsid'], ':id' => $data['optionid']));
+
+                        if(!empty($option)){
+                            if($option['stock'] != -1){
+                                if(empty($option['stock'])){
+                                    echo_json(0, $data['title'] . '<br/>' . $option['title'] . ' 库存不足!');
+                                }
+                            }
+                        }
+                    }else{
+                        if($data['stock'] != -1){
+                            if(empty($data['stock'])){
+                                echo_json(0, $data['title'] . '<br/>库存不足!');
+                            }
+                        }
                     }
                 }
             }
         }
 
-        unset($_SESSION[$openid . '_order_create']);
+
+        $ps          = array();
+        $ps['tid']   = $log['tid'];
+        $ps['user']  = $openid;
+        $ps['fee']   = $log['fee'];
+        $ps['title'] = $log['title'];
+
+        if($type == 'credit'){
+            if(empty($set['pay']['credit']) && (0 < $ps['fee'])){
+                echo_json(0, '未开启余额支付!');
+            }
+
+            if($ps['fee'] < 0){
+                echo_json(0, '金额错误');
+            }
+
+            // $credits = m('member')->getCredit($openid, 'credit2');
+            // TODO debug 默认一千万
+            $credits = '10000000';
+
+            if($credits < $ps['fee']){
+                echo_json(0, '余额不足,请充值');
+            }
+
+            $fee = floatval($ps['fee']);
+            /*$result = m('member')->setCredit($openid, 'credit2', 0 - $fee, array($_W['member']['uid'], $_W['shopset']['shop']['name'] . '消费' . $fee));
+
+            if(is_error($result)){
+                echo_json(0, $result['message']);
+            }*/
+
+            $record           = array();
+            $record['status'] = '1';
+            $record['type']   = 'cash';
+            pdo_update('core_paylog', $record, array('plid' => $log['plid']));
+            //            m('order')->setOrderPayType($order['id'], 1, $gpc_ordersn);
+            $ret            = array();
+            $ret['result']  = 'success';
+            $ret['type']    = $log['type'];
+            $ret['from']    = 'return';
+            $ret['tid']     = $log['tid'];
+            $ret['user']    = $log['openid'];
+            $ret['fee']     = $log['fee'];
+            $ret['weid']    = $log['weid'];
+            $ret['uniacid'] = $log['uniacid'];
+            @session_start();
+            $_SESSION[EWEI_SHOPV2_PREFIX . '_order_pay_complete'] = 1;
 
 
-        show_json(1, array('orderid' => $orderid));
+            $pay_result = $this->payResult($ret);
+
+            return true;
+
+            //            echo_json(200,'ok', array('result' => $pay_result));
+
+        }
     }
 
 
@@ -1317,8 +1355,13 @@ class Goods
      * @param type $type 0 下单 1 支付 2 取消
      * @param $order 2 取消
      */
-    private function setStocksAndCredits($orderid = '', $type = 0, $order)
+    private function setStocksAndCredits($orderid = '', $type = 0, $order = '')
     {
+        if(!$order){
+            $order = pdo_fetch('select id,ordersn,price,openid,dispatchtype,addressid,carrier,status,isparent,paytype,isnewstore,storeid,istrade from ' . tablename('ewei_shop_order') . ' where id=:id limit 1', array(':id' => $orderid));
+        }
+
+
         // v2 0 普通 1 门店预约订单
         if(!empty($order['istrade'])){
             return NULL;
@@ -1350,7 +1393,6 @@ class Goods
             $g['goodstotal'] = $goods_item['goodstotal'];
 
             //            var_dump('$goods_item==',$goods_item,$type,$order);exit;
-
 
             // totalcnf	减库存方式 0 拍下减库存 1 付款减库存 2 永不减库存
             $stocktype = 0;
@@ -1532,9 +1574,13 @@ class Goods
         return pdo_fetch($sql, array(':goodsid' => $goodsid, ':storeid' => $storeid, ':optionid' => $optionid, ':uniacid' => $this->g_uniacid));
     }
 
-    // 绑定用户信息
+    // 绑定用户信息 手机号 地址信息
     private function bindMember($member_param)
     {
+        // 创建用户
+
+
+        // 绑定地址
 
     }
 
@@ -1544,45 +1590,44 @@ class Goods
     {
         $goods2 = array();
 
-        foreach ($goods as $good) {
-            if ($good['type'] == 4) {
-                if (empty($goods2[$good['goodsid']])) {
+        foreach($goods as $good){
+            if($good['type'] == 4){
+                if(empty($goods2[$good['goodsid']])){
                     $intervalprices = array();
 
-                    if (0 < $good['intervalfloor']) {
+                    if(0 < $good['intervalfloor']){
                         $intervalprices[] = array('intervalnum' => intval($good['intervalnum1']), 'intervalprice' => floatval($good['intervalprice1']));
                     }
 
-                    if (1 < $good['intervalfloor']) {
+                    if(1 < $good['intervalfloor']){
                         $intervalprices[] = array('intervalnum' => intval($good['intervalnum2']), 'intervalprice' => floatval($good['intervalprice2']));
                     }
 
-                    if (2 < $good['intervalfloor']) {
+                    if(2 < $good['intervalfloor']){
                         $intervalprices[] = array('intervalnum' => intval($good['intervalnum3']), 'intervalprice' => floatval($good['intervalprice3']));
                     }
 
                     $goods2[$good['goodsid']] = array('goodsid' => $good['goodsid'], 'total' => $good['total'], 'intervalfloor' => $good['intervalfloor'], 'intervalprice' => $intervalprices);
-                }
-                else {
+                }else{
                     $goods2[$good['goodsid']]['total'] += $good['total'];
                 }
             }
         }
 
-        foreach ($goods2 as $good2) {
+        foreach($goods2 as $good2){
             $intervalprices2 = iunserializer($good2['intervalprice']);
-            $price = 0;
+            $price           = 0;
 
-            foreach ($intervalprices2 as $intervalprice) {
-                if ($intervalprice['intervalnum'] <= $good2['total']) {
+            foreach($intervalprices2 as $intervalprice){
+                if($intervalprice['intervalnum'] <= $good2['total']){
                     $price = $intervalprice['intervalprice'];
                 }
             }
 
-            foreach ($goods as &$good) {
-                if ($good['goodsid'] == $good2['goodsid']) {
+            foreach($goods as &$good){
+                if($good['goodsid'] == $good2['goodsid']){
                     $good['wholesaleprice'] = $price;
-                    $good['goodsalltotal'] = $good2['total'];
+                    $good['goodsalltotal']  = $good2['total'];
                 }
             }
 
@@ -1590,6 +1635,796 @@ class Goods
         }
 
         return $goods;
+    }
+
+
+    /**
+     * 获取所有会员等级
+     * @return type
+     */
+    private function getLevels($all = true)
+    {
+        $condition = '';
+
+        if(!$all){
+            $condition = ' and enabled=1';
+        }
+
+        return pdo_fetchall('select * from ' . tablename('ewei_shop_member_level') . ' where uniacid=:uniacid' . $condition . ' order by level asc', array(':uniacid' => $this->g_uniacid));
+    }
+
+    private function getLevel($openid)
+    {
+        if(empty($openid)){
+            return false;
+        }
+
+        return array('levelname' => empty($_S['shop']['levelname']) ? '普通会员' : $_S['shop']['levelname'], 'discount' => empty($_S['shop']['leveldiscount']) ? 10 : $_S['shop']['leveldiscount']);
+    }
+
+
+    // 获取商品折扣价
+    private function getGoodsDiscountPrice($g, $level, $type = 0)
+    {
+
+        if(!empty($level['id'])){
+            $level = pdo_fetch('select * from ' . tablename('ewei_shop_member_level') . ' where id=:id and uniacid=:uniacid and enabled=1 limit 1', array(':id' => $level['id'], ':uniacid' => $this->g_uniacid));
+            $level = (empty($level) ? array() : $level);
+        }
+
+        if($type == 0){
+            $total = $g['total'];
+        }else{
+            $total = 1;
+        }
+
+        $gprice = $g['marketprice'] * $total;
+
+        if(empty($g['buyagain_islong'])){
+            $gprice = $g['marketprice'] * $total;
+        }
+
+        $buyagain_sale = true;
+        $buyagainprice = 0;
+        $canbuyagain   = false;
+
+        if(empty($g['is_task_goods'])){
+            if(0 < floatval($g['buyagain'])){
+                if(m('goods')->canBuyAgain($g)){
+                    $canbuyagain = true;
+
+                    if(empty($g['buyagain_sale'])){
+                        $buyagain_sale = false;
+                    }
+                }
+            }
+        }
+
+        $price                = $gprice;
+        $price1               = $gprice;
+        $price2               = $gprice;
+        $taskdiscountprice    = 0;
+        $lotterydiscountprice = 0;
+
+        if(!empty($g['is_task_goods'])){
+            $buyagain_sale = false;
+            $price         = $g['task_goods']['marketprice'] * $total;
+
+            if($price < $gprice){
+                $d_price = abs($gprice - $price);
+
+                if($g['is_task_goods'] == 1){
+                    $taskdiscountprice = $d_price;
+                }else{
+                    if($g['is_task_goods'] == 2){
+                        $lotterydiscountprice = $d_price;
+                    }
+                }
+            }
+        }
+
+        $discountprice   = 0;
+        $isdiscountprice = 0;
+        $isd             = false;
+        @$isdiscount_discounts = json_decode($g['isdiscount_discounts'], true);
+        $discounttype = 0;
+        $isCdiscount  = 0;
+        $isHdiscount  = 0;
+        if($g['isdiscount'] && (time() <= $g['isdiscount_time']) && $buyagain_sale){
+            if(is_array($isdiscount_discounts)){
+                $key = (!empty($level['id']) ? 'level' . $level['id'] : 'default');
+                if(!isset($isdiscount_discounts['type']) || empty($isdiscount_discounts['type'])){
+                    if(empty($g['merchsale'])){
+                        $isd = trim($isdiscount_discounts[$key]['option0']);
+
+                        if(!empty($isd)){
+                            $price1 = $this->getFormartDiscountPrice($isd, $gprice, $total);
+                        }
+                    }else{
+                        $isd = trim($isdiscount_discounts['merch']['option0']);
+
+                        if(!empty($isd)){
+                            $price1 = $this->getFormartDiscountPrice($isd, $gprice, $total);
+                        }
+                    }
+                }else if(empty($g['merchsale'])){
+                    $isd = trim($isdiscount_discounts[$key]['option' . $g['optionid']]);
+
+                    if(!empty($isd)){
+                        $price1 = $this->getFormartDiscountPrice($isd, $gprice, $total);
+                    }
+                }else{
+                    $isd = trim($isdiscount_discounts['merch']['option' . $g['optionid']]);
+
+                    if(!empty($isd)){
+                        $price1 = $this->getFormartDiscountPrice($isd, $gprice, $total);
+                    }
+                }
+            }
+
+            if($gprice <= $price1){
+                $isdiscountprice = 0;
+                $isCdiscount     = 0;
+            }else{
+                $isdiscountprice = abs($price1 - $gprice);
+                $isCdiscount     = 1;
+            }
+        }
+
+        if(empty($g['isnodiscount']) && $buyagain_sale){
+            $discounts = json_decode($g['discounts'], true);
+
+            if(is_array($discounts)){
+                $key = (!empty($level['id']) ? 'level' . $level['id'] : 'default');
+                if(!isset($discounts['type']) || empty($discounts['type'])){
+                    if(!empty($discounts[$key])){
+                        $dd = floatval($discounts[$key]);
+                        if((0 < $dd) && ($dd < 10)){
+                            $price2 = round(($dd / 10) * $gprice, 2);
+                        }
+                    }else{
+                        $dd = floatval($discounts[$key . '_pay'] * $total);
+                        $md = floatval($level['discount']);
+
+                        if(!empty($dd)){
+                            $price2 = round($dd, 2);
+                        }else{
+                            if((0 < $md) && ($md < 10)){
+                                $price2 = round(($md / 10) * $gprice, 2);
+                            }
+                        }
+                    }
+                }else{
+                    $isd = trim($discounts[$key]['option' . $g['optionid']]);
+
+                    if(!empty($isd)){
+                        $price2 = $this->getFormartDiscountPrice($isd, $gprice, $total);
+                    }
+                }
+            }
+
+            if($gprice <= $price2){
+                $discountprice = 0;
+                $isHdiscount   = 0;
+            }else{
+                $discountprice = abs($price2 - $gprice);
+                $isHdiscount   = 1;
+            }
+        }
+
+        if($isCdiscount == 1){
+            $price        = $price1;
+            $discounttype = 1;
+        }else{
+            if($isHdiscount == 1){
+                $price        = $price2;
+                $discounttype = 2;
+            }
+        }
+
+        $unitprice           = round($price / $total, 2);
+        $isdiscountunitprice = round($isdiscountprice / $total, 2);
+        $discountunitprice   = round($discountprice / $total, 2);
+
+        if($canbuyagain){
+            if(empty($g['buyagain_islong'])){
+                $buyagainprice = ($unitprice * (10 - $g['buyagain'])) / 10;
+            }else{
+                $buyagainprice = ($price * (10 - $g['buyagain'])) / 10;
+            }
+        }
+
+        $price = $price - $buyagainprice;
+        return array('unitprice' => $unitprice, 'price' => $price, 'taskdiscountprice' => $taskdiscountprice, 'lotterydiscountprice' => $lotterydiscountprice, 'discounttype' => $discounttype, 'isdiscountprice' => $isdiscountprice, 'discountprice' => $discountprice, 'isdiscountunitprice' => $isdiscountunitprice, 'discountunitprice' => $discountunitprice, 'price0' => $gprice, 'price1' => $price1, 'price2' => $price2, 'buyagainprice' => $buyagainprice);
+    }
+
+    // 格式化商品折扣价
+    private function getFormartDiscountPrice($isd, $gprice, $gtotal = 1)
+    {
+        $price = $gprice;
+
+        if(!empty($isd)){
+            if(strexists($isd, '%')){
+                $dd = floatval(str_replace('%', '', $isd));
+                if((0 < $dd) && ($dd < 100)){
+                    $price = round(($dd / 100) * $gprice, 2);
+                }
+            }else{
+                if(0 < floatval($isd)){
+                    $price = round(floatval($isd * $gtotal), 2);
+                }
+            }
+        }
+
+        return $price;
+    }
+
+    // 获取运费
+    public function getOrderDispatchPrice($goods, $member, $address, $saleset = false, $merch_array, $t, $loop = 0)
+    {
+        global $_W;
+        $area_set              = m('util')->get_area_config_set();
+        $new_area              = intval($area_set['new_area']);
+        $realprice             = 0;
+        $dispatch_price        = 0;
+        $dispatch_array        = array();
+        $dispatch_merch        = array();
+        $total_array           = array();
+        $totalprice_array      = array();
+        $nodispatch_array      = array();
+        $goods_num             = count($goods);
+        $seckill_payprice      = 0;
+        $seckill_dispatchprice = 0;
+        $user_city             = '';
+        $user_city_code        = '';
+
+        if(empty($new_area)){
+            if(!empty($address)){
+                $user_city = $user_city_code = $address['city'];
+            }else{
+                if(!empty($member['city'])){
+                    $user_city = $user_city_code = $member['city'];
+                }
+            }
+        }else{
+            if(!empty($address)){
+                $user_city      = $address['city'] . $address['area'];
+                $user_city_code = $address['datavalue'];
+            }
+        }
+
+        foreach($goods as $g){
+            $realprice                       += $g['ggprice'];
+            $dispatch_merch[$g['merchid']]   = 0;
+            $total_array[$g['goodsid']]      += $g['total'];
+            $totalprice_array[$g['goodsid']] += $g['ggprice'];
+        }
+
+        foreach($goods as $g){
+            $seckillinfo = plugin_run('seckill::getSeckill', $g['goodsid'], $g['optionid'], true, $_W['openid']);
+            if($seckillinfo && ($seckillinfo['status'] == 0)){
+                $seckill_payprice += $g['ggprice'];
+            }
+
+            $isnodispatch = 0;
+            $sendfree     = false;
+            $merchid      = $g['merchid'];
+
+            if($g['type'] == 5){
+                $sendfree = true;
+            }
+
+            if(!empty($g['issendfree'])){
+                $sendfree = true;
+            }else{
+                if($seckillinfo && ($seckillinfo['status'] == 0)){
+                }else{
+                    if(($g['ednum'] <= $total_array[$g['goodsid']]) && (0 < $g['ednum'])){
+                        if(empty($new_area)){
+                            $gareas = explode(';', $g['edareas']);
+                        }else{
+                            $gareas = explode(';', $g['edareas_code']);
+                        }
+
+                        if(empty($gareas)){
+                            $sendfree = true;
+                        }else if(!empty($address)){
+                            if(!in_array($user_city_code, $gareas)){
+                                $sendfree = true;
+                            }
+                        }else if(!empty($member['city'])){
+                            if(!in_array($member['city'], $gareas)){
+                                $sendfree = true;
+                            }
+                        }else{
+                            $sendfree = true;
+                        }
+                    }
+                }
+
+                if($seckillinfo && ($seckillinfo['status'] == 0)){
+                }else{
+                    if((floatval($g['edmoney']) <= $totalprice_array[$g['goodsid']]) && (0 < floatval($g['edmoney']))){
+                        if(empty($new_area)){
+                            $gareas = explode(';', $g['edareas']);
+                        }else{
+                            $gareas = explode(';', $g['edareas_code']);
+                        }
+
+                        if(empty($gareas)){
+                            $sendfree = true;
+                        }else if(!empty($address)){
+                            if(!in_array($user_city_code, $gareas)){
+                                $sendfree = true;
+                            }
+                        }else if(!empty($member['city'])){
+                            if(!in_array($member['city'], $gareas)){
+                                $sendfree = true;
+                            }
+                        }else{
+                            $sendfree = true;
+                        }
+                    }
+                }
+            }
+
+            if($g['dispatchtype'] == 1){
+                if(!empty($user_city)){
+                    if(empty($new_area)){
+                        $citys = m('dispatch')->getAllNoDispatchAreas();
+                    }else{
+                        $citys = m('dispatch')->getAllNoDispatchAreas('', 1);
+                    }
+
+                    if(!empty($citys)){
+                        if(in_array($user_city_code, $citys) && !empty($citys)){
+                            $isnodispatch = 1;
+                            $has_goodsid  = 0;
+
+                            if(!empty($nodispatch_array['goodid'])){
+                                if(in_array($g['goodsid'], $nodispatch_array['goodid'])){
+                                    $has_goodsid = 1;
+                                }
+                            }
+
+                            if($has_goodsid == 0){
+                                $nodispatch_array['goodid'][] = $g['goodsid'];
+                                $nodispatch_array['title'][]  = $g['title'];
+                                $nodispatch_array['city']     = $user_city;
+                            }
+                        }
+                    }
+                }
+
+                if((0 < $g['dispatchprice']) && !$sendfree && ($isnodispatch == 0)){
+                    $dispatch_merch[$merchid] += $g['dispatchprice'];
+                    if($seckillinfo && ($seckillinfo['status'] == 0)){
+                        $seckill_dispatchprice += $g['dispatchprice'];
+                    }else{
+                        $dispatch_price += $g['dispatchprice'];
+                    }
+                }
+            }else{
+                if($g['dispatchtype'] == 0){
+                    if(empty($g['dispatchid'])){
+                        $dispatch_data = m('dispatch')->getDefaultDispatch($merchid);
+                    }else{
+                        $dispatch_data = m('dispatch')->getOneDispatch($g['dispatchid']);
+                    }
+
+                    if(empty($dispatch_data)){
+                        $dispatch_data = m('dispatch')->getNewDispatch($merchid);
+                    }
+
+                    if(!empty($dispatch_data)){
+                        $isnoarea       = 0;
+                        $dkey           = $dispatch_data['id'];
+                        $isdispatcharea = intval($dispatch_data['isdispatcharea']);
+
+                        if(!empty($user_city)){
+                            if(empty($isdispatcharea)){
+                                if(empty($new_area)){
+                                    $citys = m('dispatch')->getAllNoDispatchAreas($dispatch_data['nodispatchareas']);
+                                }else{
+                                    $citys = m('dispatch')->getAllNoDispatchAreas($dispatch_data['nodispatchareas_code'], 1);
+                                }
+
+                                if(!empty($citys)){
+                                    if(in_array($user_city_code, $citys)){
+                                        $isnoarea = 1;
+                                    }
+                                }
+                            }else{
+                                if(empty($new_area)){
+                                    $citys = m('dispatch')->getAllNoDispatchAreas();
+                                }else{
+                                    $citys = m('dispatch')->getAllNoDispatchAreas('', 1);
+                                }
+
+                                if(!empty($citys)){
+                                    if(in_array($user_city_code, $citys)){
+                                        $isnoarea = 1;
+                                    }
+                                }
+
+                                if(empty($isnoarea)){
+                                    $isnoarea = m('dispatch')->checkOnlyDispatchAreas($user_city_code, $dispatch_data);
+                                }
+                            }
+
+                            if(!empty($isnoarea)){
+                                $isnodispatch = 1;
+                                $has_goodsid  = 0;
+
+                                if(!empty($nodispatch_array['goodid'])){
+                                    if(in_array($g['goodsid'], $nodispatch_array['goodid'])){
+                                        $has_goodsid = 1;
+                                    }
+                                }
+
+                                if($has_goodsid == 0){
+                                    $nodispatch_array['goodid'][] = $g['goodsid'];
+                                    $nodispatch_array['title'][]  = $g['title'];
+                                    $nodispatch_array['city']     = $user_city;
+                                }
+                            }
+                        }
+
+                        if(!$sendfree && ($isnodispatch == 0)){
+                            $areas = unserialize($dispatch_data['areas']);
+
+                            if($dispatch_data['calculatetype'] == 1){
+                                $param = $g['total'];
+                            }else{
+                                $param = $g['weight'] * $g['total'];
+                            }
+
+                            if(array_key_exists($dkey, $dispatch_array)){
+                                $dispatch_array[$dkey]['param'] += $param;
+                            }else{
+                                $dispatch_array[$dkey]['data']  = $dispatch_data;
+                                $dispatch_array[$dkey]['param'] = $param;
+                            }
+
+                            if($seckillinfo && ($seckillinfo['status'] == 0)){
+                                if(array_key_exists($dkey, $dispatch_array)){
+                                    $dispatch_array[$dkey]['seckillnums'] += $param;
+                                }else{
+                                    $dispatch_array[$dkey]['seckillnums'] = $param;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if(!empty($dispatch_array)){
+            $dispatch_info = array();
+
+            foreach($dispatch_array as $k => $v){
+                $dispatch_data = $dispatch_array[$k]['data'];
+                $param         = $dispatch_array[$k]['param'];
+                $areas         = unserialize($dispatch_data['areas']);
+
+                if(!empty($address)){
+                    $dprice = m('dispatch')->getCityDispatchPrice($areas, $address, $param, $dispatch_data);
+                }else if(!empty($member['city'])){
+                    $dprice = m('dispatch')->getCityDispatchPrice($areas, $member, $param, $dispatch_data);
+                }else{
+                    $dprice = m('dispatch')->getDispatchPrice($param, $dispatch_data);
+                }
+
+                $merchid                  = $dispatch_data['merchid'];
+                $dispatch_merch[$merchid] += $dprice;
+
+                if(0 < $v['seckillnums']){
+                    $seckill_dispatchprice += $dprice;
+                }else{
+                    $dispatch_price += $dprice;
+                }
+
+                $dispatch_info[$dispatch_data['id']]['price']     += $dprice;
+                $dispatch_info[$dispatch_data['id']]['freeprice'] = intval($dispatch_data['freeprice']);
+            }
+
+            if(!empty($dispatch_info)){
+                foreach($dispatch_info as $k => $v){
+                    if((0 < $v['freeprice']) && ($v['freeprice'] <= $v['price'])){
+                        $dispatch_price -= $v['price'];
+                    }
+                }
+
+                if($dispatch_price < 0){
+                    $dispatch_price = 0;
+                }
+            }
+        }
+
+        if(!empty($merch_array)){
+            foreach($merch_array as $key => $value){
+                $merchid = $key;
+
+                if(0 < $merchid){
+                    $merchset = $value['set'];
+
+                    if(!empty($merchset['enoughfree'])){
+                        if(floatval($merchset['enoughorder']) <= 0){
+                            $dispatch_price           = $dispatch_price - $dispatch_merch[$merchid];
+                            $dispatch_merch[$merchid] = 0;
+                        }else{
+                            if(floatval($merchset['enoughorder']) <= $merch_array[$merchid]['ggprice']){
+                                if(empty($merchset['enoughareas'])){
+                                    $dispatch_price           = $dispatch_price - $dispatch_merch[$merchid];
+                                    $dispatch_merch[$merchid] = 0;
+                                }else{
+                                    $areas = explode(';', $merchset['enoughareas']);
+
+                                    if(!empty($address)){
+                                        if(!in_array($address['city'], $areas)){
+                                            $dispatch_price           = $dispatch_price - $dispatch_merch[$merchid];
+                                            $dispatch_merch[$merchid] = 0;
+                                        }
+                                    }else if(!empty($member['city'])){
+                                        if(!in_array($member['city'], $areas)){
+                                            $dispatch_price           = $dispatch_price - $dispatch_merch[$merchid];
+                                            $dispatch_merch[$merchid] = 0;
+                                        }
+                                    }else{
+                                        if(empty($member['city'])){
+                                            $dispatch_price           = $dispatch_price - $dispatch_merch[$merchid];
+                                            $dispatch_merch[$merchid] = 0;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if($saleset){
+            if(!empty($saleset['enoughfree'])){
+                $saleset_free = 0;
+
+                if($loop == 0){
+                    if(floatval($saleset['enoughorder']) <= 0){
+                        $saleset_free = 1;
+                    }else{
+                        if(floatval($saleset['enoughorder']) <= $realprice - $seckill_payprice){
+                            if(empty($saleset['enoughareas'])){
+                                $saleset_free = 1;
+                            }else{
+                                if(empty($new_area)){
+                                    $areas = explode(';', trim($saleset['enoughareas'], ';'));
+                                }else{
+                                    $areas = explode(';', trim($saleset['enoughareas_code'], ';'));
+                                }
+
+                                if(!empty($user_city_code)){
+                                    if(!in_array($user_city_code, $areas)){
+                                        $saleset_free = 1;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if($saleset_free == 1){
+                    $is_nofree = 0;
+                    $new_goods = array();
+
+                    if(!empty($saleset['goodsids'])){
+                        foreach($goods as $k => $v){
+                            if(!in_array($v['goodsid'], $saleset['goodsids'])){
+                                $new_goods[$k] = $goods[$k];
+                                unset($goods[$k]);
+                            }else{
+                                $is_nofree = 1;
+                            }
+                        }
+                    }
+
+                    if(($is_nofree == 1) && ($loop == 0)){
+                        if($goods_num == 1){
+                            $new_data1      = $this->getOrderDispatchPrice($goods, $member, $address, $saleset, $merch_array, $t, 1);
+                            $dispatch_price = $new_data1['dispatch_price'];
+                        }else{
+                            $new_data2      = $this->getOrderDispatchPrice($new_goods, $member, $address, $saleset, $merch_array, $t, 1);
+                            $dispatch_price = $dispatch_price - $new_data2['dispatch_price'];
+                        }
+                    }else{
+                        if($saleset_free == 1){
+                            $dispatch_price = 0;
+                        }
+                    }
+                }
+            }
+        }
+
+        if($dispatch_price == 0){
+            foreach($dispatch_merch as &$dm){
+                $dm = 0;
+            }
+
+            unset($dm);
+        }
+
+        if(!empty($nodispatch_array)){
+            $nodispatch = '商品';
+
+            foreach($nodispatch_array['title'] as $k => $v){
+                $nodispatch .= $v . ',';
+            }
+
+            $nodispatch                       = trim($nodispatch, ',');
+            $nodispatch                       .= '不支持配送到' . $nodispatch_array['city'];
+            $nodispatch_array['nodispatch']   = $nodispatch;
+            $nodispatch_array['isnodispatch'] = 1;
+        }
+
+        $data                           = array();
+        $data['dispatch_price']         = $dispatch_price + $seckill_dispatchprice;
+        $data['dispatch_merch']         = $dispatch_merch;
+        $data['nodispatch_array']       = $nodispatch_array;
+        $data['seckill_dispatch_price'] = $seckill_dispatchprice;
+        return $data;
+    }
+
+
+    // 创建订单号
+    public function createNO($table, $field, $prefix)
+    {
+        $billno = date('YmdHis') . random(6, true);
+
+        while(1){
+            $count = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_' . $table) . ' where ' . $field . '=:billno limit 1', array(':billno' => $billno));
+
+            if($count <= 0){
+                break;
+            }
+
+            $billno = date('YmdHis') . random(6, true);
+        }
+
+        return $prefix . $billno;
+    }
+
+    /**
+     * 获取配置
+     */
+    private function getSysset($key = '', $uniacid = 0)
+    {
+        global $_W;
+        global $_GPC;
+        $set     = $this->getSetData($uniacid);
+        $allset  = iunserializer($set['sets']);
+        $retsets = array();
+
+        if(!empty($key)){
+            if(is_array($key)){
+                foreach($key as $k){
+                    $retsets[$k] = isset($allset[$k]) ? $allset[$k] : array();
+                }
+            }else{
+                $retsets = (isset($allset[$key]) ? $allset[$key] : array());
+            }
+
+            return $retsets;
+        }
+
+        return $allset;
+    }
+
+    public function getSetData($uniacid = 0)
+    {
+        global $_W;
+
+        if(empty($uniacid)){
+            $uniacid = $this->g_uniacid;
+        }
+
+        $set = pdo_fetch('select * from ' . tablename('ewei_shop_sysset') . ' where uniacid=:uniacid limit 1', array(':uniacid' => $uniacid));
+
+        if(empty($set)){
+            $set = array();
+        }
+
+        return $set;
+    }
+
+
+    public function getSec($uniacid = 0)
+    {
+        global $_W;
+
+        if(empty($uniacid)){
+            $uniacid = $this->g_uniacid;
+        }
+
+        $set = pdo_fetch('select sec from ' . tablename('ewei_shop_sysset') . ' where uniacid=:uniacid limit 1', array(':uniacid' => $uniacid));
+
+        if(empty($set)){
+            $set = array();
+        }
+
+        return $set;
+    }
+
+
+    /**
+     * 支付成功
+     * @global type $_W
+     * @param type $params
+     */
+    public function payResult($params)
+    {
+        global $_W;
+        //                var_dump('$params==',$params);exit;
+        $fee         = intval($params['fee']);
+        $data        = array('status' => $params['result'] == 'success' ? 1 : 0);
+        $ordersn_tid = $params['tid'];
+        $ordersn     = rtrim($ordersn_tid, 'TR');
+        $order       = pdo_fetch('select id,ordersn, price,openid,dispatchtype,addressid,carrier,status,isverify,deductcredit2,`virtual`,isvirtual,couponid,isvirtualsend,isparent,paytype,merchid,agentid,createtime,buyagainprice,istrade,tradestatus from ' . tablename('ewei_shop_order') . ' where  ordersn=:ordersn and uniacid=:uniacid limit 1', array(':uniacid' => $this->g_uniacid, ':ordersn' => $ordersn));
+        $orderid     = $order['id'];
+        //        var_dump('$params==', $params, $orderid, $order);exit;
+
+        if($params['from'] == 'return'){
+            $address = false;
+
+            if(empty($order['dispatchtype'])){
+                $address = pdo_fetch('select realname,mobile,address from ' . tablename('ewei_shop_member_address') . ' where id=:id limit 1', array(':id' => $order['addressid']));
+            }
+
+            //            var_dump('$params==', $params, $orderid, $order);exit;
+
+
+            $carrier = false;
+            if(($order['dispatchtype'] == 1) || ($order['isvirtual'] == 1)){
+                $carrier = unserialize($order['carrier']);
+            }
+
+            //            var_dump('$params==',$params,$order);exit;
+
+            // istrade	v2 0 普通 1 门店预约订单
+            if($order['istrade'] == 0){
+                if($order['status'] == 0){
+                    //                    var_dump('$params==',$params,$order,!empty($order['virtual']) && com('virtual'));exit;
+                    if(!empty($order['virtual']) && com('virtual')){
+                        return com('virtual')->pay($order);
+                    }
+
+                    if($order['isvirtualsend']){
+                        return $this->payVirtualSend($order['id']);
+                    }
+
+                    $time        = time();
+                    $change_data = array();
+
+                    $change_data['status'] = 1;
+
+                    $change_data['paytime'] = $time;
+
+                    if($order['isparent'] == 1){
+                        $change_data['merchshow'] = 1;
+                    }
+
+                    pdo_update('ewei_shop_order', $change_data, array('id' => $orderid));
+
+                    if($order['isparent'] == 1){
+                        $this->setChildOrderPayResult($order, $time, 1);
+                    }
+
+                    $this->setStocksAndCredits($orderid, 1);
+                }
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
 
