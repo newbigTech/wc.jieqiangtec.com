@@ -229,13 +229,26 @@ class Goods
             $openid = 'oMaz50jp9G_xRU_JT1jMaxuS5KdY';
         }else{
             $openid = $_GPC['uid'];
+        }*/
+
+        // 判断手机号
+        if(empty($_GPC['mobile'])){
+            echo_json('202', 'no mobile', $data);
+        }
+
+        // 通过用户手机号查找openid
+        $member = $this->get_member_info($_GPC['mobile']);
+        if($member){
+            $openid = $member['openid'];
+        }else{
+            echo_json('203', 'no member', $data);
         }
 
         $order = pdo_fetch('select id,ordersn,openid,status,deductcredit,deductcredit2,deductprice,couponid,isparent,price,dispatchtype,addressid,carrier,paytype,isnewstore,storeid,istrade,createtime from ' . tablename('ewei_shop_order') . ' where id=:id and uniacid=:uniacid and openid=:openid limit 1', array(':id' => $orderid, ':uniacid' => $this->g_uniacid, ':openid' => $openid));
 
-        */
 
-        $order = pdo_fetch('select id,ordersn,openid,status,deductcredit,deductcredit2,deductprice,couponid,isparent,price,dispatchtype,addressid,carrier,paytype,isnewstore,storeid,istrade,createtime from ' . tablename('ewei_shop_order') . ' where id=:id and uniacid=:uniacid limit 1', array(':id' => $orderid, ':uniacid' => $this->g_uniacid));
+
+//        $order = pdo_fetch('select id,ordersn,openid,status,deductcredit,deductcredit2,deductprice,couponid,isparent,price,dispatchtype,addressid,carrier,paytype,isnewstore,storeid,istrade,createtime from ' . tablename('ewei_shop_order') . ' where id=:id and uniacid=:uniacid limit 1', array(':id' => $orderid, ':uniacid' => $this->g_uniacid));
 
         // var_dump('$order==',$order);exit;
 
@@ -289,12 +302,24 @@ class Goods
             $openid = 'oMaz50jp9G_xRU_JT1jMaxuS5KdY';
         }else{
             $openid = $_GPC['uid'];
+        }*/
+
+        // 判断手机号
+        if(empty($_GPC['mobile'])){
+            echo_json('202', 'no mobile', $data);
         }
 
+        // 通过用户手机号查找openid
+        $member = $this->get_member_info($_GPC['mobile']);
+        if($member){
+            $openid = $member['openid'];
+        }else{
+            echo_json('203', 'no member', $data);
+        }
 
-        $order = pdo_fetch('select id,status,openid,couponid,refundstate,refundid,ordersn,price from ' . tablename('ewei_shop_order') . ' where id=:id and uniacid=:uniacid and openid=:openid limit 1', array(':id' => $orderid, ':uniacid' => $this->g_uniacid, ':openid' => $openid));*/
+        $order = pdo_fetch('select id,status,openid,couponid,refundstate,refundid,ordersn,price from ' . tablename('ewei_shop_order') . ' where id=:id and uniacid=:uniacid and openid=:openid limit 1', array(':id' => $orderid, ':uniacid' => $this->g_uniacid, ':openid' => $openid));
 
-        $order = pdo_fetch('select id,status,openid,couponid,refundstate,refundid,ordersn,price from ' . tablename('ewei_shop_order') . ' where id=:id and uniacid=:uniacid limit 1', array(':id' => $orderid, ':uniacid' => $this->g_uniacid));
+//        $order = pdo_fetch('select id,status,openid,couponid,refundstate,refundid,ordersn,price from ' . tablename('ewei_shop_order') . ' where id=:id and uniacid=:uniacid limit 1', array(':id' => $orderid, ':uniacid' => $this->g_uniacid));
 
 
         if(empty($order)){
