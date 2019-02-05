@@ -22,14 +22,17 @@ if(!in_array($_SERVER['REMOTE_ADDR'], array('127.0.0.1', ''))){
     }
 }*/
 
-if(!in_array($a, array('index', 'category', 'detail', 'category', 'orders', 'cancel', 'express', 'confirm', 'buy', 'pay'))){
+/*if(!in_array($a, array('index', 'category', 'detail', 'category', 'orders', 'cancel', 'express', 'confirm', 'buy', 'pay'))){
     echo_json('501', '非法访问_未授权');
-}
+}*/
 
 $good = new  Goods();
-if($a == 'index'){
+// 商品列表接口
+$good->$a();
+
+/*if($a == 'index'){
     // 商品列表接口
-    $good->main();
+    $good->index();
 }elseif($a == 'category'){
     // 商品分类接口
     $good->category();
@@ -54,7 +57,10 @@ if($a == 'index'){
 }elseif($a == 'pay'){
     // 支付订单接口
     $good->pay(349, $memeber);
-}
+}elseif($a == 'bindMember'){
+    // 支付订单接口
+    $good->bindMember($memeber);
+}*/
 
 class Goods
 {
@@ -63,15 +69,31 @@ class Goods
     public $g_uniacid = 6; // 6:adjyc 10:融惠联
 
     // 商品列表接口
-    public function main()
+    public function index()
     {
         global $_GPC;
         $sqlcondition = $groupcondition = '';
         // $condition    = ' WHERE g.`uniacid` = 10';
-        $condition = ' WHERE 1 ';
+        $condition = " WHERE 1 AND g.`uniacid` = {$this->g_uniacid} AND `status` > 0 and `checked`=0 and `total`>0 and `deleted`=0 ";
+
+        // keyword 搜索id 标题 商品编号goodssn keywords	v2 关键词  productsn	商品条码
+        if(!empty($_GPC['keyword'])){
+            $_GPC['keyword'] = trim($_GPC['keyword']);
+            $condition       .= ' AND (g.`id` = :id or g.`title` LIKE :keyword or g.`keywords` LIKE :keyword or g.`goodssn` LIKE :keyword or g.`productsn` LIKE :keyword ';
+
+            $condition          .= ' )';
+            $params[':keyword'] = '%' . $_GPC['keyword'] . '%';
+            $params[':id']      = $_GPC['keyword'];
+        }
+
+        // 商品分类
+        if(!empty($_GPC['cate'])){
+            $_GPC['cate'] = intval($_GPC['cate']);
+            $condition    .= ' AND FIND_IN_SET(' . $_GPC['cate'] . ',cates)<>0 ';
+        }
 
         $sql           = 'SELECT g.id FROM ' . tablename('ewei_shop_goods') . 'g' . $sqlcondition . $condition . $groupcondition;
-        $total_all     = pdo_fetchall($sql);
+        $total_all     = pdo_fetchall($sql, $params);
         $data['total'] = $total = count($total_all);
         unset($total_all);
 
@@ -79,8 +101,16 @@ class Goods
             $pindex = max(1, intval($_GPC['page']));
             $psize  = $_GPC['page'] ?: 20;
 
-            $sql          = 'SELECT g.* FROM ' . tablename('ewei_shop_goods') . 'g' . $sqlcondition . $condition . $groupcondition . " ORDER BY g.`status` DESC, g.`displayorder` DESC,\r\n                g.`id` DESC LIMIT " . (($pindex - 1) * $psize) . ',' . $psize;
-            $data['list'] = pdo_fetchall($sql);
+            //            $sql          = 'SELECT g.* FROM ' . tablename('ewei_shop_goods') . 'g' . $sqlcondition . $condition . $groupcondition . " ORDER BY g.`status` DESC, g.`displayorder` DESC,\r\n                g.`id` DESC LIMIT " . (($pindex - 1) * $psize) . ',' . $psize;
+            $fields       = 'id,pcate,ccate,tcate,type,status,displayorder,title,shorttitle,thumb,unit,description,goodssn,productsn,productprice,marketprice,costprice,total,totalcnf,sales,salesreal,spec,createtime,weight,maxbuy,usermaxbuy,hasoption,dispatch,thumb_url,isnew,ishot,isdiscount,isrecommand,issendfree,istime,timestart,timeend,deleted,updatetime,virtual,ccates,pcates,pcates,ednum,edmoney,edareas,dispatchtype,dispatchid,dispatchprice,cates,minbuy,invoice,repair,seven,minprice,maxprice,province,virtualsend,virtualsendcontent,verifytype,subtitle,checked,minpriceupdated,catesinit3,showtotaladd,thumb_first,keywords,catch_id,catch_url,catch_source,labelname,autoreceive,cannotrefund,presellsendtype';
+            $sql          = 'SELECT ' . $fields . ' FROM ' . tablename('ewei_shop_goods') . 'g' . $sqlcondition . $condition . $groupcondition . " ORDER BY g.`status` DESC, g.`displayorder` DESC,\r\n                g.`id` DESC LIMIT " . (($pindex - 1) * $psize) . ',' . $psize;
+            $data['list'] = pdo_fetchall($sql, $params);
+
+            foreach($data['list'] as $k => $v){
+                $v['thumb'] && $data['list'][$k]['thumb'] = tomedia($v['thumb']);
+                // $v['advimg'] && $data['list'][$k]['advimg'] = tomedia($v['advimg']);
+            }
+
             //        var_dump($sql, $params,$data);exit;
             echo_json('200', 'success', $data);
         }else{
@@ -93,7 +123,13 @@ class Goods
     public function category()
     {
         //        $data['list'] = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_category') . ' WHERE uniacid = 10 ORDER BY parentid ASC, displayorder DESC');
-        $data['list'] = pdo_fetchall('SELECT * FROM ' . tablename('ewei_shop_category') . ' WHERE 1 ORDER BY parentid ASC, displayorder DESC');
+        $data['list'] = pdo_fetchall('SELECT id,name,thumb,parentid,description,displayorder,enabled,level FROM ' . tablename('ewei_shop_category') . ' WHERE 1 AND uniacid=' . $this->g_uniacid . ' ORDER BY parentid ASC, displayorder DESC ');
+        foreach($data['list'] as $k => $v){
+            $v['thumb'] && $data['list'][$k]['thumb'] = tomedia($v['thumb']);
+            // $v['advimg'] && $data['list'][$k]['advimg'] = tomedia($v['advimg']);
+        }
+
+        $data['total'] = count($data['list']);
         echo_json('200', 'success', $data);
     }
 
@@ -113,13 +149,32 @@ class Goods
     public function orders()
     {
         global $_GPC;
-        if($this->g_debug){
+        /*if($this->g_debug){
             $openid = 'oMaz50jp9G_xRU_JT1jMaxuS5KdY';
         }else{
             $openid = $_GPC['uid'];
+        }*/
+
+
+        // 判断手机号
+        if(empty($_GPC['mobile'])){
+            echo_json('202', 'no mobile', $data);
         }
 
+        // 通过用户手机号查找openid
+        $member = $this->get_member_info($_GPC['mobile']);
+        if($member){
+            $openid = $member['openid'];
+        }else{
+            echo_json('203', 'no member', $data);
+        }
         $condition = " WHERE 1  and openid= '$openid' ";
+
+        // status	状态 -1取消状态（交易关闭），0普通状态（没付款: 待付款 ; 付了款: 待发货），1 买家已付款（待发货），2 卖家已发货（待收货），3 成功（可评价: 等待评价 ; 不可评价 : 交易完成）4 退款申请
+        if(isset($_GPC['status'])){
+            $condition .= " and status= '{$_GPC['status']}' ";
+        }
+
         // select count(*) from `ims_ewei_shop_order` where 1  and openid='ooyv91cPbLRIz1qaX7Fim_cRfjZk' and ismr=0 and deleted=0 and uniacid='6' and istrade=0  and merchshow=0  and userdeleted=0  ;
 
         $sql           = 'SELECT id FROM ' . tablename('ewei_shop_order') . $condition;
@@ -133,6 +188,9 @@ class Goods
             $psize  = $_GPC['psize'] ?: 20;
 
             $data['list'] = pdo_fetchall('select id,addressid,ordersn,price,dispatchprice,status,iscomment,isverify,' . "\n" . 'verified,verifycode,verifytype,iscomment,refundid,expresscom,express,expresssn,finishtime,`virtual`,' . "\n" . 'paytype,expresssn,refundstate,dispatchtype,verifyinfo,merchid,isparent,userdeleted' . "\n" . ' from ' . tablename('ewei_shop_order') . $condition . ' order by createtime desc LIMIT ' . (($pindex - 1) * $psize) . ',' . $psize);
+            foreach($data['list'] as $k => $v){
+                $data['list'][$k]['goodsid'] = pdo_fetchcolumn("SELECT goodsid FROM ".tablename('ewei_shop_order_goods')." WHERE `orderid` = '{$v['id']}' ORDER BY `id` DESC LIMIT 1");
+            }
 
             //        var_dump($sql, $params,$data);exit;
             echo_json('200', 'success', $data);
@@ -167,13 +225,17 @@ class Goods
             echo_json('501', '参数错误_没有订单号', $data);
         }
 
-        if($this->g_debug){
+        /*if($this->g_debug){
             $openid = 'oMaz50jp9G_xRU_JT1jMaxuS5KdY';
         }else{
             $openid = $_GPC['uid'];
         }
 
         $order = pdo_fetch('select id,ordersn,openid,status,deductcredit,deductcredit2,deductprice,couponid,isparent,price,dispatchtype,addressid,carrier,paytype,isnewstore,storeid,istrade,createtime from ' . tablename('ewei_shop_order') . ' where id=:id and uniacid=:uniacid and openid=:openid limit 1', array(':id' => $orderid, ':uniacid' => $this->g_uniacid, ':openid' => $openid));
+
+        */
+
+        $order = pdo_fetch('select id,ordersn,openid,status,deductcredit,deductcredit2,deductprice,couponid,isparent,price,dispatchtype,addressid,carrier,paytype,isnewstore,storeid,istrade,createtime from ' . tablename('ewei_shop_order') . ' where id=:id and uniacid=:uniacid limit 1', array(':id' => $orderid, ':uniacid' => $this->g_uniacid));
 
         // var_dump('$order==',$order);exit;
 
@@ -223,14 +285,17 @@ class Goods
             echo_json('501', '参数错误_没有订单号', $data);
         }
 
-        if($this->g_debug){
+        /*if($this->g_debug){
             $openid = 'oMaz50jp9G_xRU_JT1jMaxuS5KdY';
         }else{
             $openid = $_GPC['uid'];
         }
 
 
-        $order = pdo_fetch('select id,status,openid,couponid,refundstate,refundid,ordersn,price from ' . tablename('ewei_shop_order') . ' where id=:id and uniacid=:uniacid and openid=:openid limit 1', array(':id' => $orderid, ':uniacid' => $this->g_uniacid, ':openid' => $openid));
+        $order = pdo_fetch('select id,status,openid,couponid,refundstate,refundid,ordersn,price from ' . tablename('ewei_shop_order') . ' where id=:id and uniacid=:uniacid and openid=:openid limit 1', array(':id' => $orderid, ':uniacid' => $this->g_uniacid, ':openid' => $openid));*/
+
+        $order = pdo_fetch('select id,status,openid,couponid,refundstate,refundid,ordersn,price from ' . tablename('ewei_shop_order') . ' where id=:id and uniacid=:uniacid limit 1', array(':id' => $orderid, ':uniacid' => $this->g_uniacid));
+
 
         if(empty($order)){
             echo_json('501', '订单未找到', $data);
@@ -258,16 +323,26 @@ class Goods
     public function buy()
     {
         global $_GPC;
-        if($this->g_debug){
+
+
+        // 获取用户信息
+        //        $member = pdo_fetch('select * from ' . tablename('ewei_shop_member') . ' where  openid=:openid and uniacid=:uniacid limit 1', array(':uniacid' => $this->g_uniacid, ':openid' => $openid));
+
+        // 绑定用户信息 mobile
+        $member_param = array();
+        $res_member   = $this->bindMember($member_param);
+        //        var_dump('$res_member==',$res_member);exit;
+        $member = $res_member['member'];
+
+        /*if($this->g_debug){
             $openid = 'oMaz50jp9G_xRU_JT1jMaxuS5KdY';
         }else{
-            $openid = $_GPC['uid'];
-        }
+            $openid = $member['openid'];
+        }*/
+        $openid = $member['openid'];
 
         $this->g_uniacid = $this->g_uniacid;
 
-        // 获取用户信息
-        $member = pdo_fetch('select * from ' . tablename('ewei_shop_member') . ' where  openid=:openid and uniacid=:uniacid limit 1', array(':uniacid' => $this->g_uniacid, ':openid' => $openid));
 
         //        var_dump('$member==',$member,$_W['shopset']['wap']['open']);exit;
 
@@ -275,9 +350,6 @@ class Goods
             echo_json(0, array('message' => '请先绑定手机', 'url' => mobileUrl('member/bind', NULL, true)));
         }
 
-        // 绑定用户信息
-        $member_param = array();
-        $this->bindMember($member_param);
 
         //        var_dump('$member22==', $member, $_W['shopset']['wap']['open']);
         //        exit;
@@ -302,7 +374,7 @@ class Goods
             echo_json('201', '未找到任何商品', $data);
         }
 
-        //        var_dump('$goods==',$goods);exit;
+//                var_dump('$goods==',$goods);exit;
 
         $liveid = intval($_GPC['liveid']);
 
@@ -413,7 +485,7 @@ class Goods
             // var_dump('$data==',$data,$_REQUEST);exit;
 
             if(!empty($data['hasoption'])){
-                $opdata = m('goods')->getOption($data['goodsid'], $optionid);
+                $opdata = $this->getOption($data['goodsid'], $optionid);
                 if(empty($opdata) || empty($optionid)){
                     echo_json(0, '商品' . $data['title'] . '的规格不存在,请到购物车删除该商品重新选择规格!');
                 }
@@ -444,13 +516,13 @@ class Goods
             if($data['type'] != 4){
                 if(0 < $data['minbuy']){
                     if($goodstotal < $data['minbuy']){
-                        echo_json(0, $data['title'] . '<br/> ' . $data['minbuy'] . $unit . '起售!');
+                        echo_json(0, $data['title'] . '_ ' . $data['minbuy'] . $unit . '起售!');
                     }
                 }
 
                 if(0 < $data['maxbuy']){
                     if($data['maxbuy'] < $goodstotal){
-                        echo_json(0, $data['title'] . '<br/> 一次限购 ' . $data['maxbuy'] . $unit . '!');
+                        echo_json(0, $data['title'] . '_ 一次限购 ' . $data['maxbuy'] . $unit . '!');
                     }
                 }
             }
@@ -459,23 +531,23 @@ class Goods
                 $order_goodscount = pdo_fetchcolumn('select ifnull(sum(og.total),0)  from ' . tablename('ewei_shop_order_goods') . ' og ' . ' left join ' . tablename('ewei_shop_order') . ' o on og.orderid=o.id ' . ' where og.goodsid=:goodsid and  o.status>=0 and o.openid=:openid  and og.uniacid=:uniacid ', array(':goodsid' => $data['goodsid'], ':uniacid' => $this->g_uniacid, ':openid' => $openid));
 
                 if($data['usermaxbuy'] <= $order_goodscount){
-                    echo_json(0, $data['title'] . '<br/> 最多限购 ' . $data['usermaxbuy'] . $unit . '!');
+                    echo_json(0, $data['title'] . '_ 最多限购 ' . $data['usermaxbuy'] . $unit . '!');
                 }
             }
 
             if(!empty($data['is_task_goods'])){
                 if($data['task_goods']['total'] < $goodstotal){
-                    echo_json(0, $data['title'] . '<br/> 任务活动优惠限购 ' . $data['task_goods']['total'] . $unit . '!');
+                    echo_json(0, $data['title'] . '_ 任务活动优惠限购 ' . $data['task_goods']['total'] . $unit . '!');
                 }
             }
 
             if($data['istime'] == 1){
                 if(time() < $data['timestart']){
-                    echo_json(0, $data['title'] . '<br/> 限购时间未到!');
+                    echo_json(0, $data['title'] . '_ 限购时间未到!');
                 }
 
                 if($data['timeend'] < time()){
-                    echo_json(0, $data['title'] . '<br/> 限购时间已过!');
+                    echo_json(0, $data['title'] . '_ 限购时间已过!');
                 }
             }
             $levelid = intval($member['level']);
@@ -486,7 +558,7 @@ class Goods
                 $buylevels = explode(',', $data['buylevels']);
 
                 if(!in_array($levelid, $buylevels)){
-                    echo_json(0, '您的会员等级无法购买<br/>' . $data['title'] . '!');
+                    echo_json(0, '您的会员等级无法购买_' . $data['title'] . '!');
                 }
             }
 
@@ -494,7 +566,7 @@ class Goods
                 $buygroups = explode(',', $data['buygroups']);
 
                 if(!in_array($groupid, $buygroups)){
-                    echo_json(0, '您所在会员组无法购买<br/>' . $data['title'] . '!');
+                    echo_json(0, '您所在会员组无法购买_' . $data['title'] . '!');
                 }
             }
 
@@ -519,7 +591,7 @@ class Goods
                 }
 
                 if($data['marketprice'] == 0){
-                    echo_json(0, $data['title'] . '<br/> ' . $data['minbuy'] . $unit . '起批!');
+                    echo_json(0, $data['title'] . '_ ' . $data['minbuy'] . $unit . '起批!');
                 }
             }
 
@@ -531,7 +603,7 @@ class Goods
                 if(!empty($option)){
                     if(!empty($_SESSION['exchange']) && p('exchange')){
                         if($option['exchange_stock'] <= 0){
-                            echo_json(-1, $data['title'] . '<br/>' . $option['title'] . ' 库存不足!');
+                            echo_json(-1, $data['title'] . '_' . $option['title'] . ' 库存不足!');
                         }else{
                             pdo_query('UPDATE ' . tablename('ewei_shop_goods_option') . ' SET exchange_stock = exchange_stock - 1 WHERE id = :id AND uniacid = :uniacid', array(':id' => $optionid, ':uniacid' => $this->g_uniacid));
                         }
@@ -546,12 +618,12 @@ class Goods
 
                             if($stock_num != -1){
                                 if(empty($stock_num)){
-                                    echo_json(-1, $data['title'] . '<br/>' . $option['title'] . ' 库存不足!stock=' . $stock_num);
+                                    echo_json(-1, $data['title'] . '_' . $option['title'] . ' 库存不足!stock=' . $stock_num);
                                 }
 
                                 if(!empty($data['unite_total'])){
                                     if(($stock_num - intval($total_array[$goodsid]['total'])) < 0){
-                                        echo_json(-1, $data['title'] . '<br/>总库存不足!当前总库存为' . $stock_num);
+                                        echo_json(-1, $data['title'] . '_总库存不足!当前总库存为' . $stock_num);
                                     }
                                 }
                             }
@@ -597,7 +669,7 @@ class Goods
             }else{
                 if($data['stock'] != -1){
                     if(empty($data['stock'])){
-                        echo_json(0, $data['title'] . '<br/>库存不足!');
+                        echo_json(0, $data['title'] . '_库存不足!');
                     }
                 }
             }
@@ -707,29 +779,15 @@ class Goods
         $wxcardid = $_GPC['wxcardid'];
         $wxcode   = $_GPC['wxcode'];
 
-        if($contype == 1){
-            $ref = com_run('wxcard::wxCardGetCodeInfo', $wxcode, $wxcardid);
-
-            if(!is_wxerror($ref)){
-                $ref = com_run('wxcard::wxCardConsume', $wxcode, $wxcardid);
-
-                if(is_wxerror($ref)){
-                    echo_json(0, '您的卡券未到使用日期或已经超出使用次数限制!');
-                }
-            }else{
-                echo_json(0, '您的卡券未到使用日期或已经超出使用次数限制!');
-            }
-        }
-
         $deductenough = 0;
         $couponprice  = 0;
 
 
         // 快递地址
-        $addressid = intval($_GPC['addressid']);
+        $addressid = intval($res_member['addres_id']);
         $address   = false;
 
-        //        var_dump('$data223==',$data, $addressid);exit;
+//                var_dump('$data223==',$data, $addressid);exit;
 
         if(!empty($addressid) && ($dispatchtype == 0) && !$isonlyverifygoods){
             $address = pdo_fetch('select * from ' . tablename('ewei_shop_member_address') . ' where id=:id and openid=:openid and uniacid=:uniacid   limit 1', array(':uniacid' => $this->g_uniacid, ':openid' => $openid, ':id' => $addressid));
@@ -756,7 +814,7 @@ class Goods
             //            var_dump('$data2235==',$data, $addressid,!$isvirtual && !$isverify && !$isonlyverifygoods && ($dispatchtype == 0) && !$isonlyverifygoods);exit;
 
             // TODO debug商品价格
-            //            $dispatch_array        = $this->getOrderDispatchPrice($allgoods, $member, $address, $saleset, $merch_array, 2);
+            $dispatch_array        = $this->getOrderDispatchPrice($allgoods, $member, $address, $saleset, $merch_array, 2);
 
             $dispatch_price        = $dispatch_array['dispatch_price'] - $dispatch_array['seckill_dispatch_price'];
             $seckill_dispatchprice = $dispatch_array['seckill_dispatch_price'];
@@ -1020,18 +1078,6 @@ class Goods
                 }
 
                 $order_goods['openid'] = $openid;
-
-                if($diyform_plugin){
-                    if($goods['diyformtype'] == 2){
-                        $order_goods['diyformid'] = 0;
-                    }else{
-                        $order_goods['diyformid'] = $goods['diyformid'];
-                    }
-
-                    $order_goods['diyformdata']   = $goods['diyformdata'];
-                    $order_goods['diyformfields'] = $goods['diyformfields'];
-                }
-
                 pdo_insert('ewei_shop_order_goods', $order_goods);
 
             }
@@ -1052,6 +1098,7 @@ class Goods
             }
         }
 
+//        var_dump($orderid, $member);exit;
         $this->pay($orderid, $member);
 
         echo_json(200, 'buy success', array('orderid' => $orderid));
@@ -1207,47 +1254,48 @@ class Goods
         }
 
 
-        //        var_dump('$log==',(empty($order['isnewstore']) || empty($order['storeid'])) && empty($order['istrade']),'$order==',$order);exit;
+//                var_dump('$log==',(empty($order['isnewstore']) || empty($order['storeid'])) && empty($order['istrade']),'$order==',$order);exit;
 
 
         if((empty($order['isnewstore']) || empty($order['storeid'])) && empty($order['istrade'])){
             $order_goods = pdo_fetchall('select og.id,g.title, og.goodsid,og.optionid,g.total as stock,og.total as buycount,g.status,g.deleted,g.maxbuy,g.usermaxbuy,g.istime,g.timestart,g.timeend,g.buylevels,g.buygroups,g.totalcnf,og.seckill from  ' . tablename('ewei_shop_order_goods') . ' og ' . ' left join ' . tablename('ewei_shop_goods') . ' g on og.goodsid = g.id ' . ' where og.orderid=:orderid and og.uniacid=:uniacid ', array(':uniacid' => $this->g_uniacid, ':orderid' => $orderid));
 
-            //            var_dump('$order_goods==',$order_goods);exit;
+//                        var_dump('$order_goods==',$order_goods);exit;
 
             foreach($order_goods as $data){
                 if(empty($data['status']) || !empty($data['deleted'])){
-                    echo_json(0, $data['title'] . '<br/> 已下架!');
+                    echo_json(0, $data['title'] . '_ 已下架!');
                 }
+
 
                 $unit = (empty($data['unit']) ? '件' : $data['unit']);
 
 
                 if(0 < $data['minbuy']){
-                    echo_json(0, $data['title'] . '<br/> ' . $data['min'] . $unit . '起售!', mobileUrl('order'));
+                    echo_json(0, $data['title'] . '_ ' . $data['min'] . $unit . '起售!', mobileUrl('order'));
                 }
 
                 if(0 < $data['maxbuy']){
-                    echo_json(0, $data['title'] . '<br/> 一次限购 ' . $data['maxbuy'] . $unit . '!');
+                    echo_json(0, $data['title'] . '_ 一次限购 ' . $data['maxbuy'] . $unit . '!');
                 }
 
-                //                var_dump('$order_goods==',$order_goods,$data);exit;
+//                                var_dump('$order_goods==',$order_goods,$data);exit;
 
                 if(0 < $data['usermaxbuy']){
                     $order_goodscount = pdo_fetchcolumn('select ifnull(sum(og.total),0)  from ' . tablename('ewei_shop_order_goods') . ' og ' . ' left join ' . tablename('ewei_shop_order') . ' o on og.orderid=o.id ' . ' where og.goodsid=:goodsid and  o.status>=1 and o.openid=:openid  and og.uniacid=:uniacid ', array(':goodsid' => $data['goodsid'], ':uniacid' => $this->g_uniacid, ':openid' => $openid));
 
                     if($data['usermaxbuy'] <= $order_goodscount){
-                        echo_json(0, $data['title'] . '<br/> 最多限购 ' . $data['usermaxbuy'] . $unit);
+                        echo_json(0, $data['title'] . '_ 最多限购 ' . $data['usermaxbuy'] . $unit);
                     }
                 }
 
                 if($data['istime'] == 1){
                     if(time() < $data['timestart']){
-                        echo_json(0, $data['title'] . '<br/> 限购时间未到!');
+                        echo_json(0, $data['title'] . '_ 限购时间未到!');
                     }
 
                     if($data['timeend'] < time()){
-                        echo_json(0, $data['title'] . '<br/> 限购时间已过!');
+                        echo_json(0, $data['title'] . '_ 限购时间已过!');
                     }
                 }
 
@@ -1255,7 +1303,7 @@ class Goods
                     $buylevels = explode(',', $data['buylevels']);
 
                     if(!in_array($member['level'], $buylevels)){
-                        echo_json(0, '您的会员等级无法购买<br/>' . $data['title'] . '!');
+                        echo_json(0, '您的会员等级无法购买_' . $data['title'] . '!');
                     }
                 }
 
@@ -1263,7 +1311,7 @@ class Goods
                     $buygroups = explode(',', $data['buygroups']);
 
                     if(!in_array($member['groupid'], $buygroups)){
-                        echo_json(0, '您所在会员组无法购买<br/>' . $data['title'] . '!');
+                        echo_json(0, '您所在会员组无法购买_' . $data['title'] . '!');
                     }
                 }
 
@@ -1275,14 +1323,14 @@ class Goods
                         if(!empty($option)){
                             if($option['stock'] != -1){
                                 if(empty($option['stock'])){
-                                    echo_json(0, $data['title'] . '<br/>' . $option['title'] . ' 库存不足!');
+                                    echo_json(0, $data['title'] . '_' . $option['title'] . ' 库存不足!');
                                 }
                             }
                         }
                     }else{
                         if($data['stock'] != -1){
                             if(empty($data['stock'])){
-                                echo_json(0, $data['title'] . '<br/>库存不足!');
+                                echo_json(0, $data['title'] . '_库存不足!');
                             }
                         }
                     }
@@ -1290,13 +1338,13 @@ class Goods
             }
         }
 
+//        var_dump('$order_goods==',$order_goods);exit;
 
         $ps          = array();
         $ps['tid']   = $log['tid'];
         $ps['user']  = $openid;
         $ps['fee']   = $log['fee'];
         $ps['title'] = $log['title'];
-
         if($type == 'credit'){
             if(empty($set['pay']['credit']) && (0 < $ps['fee'])){
                 echo_json(0, '未开启余额支付!');
@@ -1338,6 +1386,7 @@ class Goods
             @session_start();
             $_SESSION[EWEI_SHOPV2_PREFIX . '_order_pay_complete'] = 1;
 
+//            var_dump('$ret==',$orderid, $ret);exit;
 
             $pay_result = $this->payResult($ret);
 
@@ -1575,12 +1624,96 @@ class Goods
     }
 
     // 绑定用户信息 手机号 地址信息
-    private function bindMember($member_param)
+    public function bindMember($member_param = array())
     {
+        global $_GPC;
+        // TODO debug
+        if($member_param){
+            $_GPC = $member_param;
+        }
+
+        //        var_dump('$_GPC==',$_GPC);exit;
+
         // 创建用户
+        $mobile     = trim($_GPC['mobile']);
+        $verifycode = trim($_GPC['verifycode']);
+        $pwd        = trim($_GPC['pwd']);
+
+        if(empty($mobile)){
+            echo_json(0, '请输入正确的手机号');
+        }
+
+        /*if (empty($verifycode)) {
+            echo_json(0, '请输入验证码');
+        }
+
+        if (empty($pwd)) {
+            echo_json(0, '请输入密码');
+        }*/
+
+        $key = '__ewei_shopv2_member_verifycodesession_' . $this->g_uniacid . '_' . $mobile;
+
+        $member = pdo_fetch('select id,openid,mobile,pwd,salt from ' . tablename('ewei_shop_member') . ' where mobile=:mobile and mobileverify=1 and uniacid=:uniacid limit 1', array(':mobile' => $mobile, ':uniacid' => $this->g_uniacid));
+
+        //        var_dump('$member==',$member);exit;
+
+        if(empty($member)){
+            $salt = (empty($member) ? '' : $member['salt']);
+
+            if(empty($salt)){
+                $salt = $this->getSalt();
+            }
+
+            $openid   = (empty($member) ? '' : $member['openid']);
+            $nickname = (empty($member) ? '' : $member['nickname']);
+
+            if(empty($openid)){
+                $openid   = 'wap_user_' . $this->g_uniacid . '_' . $mobile;
+                $nickname = substr($mobile, 0, 3) . 'xxxx' . substr($mobile, 7, 4);
+            }
+
+            $data = array('uniacid' => $this->g_uniacid, 'mobile' => $mobile, 'nickname' => $nickname, 'openid' => $openid, 'pwd' => md5($pwd . $salt), 'salt' => $salt, 'createtime' => time(), 'mobileverify' => 1, 'comefrom' => 'mobile');
+
+            // 真实姓名
+            $data['realname'] = $_GPC['realname'] ?: 'un_' . $mobile;
+
+            if(empty($member)){
+                pdo_insert('ewei_shop_member', $data);
+                $member['id'] = pdo_insertid();
+            }else{
+                pdo_update('ewei_shop_member', $data, array('id' => $member['id']));
+            }
+
+            unset($_SESSION[$key]);
+            //        var_dump('$member[\'id\']==',$member['id']);exit;
+            //        return $member['id'];
+        }
 
 
         // 绑定地址
+        //        $id = intval($_GPC['id']);
+
+        $member = pdo_fetch('select * from ' . tablename('ewei_shop_member') . ' where mobile=:mobile and mobileverify=1 and uniacid=:uniacid limit 1', array(':mobile' => $mobile, ':uniacid' => $this->g_uniacid));
+
+        $data_address           = $_GPC['addressdata'];
+        $data_address['mobile'] = trim($mobile);
+
+        $data_address['province']        = $_GPC['province'];
+        $data_address['city']            = $_GPC['city'];
+        $data_address['area']            = $_GPC['area'];
+        $data_address['street']          = $_GPC['street'];
+        $data_address['address']         = $_GPC['address'];
+        $data_address['datavalue']       = trim($data_address['datavalue']);
+        $data_address['streetdatavalue'] = trim($data_address['streetdatavalue']);
+        $isdefault                       = intval($data_address['isdefault']);
+        unset($data_address['isdefault']);
+        unset($data_address['areas']);
+        $data_address['openid']  = $member['openid'];
+        $data_address['uniacid'] = $this->g_uniacid;
+
+        pdo_insert('ewei_shop_member_address', $data_address);
+        $addres_id = pdo_insertid();
+        return array('member' => $member, 'addres_id' => $addres_id);
 
     }
 
@@ -1863,7 +1996,7 @@ class Goods
     public function getOrderDispatchPrice($goods, $member, $address, $saleset = false, $merch_array, $t, $loop = 0)
     {
         global $_W;
-        $area_set              = m('util')->get_area_config_set();
+//        $area_set              = m('util')->get_area_config_set();
         $new_area              = intval($area_set['new_area']);
         $realprice             = 0;
         $dispatch_price        = 0;
@@ -1901,11 +2034,6 @@ class Goods
         }
 
         foreach($goods as $g){
-            $seckillinfo = plugin_run('seckill::getSeckill', $g['goodsid'], $g['optionid'], true, $_W['openid']);
-            if($seckillinfo && ($seckillinfo['status'] == 0)){
-                $seckill_payprice += $g['ggprice'];
-            }
-
             $isnodispatch = 0;
             $sendfree     = false;
             $merchid      = $g['merchid'];
@@ -1917,53 +2045,47 @@ class Goods
             if(!empty($g['issendfree'])){
                 $sendfree = true;
             }else{
-                if($seckillinfo && ($seckillinfo['status'] == 0)){
-                }else{
-                    if(($g['ednum'] <= $total_array[$g['goodsid']]) && (0 < $g['ednum'])){
-                        if(empty($new_area)){
-                            $gareas = explode(';', $g['edareas']);
-                        }else{
-                            $gareas = explode(';', $g['edareas_code']);
-                        }
+                if(($g['ednum'] <= $total_array[$g['goodsid']]) && (0 < $g['ednum'])){
+                    if(empty($new_area)){
+                        $gareas = explode(';', $g['edareas']);
+                    }else{
+                        $gareas = explode(';', $g['edareas_code']);
+                    }
 
-                        if(empty($gareas)){
-                            $sendfree = true;
-                        }else if(!empty($address)){
-                            if(!in_array($user_city_code, $gareas)){
-                                $sendfree = true;
-                            }
-                        }else if(!empty($member['city'])){
-                            if(!in_array($member['city'], $gareas)){
-                                $sendfree = true;
-                            }
-                        }else{
+                    if(empty($gareas)){
+                        $sendfree = true;
+                    }else if(!empty($address)){
+                        if(!in_array($user_city_code, $gareas)){
                             $sendfree = true;
                         }
+                    }else if(!empty($member['city'])){
+                        if(!in_array($member['city'], $gareas)){
+                            $sendfree = true;
+                        }
+                    }else{
+                        $sendfree = true;
                     }
                 }
 
-                if($seckillinfo && ($seckillinfo['status'] == 0)){
-                }else{
-                    if((floatval($g['edmoney']) <= $totalprice_array[$g['goodsid']]) && (0 < floatval($g['edmoney']))){
-                        if(empty($new_area)){
-                            $gareas = explode(';', $g['edareas']);
-                        }else{
-                            $gareas = explode(';', $g['edareas_code']);
-                        }
+                if((floatval($g['edmoney']) <= $totalprice_array[$g['goodsid']]) && (0 < floatval($g['edmoney']))){
+                    if(empty($new_area)){
+                        $gareas = explode(';', $g['edareas']);
+                    }else{
+                        $gareas = explode(';', $g['edareas_code']);
+                    }
 
-                        if(empty($gareas)){
-                            $sendfree = true;
-                        }else if(!empty($address)){
-                            if(!in_array($user_city_code, $gareas)){
-                                $sendfree = true;
-                            }
-                        }else if(!empty($member['city'])){
-                            if(!in_array($member['city'], $gareas)){
-                                $sendfree = true;
-                            }
-                        }else{
+                    if(empty($gareas)){
+                        $sendfree = true;
+                    }else if(!empty($address)){
+                        if(!in_array($user_city_code, $gareas)){
                             $sendfree = true;
                         }
+                    }else if(!empty($member['city'])){
+                        if(!in_array($member['city'], $gareas)){
+                            $sendfree = true;
+                        }
+                    }else{
+                        $sendfree = true;
                     }
                 }
             }
@@ -1971,9 +2093,9 @@ class Goods
             if($g['dispatchtype'] == 1){
                 if(!empty($user_city)){
                     if(empty($new_area)){
-                        $citys = m('dispatch')->getAllNoDispatchAreas();
+                        $citys = $this->getAllNoDispatchAreas();
                     }else{
-                        $citys = m('dispatch')->getAllNoDispatchAreas('', 1);
+                        $citys = $this->getAllNoDispatchAreas('', 1);
                     }
 
                     if(!empty($citys)){
@@ -1998,22 +2120,18 @@ class Goods
 
                 if((0 < $g['dispatchprice']) && !$sendfree && ($isnodispatch == 0)){
                     $dispatch_merch[$merchid] += $g['dispatchprice'];
-                    if($seckillinfo && ($seckillinfo['status'] == 0)){
-                        $seckill_dispatchprice += $g['dispatchprice'];
-                    }else{
-                        $dispatch_price += $g['dispatchprice'];
-                    }
+                    $dispatch_price += $g['dispatchprice'];
                 }
             }else{
                 if($g['dispatchtype'] == 0){
                     if(empty($g['dispatchid'])){
-                        $dispatch_data = m('dispatch')->getDefaultDispatch($merchid);
+                        $dispatch_data = $this->getDefaultDispatch($merchid);
                     }else{
-                        $dispatch_data = m('dispatch')->getOneDispatch($g['dispatchid']);
+                        $dispatch_data = $this->getOneDispatch($g['dispatchid']);
                     }
 
                     if(empty($dispatch_data)){
-                        $dispatch_data = m('dispatch')->getNewDispatch($merchid);
+                        $dispatch_data = $this->getNewDispatch($merchid);
                     }
 
                     if(!empty($dispatch_data)){
@@ -2024,9 +2142,9 @@ class Goods
                         if(!empty($user_city)){
                             if(empty($isdispatcharea)){
                                 if(empty($new_area)){
-                                    $citys = m('dispatch')->getAllNoDispatchAreas($dispatch_data['nodispatchareas']);
+                                    $citys = $this->getAllNoDispatchAreas($dispatch_data['nodispatchareas']);
                                 }else{
-                                    $citys = m('dispatch')->getAllNoDispatchAreas($dispatch_data['nodispatchareas_code'], 1);
+                                    $citys = $this->getAllNoDispatchAreas($dispatch_data['nodispatchareas_code'], 1);
                                 }
 
                                 if(!empty($citys)){
@@ -2036,9 +2154,9 @@ class Goods
                                 }
                             }else{
                                 if(empty($new_area)){
-                                    $citys = m('dispatch')->getAllNoDispatchAreas();
+                                    $citys = $this->getAllNoDispatchAreas();
                                 }else{
-                                    $citys = m('dispatch')->getAllNoDispatchAreas('', 1);
+                                    $citys = $this->getAllNoDispatchAreas('', 1);
                                 }
 
                                 if(!empty($citys)){
@@ -2048,7 +2166,7 @@ class Goods
                                 }
 
                                 if(empty($isnoarea)){
-                                    $isnoarea = m('dispatch')->checkOnlyDispatchAreas($user_city_code, $dispatch_data);
+                                    $isnoarea = $this->checkOnlyDispatchAreas($user_city_code, $dispatch_data);
                                 }
                             }
 
@@ -2108,21 +2226,17 @@ class Goods
                 $areas         = unserialize($dispatch_data['areas']);
 
                 if(!empty($address)){
-                    $dprice = m('dispatch')->getCityDispatchPrice($areas, $address, $param, $dispatch_data);
+                    $dprice = $this->getCityDispatchPrice($areas, $address, $param, $dispatch_data);
                 }else if(!empty($member['city'])){
-                    $dprice = m('dispatch')->getCityDispatchPrice($areas, $member, $param, $dispatch_data);
+                    $dprice = $this->getCityDispatchPrice($areas, $member, $param, $dispatch_data);
                 }else{
-                    $dprice = m('dispatch')->getDispatchPrice($param, $dispatch_data);
+                    $dprice = $this->getDispatchPrice($param, $dispatch_data);
                 }
 
                 $merchid                  = $dispatch_data['merchid'];
                 $dispatch_merch[$merchid] += $dprice;
 
-                if(0 < $v['seckillnums']){
-                    $seckill_dispatchprice += $dprice;
-                }else{
-                    $dispatch_price += $dprice;
-                }
+                $dispatch_price += $dprice;
 
                 $dispatch_info[$dispatch_data['id']]['price']     += $dprice;
                 $dispatch_info[$dispatch_data['id']]['freeprice'] = intval($dispatch_data['freeprice']);
@@ -2426,6 +2540,111 @@ class Goods
 
         return false;
     }
+
+    public function getSalt()
+    {
+        $salt = random(16);
+
+        while(1){
+            $count = pdo_fetchcolumn('select count(*) from ' . tablename('ewei_shop_member') . ' where salt=:salt limit 1', array(':salt' => $salt));
+
+            if($count <= 0){
+                break;
+            }
+
+            $salt = random(16);
+        }
+
+        return $salt;
+    }
+
+
+    // 获取用户信息
+    public function get_member_info($mobile)
+    {
+        $member_info = pdo_fetch('select id,openid,mobile,pwd,salt from ' . tablename('ewei_shop_member') . ' where mobile=:mobile and mobileverify=1 and uniacid=:uniacid limit 1', array(':mobile' => $mobile, ':uniacid' => $this->g_uniacid));
+        return $member_info;
+    }
+
+
+    // 获取地区
+    public function getAllNoDispatchAreas($areas = array(), $type = 0)
+    {
+        global $_W;
+        $tradeset = $this->getSysset('trade');
+
+        if (empty($type)) {
+            $dispatchareas = iunserializer($tradeset['nodispatchareas']);
+        }
+        else {
+            $dispatchareas = iunserializer($tradeset['nodispatchareas_code']);
+        }
+
+        $set_citys = array();
+        $dispatch_citys = array();
+
+        if (!empty($dispatchareas)) {
+            $set_citys = explode(';', trim($dispatchareas, ';'));
+        }
+
+        if (!empty($areas)) {
+            $areas = iunserializer($areas);
+
+            if (!empty($areas)) {
+                $dispatch_citys = explode(';', trim($areas, ';'));
+            }
+        }
+
+        $citys = array();
+
+        if (!empty($set_citys)) {
+            $citys = $set_citys;
+        }
+
+        if (!empty($dispatch_citys)) {
+            $citys = array_merge($citys, $dispatch_citys);
+            $citys = array_unique($citys);
+        }
+
+//        var_dump('$citys==',$citys);exit;
+        return $citys;
+    }
+
+
+    /**
+     * 获取默认快递信息
+     */
+    public function getDefaultDispatch($merchid = 0)
+    {
+        $sql = 'select * from ' . tablename('ewei_shop_dispatch') . ' where isdefault=1 and uniacid=:uniacid and merchid=:merchid and enabled=1 Limit 1';
+        $params = array(':uniacid' => $this->g_uniacid, ':merchid' => $merchid);
+        $data = pdo_fetch($sql, $params);
+        return $data;
+    }
+    
+
+    /**
+     * 获取最新的一条快递信息
+     */
+    public function getNewDispatch($merchid = 0)
+    {
+        $sql = 'select * from ' . tablename('ewei_shop_dispatch') . ' where uniacid=:uniacid and merchid=:merchid and enabled=1 order by id desc Limit 1';
+        $params = array(':uniacid' => $this->g_uniacid, ':merchid' => $merchid);
+        $data = pdo_fetch($sql, $params);
+        return $data;
+    }
+
+    /**
+     * 获取商品规格
+     * @param type $goodsid
+     * @param type $optionid
+     * @return type
+     */
+    public function getOption($goodsid = 0, $optionid = 0)
+    {
+        return pdo_fetch('select * from ' . tablename('ewei_shop_goods_option') . ' where id=:id and goodsid=:goodsid and uniacid=:uniacid Limit 1', array(':id' => $optionid, ':uniacid' => $this->g_uniacid, ':goodsid' => $goodsid));
+    }
+    
 
 
 }
