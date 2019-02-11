@@ -12,15 +12,17 @@ if(!in_array($_SERVER['REMOTE_ADDR'], array('127.0.0.1', ''))){
     echo_json('501', '非法访问_IP错误');
 }
 
+/*$_GPC['time'] = time();
+$sign = md5(md5($key) . substr($_GPC['time'],0, 6));*/
+//var_dump('$sign==',$sign,$_GPC['time'],!$_GPC['sign'],!$_GPC['time'],strlen($_GPC['time']),strlen($_GPC['time'])<10);exit;
 // 验签 md5(md5('密钥')+时间戳前六位)
-/*if(!$_GPC['sign'] || !$_GPC['time'] || count($_GPC['time'])<10 ){
+if( (!$_GPC['sign']) || (!$_GPC['time']) || (strlen($_GPC['time'])<10) ){
     echo_json('501', '非法访问_时间错误');
 }else{
-
-    if(!($_GPC['sign'] !== md5(md5($key) . substr(0, 6)))){
+    if(($_GPC['sign'] !== md5(md5($key) . substr($_GPC['time'],0, 6)))){
         echo_json('501', '非法访问_签名错误');
     }
-}*/
+}
 
 /*if(!in_array($a, array('index', 'category', 'detail', 'category', 'orders', 'cancel', 'express', 'confirm', 'buy', 'pay'))){
     echo_json('501', '非法访问_未授权');
