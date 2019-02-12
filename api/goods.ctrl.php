@@ -74,9 +74,9 @@ class Goods
     public function index()
     {
         global $_GPC;
-        $sqlcondition = $groupcondition = '';
         // $condition    = ' WHERE g.`uniacid` = 10';
-        $condition = " WHERE 1 AND g.`uniacid` = {$this->g_uniacid} AND `status` > 0 and `checked`=0 and `total`>0 and `deleted`=0 ";
+        $condition = " WHERE 1 AND g.`uniacid` = {$this->g_uniacid} AND `status` > 0 and `checked`=0 and `total`>0 and `deleted`=0 AND goodsid IS NULL  ";
+        $join = ' LEFT JOIN  '.tablename('ewei_shop_goods_spec').' s  ON g.id =s.goodsid ';
 
         // keyword 搜索id 标题 商品编号goodssn keywords	v2 关键词  productsn	商品条码
         if(!empty($_GPC['keyword'])){
@@ -94,7 +94,7 @@ class Goods
             $condition    .= ' AND FIND_IN_SET(' . $_GPC['cate'] . ',cates)<>0 ';
         }
 
-        $sql           = 'SELECT g.id FROM ' . tablename('ewei_shop_goods') . 'g' . $sqlcondition . $condition . $groupcondition;
+        $sql           = 'SELECT g.id FROM ' . tablename('ewei_shop_goods') . 'g' . $join.$condition ;
         $total_all     = pdo_fetchall($sql, $params);
         $data['total'] = $total = count($total_all);
         unset($total_all);
@@ -103,10 +103,10 @@ class Goods
             $pindex = max(1, intval($_GPC['page']));
             $psize  = $_GPC['page'] ?: 20;
 
-            //            $sql          = 'SELECT g.* FROM ' . tablename('ewei_shop_goods') . 'g' . $sqlcondition . $condition . $groupcondition . " ORDER BY g.`status` DESC, g.`displayorder` DESC,\r\n                g.`id` DESC LIMIT " . (($pindex - 1) * $psize) . ',' . $psize;
+            //            $sql          = 'SELECT g.* FROM ' . tablename('ewei_shop_goods') . 'g' . $condition .  " ORDER BY g.`status` DESC, g.`displayorder` DESC,\r\n                g.`id` DESC LIMIT " . (($pindex - 1) * $psize) . ',' . $psize;
 //            $fields       = 'id,pcate,ccate,tcate,type,status,displayorder,title,shorttitle,thumb,unit,description,goodssn,productsn,productprice,marketprice,costprice,total,totalcnf,sales,salesreal,spec,createtime,weight,maxbuy,usermaxbuy,hasoption,dispatch,thumb_url,isnew,ishot,isdiscount,isrecommand,issendfree,istime,timestart,timeend,deleted,updatetime,virtual,ccates,pcates,pcates,ednum,edmoney,edareas,dispatchtype,dispatchid,dispatchprice,cates,minbuy,invoice,repair,seven,minprice,maxprice,province,virtualsend,virtualsendcontent,verifytype,subtitle,checked,minpriceupdated,catesinit3,showtotaladd,thumb_first,keywords,catch_id,catch_url,catch_source,labelname,autoreceive,cannotrefund,presellsendtype';
-            $fields       = 'id';
-            $sql          = 'SELECT ' . $fields . ' FROM ' . tablename('ewei_shop_goods') . 'g' . $sqlcondition . $condition . $groupcondition . " ORDER BY g.`status` DESC, g.`displayorder` DESC,\r\n                g.`id` DESC LIMIT " . (($pindex - 1) * $psize) . ',' . $psize;
+            $fields       = 'g.id';
+            $sql          = 'SELECT ' . $fields . ' FROM ' . tablename('ewei_shop_goods') . 'g' .  $join.$condition .  " ORDER BY g.`status` DESC, g.`displayorder` DESC,\r\n                g.`id` DESC LIMIT " . (($pindex - 1) * $psize) . ',' . $psize;
             $data['list'] = pdo_fetchall($sql, $params);
 
             foreach($data['list'] as $k => $v){
