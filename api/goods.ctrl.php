@@ -105,7 +105,7 @@ class Goods
 
             //            $sql          = 'SELECT g.* FROM ' . tablename('ewei_shop_goods') . 'g' . $sqlcondition . $condition . $groupcondition . " ORDER BY g.`status` DESC, g.`displayorder` DESC,\r\n                g.`id` DESC LIMIT " . (($pindex - 1) * $psize) . ',' . $psize;
 //            $fields       = 'id,pcate,ccate,tcate,type,status,displayorder,title,shorttitle,thumb,unit,description,goodssn,productsn,productprice,marketprice,costprice,total,totalcnf,sales,salesreal,spec,createtime,weight,maxbuy,usermaxbuy,hasoption,dispatch,thumb_url,isnew,ishot,isdiscount,isrecommand,issendfree,istime,timestart,timeend,deleted,updatetime,virtual,ccates,pcates,pcates,ednum,edmoney,edareas,dispatchtype,dispatchid,dispatchprice,cates,minbuy,invoice,repair,seven,minprice,maxprice,province,virtualsend,virtualsendcontent,verifytype,subtitle,checked,minpriceupdated,catesinit3,showtotaladd,thumb_first,keywords,catch_id,catch_url,catch_source,labelname,autoreceive,cannotrefund,presellsendtype';
-            $fields       = 'id,total';
+            $fields       = 'id';
             $sql          = 'SELECT ' . $fields . ' FROM ' . tablename('ewei_shop_goods') . 'g' . $sqlcondition . $condition . $groupcondition . " ORDER BY g.`status` DESC, g.`displayorder` DESC,\r\n                g.`id` DESC LIMIT " . (($pindex - 1) * $psize) . ',' . $psize;
             $data['list'] = pdo_fetchall($sql, $params);
 
