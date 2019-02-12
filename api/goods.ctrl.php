@@ -8,21 +8,21 @@ define('IN_API', true);
 $key = 'abcd1234';
 // ip限制
 //var_dump($_SERVER);exit;
-if(!in_array($_SERVER['REMOTE_ADDR'], array('127.0.0.1', ''))){
+/*if(!in_array($_SERVER['REMOTE_ADDR'], array('127.0.0.1', ''))){
     echo_json('501', '非法访问_IP错误');
-}
+}*/
 
 /*$_GPC['time'] = time();
 $sign = md5(md5($key) . substr($_GPC['time'],0, 6));*/
 //var_dump('$sign==',$sign,$_GPC['time'],!$_GPC['sign'],!$_GPC['time'],strlen($_GPC['time']),strlen($_GPC['time'])<10);exit;
 // 验签 md5(md5('密钥')+时间戳前六位)
-if( (!$_GPC['sign']) || (!$_GPC['time']) || (strlen($_GPC['time'])<10) ){
+/*if( (!$_GPC['sign']) || (!$_GPC['time']) || (strlen($_GPC['time'])<10) ){
     echo_json('501', '非法访问_时间错误');
 }else{
     if(($_GPC['sign'] !== md5(md5($key) . substr($_GPC['time'],0, 6)))){
         echo_json('501', '非法访问_签名错误');
     }
-}
+}*/
 
 /*if(!in_array($a, array('index', 'category', 'detail', 'category', 'orders', 'cancel', 'express', 'confirm', 'buy', 'pay'))){
     echo_json('501', '非法访问_未授权');
@@ -104,7 +104,8 @@ class Goods
             $psize  = $_GPC['page'] ?: 20;
 
             //            $sql          = 'SELECT g.* FROM ' . tablename('ewei_shop_goods') . 'g' . $sqlcondition . $condition . $groupcondition . " ORDER BY g.`status` DESC, g.`displayorder` DESC,\r\n                g.`id` DESC LIMIT " . (($pindex - 1) * $psize) . ',' . $psize;
-            $fields       = 'id,pcate,ccate,tcate,type,status,displayorder,title,shorttitle,thumb,unit,description,goodssn,productsn,productprice,marketprice,costprice,total,totalcnf,sales,salesreal,spec,createtime,weight,maxbuy,usermaxbuy,hasoption,dispatch,thumb_url,isnew,ishot,isdiscount,isrecommand,issendfree,istime,timestart,timeend,deleted,updatetime,virtual,ccates,pcates,pcates,ednum,edmoney,edareas,dispatchtype,dispatchid,dispatchprice,cates,minbuy,invoice,repair,seven,minprice,maxprice,province,virtualsend,virtualsendcontent,verifytype,subtitle,checked,minpriceupdated,catesinit3,showtotaladd,thumb_first,keywords,catch_id,catch_url,catch_source,labelname,autoreceive,cannotrefund,presellsendtype';
+//            $fields       = 'id,pcate,ccate,tcate,type,status,displayorder,title,shorttitle,thumb,unit,description,goodssn,productsn,productprice,marketprice,costprice,total,totalcnf,sales,salesreal,spec,createtime,weight,maxbuy,usermaxbuy,hasoption,dispatch,thumb_url,isnew,ishot,isdiscount,isrecommand,issendfree,istime,timestart,timeend,deleted,updatetime,virtual,ccates,pcates,pcates,ednum,edmoney,edareas,dispatchtype,dispatchid,dispatchprice,cates,minbuy,invoice,repair,seven,minprice,maxprice,province,virtualsend,virtualsendcontent,verifytype,subtitle,checked,minpriceupdated,catesinit3,showtotaladd,thumb_first,keywords,catch_id,catch_url,catch_source,labelname,autoreceive,cannotrefund,presellsendtype';
+            $fields       = 'id,total';
             $sql          = 'SELECT ' . $fields . ' FROM ' . tablename('ewei_shop_goods') . 'g' . $sqlcondition . $condition . $groupcondition . " ORDER BY g.`status` DESC, g.`displayorder` DESC,\r\n                g.`id` DESC LIMIT " . (($pindex - 1) * $psize) . ',' . $psize;
             $data['list'] = pdo_fetchall($sql, $params);
 
